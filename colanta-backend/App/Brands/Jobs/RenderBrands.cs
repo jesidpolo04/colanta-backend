@@ -2,81 +2,131 @@
 {
     using App.Brands.Application;
     using App.Brands.Domain;
+    using App.Shared.Domain;
     using App.Brands.Infraestructure;
+    using App.Shared.Application;
+    using App.Shared.Infraestructure;
     using System;
     using System.Collections.Generic;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
     using System.Text.Json;
+
     public class RenderBrands
     {
         private GetBrandBySiesaId getBrandBySiesaId;
         private CreateBrand createBrand;
+        private CreateVtexBrand createVtexBrand;
+        private IBrandsSiesaRepository brandsSiesaRepository;
+        private GetDeltaBrands getDeltaBrands;
+        private UpdateBrands updateBrands;
         private UpdateBrand updateBrand;
-        private HttpClient httpClient;
-        private string url = "https://colanta.myvtex.com/";
-        private string endpoint = "api/catalog/pvt/brand";
-        private string apiToken = "FIROYQZUHUNDYJAEFJXKOHXRTUNTNSERIPTKGTSVGVFFVCNJOSSHOIOYLAUECFHPPWUIQQXLRCDTCSWRGDEUZXCABUYGYOSBNPPYHETYVHQMEUWSEDXZAMQSUUHWRRMD";
-        private string apiKey = "vtexappkey-colanta-CNANOI";
+        private CustomConsole console;
+        private ILogs logs;
+        private List<Detail> details;
+        private EmailSender emailSender;
+
+        private int total_loads = 0;
+        private int total_errors = 0;
+        private int total_not_procecced = 0;
 
         public RenderBrands()
         {
-            this.httpClient = new HttpClient();
             this.getBrandBySiesaId = new GetBrandBySiesaId(new EFBrandsRepository());
-            this.createBrand = new CreateBrand(new EFBrandsRepository(), new VtexBrandsRepository());
+            this.createBrand = new CreateBrand(new EFBrandsRepository(), new ProcessLogs());
+            this.createVtexBrand = new CreateVtexBrand(new VtexBrandsRepository());
+            this.brandsSiesaRepository = new BrandsSiesaRepository();
+            this.getDeltaBrands = new GetDeltaBrands(new EFBrandsRepository());
+            this.updateBrands = new UpdateBrands(new EFBrandsRepository());
             this.updateBrand = new UpdateBrand(new EFBrandsRepository());
+            this.emailSender = new GmailSender();
+            this.console = new CustomConsole();
+            this.logs = new ProcessLogs();
+            this.details = new List<Detail>();
+
+            this.console.color(ConsoleColor.Yellow).write("Inicio de ejecución del cron").dot(2);
         }
 
         public async void Invoke()
         {
-            // request info from Siesa
-            var responseSiesaBrands = await this.httpClient.GetAsync("http://localhost:3000/marcas");
-            string siesaBrandsBody = await responseSiesaBrands.Content.ReadAsStringAsync();
-            var siesaBrands = JsonSerializer.Deserialize<List<SiesaBrandDTO>>(siesaBrandsBody).ToArray();
+            Brand[] siesaBrands = await this.brandsSiesaRepository.getAllBrands();
+            this.details.Add(new Detail(
+                origin: "siesa",
+                success: true,
+                description: "request for get all brands in siesa, completed successfully"
+                )); ;
 
-            //Set headers for vtex
-            this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            this.httpClient.DefaultRequestHeaders.Add("X-VTEX-API-AppToken", this.apiToken);
-            this.httpClient.DefaultRequestHeaders.Add("X-VTEX-API-AppKey", this.apiKey);
-
-            foreach (SiesaBrandDTO siesaBrand in siesaBrands)
+            Brand[] deltaBrands = this.getDeltaBrands.Invoke(siesaBrands);
+            if(deltaBrands.Length > 0)
             {
-                Brand localBrand = this.getBrandBySiesaId.Invoke(siesaBrand.id);
+                this.console.color(ConsoleColor.Yellow).write("Esta vez no vinieron")
+                    .color(ConsoleColor.White).write("" + deltaBrands.Length)
+                    .color(ConsoleColor.Yellow).write("de las marcas que ya tenemos activas en local").reset();
 
-                if(localBrand != null)
+                foreach(Brand deltaBrand in deltaBrands)
                 {
-                    //If Brand Exists Locally: Write...
-                    await Console.Out.WriteAsync("Ya existe la marca con siesa Id: " + localBrand.id_siesa + "\n");
+                    deltaBrand.state = false;
                 }
-                else
+                this.updateBrands.Invoke(deltaBrands);
+            }
+
+            foreach (Brand siesaBrand in siesaBrands)
+            {
+                try
                 {
-                    //Create brand if no exists
-                    localBrand = this.createBrand.Invoke(new Brand(
-                            id_siesa: siesaBrand.id,
-                            name: siesaBrand.nombre,
-                            id: Convert.ToInt16(siesaBrand.id)
-                        ));
-                    Console.Out.Write("Se creó localmente la marca con id Siesa: " + siesaBrand.id + "\n");
+                    Brand? localBrand = this.getBrandBySiesaId.Invoke(siesaBrand.id_siesa);
 
-                    //Create brand in VTEX
-                    
-                    string jsonContent = JsonSerializer.Serialize(new
+                    if(localBrand != null && localBrand.state == true)
                     {
-                        Name = siesaBrand.nombre
-                    });
-                    HttpContent content = new StringContent(jsonContent, encoding:System.Text.Encoding.UTF8, "application/json");
-                    HttpResponseMessage responseVtex = await this.httpClient.PostAsync(this.url + this.endpoint, content);
-                    string responseBodyVtex = await responseVtex.Content.ReadAsStringAsync();
-                    Console.Out.Write("Body Vtex: "+responseBodyVtex + "\n");
-                    VtexBrandDTO vtexBrand = JsonSerializer.Deserialize<VtexBrandDTO>(responseBodyVtex);
-                    Console.Out.WriteLine("Se creó la marca con Id Siesa: "+siesaBrand.id+" En VTEX con id vtex: "+vtexBrand.Id);
+                        this.total_not_procecced++;
+                    }
 
-                    //Update brand Locally
-                    localBrand.id_vtex = vtexBrand.Id;
-                    Brand updatedLocalBrand = this.updateBrand.Invoke(localBrand);
-                    Console.Out.WriteLine("Se actualizó el id vtex ("+localBrand.id_vtex+") para marca con Siesa Id: " + localBrand.id_siesa);
+                    if(localBrand != null && localBrand.state == false)
+                    {
+                        localBrand.state = true;
+                        this.updateBrand.Invoke(localBrand);
+                        this.total_not_procecced++;
+                    }
+
+                    if (localBrand == null)
+                    {
+                        //Create brand if no exists
+                        localBrand = this.createBrand.Invoke(siesaBrand);
+                        Brand? vtexBrand = await this.createVtexBrand.Invoke(localBrand);
+                        this.details.Add(new Detail(
+                                                origin: "vtex",
+                                                success: true,
+                                                description: "request for create a brand in VTEX, completed successfully"
+                                            )); 
+                        localBrand.id_vtex = vtexBrand.id_vtex;
+                        UpdateBrand updateBrand = new UpdateBrand(new EFBrandsRepository());
+                        updateBrand.Invoke(localBrand);
+                        this.total_loads++;
+                    }
+
+                }
+                catch (VtexException vtexException) 
+                {
+                    this.details.Add(new Detail(
+                                            origin: "vtex",
+                                            success: false,
+                                            description: vtexException.Message
+                                        ));
+                    this.total_errors++;
+                    this.emailSender.SendEmail("¡Alerta!, no fue posible crear en vtex la marca: " + siesaBrand.name);
+                }      
+                catch(Exception exception)
+                {
+                    //otro tipo de excepcion
                 }
             }
+            this.logs.Log(
+                    name: "Renderizado de Marcas",
+                    total_loads: this.total_loads,
+                    total_errors: this.total_errors,
+                    total_not_procecced: this.total_not_procecced,
+                    json_details: JsonSerializer.Serialize(this.details.ToArray())
+                ) ;
+            
+            this.console.color(ConsoleColor.Yellow).write("Fin de ejecución del cron").dot(2);
         }
     }
 }

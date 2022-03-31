@@ -6,17 +6,12 @@ using colanta_backend.App.Brands.Application;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using colanta_backend.App.Shared.Infraestructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace colanta_backend
 {
@@ -35,13 +30,16 @@ namespace colanta_backend
 
             services.AddControllers();
 
+            //DbContext
+            services.AddDbContext<colantaContext>(options=> options.UseSqlServer("Server=localhost; Database=colanta; User=sa; Password=Jesing0408"));
+
             //Dependencies Injections Brands
             services.AddTransient<BrandsRepository, EFBrandsRepository>();
             services.AddTransient<BrandsVtexRepository, VtexBrandsRepository>();
-            services.AddTransient<GetAllBrands , GetAllBrands>();
             //---------------------------/
 
-            services.AddHostedService<ScheduledRenderBrands>();
+            //services.AddHostedService<ScheduledRenderBrands>();
+            services.AddHostedService<ScheduledUpdateBrandsState>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "colanta_backend", Version = "v1" });

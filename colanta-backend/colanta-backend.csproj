@@ -16,9 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="App\Shared\Logs\" />
-    <Folder Include="App\Shared\Domain\" />
-    <Folder Include="App\Shared\Application\" />
     <Folder Include="Models\" />
   </ItemGroup>
 
