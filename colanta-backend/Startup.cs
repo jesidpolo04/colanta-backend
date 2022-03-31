@@ -31,7 +31,7 @@ namespace colanta_backend
             services.AddControllers();
 
             //DbContext
-            services.AddDbContext<colantaContext>(options=> options.UseSqlServer("Server=localhost; Database=colanta; User=sa; Password=Jesing0408"));
+            services.AddDbContext<colantaContext>(options=> options.UseSqlServer("Server=MEDVPCLU004; Database=middleware_colanta; User=C263_User_Aplicativo; Password=F@KKgxye@t6P"));
 
             //Dependencies Injections Brands
             services.AddTransient<BrandsRepository, EFBrandsRepository>();
