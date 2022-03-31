@@ -26,7 +26,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=localhost; Database=colanta; User=sa; Password=Jesing0408");
+                optionsBuilder.UseSqlServer("Server=MEDVPCLU004; Database=middleware_colanta; User=C263_User_Aplicativo; Password=F@KKgxye@t6P");
             }
         }
 
