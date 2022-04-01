@@ -9,13 +9,17 @@
     using System;
     using System.Collections.Generic;
     using System.Text.Json;
+    using Microsoft.Extensions.Configuration;
 
     public class RenderBrands
     {
+        private BrandsRepository brandsLocalRepository;
+        private BrandsVtexRepository brandsVtexRepository;
+        private IBrandsSiesaRepository brandsSiesaRepository;
         private GetBrandBySiesaId getBrandBySiesaId;
         private CreateBrand createBrand;
         private CreateVtexBrand createVtexBrand;
-        private IBrandsSiesaRepository brandsSiesaRepository;
+        
         private GetDeltaBrands getDeltaBrands;
         private UpdateBrands updateBrands;
         private UpdateBrand updateBrand;
@@ -28,20 +32,23 @@
         private int total_errors = 0;
         private int total_not_procecced = 0;
 
-        public RenderBrands()
+        public RenderBrands(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository, ILogs logs)
         {
-            this.getBrandBySiesaId = new GetBrandBySiesaId(new EFBrandsRepository());
-            this.createBrand = new CreateBrand(new EFBrandsRepository(), new ProcessLogs());
-            this.createVtexBrand = new CreateVtexBrand(new VtexBrandsRepository());
+            this.brandsLocalRepository = brandsLocalRepository;
+            this.brandsVtexRepository = brandsVtexRepository;
+            this.logs = logs;
+            this.getBrandBySiesaId = new GetBrandBySiesaId(this.brandsLocalRepository);
+            this.createBrand = new CreateBrand(this.brandsLocalRepository, this.logs);
+            this.createVtexBrand = new CreateVtexBrand(this.brandsVtexRepository);
             this.brandsSiesaRepository = new BrandsSiesaRepository();
-            this.getDeltaBrands = new GetDeltaBrands(new EFBrandsRepository());
-            this.updateBrands = new UpdateBrands(new EFBrandsRepository());
-            this.updateBrand = new UpdateBrand(new EFBrandsRepository());
+            this.getDeltaBrands = new GetDeltaBrands(this.brandsLocalRepository);
+            this.updateBrands = new UpdateBrands(this.brandsLocalRepository);
+            this.updateBrand = new UpdateBrand(this.brandsLocalRepository);
             this.emailSender = new GmailSender();
             this.console = new CustomConsole();
-            this.logs = new ProcessLogs();
-            this.details = new List<Detail>();
 
+            this.details = new List<Detail>();
+            
             this.console.color(ConsoleColor.Yellow).write("Inicio de ejecución del cron").dot(2);
         }
 
@@ -97,7 +104,7 @@
                                                 description: "request for create a brand in VTEX, completed successfully"
                                             )); 
                         localBrand.id_vtex = vtexBrand.id_vtex;
-                        UpdateBrand updateBrand = new UpdateBrand(new EFBrandsRepository());
+                        UpdateBrand updateBrand = new UpdateBrand(this.brandsLocalRepository);
                         updateBrand.Invoke(localBrand);
                         this.total_loads++;
                     }

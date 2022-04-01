@@ -1,12 +1,13 @@
 ﻿namespace colanta_backend.App.Shared.Infraestructure
 {
     using App.Shared.Application;
+    using Microsoft.Extensions.Configuration;
     public class ProcessLogs : ILogs
     {
         private colantaContext dbContext;
-        public ProcessLogs()
+        public ProcessLogs(IConfiguration configuration)
         {
-            this.dbContext = new colantaContext();
+            this.dbContext = new colantaContext(configuration);
         }
         public void Log(string name, int total_loads, int total_errors, int total_not_procecced, string? json_details = null)
         {

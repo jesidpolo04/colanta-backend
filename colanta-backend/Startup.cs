@@ -2,7 +2,7 @@
 using colanta_backend.App.Brands.Jobs;
 using colanta_backend.App.Brands.Domain;
 using colanta_backend.App.Brands.Infraestructure;
-using colanta_backend.App.Brands.Application;
+using colanta_backend.App.Shared.Application;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,14 +31,15 @@ namespace colanta_backend
             services.AddControllers();
 
             //DbContext
-            services.AddDbContext<colantaContext>(options=> options.UseSqlServer("Server=MEDVPCLU004; Database=middleware_colanta; User=C263_User_Aplicativo; Password=F@KKgxye@t6P"));
-
+            //services.AddDbContext<colantaContext>(options => options.UseSqlServer("Server=" + Configuration["DbHost"] + "; Database=" + Configuration["DbName"] + "; User=" + Configuration["DbUser"] + "; Password=" + Configuration["DbPassword"]));
             //Dependencies Injections Brands
             services.AddTransient<BrandsRepository, EFBrandsRepository>();
             services.AddTransient<BrandsVtexRepository, VtexBrandsRepository>();
+            services.AddTransient<ILogs, ProcessLogs>();
             //---------------------------/
 
-            //services.AddHostedService<ScheduledRenderBrands>();
+            //Scheduled Tasks
+            services.AddHostedService<ScheduledRenderBrands>();
             services.AddHostedService<ScheduledUpdateBrandsState>();
             services.AddSwaggerGen(c =>
             {

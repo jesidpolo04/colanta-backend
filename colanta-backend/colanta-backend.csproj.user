@@ -4,6 +4,6 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>colanta_backend</ActiveDebugProfile>
+    <ActiveDebugProfile>colanta_backend_dev</ActiveDebugProfile>
   </PropertyGroup>
 </Project>

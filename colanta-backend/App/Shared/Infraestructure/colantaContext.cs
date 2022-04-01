@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
+
 
 using colanta_backend.App.Brands.Infraestructure;
 
@@ -10,23 +12,20 @@ namespace colanta_backend.App.Shared.Infraestructure
 {
     public partial class colantaContext : DbContext
     {
-        public colantaContext()
+        IConfiguration Configuration;
+        public colantaContext(IConfiguration configuration)
         {
+            this.Configuration = configuration;
         }
 
-        public colantaContext(DbContextOptions<colantaContext> options)
-            : base(options)
-        {
-        }
-
-        public virtual DbSet<EFBrand> Brands { get; set; }
-        public virtual DbSet<EFProcess> Process { get; set; }
+        public DbSet<EFBrand> Brands { get; set; }
+        public DbSet<EFProcess> Process { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=MEDVPCLU004; Database=middleware_colanta; User=C263_User_Aplicativo; Password=F@KKgxye@t6P");
+                optionsBuilder.UseSqlServer("Server=" + Configuration["DbHost"] + "; Database=" + Configuration["DbName"] + "; User=" + Configuration["DbUser"] + "; Password=" + Configuration["DbPassword"]);
             }
         }
 

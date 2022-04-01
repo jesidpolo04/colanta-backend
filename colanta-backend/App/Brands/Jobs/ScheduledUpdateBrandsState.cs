@@ -8,8 +8,8 @@
     public class ScheduledUpdateBrandsState : IHostedService, IDisposable
     {
         private Timer _timer;
-        private BrandsRepository brandsLocalRepository;
-        private BrandsVtexRepository brandVtexRepository;
+        private BrandsRepository brandsLocalRepository { get; set; }
+        private BrandsVtexRepository brandVtexRepository { get; set; }
         public ScheduledUpdateBrandsState(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository)
         {
             this.brandsLocalRepository = brandsLocalRepository;

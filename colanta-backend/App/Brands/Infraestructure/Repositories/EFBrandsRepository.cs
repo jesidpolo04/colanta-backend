@@ -9,14 +9,15 @@ namespace colanta_backend.App.Brands.Infraestructure
     using System.Linq;
     using System;
     using System.Collections.Generic;
+    using Microsoft.Extensions.Configuration;
 
     public class EFBrandsRepository : BrandsRepository
     {
         private colantaContext dbContext;
         private CustomConsole console;
-        public EFBrandsRepository()
+        public EFBrandsRepository(IConfiguration configuration)
         {
-            this.dbContext = new colantaContext();
+            this.dbContext = new colantaContext(configuration);
             this.console = new CustomConsole();
         }
         public Brand[] getAllBrands()
