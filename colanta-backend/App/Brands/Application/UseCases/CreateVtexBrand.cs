@@ -24,11 +24,10 @@
             {
                 Brand vtexBrand = await this._brandsVtexRepository.saveBrand(brand);
                 this.console
-                    .color(ConsoleColor.DarkGreen).write("Se creó en VTEX la marca:")
-                    .color(ConsoleColor.White).write(""+brand.name).reset();
+                    .color(ConsoleColor.Green).write("completado con éxito").reset();
                 return vtexBrand;
             }
-            catch(Exception vtexExcepcion)
+            catch(VtexException vtexExcepcion)
             {
                 this.console.color(ConsoleColor.Red).write("Excepción:")
                     .color(ConsoleColor.White).write(vtexExcepcion.Message).skipLine();

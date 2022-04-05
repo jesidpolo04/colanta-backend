@@ -10,14 +10,15 @@ namespace colanta_backend.App.Brands.Infraestructure
     using System;
     using System.Collections.Generic;
     using Microsoft.Extensions.Configuration;
+    using System.Threading.Tasks;
 
     public class EFBrandsRepository : BrandsRepository
     {
-        private colantaContext dbContext;
+        private ColantaContext dbContext;
         private CustomConsole console;
         public EFBrandsRepository(IConfiguration configuration)
         {
-            this.dbContext = new colantaContext(configuration);
+            this.dbContext = new ColantaContext(configuration);
             this.console = new CustomConsole();
         }
         public Brand[] getAllBrands()
@@ -33,6 +34,16 @@ namespace colanta_backend.App.Brands.Infraestructure
                 )
             ).ToArray();
             return brands;
+        }
+
+        public async Task<Brand[]> getNullVtexBrands() { 
+            EFBrand[] nullVtexEFBrands = dbContext.Brands.Where(brand => brand.id_vtex == null).ToArray();
+            List<Brand> nullVtexBrands = new List<Brand>();
+            foreach(EFBrand nullVtexEFBrand in nullVtexEFBrands)
+            {
+                nullVtexBrands.Add(nullVtexEFBrand.getBrandFromEFBrand());
+            }
+            return nullVtexBrands.ToArray();
         }
 
         public Brand getBrandById(int id)
@@ -93,8 +104,6 @@ namespace colanta_backend.App.Brands.Infraestructure
                 efBrand.state = Convert.ToInt16(brand.state);
                 efBrand.id_vtex = brand.id_vtex;
                 dbContext.SaveChanges();
-                this.console.color(ConsoleColor.DarkGreen).write("Se actualizó correctamente la marca:")
-                    .color(ConsoleColor.White).write("" + brand.name).reset(); 
                 return efBrand.getBrandFromEFBrand();
             }
             

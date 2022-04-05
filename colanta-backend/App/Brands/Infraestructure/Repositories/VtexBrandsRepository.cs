@@ -52,8 +52,12 @@
             string jsonContent = JsonSerializer.Serialize(new
             {
                 Name = brand.name,
-                Active = brand.state
-            });
+                Active = brand.state,
+                SiteTitle = brand.name,
+                Text = "",
+                Keywords = "",
+                MenuHome = false
+            }); 
             HttpContent content = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
             HttpResponseMessage responseVtex = await this.httpClient.PostAsync(this.url + this.endpoint, content);
             if (!responseVtex.IsSuccessStatusCode)
@@ -66,9 +70,21 @@
             return brand;
         }
 
-        public Task<Brand> updateBrand(Brand brand)
+        public async Task<Brand> updateBrand(Brand brand)
         {
-            throw new System.NotImplementedException();
+            string endpoint = "api/catalog/pvt/brand/" + brand.id_vtex;
+            string jsonContent = JsonSerializer.Serialize(new
+            {
+                Name = brand.name,
+                Active = brand.state
+            });
+            HttpContent content = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage responseVtex = await this.httpClient.PutAsync(this.url + endpoint, content);
+            if (!responseVtex.IsSuccessStatusCode)
+            {
+                throw new VtexException("VTEX repondió con status: " + responseVtex.StatusCode + " al intentar actualizar la marca: " + brand.name);
+            }
+            return brand;
         }
     }
 }

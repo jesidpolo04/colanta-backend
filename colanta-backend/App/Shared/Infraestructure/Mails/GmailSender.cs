@@ -21,6 +21,7 @@
         public void SendEmail(string message)
         {
             MailMessage mail = new MailMessage(this.from, this.to, "Colanta Middleware Process", message);
+            mail.IsBodyHtml = true;
             
             this.smtpClient.Send(mail);
         }

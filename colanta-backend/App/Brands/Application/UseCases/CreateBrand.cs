@@ -20,17 +20,9 @@
         }
         public Brand Invoke(Brand brand)
         {
-            try
-            {
-                Brand localBrand =  this.locallyRepository.saveBrand(brand);
-                this.console.color(ConsoleColor.DarkGreen).write("Se creó localmente la marca:")
-                    .color(ConsoleColor.White).write("" + brand.name).skipLine();
-                return localBrand;
-            }
-            catch (Exception exception)
-            {
-              return null;
-            }
+            Brand localBrand =  this.locallyRepository.saveBrand(brand);
+            this.console.color(ConsoleColor.Green).write("completado con éxito").reset();
+            return localBrand;
         }
 
     }

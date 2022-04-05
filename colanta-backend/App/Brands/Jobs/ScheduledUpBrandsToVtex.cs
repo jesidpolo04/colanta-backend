@@ -5,25 +5,25 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Brands.Domain;
-    public class ScheduledUpdateBrandsState : IHostedService, IDisposable
+    public class ScheduledUpBrandsToVtex : IHostedService, IDisposable
     {
         private Timer _timer;
         private BrandsRepository brandsLocalRepository { get; set; }
         private BrandsVtexRepository brandVtexRepository { get; set; }
-        public ScheduledUpdateBrandsState(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository)
+        public ScheduledUpBrandsToVtex(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository)
         {
             this.brandsLocalRepository = brandsLocalRepository;
             this.brandVtexRepository = brandsVtexRepository;
         }
         public async void Execute(object state)
         {
-            UpdateBrandsState updateBrandsState = new UpdateBrandsState(this.brandsLocalRepository, this.brandVtexRepository);
-            updateBrandsState.Invoke();
+            UpBrandsToVtex upBrandsToVtex = new UpBrandsToVtex(this.brandsLocalRepository, this.brandVtexRepository);
+            await upBrandsToVtex.Invoke();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(30));
+            _timer = new Timer(Execute, null, TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(30));
             return Task.CompletedTask;
         }
 

@@ -31,7 +31,7 @@ namespace colanta_backend.App.Brands.Jobs
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
+            _timer = new Timer(Execute, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(60));
             return Task.CompletedTask;
         }
 

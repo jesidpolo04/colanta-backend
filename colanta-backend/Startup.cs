@@ -30,17 +30,20 @@ namespace colanta_backend
 
             services.AddControllers();
 
-            //DbContext
-            //services.AddDbContext<colantaContext>(options => options.UseSqlServer("Server=" + Configuration["DbHost"] + "; Database=" + Configuration["DbName"] + "; User=" + Configuration["DbUser"] + "; Password=" + Configuration["DbPassword"]));
             //Dependencies Injections Brands
             services.AddTransient<BrandsRepository, EFBrandsRepository>();
             services.AddTransient<BrandsVtexRepository, VtexBrandsRepository>();
+            //Dependencies Injections Cattegories
+            //services.AddTransient<BrandsRepository, EFBrandsRepository>(); //s
+            //services.AddTransient<BrandsVtexRepository, VtexBrandsRepository>(); //s
+            //Dependencies Injections Shared
             services.AddTransient<ILogs, ProcessLogs>();
-            //---------------------------/
 
             //Scheduled Tasks
             services.AddHostedService<ScheduledRenderBrands>();
             services.AddHostedService<ScheduledUpdateBrandsState>();
+            services.AddHostedService<ScheduledUpBrandsToVtex>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "colanta_backend", Version = "v1" });

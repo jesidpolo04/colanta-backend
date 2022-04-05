@@ -10,10 +10,10 @@ using colanta_backend.App.Brands.Infraestructure;
 
 namespace colanta_backend.App.Shared.Infraestructure
 {
-    public partial class colantaContext : DbContext
+    public partial class ColantaContext : DbContext
     {
         IConfiguration Configuration;
-        public colantaContext(IConfiguration configuration)
+        public ColantaContext(IConfiguration configuration)
         {
             this.Configuration = configuration;
         }

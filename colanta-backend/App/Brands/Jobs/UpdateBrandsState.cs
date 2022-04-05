@@ -4,6 +4,7 @@
     using Brands.Application;
     using Shared.Domain;
     using Shared.Application;
+    using System;
     public class UpdateBrandsState
     {
         BrandsRepository brandsLocalRepository;
@@ -37,6 +38,7 @@
                 {
 
                 }
+
             }
 
         }

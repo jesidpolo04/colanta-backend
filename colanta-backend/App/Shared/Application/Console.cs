@@ -23,6 +23,13 @@
             System.Console.Out.Write(text + " ");
             return this;
         }
+
+        public CustomConsole writeLine(string text)
+        {
+            System.Console.ForegroundColor = this._color;
+            System.Console.Out.WriteLine(text + " ");
+            return this;
+        }
         public CustomConsole reset()
         {
             this._color = ConsoleColor.White;
