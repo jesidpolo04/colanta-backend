@@ -27,6 +27,7 @@
             GetAllSiesaCategories getAllSiesaCategories = new GetAllSiesaCategories(this.siesaRepository);
             GetDeltaCategories getDeltaCategories = new GetDeltaCategories(this.localRepository);
             GetCategoryBySiesaId getCategoryBySiesaId = new GetCategoryBySiesaId(this.localRepository);
+            GetVtexCategoryByName getCategoryByName = new GetVtexCategoryByName(this.vtexRepository);
             CreateCategory createCategory = new CreateCategory(this.localRepository);
             CreateVtexCategory createVtexCategory = new CreateVtexCategory(this.vtexRepository);
             UpdateCategory updateCategory = new UpdateCategory(this.localRepository);
@@ -42,22 +43,23 @@
             {
                 foreach(Category category in deltaCategories)
                 {
-                    category.isActive = false;
                     try
                     {
+                        category.isActive = false;
                         await updateVtexCategory.Invoke(category);
                     }
                     catch
                     {
                         category.isActive = true;
-                    } 
+                    }
                 }
                 await updateCategories.Invoke(deltaCategories);
             }
 
             foreach(Category siesaCategory in siesaCategories)
             {
-                Category localCategory = await getCategoryBySiesaId.Invoke(siesaCategory.siesa_id);
+                
+                Category? localCategory = await getCategoryBySiesaId.Invoke(siesaCategory.siesa_id);
 
                 if(localCategory != null)
                 {
@@ -79,10 +81,17 @@
                         Category vtexCategory = await createVtexCategory.Invoke(localCategory);
                         localCategory.vtex_id = vtexCategory.vtex_id;
                         localCategory = await updateCategory.Invoke(localCategory);
+                        foreach (Category localCategoryChild in localCategory.childs)
+                        {
+                            Category vtexCategoryChild = await createVtexCategory.Invoke(localCategoryChild);
+                            localCategoryChild.vtex_id = vtexCategoryChild.vtex_id;
+                            await updateCategory.Invoke(localCategoryChild);
+                        }
                     }
                     catch (Exception exception)
                     {
-                        //enviar correo, no fue posible crear
+                        Console.WriteLine(exception.Message);
+                        throw exception;
                     }
                 }
                 

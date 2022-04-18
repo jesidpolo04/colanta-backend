@@ -1,8 +1,12 @@
 //Brands import
 using colanta_backend.App.Brands.Jobs;
+using colanta_backend.App.Categories.Jobs;
+using colanta_backend.App.Categories.Domain;
 using colanta_backend.App.Brands.Domain;
 using colanta_backend.App.Brands.Infraestructure;
+using colanta_backend.App.Categories.Infraestructure;
 using colanta_backend.App.Shared.Application;
+using colanta_backend.App.Shared.Domain;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,15 +38,19 @@ namespace colanta_backend
             services.AddTransient<BrandsRepository, EFBrandsRepository>();
             services.AddTransient<BrandsVtexRepository, VtexBrandsRepository>();
             //Dependencies Injections Cattegories
-            //services.AddTransient<BrandsRepository, EFBrandsRepository>(); //s
-            //services.AddTransient<BrandsVtexRepository, VtexBrandsRepository>(); //s
+            services.AddTransient<App.Categories.Domain.CategoriesRepository , App.Categories.Infraestructure.CategoriesEFRepository>(); //s
+            services.AddTransient<App.Categories.Domain.CategoriesVtexRepository, App.Categories.Infraestructure.CategoriesVtexRepository>();
+            services.AddTransient<App.Categories.Domain.CategoriesSiesaRepository, App.Categories.Infraestructure.CategoriesMockSiesaRepository>();//s
             //Dependencies Injections Shared
             services.AddTransient<ILogs, ProcessLogs>();
+            services.AddTransient<EmailSender, GmailSender>();
 
             //Scheduled Tasks
             services.AddHostedService<ScheduledRenderBrands>();
             services.AddHostedService<ScheduledUpdateBrandsState>();
             services.AddHostedService<ScheduledUpBrandsToVtex>();
+
+            services.AddHostedService<ScheduledRenderCategories>();
 
             services.AddSwaggerGen(c =>
             {

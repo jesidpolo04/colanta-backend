@@ -11,6 +11,7 @@ namespace colanta_backend.App.Brands.Infraestructure
         public int? id { get; set; }
         public int? id_vtex { get; set; }
         public string id_siesa { get; set; }
+        public string business { get; set; }
         public string name { get; set; }
         public short? state { get; set; }
 
@@ -21,6 +22,7 @@ namespace colanta_backend.App.Brands.Infraestructure
                 id_vtex: this.id_vtex,
                 id_siesa: this.id_siesa,
                 name: this.name,
+                business: this.business,
                 state: Convert.ToBoolean(this.state)
             );
         }
@@ -32,6 +34,7 @@ namespace colanta_backend.App.Brands.Infraestructure
             this.id_siesa = brand.id_siesa;
             this.name = brand.name;
             this.state = Convert.ToInt16(brand.state);
+            this.business = brand.business;
         }
     }
     

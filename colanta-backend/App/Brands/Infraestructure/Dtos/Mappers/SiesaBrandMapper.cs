@@ -9,6 +9,7 @@
             SiesaBrandDTO siesaBrandDto = new SiesaBrandDTO();
             siesaBrandDto.id = brand.id_siesa;
             siesaBrandDto.nombre = brand.name;
+            siesaBrandDto.negocio = brand.business;
             return siesaBrandDto;
         }
 
@@ -17,6 +18,7 @@
             return new Brand(
                             name: siesaBrand.nombre,
                             id_siesa: siesaBrand.id,
+                            business: siesaBrand.negocio,
                             id: Convert.ToInt16(siesaBrand.id)
                        );
         }

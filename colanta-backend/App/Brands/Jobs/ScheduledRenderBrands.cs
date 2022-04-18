@@ -10,22 +10,25 @@ namespace colanta_backend.App.Brands.Jobs
     using Shared.Infraestructure;
     using Shared.Application;
     using App.Brands.Domain;
+    using Shared.Domain;
     public class ScheduledRenderBrands : IHostedService, IDisposable
     {
         private Timer _timer;
         private BrandsRepository brandsLocalRepository { get; set; }
         private BrandsVtexRepository brandsVtexRepository { get; set; }
         private ILogs logs { get; set; }
-        public ScheduledRenderBrands(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository, ILogs logs)
+        private EmailSender emailSender { get; set; }
+        public ScheduledRenderBrands(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository, ILogs logs, EmailSender emailSender)
         {
             this.brandsLocalRepository = brandsLocalRepository;
             this.brandsVtexRepository = brandsVtexRepository;
             this.logs = logs;
+            this.emailSender = emailSender;
         }
 
         public async void Execute(object state)
         {
-            RenderBrands renderBrands = new RenderBrands(this.brandsLocalRepository, this.brandsVtexRepository, this.logs);
+            RenderBrands renderBrands = new RenderBrands(this.brandsLocalRepository, this.brandsVtexRepository, this.logs, this.emailSender);
             renderBrands.Invoke();
         }
 

@@ -10,7 +10,7 @@ namespace colanta_backend.App.Categories.Domain
         Task<Category?> getCategoryBySiesaId(string id);
         Task<Category> saveCategory(Category category);
         Task<Category> updateCategory(Category category);
-        Task<Category> updateCategories(Category[] categories);
+        Task<Category[]> updateCategories(Category[] categories);
 
     }
 }

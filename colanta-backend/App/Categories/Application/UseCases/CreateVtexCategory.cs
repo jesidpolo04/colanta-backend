@@ -18,19 +18,25 @@
         {
             try
             {
-                return await this.categoriesVtexRepository.saveCategory(category);
+                Category? vtexCategory = await this.categoriesVtexRepository.getCategoryByName(category.name);
+                if(vtexCategory == null)
+                {
+                    return await this.categoriesVtexRepository.saveCategory(category);
+                }
+                return vtexCategory;
             }
             catch(Exception exception)
             {
                 for (int i = 1; i <= this._numberOfTry; i++)
                 {
-                    //this.console.color(ConsoleColor.Yellow).write("Reintentando inserción, intento:")
-                    //    .color(ConsoleColor.White).write("" + (i)).skipLine();
                     try
                     {
-                        return await this.categoriesVtexRepository.saveCategory(category);
-                        //this.console.color(ConsoleColor.DarkGreen).write("Inserción a VTEX exitosa:")
-                        //    .color(ConsoleColor.White).write("" + (i)).dot(2);
+                        Category? vtexCategory = await this.categoriesVtexRepository.getCategoryByName(category.name);
+                        if (vtexCategory == null)
+                        {
+                            return await this.categoriesVtexRepository.saveCategory(category);
+                        }
+                        return vtexCategory;
                     }
                     catch
                     {

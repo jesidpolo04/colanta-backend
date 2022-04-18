@@ -10,37 +10,28 @@
     {
         private BrandsVtexRepository _brandsVtexRepository;
         private int _numberOfTry;
-        private CustomConsole console;
         public CreateVtexBrand(BrandsVtexRepository brandsVtexRepository)
         {
             this._numberOfTry = 5;
             this._brandsVtexRepository = brandsVtexRepository;
-            this.console = new CustomConsole();
         }
 
         public async Task<Brand?> Invoke(Brand brand)
         {
             try
             {
+                this._brandsVtexRepository.changeEnviroment(brand.business);
                 Brand vtexBrand = await this._brandsVtexRepository.saveBrand(brand);
-                this.console
-                    .color(ConsoleColor.Green).write("completado con éxito").reset();
                 return vtexBrand;
             }
             catch(VtexException vtexExcepcion)
             {
-                this.console.color(ConsoleColor.Red).write("Excepción:")
-                    .color(ConsoleColor.White).write(vtexExcepcion.Message).skipLine();
                 Brand? vtexBrand = null;
                 for(int i = 1; i <= this._numberOfTry; i++)
                 {
-                    this.console.color(ConsoleColor.Yellow).write("Reintentando inserción, intento:")
-                        .color(ConsoleColor.White).write("" + (i)).skipLine();
                     try
                     {
                         vtexBrand = await this._brandsVtexRepository.saveBrand(brand);
-                        this.console.color(ConsoleColor.DarkGreen).write("Inserción a VTEX exitosa:")
-                            .color(ConsoleColor.White).write(""+(i)).dot(2);
                         break;
                     }catch(VtexException tryException)
                     {

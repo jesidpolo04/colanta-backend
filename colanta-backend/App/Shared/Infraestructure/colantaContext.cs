@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 
 using colanta_backend.App.Brands.Infraestructure;
+using colanta_backend.App.Categories.Infraestructure;
 
 #nullable disable
 
@@ -19,10 +20,12 @@ namespace colanta_backend.App.Shared.Infraestructure
         }
 
         public DbSet<EFBrand> Brands { get; set; }
+        public DbSet<EFCategory> Categories { get; set; }
         public DbSet<EFProcess> Process { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.EnableSensitiveDataLogging();
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer("Server=" + Configuration["DbHost"] + "; Database=" + Configuration["DbName"] + "; User=" + Configuration["DbUser"] + "; Password=" + Configuration["DbPassword"]);
@@ -53,6 +56,8 @@ namespace colanta_backend.App.Shared.Infraestructure
                     .IsUnicode(false)
                     .HasColumnName("name");
 
+                entity.Property(e => e.business).HasColumnName("business");
+
                 entity.Property(e => e.state).HasColumnName("state");
             });
 
@@ -66,6 +71,20 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.total_not_procecced).HasColumnName("total_not_procecced");
                 entity.Property(e => e.json_details).HasColumnType("text").HasColumnName("json_details");
                 entity.Property(e => e.dateTime).HasColumnType("dateTime").HasDefaultValueSql("getdate()");
+            });
+
+            modelBuilder.Entity<EFCategory>(entity =>
+            {
+                entity.ToTable("categories");
+
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.name).IsRequired().HasColumnName("name");
+                entity.Property(e => e.siesa_id).HasColumnName("siesa_id");
+                entity.Property(e => e.vtex_id).HasColumnName("vtex_id");
+                entity.Property(e => e.isActive).IsRequired().HasColumnName("is_active");
+
+                entity.HasMany(e => e.childs).WithOne(e => e.father).HasForeignKey("family");
+                entity.HasOne(e => e.father).WithMany(e => e.childs);
             });
 
             OnModelCreatingPartial(modelBuilder);

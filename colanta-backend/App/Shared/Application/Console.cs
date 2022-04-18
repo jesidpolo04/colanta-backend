@@ -46,5 +46,54 @@
             }
             return this;
         }
+
+        public CustomConsole endPharagraph()
+        {
+            Console.Out.Write("\n");
+            Console.Out.Write("\n");
+            return this;
+        }
+
+        public CustomConsole successColor()
+        {
+            this.color(ConsoleColor.DarkGreen);
+            return this;
+        }
+
+        public CustomConsole errorColor()
+        {
+            this.color(ConsoleColor.DarkGreen);
+            return this;
+        }
+
+        public CustomConsole infoColor()
+        {
+            this.color(ConsoleColor.DarkCyan);
+            return this;
+        }
+
+        public CustomConsole warningColor()
+        {
+            this.color(ConsoleColor.Yellow);
+            return this;
+        }
+
+        public CustomConsole whiteColor()
+        {
+            this.color(ConsoleColor.White);
+            return this;
+        }
+
+        public CustomConsole grayColor()
+        {
+            this.color(ConsoleColor.DarkGray);
+            return this;
+        }
+
+        public CustomConsole magentaColor()
+        {
+            this.color(ConsoleColor.Magenta);
+            return this;
+        }
     }
 }

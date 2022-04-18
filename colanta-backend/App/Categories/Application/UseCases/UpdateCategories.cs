@@ -13,7 +13,7 @@
             this.repository = repository;
         }
 
-        public async Task<Category> Invoke(Category[] categories)
+        public async Task<Category[]> Invoke(Category[] categories)
         {
             return await this.repository.updateCategories(categories);
         }
