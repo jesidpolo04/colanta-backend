@@ -139,5 +139,26 @@
             }
             return brand;
         }
+
+        public async Task<Brand?> getBrandByName(string name)
+        {
+            string endpoint = "/api/catalog_system/pvt/brand/list";
+            string url = "https://" + this.accountName + "." + this.vtexEnviroment + endpoint;
+            HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
+            if (!vtexResponse.IsSuccessStatusCode)
+            {
+                throw new VtexException("No fue posible traer la lista de marcas, Vtex respondió con status: " + vtexResponse.StatusCode);
+            }
+            string responseBody = await vtexResponse.Content.ReadAsStringAsync();
+            VtexListBrandDto[] listBrandsDto = JsonSerializer.Deserialize<VtexListBrandDto[]>(responseBody);
+            foreach(VtexListBrandDto brandDto in listBrandsDto)
+            {
+                if(brandDto.name == name)
+                {
+                    return brandDto.getBrandFromDto();
+                }
+            }
+            return null;
+        }
     }
 }

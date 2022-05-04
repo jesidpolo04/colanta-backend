@@ -21,7 +21,12 @@
             try
             {
                 this._brandsVtexRepository.changeEnviroment(brand.business);
-                Brand vtexBrand = await this._brandsVtexRepository.saveBrand(brand);
+                Brand vtexBrand = await this._brandsVtexRepository.getBrandByName(brand.name);
+                if(vtexBrand != null)
+                {
+                    return vtexBrand;
+                }
+                vtexBrand = await this._brandsVtexRepository.saveBrand(brand);
                 return vtexBrand;
             }
             catch(VtexException vtexExcepcion)
@@ -31,6 +36,11 @@
                 {
                     try
                     {
+                        vtexBrand = await this._brandsVtexRepository.getBrandByName(brand.name);
+                        if (vtexBrand != null)
+                        {
+                            return vtexBrand;
+                        }
                         vtexBrand = await this._brandsVtexRepository.saveBrand(brand);
                         break;
                     }catch(VtexException tryException)

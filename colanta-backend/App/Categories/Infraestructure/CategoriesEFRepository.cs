@@ -33,7 +33,10 @@
             var efCategories = this.dbContext.Categories.Where(category => category.siesa_id == id);
             if(efCategories.ToArray().Length > 0)
             {
-                return efCategories.First().getCategoryFromEFCategory();
+                EFCategory efCategory = efCategories.First();
+                Console.WriteLine(efCategory.name);
+                Console.WriteLine(efCategory.childs.Count);
+                return efCategory.getCategoryFromEFCategory();
             }
             return null;
         }
