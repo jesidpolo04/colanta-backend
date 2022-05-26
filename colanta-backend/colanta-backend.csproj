@@ -17,8 +17,9 @@
 
   <ItemGroup>
     <Folder Include="App\Inventory\Application\" />
-    <Folder Include="App\Inventory\Infraestructure\" />
+    <Folder Include="App\CustomerCredit\" />
     <Folder Include="App\Prices\Application\" />
+    <Folder Include="App\Promotions\Application\" />
     <Folder Include="Models\" />
   </ItemGroup>
 

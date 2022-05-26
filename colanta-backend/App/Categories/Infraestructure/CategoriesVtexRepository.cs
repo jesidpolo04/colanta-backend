@@ -130,6 +130,13 @@
         {
             string endpoint = "/api/catalog/pvt/category";
             string jsonContent;
+
+            Category existCategory = await this.getCategoryByName(category.name);
+            if(existCategory != null)
+            {
+                return existCategory;
+            }
+
             if(category.father != null)
             {
                 jsonContent = JsonSerializer.Serialize(new

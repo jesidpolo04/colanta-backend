@@ -4,20 +4,40 @@
     using Products.Application;
     using Products.Domain;
     using System;
+    using System.Collections.Generic;
+    using Shared.Application;
+    using Shared.Domain;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
     public class RenderProductsAndSkus
     {
+        private string processName = "Renderizado de productos";
         private ProductsRepository productsLocalRepository;
         private SkusRepository skusLocalRepository;
         private ProductsVtexRepository productsVtexRepository;
         private SkusVtexRepository skusVtexRepository;
         private ProductsSiesaRepository siesaRepository;
+        private ILogs logs;
+        private CustomConsole console = new CustomConsole();
+        private RenderProductsAndSkusMail renderProductsMail;
+
+        private List<Sku> loadSkus;
+        private List<Sku> failedSkus;
+        private List<Sku> inactiveSkus;
+        private List<Sku> inactivatedSkus;
+        private List<Sku> notProccecedSkus;
+
+        private List<Detail> details;
+        private JsonSerializerOptions jsonOptions;
         public RenderProductsAndSkus
         (
             ProductsRepository productsLocalRepository,
             ProductsVtexRepository productsVtexRepository,
             SkusRepository skusLocalRepository,
             SkusVtexRepository skusVtexRepository,
-            ProductsSiesaRepository siesaRepository
+            ProductsSiesaRepository siesaRepository,
+            ILogs logs,
+            EmailSender emailSender
         )
         {
             this.productsLocalRepository = productsLocalRepository;
@@ -25,6 +45,19 @@
             this.productsVtexRepository = productsVtexRepository;
             this.skusVtexRepository = skusVtexRepository;
             this.siesaRepository = siesaRepository;
+            this.logs = logs;
+            this.renderProductsMail = new RenderProductsAndSkusMail(emailSender);
+
+            this.loadSkus = new List<Sku>();
+            this.failedSkus = new List<Sku>();
+            this.inactiveSkus = new List<Sku>();
+            this.inactivatedSkus = new List<Sku>();
+            this.notProccecedSkus  = new List<Sku>();
+
+            this.details = new List<Detail>();
+            this.jsonOptions = new JsonSerializerOptions();
+            this.jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+
         }
 
         public async Task<bool> Invoke()
@@ -48,11 +81,14 @@
             SaveVtexProduct createVtexProduct = new SaveVtexProduct(this.productsVtexRepository);
             SaveVtexSku createVtexSku = new SaveVtexSku(this.skusVtexRepository);
 
-            //1.obtener todos los productos y skus de siesa
+            this.console.warningColor().write("Iniciando proceso:")
+                .infoColor().write(this.processName)
+                .grayColor().write("Fecha:")
+                .magentaColor().write(DateTime.Now.ToString()).endPharagraph();
+
             Product[] allSiesaProducts = await getAllProductsFromSiesa.Invoke();
             Sku[] allSiesaSkus = await getAllSkusFromSiesa.Invoke();
 
-            //2.desactivar los productos y skus que ya no vinieron
             Product[] deltaProducts = await getDeltaProducts.Invoke(allSiesaProducts);
             Sku[] deltaSkus = await getDeltaSkus.Invoke(allSiesaSkus);
 
@@ -67,13 +103,16 @@
             {
                 deltaSku.is_active = false;
                 //await updateVtexSku.Invoke(deltaSku);
+                this.loadSkus.Add(deltaSku);
+                this.details.Add(new Detail(
+                        origin: "vtex",
+                        action: "actualizar estado en vtex",
+                        content: JsonSerializer.Serialize(deltaSku, this.jsonOptions),
+                        description: "sku actualizado con éxito",
+                        success: true
+                    ));
             }
             await updateSkus.Invoke(deltaSkus);
-
-            //3.iterar sobre cada producto y sus skus
-            //4.si el producto ya existe localmente y en vtex y ademas está inactivo hay que activar
-            //5.si el producto ya existe localmente y en vtex y ademas está activo todo ok
-            //6.si el producto no existe en el local crearlo y crearlo en vtex si no existe
 
             foreach (Product siesaProduct in allSiesaProducts)
             {
@@ -104,12 +143,12 @@
 
                 if (localSku != null && localSku.is_active == false)
                 {
-                    //hay que activar
+                    this.inactiveSkus.Add(localSku);
                 }
 
                 if (localSku != null && localSku.is_active == true)
                 {
-                    //todo ok
+                    this.notProccecedSkus.Add(localSku);
                 }
 
                 if (localSku == null)
@@ -118,10 +157,115 @@
                     Sku vtexSku = await createVtexSku.Invoke(localSku);
                     localSku.vtex_id = vtexSku.vtex_id;
                     await updateSku.Invoke(localSku);
+
+                    this.loadSkus.Add(localSku);
+                    this.details.Add(new Detail(
+                        origin: "vtex",
+                        action: "crear sku",
+                        content: JsonSerializer.Serialize(localSku, this.jsonOptions),
+                        description: "sku creado con éxito",
+                        success: true
+                    ));
                 }
             }
+            this.logs.Log(
+                    name: this.processName, 
+                    this.loadSkus.Count, 
+                    this.failedSkus.Count, 
+                    this.notProccecedSkus.Count + this.inactiveSkus.Count, 
+                    allSiesaSkus.Length, 
+                    JsonSerializer.Serialize(this.details, jsonOptions)
+                );
+
+            this.writeConsoleLogs();
+
+            this.renderProductsMail.sendMail(
+                this.loadSkus.ToArray(), 
+                this.inactiveSkus.ToArray(), 
+                this.failedSkus.ToArray(),
+                this.notProccecedSkus.ToArray(), 
+                this.inactivatedSkus.ToArray()
+                );
+
+            this.console.warningColor().write("Proceso Finalizado:")
+                .infoColor().write(this.processName)
+                .grayColor().write("Fecha:")
+                .magentaColor().write(DateTime.Now.ToString()).endPharagraph();
 
             return true;
+        }
+
+        private void writeConsoleLogs()
+        {
+            if (this.inactivatedSkus.Count > 0)
+            {
+                this.console.errorColor().writeLine("Productos desactivados");
+                foreach (Sku inactivatedSku in this.inactivatedSkus)
+                {
+                    this.console.whiteColor().write(inactivatedSku.name)
+                        .grayColor().write("siesa id: ")
+                        .infoColor().write(inactivatedSku.siesa_id)
+                        .grayColor().write("vtex id:")
+                        .infoColor().write(inactivatedSku.siesa_id.ToString()).skipLine();
+                }
+                this.console.endPharagraph();
+            }
+
+            if (this.loadSkus.Count > 0)
+            {
+                this.console.successColor().writeLine("Productos desactivados");
+                foreach (Sku loadSku in this.loadSkus)
+                {
+                    this.console.whiteColor().write(loadSku.name)
+                        .grayColor().write("siesa id: ")
+                        .infoColor().write(loadSku.siesa_id)
+                        .grayColor().write("vtex id:")
+                        .infoColor().write(loadSku.vtex_id.ToString()).skipLine();
+                }
+                this.console.endPharagraph();
+            }
+
+            if (this.failedSkus.Count > 0)
+            {
+                this.console.errorColor().writeLine("Productos no cargados a Vtex debiado a error");
+                foreach (Sku failedSku in this.failedSkus)
+                {
+                    this.console.whiteColor().write(failedSku.name)
+                        .grayColor().write("siesa id: ")
+                        .infoColor().write(failedSku.siesa_id)
+                        .grayColor().write("vtex id:")
+                        .infoColor().write(failedSku.vtex_id.ToString()).skipLine();
+                }
+                this.console.endPharagraph();
+            }
+
+            if (this.inactiveSkus.Count > 0)
+            {
+                this.console.warningColor().writeLine("Productos por activar en Vtex");
+                foreach (Sku inactiveSku in this.inactiveSkus)
+                {
+                    this.console.whiteColor().write(inactiveSku.name)
+                        .grayColor().write("siesa id: ")
+                        .infoColor().write(inactiveSku.siesa_id)
+                        .grayColor().write("vtex id:")
+                        .infoColor().write(inactiveSku.vtex_id.ToString()).skipLine();
+                }
+                this.console.endPharagraph();
+            }
+
+            if (this.notProccecedSkus.Count > 0)
+            {
+                this.console.successColor().writeLine("Productos no procesados");
+                foreach (Sku notProccecedSku in this.notProccecedSkus)
+                {
+                    this.console.whiteColor().write(notProccecedSku.name)
+                        .grayColor().write("siesa id: ")
+                        .infoColor().write(notProccecedSku.siesa_id)
+                        .grayColor().write("vtex id:")
+                        .infoColor().write(notProccecedSku.vtex_id.ToString()).skipLine();
+                }
+                this.console.endPharagraph();
+            }
         }
     }
 }

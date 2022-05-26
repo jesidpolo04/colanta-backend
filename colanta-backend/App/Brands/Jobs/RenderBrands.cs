@@ -1,6 +1,5 @@
 ﻿namespace colanta_backend.App.Brands.Jobs
 {
-    using App.Brands.Application;
     using App.Brands.Domain;
     using App.Shared.Domain;
     using App.Brands.Infraestructure;
@@ -16,7 +15,7 @@
         private BrandsRepository brandsLocalRepository;
         private BrandsVtexRepository brandsVtexRepository;
         private ILogs logs;
-        private EmailSender emailSender;
+        private RenderBrandsMail renderBrandsMail;
 
         private CustomConsole console;
         
@@ -26,21 +25,19 @@
         private List<Brand> failedLoadBrands;
         private List<Brand> notProccecedBrands;
         private List<Brand> inactivatedBrands;
-        
-
-        private int total_loads = 0;
-        private int total_errors = 0;
-        private int total_not_procecced = 0;
+        private JsonSerializerOptions jsonOptions;
 
         public RenderBrands(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository, ILogs logs, EmailSender emailSender)
         {
             this.brandsLocalRepository = brandsLocalRepository;
             this.brandsVtexRepository = brandsVtexRepository;
             this.logs = logs;
-            this.emailSender = emailSender;
+            this.renderBrandsMail = new RenderBrandsMail(emailSender);
 
             this.console = new CustomConsole();
             this.details = new List<Detail>();
+            this.jsonOptions = new JsonSerializerOptions();
+            this.jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
 
             this.inactiveBrands = new List<Brand>();
             this.loadBrands = new List<Brand>();
@@ -57,38 +54,37 @@
         public async Task<bool> Invoke()
         {
             BrandsSiesaRepository brandsSiesaRepository = new BrandsSiesaRepository();
-            GetDeltaBrands getDeltaBrands = new GetDeltaBrands(this.brandsLocalRepository);
-            GetBrandBySiesaId getBrandBySiesaId = new GetBrandBySiesaId(this.brandsLocalRepository);
-            CreateBrand createBrand = new CreateBrand(this.brandsLocalRepository);
-            CreateVtexBrand createVtexBrand = new CreateVtexBrand(this.brandsVtexRepository);
-            UpdateVtexBrand updateVtexBrand = new UpdateVtexBrand(this.brandsVtexRepository);
-            UpdateBrands updateBrands = new UpdateBrands(this.brandsLocalRepository);
-            UpdateBrand updateBrand = new UpdateBrand(this.brandsLocalRepository);
 
             Brand[] siesaBrands = await brandsSiesaRepository.getAllBrands();
             this.details.Add(new Detail(
                     origin: "siesa",
                     success: true,
-                    description: "Petición para obtener todas las marcas de siesa, completada con éxito"
+                    description: "Petición para obtener todas las marcas de siesa, completada con éxito",
+                    content: JsonSerializer.Serialize(siesaBrands)
                 ));
-
-            Brand[] deltaBrands = getDeltaBrands.Invoke(siesaBrands);
+            Brand[] deltaBrands = this.brandsLocalRepository.getDeltaBrands(siesaBrands);
             if (deltaBrands.Length > 0)
             {
                 foreach (Brand deltaBrand in deltaBrands)
                 {
                     deltaBrand.state = false;
-                    updateVtexBrand.Invoke(deltaBrand);
+                    await this.brandsVtexRepository.updateBrand(deltaBrand);
                     this.inactivatedBrands.Add(deltaBrand);
+                    this.details.Add(new Detail(
+                            origin: "vtex",
+                            success: true,
+                            description: "inactivación de la marca, completada con éxito",
+                            content: JsonSerializer.Serialize(deltaBrand, this.jsonOptions)
+                        ));
                 }
-                updateBrands.Invoke(deltaBrands);
+                this.brandsLocalRepository.updateBrands(deltaBrands);
             }
 
             foreach (Brand siesaBrand in siesaBrands)
             {
                 try
                 {
-                    Brand? localBrand = getBrandBySiesaId.Invoke(siesaBrand.id_siesa);
+                    Brand? localBrand = this.brandsLocalRepository.getBrandBySiesaId(siesaBrand.id_siesa);
 
                     if (localBrand != null && localBrand.state == true)
                     {
@@ -104,18 +100,19 @@
 
                     if (localBrand == null)
                     {
-                        localBrand = createBrand.Invoke(siesaBrand);
-                        Brand? vtexBrand = await createVtexBrand.Invoke(localBrand);
+                        localBrand = this.brandsLocalRepository.saveBrand(siesaBrand);
+                        Brand? vtexBrand = await this.brandsVtexRepository.saveBrand(localBrand);
 
                         this.details.Add(
                             new Detail(
                                 origin: "vtex",
                                 success: true,
-                                description: "request for create a brand in VTEX, completed successfully"
+                                description: "Petición para crear la marca en vtex, completada con éxito",
+                                content: JsonSerializer.Serialize(vtexBrand, jsonOptions)
                         ));
 
                         localBrand.id_vtex = vtexBrand.id_vtex;
-                        updateBrand.Invoke(localBrand);
+                        this.brandsLocalRepository.updateBrand(localBrand);
                         this.loadBrands.Add(vtexBrand);
                     }
 
@@ -128,7 +125,6 @@
                                             description: vtexException.Message
                                         ));
                     this.failedLoadBrands.Add(siesaBrand);
-                    this.total_errors++;
                 }
                 catch (Exception exception)
                 {
@@ -137,45 +133,22 @@
             }
 
             this.logs.Log(
-                    name: "Renderizado de Marcas",
-                    total_loads: this.total_loads,
-                    total_errors: this.total_errors,
-                    total_not_procecced: this.total_not_procecced,
-                    json_details: JsonSerializer.Serialize(this.details.ToArray())
+                    name: this.processName,
+                    total_loads: this.loadBrands.Count,
+                    total_errors: this.failedLoadBrands.Count,
+                    total_not_procecced: this.inactiveBrands.Count + notProccecedBrands.Count,
+                    total_obtained: siesaBrands.Length,
+                    json_details: JsonSerializer.Serialize(this.details, jsonOptions)
                 );
 
-
-
-
-            //refactor the below code ↓ ↓ ↓
-
-            string emailMessage = "";
-            emailMessage += "<h3>Marcas pendientes de activación</h3>";
-            emailMessage += "<ul>";
-            foreach (Brand inactiveBrand in this.inactiveBrands)
-            {
-                emailMessage += "<li>" + inactiveBrand.name + "</li>";
-            }
-            emailMessage += "</ul>";
-
-            emailMessage += "<h3>Nuevas Marcas</h3>";
-            emailMessage += "<ul>";
-            foreach (Brand loadBrand in this.loadBrands)
-            {
-                emailMessage += "<li>" + loadBrand.name + "</li>";
-            }
-            emailMessage += "</ul>";
-
-            emailMessage += "<h3>Excepciones</h3>";
-            emailMessage += "<ul>";
-            foreach (Brand failedloadBrand in this.failedLoadBrands)
-            {
-                emailMessage += "<li>" + failedloadBrand.name + "</li>";
-            }
-            emailMessage += "</ul>";
-
             this.writeConsoleLogs();
-            this.emailSender.SendEmail(emailMessage);
+            this.renderBrandsMail.sendMail(
+                        loadBrands.ToArray(),
+                        inactiveBrands.ToArray(),
+                        failedLoadBrands.ToArray(),
+                        notProccecedBrands.ToArray(),
+                        inactivatedBrands.ToArray()
+                    );
 
             this.console.warningColor().write("Proceso Finalizado:")
                 .infoColor().write(this.processName)

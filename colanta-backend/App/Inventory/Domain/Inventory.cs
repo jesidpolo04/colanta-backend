@@ -11,5 +11,6 @@
         public int warehouse_id { get; set; }
         public string warehouse_siesa_id { get; set; }
         public Warehouse warehouse { get; set; }
+        public string business { get; set; }
     }
 }

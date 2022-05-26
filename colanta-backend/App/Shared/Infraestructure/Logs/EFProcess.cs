@@ -9,6 +9,7 @@
         public int total_loads { get; set; }
         public int total_errors  { get; set; }
         public int total_not_procecced { get; set; }
+        public int total_obtained { get; set; }
         public string json_details  { get; set; }
         public DateTime dateTime { get; set; }
 
@@ -20,6 +21,7 @@
             process.total_loads = this.total_loads;
             process.total_errors = this.total_errors;
             process.total_not_procecced = this.total_not_procecced;
+            process.total_obtained = this.total_obtained;
             process.json_details = this.json_details;
             process.dateTime = this.dateTime;
             return process;
@@ -32,6 +34,7 @@
             this.total_loads = process.total_loads;
             this.total_errors = process.total_errors;
             this.total_not_procecced = process.total_not_procecced;
+            this.total_obtained = process.total_obtained;
             this.dateTime = process.dateTime;
             this.json_details= process.json_details;
         }

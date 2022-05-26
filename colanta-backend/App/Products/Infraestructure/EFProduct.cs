@@ -38,9 +38,15 @@
             product.ref_id = this.ref_id;
             product.is_active = this.is_active;
             product.business = this.business;
-
-            product.category = this.category.getCategoryFromEFCategory();
-            product.brand = this.brand.getBrandFromEFBrand();
+            if(this.category != null)
+            {
+                product.category = this.category.getCategoryFromEFCategory();
+            }
+            if(this.brand != null)
+            {
+                product.brand = this.brand.getBrandFromEFBrand();
+            }
+            
 
             return product;
         }

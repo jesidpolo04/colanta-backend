@@ -8,6 +8,7 @@
         public int total_loads { get; set; }
         public int total_errors { get; set; }
         public int total_not_procecced { get; set; }
+        public int total_obtained { get; set; }
         public string json_details { get; set; }
         public DateTime dateTime { get; set; }
     }

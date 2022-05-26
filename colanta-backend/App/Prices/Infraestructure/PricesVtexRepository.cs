@@ -41,7 +41,6 @@ namespace colanta_backend.App.Prices.Infraestructure
             this.httpClient.DefaultRequestHeaders.Add("X-VTEX-API-AppToken", this.apiToken);
             this.httpClient.DefaultRequestHeaders.Add("X-VTEX-API-AppKey", this.apiKey);
 
-
         }
 
         public void changeEnvironment(string environment)

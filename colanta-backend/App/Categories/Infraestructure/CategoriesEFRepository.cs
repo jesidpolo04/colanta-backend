@@ -28,14 +28,23 @@
             return categories.ToArray();
         }
 
+        public async Task<Category[]> getVtexNullCategories()
+        {
+            EFCategory[] efCategories = this.dbContext.Categories.Where(category => category.vtex_id == null ).ToArray();
+            List<Category> categories = new List<Category>();
+            foreach(EFCategory efCategory in efCategories)
+            {
+                categories.Add(efCategory.getCategoryFromEFCategory());
+            }
+            return categories.ToArray();
+        }
+
         public async Task<Category?> getCategoryBySiesaId(string id)
         {
             var efCategories = this.dbContext.Categories.Where(category => category.siesa_id == id);
             if(efCategories.ToArray().Length > 0)
             {
                 EFCategory efCategory = efCategories.First();
-                Console.WriteLine(efCategory.name);
-                Console.WriteLine(efCategory.childs.Count);
                 return efCategory.getCategoryFromEFCategory();
             }
             return null;

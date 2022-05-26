@@ -37,7 +37,7 @@
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(60));
+            _timer = new Timer(Execute, null, TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(120));
             return Task.CompletedTask;
         }
 

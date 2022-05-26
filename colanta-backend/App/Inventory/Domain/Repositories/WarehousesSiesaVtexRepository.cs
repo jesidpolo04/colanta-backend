@@ -1,4 +1,4 @@
-﻿namespace colanta_backend.App.Inventory.Domain.Repositories
+﻿namespace colanta_backend.App.Inventory.Domain
 {
     using System.Threading.Tasks;
     public interface WarehousesSiesaVtexRepository

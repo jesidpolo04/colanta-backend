@@ -12,6 +12,8 @@ using colanta_backend.App.Categories.Infraestructure;
 using colanta_backend.App.Products.Infraestructure;
 using colanta_backend.App.Shared.Application;
 using colanta_backend.App.Shared.Domain;
+using colanta_backend.App.Inventory.Jobs;
+using colanta_backend.App.Promotions.Jobs;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,6 +60,20 @@ namespace colanta_backend
             services.AddTransient<App.Prices.Domain.PricesRepository , App.Prices.Infraestructure.PricesEFRepository>();
             services.AddTransient<App.Prices.Domain.PricesVtexRepository, App.Prices.Infraestructure.PricesVtexRepository>();
             services.AddTransient<App.Prices.Domain.PricesSiesaRepository, App.Prices.Infraestructure.PricesSiesaRepository>();
+            //Depndencies Injectios Inventory
+            services.AddTransient<App.Inventory.Domain.InventoriesRepository, App.Inventory.Infraestructure.InventoriesEFRepository>();
+            services.AddTransient<App.Inventory.Domain.InventoriesVtexRepository, App.Inventory.Infraestructure.InventoriesVtexRepository>();
+            services.AddTransient<App.Inventory.Domain.InventoriesSiesaRepository, App.Inventory.Infraestructure.InventoriesSiesaRepository>();
+            services.AddTransient<App.Inventory.Domain.WarehousesRepository, App.Inventory.Infraestructure.WarehousesEFRepository>();
+            services.AddTransient<App.Inventory.Domain.WarehousesSiesaVtexRepository, App.Inventory.Infraestructure.WarehousesSiesaVtexRepository>();
+            //Dependencies Injections Promotions
+            services.AddTransient<App.Promotions.Domain.PromotionsRepository, App.Promotions.Infraestructure.PromotionsEFRepository>();
+            services.AddTransient<App.Promotions.Domain.PromotionsVtexRepository, App.Promotions.Infraestructure.PromotionsVtexRepository>();
+            services.AddTransient<App.Promotions.Domain.PromotionsSiesaRepository, App.Promotions.Infraestructure.PromotionsSiesaRepository>();
+            //Dependencies Injections GiftCards
+            services.AddTransient<App.GiftCards.Domain.GiftCardsRepository, App.GiftCards.Infraestructure.GiftCardsEFRepository>();
+            services.AddTransient<App.GiftCards.Domain.GiftCardsSiesaRepository, App.GiftCards.Infraestructure.GiftCardsSiesaRepository>();
+
             //Dependencies Injections Shared
             services.AddTransient<ILogs, ProcessLogs>();
             services.AddTransient<EmailSender, GmailSender>();
@@ -68,9 +84,13 @@ namespace colanta_backend
             services.AddHostedService<ScheduledUpBrandsToVtex>();
 
             services.AddHostedService<ScheduledRenderCategories>();
+            services.AddHostedService<ScheduledUpCategoriesToVtex>();
 
             services.AddHostedService<ScheduledRenderProductsAndSkus>();
             services.AddHostedService<ScheduledRenderPrices>();
+            services.AddHostedService<ScheduledRenderWarehouses>();
+            services.AddHostedService<ScheduledRenderInventories>();
+            services.AddHostedService<ScheduledRenderPromotions>();
 
             services.AddSwaggerGen(c =>
             {

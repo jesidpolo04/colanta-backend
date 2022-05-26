@@ -26,9 +26,9 @@
             this.smtpClient.UseDefaultCredentials = false;
             this.smtpClient.Credentials = new NetworkCredential(this.user, this.password);
         }
-        public void SendEmail(string message)
+        public void SendEmail(string title, string message)
         {
-            MailMessage mail = new MailMessage(this.from, this.to, "Colanta Middleware Process", message);
+            MailMessage mail = new MailMessage(this.from, this.to, title, message);
             mail.IsBodyHtml = true;
             
             this.smtpClient.Send(mail);
