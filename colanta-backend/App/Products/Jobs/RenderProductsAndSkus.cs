@@ -93,24 +93,46 @@
             Sku[] deltaSkus = await getDeltaSkus.Invoke(allSiesaSkus);
 
             foreach(Product deltaProduct in deltaProducts)
-            { 
-                deltaProduct.is_active = false;
-                //await updateVtexProduct.Invoke(deltaProduct);
+            {
+                try
+                {
+                    deltaProduct.is_active = false;
+                    await updateVtexProduct.Invoke(deltaProduct);
+                }
+                catch(VtexException vtexException)
+                {
+
+                }
             }
             await updateProducts.Invoke(deltaProducts);
 
             foreach(Sku deltaSku in deltaSkus)
             {
-                deltaSku.is_active = false;
-                //await updateVtexSku.Invoke(deltaSku);
-                this.loadSkus.Add(deltaSku);
-                this.details.Add(new Detail(
-                        origin: "vtex",
-                        action: "actualizar estado en vtex",
-                        content: JsonSerializer.Serialize(deltaSku, this.jsonOptions),
-                        description: "sku actualizado con éxito",
-                        success: true
-                    ));
+                try
+                {
+                    deltaSku.is_active = false;
+                    await updateVtexSku.Invoke(deltaSku);
+                    this.loadSkus.Add(deltaSku);
+                    this.details.Add(new Detail(
+                            origin: "vtex",
+                            action: "actualizar estado en vtex",
+                            content: JsonSerializer.Serialize(deltaSku, this.jsonOptions),
+                            description: "sku actualizado con éxito",
+                            success: true
+                        ));
+                }
+                catch(VtexException vtexException)
+                {
+                    this.failedSkus.Add(deltaSku);
+                    this.details.Add(new Detail(
+                            origin: "vtex",
+                            action: "actualizar estado en vtex",
+                            content: vtexException.Message,
+                            description: vtexException.Message,
+                            success: false
+                            ));
+                }
+                
             }
             await updateSkus.Invoke(deltaSkus);
 
@@ -130,10 +152,17 @@
 
                 if(localProduct == null)
                 {
-                    localProduct = await createProduct.Invoke(siesaProduct);
-                    Product vtexProduct = await createVtexProduct.Invoke(localProduct);
-                    localProduct.vtex_id = vtexProduct.vtex_id;
-                    await updateProduct.Invoke(localProduct);
+                    try
+                    {
+                        localProduct = await createProduct.Invoke(siesaProduct);
+                        Product vtexProduct = await createVtexProduct.Invoke(localProduct);
+                        localProduct.vtex_id = vtexProduct.vtex_id;
+                        await updateProduct.Invoke(localProduct);
+                    }
+                    catch (VtexException vtexException)
+                    {
+
+                    }
                 }
             }
 
@@ -153,19 +182,33 @@
 
                 if (localSku == null)
                 {
-                    localSku = await createSku.Invoke(siesaSku);
-                    Sku vtexSku = await createVtexSku.Invoke(localSku);
-                    localSku.vtex_id = vtexSku.vtex_id;
-                    await updateSku.Invoke(localSku);
+                    try
+                    {
+                        localSku = await createSku.Invoke(siesaSku);
+                        Sku vtexSku = await createVtexSku.Invoke(localSku);
+                        localSku.vtex_id = vtexSku.vtex_id;
+                        await updateSku.Invoke(localSku);
 
-                    this.loadSkus.Add(localSku);
-                    this.details.Add(new Detail(
-                        origin: "vtex",
-                        action: "crear sku",
-                        content: JsonSerializer.Serialize(localSku, this.jsonOptions),
-                        description: "sku creado con éxito",
-                        success: true
-                    ));
+                        this.loadSkus.Add(localSku);
+                        this.details.Add(new Detail(
+                            origin: "vtex",
+                            action: "crear sku",
+                            content: JsonSerializer.Serialize(localSku, this.jsonOptions),
+                            description: "sku creado con éxito",
+                            success: true
+                        ));
+                    }
+                    catch(VtexException vtexException)
+                    {
+                        this.failedSkus.Add(siesaSku);
+                        this.details.Add(new Detail(
+                            origin: "vtex",
+                            action: "crear sku",
+                            content: vtexException.Message,
+                            description: vtexException.Message,
+                            success: false
+                        ));
+                    }
                 }
             }
             this.logs.Log(

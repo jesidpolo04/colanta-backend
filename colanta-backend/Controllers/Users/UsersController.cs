@@ -1,10 +1,6 @@
 ﻿namespace colanta_backend.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using App.Users.Domain;
     using App.Users.Application;

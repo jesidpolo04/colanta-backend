@@ -18,6 +18,7 @@ using colanta_backend.App.GiftCards.Infraestructure;
 
 namespace colanta_backend.App.Shared.Infraestructure
 {
+    using System.Collections.Generic;
     public partial class ColantaContext : DbContext
     {
         IConfiguration Configuration;
@@ -27,6 +28,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         }
 
         public virtual DbSet<EFUser> Users { get; set; }
+        public virtual DbSet<EFClientType> ClienTypes { get; set; }
         public virtual DbSet<EFBrand> Brands { get; set; }
         public virtual DbSet<EFCategory> Categories { get; set; }
         public virtual DbSet<EFProduct> Products { get; set; }
@@ -55,11 +57,28 @@ namespace colanta_backend.App.Shared.Infraestructure
 
                 entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
                 entity.Property(e => e.name).IsRequired().HasColumnName("name");
+                entity.Property(e => e.last_name);
+                entity.Property(e => e.second_last_name);
+                entity.Property(e => e.address);
+                entity.Property(e => e.country_code);
+                entity.Property(e => e.department_code);
+                entity.Property(e => e.city_code);
                 entity.Property(e => e.email).IsRequired();
                 entity.Property(e => e.telephone);
+                entity.Property(e => e.phone);
+                entity.Property(e => e.born_date);
                 entity.Property(e => e.document).IsRequired();
                 entity.Property(e => e.document_type).IsRequired();
                 entity.Property(e => e.client_type).IsRequired();
+            });
+
+            modelBuilder.Entity<EFClientType>(entity =>
+            {
+                entity.ToTable("client_types");
+
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.siesa_id).IsRequired();
+                entity.Property(e => e.name).IsRequired();
             });
 
             modelBuilder.Entity<EFBrand>(entity =>

@@ -6,23 +6,27 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
+    using Shared.Domain;
+    using Shared.Application;
     public class ScheduledRenderPromotions : IHostedService, IDisposable
     {
         private Timer _timer;
         private PromotionsRepository localRepository;
         private PromotionsVtexRepository vtexRepository;
         private PromotionsSiesaRepository siesaRepositoy;
-
+        private ILogs logs;
         public ScheduledRenderPromotions
         (
             PromotionsRepository localRepository,
             PromotionsVtexRepository vtexRepository,
-            PromotionsSiesaRepository siesaRepositoy
+            PromotionsSiesaRepository siesaRepositoy,
+            ILogs logs
         )
         {
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepositoy = siesaRepositoy;
+            this.logs = logs;
         }
 
         public async void Execute(object state)
@@ -30,7 +34,8 @@
             RenderPromotions renderPromotions = new RenderPromotions(
                 this.localRepository,
                 this.vtexRepository,
-                this.siesaRepositoy
+                this.siesaRepositoy,
+                this.logs
                 );
             await renderPromotions.Invoke();
         }

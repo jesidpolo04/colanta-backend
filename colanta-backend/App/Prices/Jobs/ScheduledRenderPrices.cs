@@ -6,23 +6,32 @@
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using App.Prices.Domain;
+    using App.Shared.Domain;
+    using App.Shared.Application;
     public class ScheduledRenderPrices : IHostedService, IDisposable
     {
         private Timer _timer;
         private PricesRepository localRepository;
         private PricesVtexRepository vtexRepository;
         private PricesSiesaRepository siesaRepositoy;
+        private EmailSender emailSender;
+        private ILogs logs;
 
         public ScheduledRenderPrices
         (
             PricesRepository localRepository,
             PricesVtexRepository vtexRepository,
-            PricesSiesaRepository siesaRepositoy
+            PricesSiesaRepository siesaRepositoy,
+            EmailSender emailSender,
+            ILogs logs
+
         )
         {
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepositoy = siesaRepositoy;
+            this.emailSender = emailSender;
+            this.logs = logs;
         }
 
         public async void Execute(object state)
@@ -30,7 +39,9 @@
             RenderPrices renderPrices = new RenderPrices(
                 this.localRepository,
                 this.vtexRepository,
-                this.siesaRepositoy
+                this.siesaRepositoy,
+                this.emailSender,
+                this.logs
                 );
             await renderPrices.Invoke();
         }

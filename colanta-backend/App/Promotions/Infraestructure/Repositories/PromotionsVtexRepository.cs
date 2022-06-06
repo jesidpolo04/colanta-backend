@@ -319,6 +319,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.totalValueFloor = promotion.total_value_floor;
             requestBody.multipleUsePerClient = promotion.multiple_use_per_client;
             requestBody.cumulative = promotion.cumulative;
+            requestBody.origin = "Marketplace";
 
             string jsonContent = JsonSerializer.Serialize(requestBody);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
@@ -326,6 +327,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             HttpResponseMessage vtexResponse = await this.httpClient.PostAsync(url, httpContent);
             if (!vtexResponse.IsSuccessStatusCode)
             {
+                System.Console.WriteLine(await vtexResponse.Content.ReadAsStringAsync());
                 throw new VtexException("No fue posible actualizar la promoción, Vtex respondió con status: " + vtexResponse.StatusCode);
             }
 

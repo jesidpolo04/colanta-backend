@@ -6,6 +6,8 @@
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using App.Inventory.Domain;
+    using App.Shared.Domain;
+    using App.Shared.Application;
     public class ScheduledRenderInventories : IHostedService, IDisposable
     {
         private Timer _timer;
@@ -13,19 +15,22 @@
         private InventoriesVtexRepository vtexRepository;
         private InventoriesSiesaRepository siesaRepository;
         private WarehousesRepository warehousesRepository;
+        private ILogs logs;
 
         public ScheduledRenderInventories
             (
             InventoriesRepository localRepository,
             InventoriesVtexRepository vtexRepository,
             InventoriesSiesaRepository siesaRepository,
-            WarehousesRepository warehousesRepository
+            WarehousesRepository warehousesRepository,
+            ILogs logs
             )
         {
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
             this.warehousesRepository = warehousesRepository;
+            this.logs = logs;
         }
 
         public async void Execute(object state)
@@ -34,7 +39,8 @@
                 this.localRepository,
                 this.vtexRepository,
                 this.siesaRepository,
-                this.warehousesRepository
+                this.warehousesRepository,
+                this.logs
                 );
             await renderWarehouses.Invoke();
         }
