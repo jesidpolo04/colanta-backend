@@ -72,9 +72,9 @@
                             this.loadPromotions.Add(localPromotion);
                             this.details.Add(new Detail(
                                 origin: "vtex",
-                                action: "actualizar promoción",
+                                action: "crear o actualizar promoción",
                                 content: JsonSerializer.Serialize(localPromotion, this.jsonOptions),
-                                description: "petición para actualizar promoción, completada con éxito",
+                                description: "petición para crear o actualizar promoción, completada con éxito",
                                 success: true));
                         }
                         if (localPromotion != null)

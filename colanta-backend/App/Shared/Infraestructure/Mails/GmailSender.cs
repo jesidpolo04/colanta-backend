@@ -6,7 +6,7 @@
     using System;
     using Microsoft.Extensions.Configuration;
 
-    public class GmailSender : EmailSender
+    public class GmailSender : EmailSender, IDisposable
     {
         private SmtpClient smtpClient;
         private string password;
@@ -26,6 +26,12 @@
             this.smtpClient.UseDefaultCredentials = false;
             this.smtpClient.Credentials = new NetworkCredential(this.user, this.password);
         }
+
+        public void Dispose()
+        {
+            this.smtpClient?.Dispose();
+        }
+
         public void SendEmail(string title, string message)
         {
             MailMessage mail = new MailMessage(this.from, this.to, title, message);

@@ -13,9 +13,11 @@ namespace colanta_backend.App.GiftCards.Controllers
     [ApiController]
     public class GiftCardsController : ControllerBase
     {
+        private GiftCardsRepository localRepository;
         private GiftCardsSiesaRepository siesaRepository;
-        public GiftCardsController(GiftCardsSiesaRepository siesaRepository)
+        public GiftCardsController(GiftCardsRepository localRepository, GiftCardsSiesaRepository siesaRepository)
         {
+            this.localRepository = localRepository;
             this.siesaRepository = siesaRepository;
         }
         // GET: api/<ValuesController>
@@ -23,7 +25,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         [Route("giftcards/_search")]
         public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(object vtexInfo)
         {
-            ListAllGiftCardByDocumentAndBusiness listAllGiftCardsByDocumentAndBussines = new ListAllGiftCardByDocumentAndBusiness(this.siesaRepository);
+            ListAllGiftCardByDocumentAndBusiness listAllGiftCardsByDocumentAndBussines = new ListAllGiftCardByDocumentAndBusiness(this.localRepository, this.siesaRepository);
             GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke("1002999476", "mercolanta");
             List<GiftCardProviderDto> giftCardProviderDtos = new List<GiftCardProviderDto>();
             foreach (GiftCard giftCard in giftCards)
@@ -36,28 +38,18 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("giftcards/{giftCardId}")]
+        public async Task<GiftCardDetailProviderResponseDto> getGiftCardBySiesaId(string giftCardId)
         {
-            return "value";
+            GetAndUpdateGiftCardBySiesaId getAndUpdateGiftCardBySiesaId = new GetAndUpdateGiftCardBySiesaId(
+                this.localRepository,
+                this.siesaRepository
+                );
+            GiftCard giftCard = await getAndUpdateGiftCardBySiesaId.Invoke(giftCardId);
+            GiftCardDetailProviderResponseDto response = new GiftCardDetailProviderResponseDto();
+            response.setDtoFromGiftCard(giftCard);
+            return response;
         }
 
-        // POST api/<ValuesController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<ValuesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

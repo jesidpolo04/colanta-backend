@@ -107,5 +107,16 @@
             this.dbContext.SaveChanges();
             return category;
         }
+
+        public async Task<Category[]> getVtexCategories()
+        {
+            EFCategory[] efCategories = this.dbContext.Categories.Where(category => category.vtex_id != null).ToArray();
+            List<Category> categories = new List<Category>();
+            foreach (EFCategory efCategory in efCategories)
+            {
+                categories.Add(efCategory.getCategoryFromEFCategory());
+            }
+            return categories.ToArray();
+        }
     }
 }

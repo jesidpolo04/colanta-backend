@@ -50,9 +50,34 @@
             var efSkus = this.dbContext.Skus.Where(sku => sku.vtex_id == vtexId);
             if (efSkus.ToArray().Length > 0)
             {
+                EFSku efSku = efSkus.First();
+                EFProduct efProduct = this.dbContext.Products.Find(efSku.product_id);
+                efSku.product = efProduct;
                 return efSkus.First().GetSkuFromEfSku();
             }
             return null;
+        }
+
+        public async Task<Sku[]> getVtexNullSkus()
+        {
+            EFSku[] efSkus = this.dbContext.Skus.Where(sku => sku.vtex_id == null).ToArray();
+            List<Sku> skus = new List<Sku>();
+            foreach(EFSku efSku in efSkus)
+            {
+                skus.Add(efSku.GetSkuFromEfSku());
+            }
+            return skus.ToArray();
+        }
+
+        public async Task<Sku[]> getVtexSkus()
+        {
+            EFSku[] efSkus = this.dbContext.Skus.Where(sku => sku.vtex_id != null).ToArray();
+            List<Sku> skus = new List<Sku>();
+            foreach (EFSku efSku in efSkus)
+            {
+                skus.Add(efSku.GetSkuFromEfSku());
+            }
+            return skus.ToArray();
         }
 
         public async Task<Sku> saveSku(Sku sku)

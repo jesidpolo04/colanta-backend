@@ -148,7 +148,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 
                 string[] list_sku_1_buy_together_ids = JsonSerializer.Deserialize<string[]>(efPromotion.list_sku_1_buy_together_ids);
                 EFSku[] efListSku1 = this.dbContext.Skus.Where(sku => list_sku_1_buy_together_ids.Contains(sku.siesa_id)).ToArray();
-                List<Sku> listSku1 = new List<Sku>(); ;
+                List<Sku> listSku1 = new List<Sku>();
                 foreach(EFSku efSku in efListSku1)
                 {
                     listSku1.Add(efSku.GetSkuFromEfSku());
@@ -174,6 +174,28 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 return promotion;
             }
             return null;
+        }
+
+        public async Task<Promotion[]> getVtexNullPromotions()
+        {
+            EFPromotion[] efPromotions = this.dbContext.Promotions.Where(promotion => promotion.vtex_id == null).ToArray();
+            List<Promotion> promotions = new List<Promotion>();
+            foreach(EFPromotion efPromotion in efPromotions)
+            {
+                promotions.Add(efPromotion.getPromotionFromEfPromotion());
+            }
+            return promotions.ToArray();
+        }
+
+        public async Task<Promotion[]> getVtexPromotions()
+        {
+            EFPromotion[] efPromotions = this.dbContext.Promotions.Where(promotion => promotion.vtex_id != null).ToArray();
+            List<Promotion> promotions = new List<Promotion>();
+            foreach (EFPromotion efPromotion in efPromotions)
+            {
+                promotions.Add(efPromotion.getPromotionFromEfPromotion());
+            }
+            return promotions.ToArray();
         }
 
         public async Task<Promotion> savePromotion(Promotion promotion)

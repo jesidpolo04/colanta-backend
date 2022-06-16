@@ -174,7 +174,7 @@
                         this.processName,
                         this.loadCategories.Count,
                         this.failedLoadCategories.Count,
-                        this.notProccecedCategories.Count,
+                        this.notProccecedCategories.Count + inactivatedCategories.Count,
                         this.obtainedCategories,
                         JsonSerializer.Serialize(this.details, jsonOptions)
                     );

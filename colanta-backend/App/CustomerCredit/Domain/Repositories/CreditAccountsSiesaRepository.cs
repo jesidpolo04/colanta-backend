@@ -5,6 +5,6 @@
     {
         Task<CreditAccount[]> getAllAccounts();
 
-        Task<CreditAccount> getAccountByDocumentAndBusiness(string document, string business);
+        Task<decimal> getAccountByDocumentAndBusiness(string document, string business);
     }
 }

@@ -7,6 +7,7 @@ namespace colanta_backend.App.Categories.Domain
     {
         Task<Category[]> getAllCategories();
         Task<Category[]> getVtexNullCategories();
+        Task<Category[]> getVtexCategories();
         Task<Category[]> getDeltaCategories(Category[] currentCategories);
         Task<Category?> getCategoryBySiesaId(string id);
         Task<Category> saveCategory(Category category);

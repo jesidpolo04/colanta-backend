@@ -3,11 +3,12 @@
     using System.Threading.Tasks;
     public interface CreditAccountsRepository
     {
-        Task<CreditAccount> getAllAccounts();
+        Task<CreditAccount[]> getAllAccounts();
         Task<CreditAccount[]> getDeltaAccounts(CreditAccount[] currentAccounts);
         Task<CreditAccount> getCreditAccountByDocumentAndBusiness(string document, string business);
+        Task<CreditAccount> getCreditAccountByVtexId(string vtexId);
         Task<CreditAccount> saveAccount(CreditAccount creditAccount);
         Task<CreditAccount> updateCreditAccount(CreditAccount creditAccount);
-        Task<CreditAccount> updateCreditAccounts(CreditAccount[] creditAccounts);
+        Task<CreditAccount[]> updateCreditAccounts(CreditAccount[] creditAccounts);
     }
 }

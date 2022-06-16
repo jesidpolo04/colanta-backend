@@ -66,6 +66,9 @@
                     {
                         // implementar cambiar entidad
                     }
+                    promotion.gifts_ids = "[]";
+                    promotion.list_sku_1_buy_together_ids = "[]";
+                    promotion.list_sku_2_buy_together_ids = "[]";
                     break;
                 case "regalo":
                     promotion.type = "buyAndWin";
@@ -77,6 +80,7 @@
                     promotion.gifts_ids = JsonSerializer.Serialize(gifts_ids);
                     promotion.gift_quantity_selectable = (int) this.configuracion.cantidad_de_regalos_seleccionables;
                     promotion.minimum_quantity_buy_together = (int) this.configuracion.cantidad_minima_de_items_para_aplicar;
+                    promotion.list_sku_2_buy_together_ids = "[]";
                     break;
                 case "kit":
                     promotion.type = "combo";
@@ -97,6 +101,8 @@
 
                     promotion.percentual_discount_value_list_1 = (decimal) this.configuracion.porcentaje_descuento_lista1;
                     promotion.percentual_discount_value_list_2 = (decimal) this.configuracion.porcentaje_descuento_lista2;
+                    promotion.minimum_quantity_buy_together = (int) this.configuracion.minimo_items_lista_1;
+                    promotion.gifts_ids = "[]";
                     break;
                 default:
                     break;
@@ -130,7 +136,7 @@
             }
             promotion.products_ids = JsonSerializer.Serialize(products_ids);
 
-            if (this.tipo != "bono")
+            if (this.tipo != "bono" && this.tipo != "regalo")
             {
                 List<string> skus_ids = new List<string>();
                 foreach (string siesa_id in this.aplica_a.variaciones)
@@ -147,6 +153,7 @@
                     skus_ids.Add(siesa_id);
                 }
                 promotion.list_sku_1_buy_together_ids = JsonSerializer.Serialize(skus_ids);
+                promotion.skus_ids = "[]";
             }
            
 
@@ -185,6 +192,7 @@
         public string[]? lista2 { get; set; }
         public decimal? porcentaje_descuento_lista1 { get; set; }
         public decimal? porcentaje_descuento_lista2 { get; set; }
+        public int? minimo_items_lista_1 { get; set; }
 
     }
 

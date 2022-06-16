@@ -180,7 +180,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 VtexPromotionSku vtexPromotionSku = new VtexPromotionSku();
                 vtexPromotionSku.id = sku.vtex_id.ToString();
                 vtexPromotionSku.name = sku.name;
-                vtexPromotionSkus.Add(vtexPromotionSku);
+                vtexListBuyTogether1.Add(vtexPromotionSku);
             }
             requestBody.listSku1BuyTogether = vtexListBuyTogether1.ToArray();
 
@@ -190,7 +190,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 VtexPromotionSku vtexPromotionSku = new VtexPromotionSku();
                 vtexPromotionSku.id = sku.vtex_id.ToString();
                 vtexPromotionSku.name = sku.name;
-                vtexPromotionSkus.Add(vtexPromotionSku);
+                vtexListBuyTogether2.Add(vtexPromotionSku);
             }
             requestBody.listSku2BuyTogether = vtexListBuyTogether2.ToArray();
 
@@ -301,7 +301,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 VtexPromotionSku vtexPromotionSku = new VtexPromotionSku();
                 vtexPromotionSku.id = sku.vtex_id.ToString();
                 vtexPromotionSku.name = sku.name;
-                vtexPromotionSkus.Add(vtexPromotionSku);
+                vtexListBuyTogether1.Add(vtexPromotionSku);
             }
             requestBody.listSku1BuyTogether = vtexListBuyTogether1.ToArray();
 
@@ -311,7 +311,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 VtexPromotionSku vtexPromotionSku = new VtexPromotionSku();
                 vtexPromotionSku.id = sku.vtex_id.ToString();
                 vtexPromotionSku.name = sku.name;
-                vtexPromotionSkus.Add(vtexPromotionSku);
+                vtexListBuyTogether2.Add(vtexPromotionSku);
             }
             requestBody.listSku2BuyTogether = vtexListBuyTogether2.ToArray();
 

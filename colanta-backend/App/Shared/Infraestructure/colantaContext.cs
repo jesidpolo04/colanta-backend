@@ -13,6 +13,7 @@ using colanta_backend.App.Inventory.Infraestructure;
 using colanta_backend.App.Promotions.Infraestructure;
 using colanta_backend.App.CustomerCredit.Infraestructure;
 using colanta_backend.App.GiftCards.Infraestructure;
+using colanta_backend.App.Orders.Infraestructure;
 
 #nullable disable
 
@@ -39,6 +40,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFPromotion> Promotions { get; set; }
         public virtual DbSet<EFCreditAccount> CreditAccounts { get; set; }
         public virtual DbSet<EFGiftCard> GiftCards { get; set; }
+        public virtual DbSet<EFOrder> Orders { get; set; }
         public virtual DbSet<EFProcess> Process { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -256,9 +258,12 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.vtex_id);
                 entity.Property(e => e.business);
                 entity.Property(e => e.credit_limit);
+                entity.Property(e => e.vtex_credit_limit);
                 entity.Property(e => e.is_active);
-
-                entity.HasOne(e => e.user).WithMany().HasForeignKey(e => e.user_id);
+                entity.Property(e => e.current_credit);
+                entity.Property(e => e.vtex_current_credit);
+                entity.Property(e => e.document);
+                entity.Property(e => e.email);
             });
 
             modelBuilder.Entity<EFGiftCard>(entity =>
@@ -275,6 +280,20 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.token);
                 entity.Property(e => e.expire_date);
                 entity.Property(e => e.emision_date);
+            });
+
+            modelBuilder.Entity<EFOrder>(entity =>
+            {
+                entity.ToTable("orders");
+
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.vtex_id);
+                entity.Property(e => e.status);
+                entity.Property(e => e.last_status);
+                entity.Property(e => e.current_change_date);
+                entity.Property(e => e.last_change_date);
+                entity.Property(e => e.business);
+                entity.Property(e => e.order_json).HasColumnType("text");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -4,16 +4,13 @@ using colanta_backend.App.Brands.Jobs;
 using colanta_backend.App.Categories.Jobs;
 using colanta_backend.App.Products.Jobs;
 using colanta_backend.App.Prices.Jobs;
-using colanta_backend.App.Categories.Domain;
 using colanta_backend.App.Brands.Domain;
-using colanta_backend.App.Products.Domain;
 using colanta_backend.App.Brands.Infraestructure;
-using colanta_backend.App.Categories.Infraestructure;
-using colanta_backend.App.Products.Infraestructure;
 using colanta_backend.App.Shared.Application;
 using colanta_backend.App.Shared.Domain;
 using colanta_backend.App.Inventory.Jobs;
 using colanta_backend.App.Promotions.Jobs;
+using colanta_backend.App.CustomerCredit.Jobs;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -73,6 +70,14 @@ namespace colanta_backend
             //Dependencies Injections GiftCards
             services.AddTransient<App.GiftCards.Domain.GiftCardsRepository, App.GiftCards.Infraestructure.GiftCardsEFRepository>();
             services.AddTransient<App.GiftCards.Domain.GiftCardsSiesaRepository, App.GiftCards.Infraestructure.GiftCardsSiesaRepository>();
+            //Dependencies Injections Customer Credit
+            services.AddTransient<App.CustomerCredit.Domain.CreditAccountsRepository, App.CustomerCredit.Infraestructure.CreditAccountsEFRepository>();
+            services.AddTransient<App.CustomerCredit.Domain.CreditAccountsVtexRepository, App.CustomerCredit.Infraestructure.CreditAccountsVtexRepository>();
+            services.AddTransient<App.CustomerCredit.Domain.CreditAccountsSiesaRepository, App.CustomerCredit.Infraestructure.CreditAccountsSiesaRepository>();
+            //Dependencies Injections Orders
+            services.AddTransient<App.Orders.Domain.OrdersRepository, App.Orders.Infraestructure.OrdersEFRepository>();
+            services.AddTransient<App.Orders.Domain.OrdersVtexRepository, App.Orders.Infraestructure.OrdersVtexRepository>();
+            services.AddTransient<App.Orders.Domain.OrdersSiesaRepository, App.Orders.Infraestructure.OrdersSiesaRepository>();
 
             //Dependencies Injections Shared
             services.AddTransient<ILogs, ProcessLogs>();
@@ -85,12 +90,22 @@ namespace colanta_backend
 
             services.AddHostedService<ScheduledRenderCategories>();
             services.AddHostedService<ScheduledUpCategoriesToVtex>();
+            services.AddHostedService<ScheduledUpdateCategoriesState>();
 
             services.AddHostedService<ScheduledRenderProductsAndSkus>();
+            services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
+            services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
+
             services.AddHostedService<ScheduledRenderPrices>();
+
             services.AddHostedService<ScheduledRenderWarehouses>();
+
             services.AddHostedService<ScheduledRenderInventories>();
+
             services.AddHostedService<ScheduledRenderPromotions>();
+            services.AddHostedService<ScheduledUpToVtexNullPromotions>();
+
+            services.AddHostedService<ScheduledRenderCreditAccounts>();
 
             services.AddSwaggerGen(c =>
             {

@@ -3,10 +3,14 @@
     using System;
     public class InvalidOperationException : Exception
     {
-        public string operation;
-        public InvalidOperationException(string message, string operation) : base(message)
+        public decimal value;
+        public decimal credit_limit;
+        public decimal current_credit;
+        public InvalidOperationException(decimal value, decimal credit_limit, decimal current_credit, string message) : base(message)
         {
-            this.operation = operation;
+            this.value = value;
+            this.credit_limit = credit_limit;
+            this.current_credit = current_credit;
         }
     }
 }

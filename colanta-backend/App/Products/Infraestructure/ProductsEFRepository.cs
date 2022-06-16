@@ -62,6 +62,28 @@ namespace colanta_backend.App.Products.Infraestructure
             return null;
         }
 
+        public async Task<Product[]> getVtexNullProducts()
+        {
+            EFProduct[] efProducts = this.dbContext.Products.Where(product => product.vtex_id == null).ToArray();
+            List<Product> products = new List<Product>();
+            foreach (EFProduct efProduct in efProducts)
+            {
+                products.Add(efProduct.getProductFromEfProduct());
+            }
+            return products.ToArray();
+        }
+
+        public async Task<Product[]> getVtexProducts()
+        {
+            EFProduct[] efProducts = this.dbContext.Products.Where(product => product.vtex_id != null).ToArray();
+            List<Product> products = new List<Product>();
+            foreach (EFProduct efProduct in efProducts)
+            {
+                products.Add(efProduct.getProductFromEfProduct());
+            }
+            return products.ToArray();
+        }
+
         public async Task<Product> saveProduct(Product product)
         {
             EFProduct efProduct = new EFProduct();

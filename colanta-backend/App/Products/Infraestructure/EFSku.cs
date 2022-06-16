@@ -40,22 +40,25 @@
             sku.measurement_unit = this.measurement_unit;
             sku.unit_multiplier = this.unit_multiplier;
 
-            Product product = new Product();
+            if(this.product != null)
+            {
+                Product product = new Product();
 
-            product.id = this.product.id;
-            product.type = this.product.type;
-            product.brand_id = this.product.brand_id;
-            product.category_id = this.product.category_id;
-            product.siesa_id = this.product.siesa_id;
-            product.concat_siesa_id = this.product.concat_siesa_id;
-            product.vtex_id = this.product.vtex_id;
-            product.name = this.product.name;
-            product.description = this.product.description;
-            product.ref_id = this.product.ref_id;
-            product.is_active = this.product.is_active;
-            product.business = this.product.business;
+                product.id = this.product.id;
+                product.type = this.product.type;
+                product.brand_id = this.product.brand_id;
+                product.category_id = this.product.category_id;
+                product.siesa_id = this.product.siesa_id;
+                product.concat_siesa_id = this.product.concat_siesa_id;
+                product.vtex_id = this.product.vtex_id;
+                product.name = this.product.name;
+                product.description = this.product.description;
+                product.ref_id = this.product.ref_id;
+                product.is_active = this.product.is_active;
+                product.business = this.product.business;
 
-            sku.setProduct(product);
+                sku.setProduct(product);
+            }
 
             return sku;
         }

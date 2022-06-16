@@ -49,7 +49,7 @@ namespace colanta_backend.App.GiftCards.Infraestructure
 
         public async Task<decimal> getGiftCardBalanceBySiesaId(string siesaId)
         {
-            string endpoint = "/tarjeta_balance";
+            string endpoint = "/balance_tarjeta";
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
