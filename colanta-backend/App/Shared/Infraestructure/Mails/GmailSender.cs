@@ -37,7 +37,7 @@
             MailMessage mail = new MailMessage(this.from, this.to, title, message);
             mail.IsBodyHtml = true;
             
-            this.smtpClient.Send(mail);
+            //this.smtpClient.Send(mail);
         }
     }
 }

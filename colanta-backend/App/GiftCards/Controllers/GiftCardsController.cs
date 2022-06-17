@@ -9,7 +9,7 @@ namespace colanta_backend.App.GiftCards.Controllers
     using GiftCards.Domain;
     using GiftCards.Application;
 
-    [Route("api")]
+    [Route("")]
     [ApiController]
     public class GiftCardsController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
         // GET: api/<ValuesController>
         [HttpPost]
-        [Route("giftcards/_search")]
+        [Route("api/giftcards/_search")]
         public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(object vtexInfo)
         {
             ListAllGiftCardByDocumentAndBusiness listAllGiftCardsByDocumentAndBussines = new ListAllGiftCardByDocumentAndBusiness(this.localRepository, this.siesaRepository);
@@ -34,11 +34,15 @@ namespace colanta_backend.App.GiftCards.Controllers
                 giftCardProviderDto.setDtoFromGiftCard(giftCard);
                 giftCardProviderDtos.Add(giftCardProviderDto);
             }
+            int from = 0;
+            int to = giftCards.Length;
+            int of = giftCards.Length;
+            HttpContext.Response.Headers.Add("REST-Content-Range", from+"-"+to+"/"+of);
             return giftCardProviderDtos.ToArray();
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("giftcards/{giftCardId}")]
+        [HttpGet("api/giftcards/{giftCardId}")]
         public async Task<GiftCardDetailProviderResponseDto> getGiftCardBySiesaId(string giftCardId)
         {
             GetAndUpdateGiftCardBySiesaId getAndUpdateGiftCardBySiesaId = new GetAndUpdateGiftCardBySiesaId(
@@ -49,6 +53,15 @@ namespace colanta_backend.App.GiftCards.Controllers
             GiftCardDetailProviderResponseDto response = new GiftCardDetailProviderResponseDto();
             response.setDtoFromGiftCard(giftCard);
             return response;
+        }
+
+        [HttpPost]
+        [Route("/giftcards/{giftCardId}/transactions/{transactionId}/cancellations")]
+        public async Task<TransactionSummaryDto> giftCardTransaction(string giftCardId, string transactionId, object body)
+        {
+            TransactionSummaryDto transactionSummaryDto = new TransactionSummaryDto();
+            transactionSummaryDto.setCardId(giftCardId);
+            return transactionSummaryDto;
         }
 
     }
