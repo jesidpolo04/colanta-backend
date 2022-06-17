@@ -37,7 +37,7 @@ namespace colanta_backend.App.GiftCards.Controllers
             int from = 0;
             int to = giftCards.Length;
             int of = giftCards.Length;
-            HttpContext.Response.Headers.Add("REST-Content-Range", from+"-"+to+"/"+of);
+            HttpContext.Response.Headers.Add("REST-Content-Range", "resources " + from+"-"+to+"/"+of);
             return giftCardProviderDtos.ToArray();
         }
 
