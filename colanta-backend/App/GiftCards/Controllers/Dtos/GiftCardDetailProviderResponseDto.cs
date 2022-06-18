@@ -16,6 +16,7 @@
         public GiftCardDetailProviderResponseDto()
         {
             this.provider = "middleware";
+            this.transaction = new TransactionDto();
             this.transaction.href = "";
         }
 

@@ -9,6 +9,7 @@
         public TransactionSummaryDto()
         {
             id = "642e_21a12_2022_06";
+            _self = new _self();
             _self.href = "";
         }
 
