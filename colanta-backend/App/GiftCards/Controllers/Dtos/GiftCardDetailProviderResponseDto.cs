@@ -24,7 +24,7 @@
         public void setDtoFromGiftCard(GiftCard giftCard)
         {
             this.id = giftCard.siesa_id;
-            this.redemptionCode = giftCard.token;
+            this.redemptionToken = giftCard.token;
             this.redemptionCode = giftCard.code;
             this.balance = giftCard.balance;
             this.relationName = giftCard.name;
