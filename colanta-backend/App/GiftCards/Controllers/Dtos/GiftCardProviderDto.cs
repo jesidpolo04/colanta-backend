@@ -10,6 +10,7 @@
         public string relationName { get; set; }
         public string? caption { get; set; }
         public string? groupName { get; set; }
+        public _self _self { get; set; }
 
         public void setDtoFromGiftCard(GiftCard giftCard)
         {
@@ -19,6 +20,9 @@
             this.relationName = giftCard.name;
             this.caption = "";
             this.groupName = "";
+            this._self = new _self();
+            this._self.href = "";
         }
+
     }
 }
