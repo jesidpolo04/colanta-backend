@@ -10,8 +10,15 @@
         public string relationName { get; set; }
         public string emissionDate { get; set; }
         public string expiringDate { get; set; }
-        public string provider = "middleware";
+        public string provider {get; set;}
         public TransactionDto transaction { get; set; }
+
+        public GiftCardDetailProviderResponseDto()
+        {
+            this.provider = "middleware";
+            this.transaction.href = "";
+        }
+
 
         public void setDtoFromGiftCard(GiftCard giftCard)
         {
@@ -26,6 +33,6 @@
     }
 
     public class TransactionDto {
-        public string href = "";
+        public string href { get; set; }
     }
 }

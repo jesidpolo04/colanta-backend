@@ -14,7 +14,7 @@
         public string codigo { get; set; }
         public string propietario { get; set; }
         public string fecha_expiracion { get; set; }
-        public string fecha_emsion { get; set; }
+        public string fecha_emision { get; set; }
         public string business { get; set; }
 
         public GiftCard getGiftCardFromDto()
@@ -27,7 +27,7 @@
             giftCard.token = this.codigo;
             giftCard.owner = this.propietario;
             giftCard.expire_date = this.fecha_expiracion;
-            giftCard.emision_date = this.fecha_emsion;
+            giftCard.emision_date = this.fecha_emision;
             giftCard.business = this.business;
             return giftCard;
         }
