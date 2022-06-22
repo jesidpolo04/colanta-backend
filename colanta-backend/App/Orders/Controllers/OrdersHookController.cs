@@ -7,8 +7,9 @@ namespace colanta_backend.App.Orders.Controllers
     using Orders.Application;
     using System.Threading.Tasks;
 
-    [Route("api/orders")]
+    
     [ApiController]
+    [Route("api")]
     public class OrdersHookController : ControllerBase
     {
         private OrdersRepository localRepository;
@@ -24,7 +25,8 @@ namespace colanta_backend.App.Orders.Controllers
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
         }
-        [Route("/hook")]
+
+        [Route("orders/hook")]
         [HttpPost]
         public async Task<OrderHookDto> orderHook(OrderHookDto orderSummary)
         {
