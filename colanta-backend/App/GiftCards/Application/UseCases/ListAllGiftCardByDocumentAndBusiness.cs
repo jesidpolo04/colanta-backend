@@ -23,7 +23,7 @@
                     await localRepository.saveGiftCard(siesaGiftCard);
                 }
             }
-            return siesaGiftCards;
+            return await this.localRepository.getGiftCardsByDocumentAndBusiness(document, business);
         }
     }
 }
