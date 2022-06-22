@@ -22,6 +22,7 @@
         public async Task<Order> Invoke(Order order)
         {
             string orderJson = await this.vtexRepository.getOrderByVtexId(order.vtex_id);
+            
             order.order_json = orderJson;
             Order localOrder = await this.localRepository.SaveOrder(order);
             return await this.siesaRepository.saveOrder(localOrder);

@@ -20,6 +20,7 @@
         public int quantity { get; set; }
         public decimal price { get; set; }
         public string productId { get; set; }
+        public string id { get; set; }
         public PriceTagDto[] priceTags { get; set; }
 
     }
@@ -37,8 +38,8 @@
     }
     public class ShippingDataDto
     {
-        LogisticInfoDto logisticInfo { get; set; }
-        SelectedAddresseDto[] selectedAddresses { get; set; }
+        public LogisticInfoDto logisticInfo { get; set; }
+        public SelectedAddresseDto[] selectedAddresses { get; set; }
         public string shippingEstimateDate { get; set; }
     }
     public class SelectedAddresseDto 
@@ -50,7 +51,7 @@
     }
     public class LogisticInfoDto
     {
-        DeliveryIdsDto deliveryIds { get; set; }
+        public DeliveryIdsDto deliveryIds { get; set; }
     }
     public class DeliveryIdsDto
     {
