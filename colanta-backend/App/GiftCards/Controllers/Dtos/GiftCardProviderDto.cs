@@ -22,7 +22,7 @@
             //this.caption = "";
             //this.groupName = "";
             this._self = new _self();
-            this._self.href = "";
+            this._self.href = "api/giftcards/" + giftCard.siesa_id;
         }
 
     }
