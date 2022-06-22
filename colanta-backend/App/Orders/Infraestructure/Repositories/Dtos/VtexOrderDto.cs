@@ -38,7 +38,7 @@
     }
     public class ShippingDataDto
     {
-        public LogisticInfoDto logisticInfo { get; set; }
+        public LogisticInfoDto[] logisticsInfo { get; set; }
         public SelectedAddresseDto[] selectedAddresses { get; set; }
         public string shippingEstimateDate { get; set; }
     }
@@ -51,9 +51,9 @@
     }
     public class LogisticInfoDto
     {
-        public DeliveryIdsDto deliveryIds { get; set; }
+        public DeliveryIdDto[] deliveryIds { get; set; }
     }
-    public class DeliveryIdsDto
+    public class DeliveryIdDto
     {
         public string warehouseId { get; set; }
     }

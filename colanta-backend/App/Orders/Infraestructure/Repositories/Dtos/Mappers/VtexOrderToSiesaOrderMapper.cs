@@ -15,8 +15,10 @@
         public SendOrderToSiesaDto getSiesaOrder(VtexOrderDto vtexOrder)
         {
             SendOrderToSiesaDto siesaOrder = new SendOrderToSiesaDto();
+            SendOrderToSiesaHeaderDto header = new SendOrderToSiesaHeaderDto();
+            siesaOrder.Encabezado = header;
             //Header
-            siesaOrder.Encabezado.C263CO = vtexOrder.shippingData.logisticInfo.deliveryIds.warehouseId;
+            siesaOrder.Encabezado.C263CO = vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId;
             siesaOrder.Encabezado.C263Fecha = vtexOrder.creationDate;
             siesaOrder.Encabezado.C263DocTercero = vtexOrder.clientProfileData.document;
             siesaOrder.Encabezado.C263FechaEntrega = vtexOrder.shippingData.shippingEstimateDate;
@@ -36,7 +38,7 @@
             {
                 consecutive++;
                 SendOrderToSiesaDetailDto siesaDetail = new SendOrderToSiesaDetailDto();
-                siesaDetail.C263DetCO = vtexOrder.shippingData.logisticInfo.deliveryIds.warehouseId;
+                siesaDetail.C263DetCO = vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId;
                 siesaDetail.C263NroDetalle = consecutive;
                 siesaDetail.C263ReferenciaItem = vtexItem.refId;
                 siesaDetail.C263VariacionItem = "";
@@ -54,7 +56,7 @@
                 {
                     discountsConsecutive++;
                     SendOrderToSiesaDiscountDto siesaDiscount = new SendOrderToSiesaDiscountDto();
-                    siesaDiscount.C263DestoCO = vtexOrder.shippingData.logisticInfo.deliveryIds.warehouseId;
+                    siesaDiscount.C263DestoCO = vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId;
                     siesaDiscount.C263ReferenciaVTEX = vtexDiscount.identifier;
                     siesaDiscount.C263NroDetalle = consecutive;
                     siesaDiscount.C263OrdenDescto = discountsConsecutive;
