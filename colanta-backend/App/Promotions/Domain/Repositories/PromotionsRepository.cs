@@ -3,6 +3,7 @@
     public interface PromotionsRepository
     {
         public Task<Promotion> getPromotionBySiesaId(string siesaId);
+        public Task<Promotion[]> getDeltaPromotions(Promotion[] currentPromotions);
         public Task<Promotion[]> getVtexNullPromotions();
         public Task<Promotion[]> getVtexPromotions();
         public Task<Promotion> savePromotion(Promotion promotion);

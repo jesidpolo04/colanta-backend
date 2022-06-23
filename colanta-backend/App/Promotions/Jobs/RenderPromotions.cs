@@ -54,6 +54,21 @@
                             description: "petición para obtener las promociones, completada con éxito",
                             success: true));
 
+                Promotion[] deltaPromotions = await this.localRepository.getDeltaPromotions(allSiesaPromotions);
+                foreach (Promotion deltaPromotion in deltaPromotions)
+                {
+                    deltaPromotion.is_active = false;
+                    await vtexRepository.updatePromotion(deltaPromotion);
+                    await localRepository.updatePromotion(deltaPromotion);
+                    this.inactivatedPromotions.Add(deltaPromotion);
+                    this.details.Add(new Detail(
+                            origin: "vtex",
+                            action: "actualizar promoción",
+                            content: JsonSerializer.Serialize(deltaPromotion, this.jsonOptions),
+                            description: "petición para actualizar la promoción, completada con éxito",
+                            success: true));
+                }
+
                 foreach (Promotion siesaPromotion in allSiesaPromotions)
                 {
                     try
