@@ -126,7 +126,7 @@ namespace colanta_backend.App.Products.Infraestructure
             CreateVtexSkuDto requestBody = new CreateVtexSkuDto();
             requestBody.ProductId = sku.product_id;
             requestBody.Name = sku.name;
-            requestBody.RefId = sku.ref_id;
+            requestBody.RefId = sku.concat_siesa_id;
             requestBody.UnitMultiplier = sku.unit_multiplier;
             requestBody.MeasurementUnit = sku.measurement_unit;
             requestBody.IsActive = sku.is_active;

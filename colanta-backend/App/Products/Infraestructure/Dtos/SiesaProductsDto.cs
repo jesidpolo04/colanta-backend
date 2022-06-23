@@ -36,7 +36,7 @@
                 product.siesa_id = this.id;
                 product.concat_siesa_id = this.negocio + "_" + this.id;
                 product.name = this.nombre;
-                product.ref_id = this.negocio + "_" + this.id;
+                product.ref_id = this.referencia;
                 product.description = this.descripcion;
                 product.business = this.negocio;
                 product.setBrand(new Brand(null, id_siesa: this.id_marca));
@@ -48,7 +48,7 @@
                 sku.siesa_id = this.id;
                 sku.concat_siesa_id = this.negocio + "_" + this.id + "_" + this.id;
                 sku.name = this.nombre;
-                sku.ref_id = this.negocio + "_" + this.id + "_" + this.id;
+                sku.ref_id = this.referencia;
                 sku.description = this.descripcion;
                 sku.measurement_unit = this.unidad_medida;
 
@@ -69,7 +69,7 @@
                 product.siesa_id = this.id;
                 product.concat_siesa_id = this.negocio + "_" + this.id;
                 product.name = this.nombre;
-                product.ref_id = this.negocio + "_" + this.id;
+                product.ref_id = this.referencia;
                 product.description = this.descripcion;
                 product.business = this.negocio;
                 product.setBrand(new Brand(null, id_siesa: this.id_marca));
@@ -82,7 +82,7 @@
                     sku.siesa_id = variacionDto.id;
                     sku.concat_siesa_id = this.negocio + "_" + this.id + "_" + variacionDto.id;
                     sku.name = variacionDto.nombre;
-                    sku.ref_id = this.negocio + "_" + this.id + "_" + variacionDto.id;
+                    sku.ref_id = variacionDto.referencia + "_" + variacionDto.id;
                     sku.measurement_unit = this.unidad_medida;
                     sku.packaged_height = variacionDto.dimensiones.alto_producto;
                     sku.packaged_width = variacionDto.dimensiones.ancho_producto;
@@ -108,7 +108,9 @@
     public class VariacionDto
     {
         public string id { get; set; }
-        public string nombre { get; set; }  
+        public string nombre { get; set; }
+        public string ean { get; set; }
+        public string referencia { get; set; }
         public DimensionesDto dimensiones { get; set; }
 
     }

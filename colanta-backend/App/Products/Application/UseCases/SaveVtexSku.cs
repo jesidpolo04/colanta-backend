@@ -13,7 +13,7 @@
 
         public async Task<Sku> Invoke(Sku sku)
         {
-            Sku vtexSku = await this.vtexRepository.getSkuBySiesaId(sku.ref_id);
+            Sku vtexSku = await this.vtexRepository.getSkuBySiesaId(sku.concat_siesa_id);
             if (vtexSku != null)
             {
                 return vtexSku;

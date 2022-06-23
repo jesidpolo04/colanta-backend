@@ -13,7 +13,7 @@
 
         public async Task<Product> Invoke(Product product)
         {
-            Product vtexProduct = await this.vtexRepository.getProductBySiesaId(product.ref_id);
+            Product vtexProduct = await this.vtexRepository.getProductBySiesaId(product.concat_siesa_id);
             if(vtexProduct != null)
             {
                 return vtexProduct;
