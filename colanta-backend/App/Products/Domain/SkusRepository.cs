@@ -5,6 +5,7 @@
     {
         Task<Sku> saveSku(Sku sku);
         Task<Sku?> getSkuBySiesaId(string siesaId);
+        Task<Sku> getSkuByConcatSiesaId(string concatSiesaId);
         Task<Sku?> getSkuByVtexId(int vtexId);
         Task<Sku[]> getVtexNullSkus();
         Task<Sku[]> getVtexSkus();

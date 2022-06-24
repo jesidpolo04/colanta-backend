@@ -13,7 +13,7 @@
 
         public async Task<Sku?> Invoke(string siesaId)
         {
-            return await this.vtexRepository.getSkuBySiesaId(siesaId);
+            return await this.vtexRepository.getSkuByInVtexRef(siesaId);
         }
     }
 }

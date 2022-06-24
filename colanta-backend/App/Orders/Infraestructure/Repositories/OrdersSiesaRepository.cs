@@ -10,18 +10,18 @@ namespace colanta_backend.App.Orders.Infraestructure
     using Microsoft.Extensions.Configuration;
     public class OrdersSiesaRepository : Domain.OrdersSiesaRepository
     {
-        private ProductsRepository productsLocalRepository;
+        private SkusRepository skusLocalRepository;
         private PromotionsRepository promotionLocalRepository;
         private HttpClient httpClient;
         private IConfiguration configuration;
         
         public OrdersSiesaRepository(
-            ProductsRepository productsLocalRepository,
+            SkusRepository skusLocalRepository,
             PromotionsRepository promotionLocalRepository,
             IConfiguration configuration
         )
         {
-            this.productsLocalRepository = productsLocalRepository;
+            this.skusLocalRepository = skusLocalRepository;
             this.promotionLocalRepository = promotionLocalRepository;
             this.httpClient = new HttpClient();
             this.configuration = configuration;
@@ -29,9 +29,9 @@ namespace colanta_backend.App.Orders.Infraestructure
         public async Task<Order> saveOrder(Order order)
         {
             string endpoint = "/siesa_order_endpoint";
-            VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(this.productsLocalRepository, this.promotionLocalRepository);
+            VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(this.skusLocalRepository, this.promotionLocalRepository);
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(order.order_json);
-            SendOrderToSiesaDto siesaOrderDto = mapper.getSiesaOrder(vtexOrderDto);
+            SendOrderToSiesaDto siesaOrderDto = await mapper.getSiesaOrder(vtexOrderDto);
             string jsonContent = JsonSerializer.Serialize(siesaOrderDto);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
             await httpClient.PostAsync(this.configuration["SiesaUrl"] + endpoint, httpContent);

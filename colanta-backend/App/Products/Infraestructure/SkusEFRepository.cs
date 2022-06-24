@@ -32,6 +32,19 @@
             return skus.ToArray();
         }
 
+        public async Task<Sku> getSkuByConcatSiesaId(string concatSiesaId)
+        {
+            var efSkus = this.dbContext.Skus.Where(sku => sku.concat_siesa_id == concatSiesaId);
+            if (efSkus.ToArray().Length > 0)
+            {
+                EFSku efSku = efSkus.First();
+                EFProduct efProduct = this.dbContext.Products.Find(efSku.product_id);
+                efSku.product = efProduct;
+                return efSku.GetSkuFromEfSku();
+            }
+            return null;
+        }
+
         public async Task<Sku> getSkuBySiesaId(string siesaId)
         {
             var efSkus = this.dbContext.Skus.Where(sku => sku.siesa_id == siesaId);

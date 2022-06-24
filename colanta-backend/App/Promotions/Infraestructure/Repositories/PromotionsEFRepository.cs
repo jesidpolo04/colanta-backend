@@ -192,6 +192,16 @@ namespace colanta_backend.App.Promotions.Infraestructure
             return null;
         }
 
+        public async Task<Promotion> getPromotionByVtexId(string vtexId)
+        {
+            EFPromotion[] efPromotions = this.dbContext.Promotions.Where(promotion => promotion.vtex_id == vtexId).ToArray();
+            if (efPromotions.Length > 0)
+            {
+                return await this.addRelationsToPromotion(efPromotions.First());
+            }
+            return null;
+        }
+
         public async Task<Promotion[]> getVtexNullPromotions()
         {
             EFPromotion[] efPromotions = this.dbContext.Promotions.Where(promotion => promotion.vtex_id == null).ToArray();

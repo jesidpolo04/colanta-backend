@@ -3,16 +3,17 @@
     using System.Collections.Generic;
     using Products.Domain;
     using Promotions.Domain;
+    using System.Threading.Tasks;
     public class VtexOrderToSiesaOrderMapper
     {
-        private ProductsRepository productsLocalRepository;
+        private SkusRepository skusLocalRepository;
         private PromotionsRepository promotionsLocalRepository;
-        public VtexOrderToSiesaOrderMapper(ProductsRepository productsLocalRepository, PromotionsRepository promotionsLocalRepository)
+        public VtexOrderToSiesaOrderMapper(SkusRepository skusLocalRepository, PromotionsRepository promotionsLocalRepository)
         {
-            this.productsLocalRepository = productsLocalRepository;
+            this.skusLocalRepository = skusLocalRepository;
             this.promotionsLocalRepository = promotionsLocalRepository;
         }
-        public SendOrderToSiesaDto getSiesaOrder(VtexOrderDto vtexOrder)
+        public async Task<SendOrderToSiesaDto> getSiesaOrder(VtexOrderDto vtexOrder)
         {
             SendOrderToSiesaDto siesaOrder = new SendOrderToSiesaDto();
             SendOrderToSiesaHeaderDto header = new SendOrderToSiesaHeaderDto();
@@ -40,7 +41,7 @@
                 SendOrderToSiesaDetailDto siesaDetail = new SendOrderToSiesaDetailDto();
                 siesaDetail.C263DetCO = vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId;
                 siesaDetail.C263NroDetalle = consecutive;
-                siesaDetail.C263ReferenciaItem = vtexItem.refId;
+                siesaDetail.C263ReferenciaItem = await this.getSiesaSkuRefId(vtexItem.refId);
                 siesaDetail.C263VariacionItem = "";
                 siesaDetail.C263IndObsequio = vtexItem.isGift ? 1 : 0;
                 siesaDetail.C263UnidMedida = vtexItem.measurementUnit == "un" ? "UND" : vtexItem.measurementUnit;
@@ -105,6 +106,32 @@
                 }
             }
             return value;
+        }
+
+        private async Task<string> getSiesaSkuRefId(string concatSiesaId)
+        {
+            Sku sku = await this.skusLocalRepository.getSkuByConcatSiesaId(concatSiesaId);
+            if(sku != null)
+            {
+                return sku.ref_id;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        private async Task<string> getSiesaPromotionId(string vtexId)
+        {
+            Promotion promotion = await this.promotionsLocalRepository.getPromotionByVtexId(vtexId);
+            if(promotion != null)
+            {
+                return promotion.siesa_id;
+            }
+            else
+            {
+                return "";
+            }
         }
     }
 }

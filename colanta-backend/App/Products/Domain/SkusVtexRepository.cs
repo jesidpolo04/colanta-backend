@@ -5,7 +5,7 @@
     {
         void changeEnvironment(string environment);
         Task<Sku> saveSku(Sku sku);
-        Task<Sku?> getSkuBySiesaId(string siesaId);
+        Task<Sku?> getSkuByInVtexRef(string siesaId);
         Task<Sku?> getSkuByVtexId(string vtexId);
         Task<Sku> updateSku(Sku sku);
     }

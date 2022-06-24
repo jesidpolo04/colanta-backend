@@ -74,10 +74,10 @@ namespace colanta_backend.App.Products.Infraestructure
             throw new ArgumentOutOfRangeException(paramName: "enviroment", message: "Invalid Enviroment, Only can be: 'mercolanta' or 'agrocolanta'");
         }
 
-        public async Task<Sku> getSkuBySiesaId(string siesaId)
+        public async Task<Sku> getSkuByInVtexRef(string inVtexRef)
         {
             string endpoint = "/api/catalog/pvt/stockkeepingunit?refId=";
-            string refId = siesaId;
+            string refId = inVtexRef;
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint + refId;
             HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
             if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
