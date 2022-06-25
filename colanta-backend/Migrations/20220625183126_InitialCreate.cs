@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 namespace colanta_backend.Migrations
 {
@@ -8,20 +8,21 @@ namespace colanta_backend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "brands",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false),
-                    id_vtex = table.Column<int>(type: "int", nullable: true),
-                    id_siesa = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
-                    business = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    name = table.Column<string>(type: "varchar(25)", unicode: false, maxLength: 25, nullable: false),
-                    state = table.Column<short>(type: "smallint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_brands", x => x.id);
-                });
+               name: "brands",
+               columns: table => new
+               {
+                   id = table.Column<int>(type: "int", nullable: false)
+                       .Annotation("SqlServer:Identity", "1, 1"),
+                   id_vtex = table.Column<int>(type: "int", nullable: true),
+                   id_siesa = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
+                   business = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                   name = table.Column<string>(type: "varchar(25)", unicode: false, maxLength: 25, nullable: false),
+                   state = table.Column<short>(type: "smallint", nullable: true)
+               },
+               constraints: table =>
+               {
+                   table.PrimaryKey("PK_brands", x => x.id);
+               });
 
             migrationBuilder.CreateTable(
                 name: "categories",

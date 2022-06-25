@@ -18,8 +18,7 @@
             return new Brand(
                             name: siesaBrand.nombre,
                             id_siesa: siesaBrand.id,
-                            business: siesaBrand.negocio,
-                            id: Convert.ToInt16(siesaBrand.id)
+                            business: siesaBrand.negocio
                        );
         }
     }

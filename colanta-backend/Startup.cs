@@ -87,27 +87,27 @@ namespace colanta_backend
 
             //Scheduled Tasks
             services.AddHostedService<ScheduledRenderBrands>();
-            services.AddHostedService<ScheduledUpdateBrandsState>();
-            services.AddHostedService<ScheduledUpBrandsToVtex>();
+            //services.AddHostedService<ScheduledUpdateBrandsState>();
+            //services.AddHostedService<ScheduledUpBrandsToVtex>();
 
-            services.AddHostedService<ScheduledRenderCategories>();
-            services.AddHostedService<ScheduledUpCategoriesToVtex>();
-            services.AddHostedService<ScheduledUpdateCategoriesState>();
+            //services.AddHostedService<ScheduledRenderCategories>();
+            //services.AddHostedService<ScheduledUpCategoriesToVtex>();
+            //services.AddHostedService<ScheduledUpdateCategoriesState>();
 
-            services.AddHostedService<ScheduledRenderProductsAndSkus>();
-            services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
-            services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
+            //services.AddHostedService<ScheduledRenderProductsAndSkus>();
+            //services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
+            //services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
 
-            services.AddHostedService<ScheduledRenderPrices>();
+            //services.AddHostedService<ScheduledRenderPrices>();
 
-            services.AddHostedService<ScheduledRenderWarehouses>();
+            //services.AddHostedService<ScheduledRenderWarehouses>();
 
-            services.AddHostedService<ScheduledRenderInventories>();
+            //services.AddHostedService<ScheduledRenderInventories>();
 
-            services.AddHostedService<ScheduledRenderPromotions>();
-            services.AddHostedService<ScheduledUpToVtexNullPromotions>();
+            //services.AddHostedService<ScheduledRenderPromotions>();
+            //services.AddHostedService<ScheduledUpToVtexNullPromotions>();
 
-            services.AddHostedService<ScheduledRenderCreditAccounts>();
+            //services.AddHostedService<ScheduledRenderCreditAccounts>();
 
             services.AddSwaggerGen(c =>
             {

@@ -92,7 +92,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.ToTable("brands");
 
                 entity.Property(e => e.id)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("id");
 
                 entity.Property(e => e.id_siesa)

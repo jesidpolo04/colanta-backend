@@ -7,31 +7,49 @@
     using System.Text.Json;
     using System.Threading.Tasks;
     using App.Brands.Domain;
+    using Microsoft.Extensions.Configuration;
+    using App.Shared.Infraestructure;
+    using Shared.Domain;
 
     public class BrandsSiesaRepository : IBrandsSiesaRepository
     {
+        private IConfiguration configuration;
         private HttpClient httpClient;
         private SiesaBrandMapper siesaBrandMapper;
-        public BrandsSiesaRepository()
+        private SiesaAuth siesaAuth;
+        public BrandsSiesaRepository(IConfiguration configuration)
         {
             this.httpClient = new HttpClient();
             this.siesaBrandMapper = new SiesaBrandMapper();
+            this.configuration = configuration;
+            this.siesaAuth = new SiesaAuth(configuration);
         }
         public async Task<Brand[]?> getAllBrands()
         {
-            HttpResponseMessage responseSiesaBrands = await this.httpClient.GetAsync("http://localhost:3000/marcas");
+            await this.setHeaders();
+            string endpoint = "/api/ColantaWS/Marcas";
+            HttpResponseMessage responseSiesaBrands = await this.httpClient.GetAsync(this.configuration["SiesaUrl"] + endpoint);
             if (!responseSiesaBrands.IsSuccessStatusCode)
             {
-                return null;
+                throw new SiesaException(500, "error en marcas");
             }
             string siesaBrandsBody = await responseSiesaBrands.Content.ReadAsStringAsync();
-            List<SiesaBrandDTO> siesaBrandsDtos = JsonSerializer.Deserialize<List<SiesaBrandDTO>>(siesaBrandsBody);
+            SiesaBrandsDTO siesaBrandsDto = JsonSerializer.Deserialize<SiesaBrandsDTO>(siesaBrandsBody);
             List<Brand> brands = new List<Brand>();
-            foreach (SiesaBrandDTO siesaBrandDTO in siesaBrandsDtos)
+            foreach (SiesaBrandDTO siesaBrandDTO in siesaBrandsDto.marcas)
             {
                 brands.Add(this.siesaBrandMapper.DtoToEntity(siesaBrandDTO));
             }
+            
             return brands.ToArray();
+        }
+
+        private async Task setHeaders()
+        {
+            Console.WriteLine("set headers 1");
+            this.httpClient.DefaultRequestHeaders.Remove("Authorization");
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await this.siesaAuth.getToken());
+            Console.WriteLine("set headers 2");
         }
     }
 }

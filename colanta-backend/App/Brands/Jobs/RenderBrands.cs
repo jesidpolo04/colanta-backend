@@ -8,13 +8,14 @@
     using System.Collections.Generic;
     using System.Text.Json;
     using System.Threading.Tasks;
-
+    using Microsoft.Extensions.Configuration;
     public class RenderBrands
     {
         public string processName = "Renderizado de marcas";
         private BrandsRepository brandsLocalRepository;
         private BrandsVtexRepository brandsVtexRepository;
         private ILogs logs;
+        private IConfiguration configuration;
         private RenderBrandsMail renderBrandsMail;
 
         private CustomConsole console;
@@ -27,10 +28,11 @@
         private List<Brand> inactivatedBrands;
         private JsonSerializerOptions jsonOptions;
 
-        public RenderBrands(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository, ILogs logs, EmailSender emailSender)
+        public RenderBrands(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository, ILogs logs, EmailSender emailSender, IConfiguration configuration)
         {
             this.brandsLocalRepository = brandsLocalRepository;
             this.brandsVtexRepository = brandsVtexRepository;
+            this.configuration = configuration;
             this.logs = logs;
             this.renderBrandsMail = new RenderBrandsMail(emailSender);
 
@@ -53,9 +55,11 @@
 
         public async Task<bool> Invoke()
         {
-            BrandsSiesaRepository brandsSiesaRepository = new BrandsSiesaRepository();
+            BrandsSiesaRepository brandsSiesaRepository = new BrandsSiesaRepository(this.configuration);
 
             Brand[] siesaBrands = await brandsSiesaRepository.getAllBrands();
+
+            System.Console.WriteLine("LLegó hasta aquí");
             this.details.Add(new Detail(
                     origin: "siesa",
                     success: true,
@@ -68,7 +72,7 @@
                 foreach (Brand deltaBrand in deltaBrands)
                 {
                     deltaBrand.state = false;
-                    await this.brandsVtexRepository.updateBrand(deltaBrand);
+                    //await this.brandsVtexRepository.updateBrand(deltaBrand);
                     this.inactivatedBrands.Add(deltaBrand);
                     this.details.Add(new Detail(
                             origin: "vtex",
@@ -101,9 +105,9 @@
                     if (localBrand == null)
                     {
                         localBrand = this.brandsLocalRepository.saveBrand(siesaBrand);
-                        Brand? vtexBrand = await this.brandsVtexRepository.saveBrand(localBrand);
+                        //Brand? vtexBrand = await this.brandsVtexRepository.saveBrand(localBrand);
 
-                        this.details.Add(
+                        /*this.details.Add(
                             new Detail(
                                 origin: "vtex",
                                 success: true,
@@ -113,7 +117,7 @@
 
                         localBrand.id_vtex = vtexBrand.id_vtex;
                         this.brandsLocalRepository.updateBrand(localBrand);
-                        this.loadBrands.Add(vtexBrand);
+                        this.loadBrands.Add(vtexBrand); */
                     }
 
                 }
@@ -128,7 +132,7 @@
                 }
                 catch (Exception exception)
                 {
-                    //normalmente problemas de conexión del middleware
+                    throw exception;
                 }
             }
 

@@ -10,7 +10,7 @@ using colanta_backend.App.Shared.Infraestructure;
 namespace colanta_backend.Migrations
 {
     [DbContext(typeof(ColantaContext))]
-    [Migration("20220624213345_ClearDatabase")]
+    [Migration("20220625183109_ClearDatabase")]
     partial class ClearDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,8 +24,10 @@ namespace colanta_backend.Migrations
             modelBuilder.Entity("colanta_backend.App.Brands.Infraestructure.EFBrand", b =>
                 {
                     b.Property<int?>("id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .UseIdentityColumn();
 
                     b.Property<string>("business")
                         .HasColumnType("nvarchar(max)")
