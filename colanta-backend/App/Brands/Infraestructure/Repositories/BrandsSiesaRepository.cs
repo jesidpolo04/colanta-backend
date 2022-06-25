@@ -46,10 +46,8 @@
 
         private async Task setHeaders()
         {
-            Console.WriteLine("set headers 1");
             this.httpClient.DefaultRequestHeaders.Remove("Authorization");
             this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await this.siesaAuth.getToken());
-            Console.WriteLine("set headers 2");
         }
     }
 }

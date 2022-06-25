@@ -77,7 +77,7 @@
                         try
                         {
                             category.isActive = false;
-                            await this.vtexRepository.updateCategory(category);
+                            /*await this.vtexRepository.updateCategory(category);
                             this.inactivatedCategories.Add(category);
                             this.details.Add(new Detail(
                                     origin: "vtex", 
@@ -85,7 +85,7 @@
                                     description: "se actualizó con éxito el estado de la categoría", 
                                     success: true, 
                                     content: JsonSerializer.Serialize(category, jsonOptions)
-                                ));
+                                ));*/
                         }
                         catch (VtexException vtexException)
                         {
@@ -129,7 +129,7 @@
                         try
                         {
                             localCategory = await this.localRepository.saveCategory(siesaCategory);
-                            Category vtexCategory = await this.vtexRepository.saveCategory(localCategory);
+                            /*Category vtexCategory = await this.vtexRepository.saveCategory(localCategory);
                             localCategory.vtex_id = vtexCategory.vtex_id;
                             localCategory = await this.localRepository.updateCategory(localCategory);
                             this.loadCategories.Add(localCategory);
@@ -139,10 +139,10 @@
                                     description: "se cargó correctamente la categoría",
                                     success: true,
                                     content: JsonSerializer.Serialize(localCategory, jsonOptions)
-                                ));
+                                ));*/
                             foreach (Category localCategoryChild in localCategory.childs)
                             {
-                                Category vtexCategoryChild = await this.vtexRepository.saveCategory(localCategoryChild);
+                                /*Category vtexCategoryChild = await this.vtexRepository.saveCategory(localCategoryChild);
                                 localCategoryChild.vtex_id = vtexCategoryChild.vtex_id;
                                 await this.localRepository.updateCategory(localCategoryChild);
                                 this.loadCategories.Add(localCategoryChild);
@@ -152,7 +152,7 @@
                                         description: "se cargó correctamente la categoría",
                                         success: true,
                                         content: JsonSerializer.Serialize(localCategoryChild, jsonOptions)
-                                    ));
+                                    ));*/
                             }
                         }
                         catch (VtexException exception)

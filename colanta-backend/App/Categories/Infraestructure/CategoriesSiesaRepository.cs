@@ -8,34 +8,43 @@
     using System.Threading.Tasks;
     using Categories.Domain;
     using Shared.Domain;
+    using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
 
     public class CategoriesMockSiesaRepository : Domain.CategoriesSiesaRepository
     {
         private IConfiguration configuration;
         private HttpClient httpClient;
-
+        private SiesaAuth siesaAuth;
         public CategoriesMockSiesaRepository(IConfiguration configuration)
         {
             this.configuration = configuration;
             this.httpClient = new HttpClient();
+            this.siesaAuth = new SiesaAuth(configuration);
         }
         public async Task<Category[]> getAllCategories()
         {
-            string endpoint = "/familias";
+            await this.setHeaders();
+            string endpoint = "/api/ColantaWS/FamiliasLineas";
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
                 throw new SiesaException(((int)siesaResponse.StatusCode), "Falló la petición a siesa con estado: " + siesaResponse.StatusCode);
             }
             string siesaBodyResponse = await siesaResponse.Content.ReadAsStringAsync();
-            MockSiesaCategoryDto[] mockSiesaCateoriesDto = JsonSerializer.Deserialize<MockSiesaCategoryDto[]>(siesaBodyResponse);
+            SiesaCategoriesDto siesaCategoriesDto = JsonSerializer.Deserialize<SiesaCategoriesDto>(siesaBodyResponse);
             List<Category> categories = new List<Category>();
-            foreach(MockSiesaCategoryDto mockSiesaCategoryDto in mockSiesaCateoriesDto)
+            foreach(SiesaCategoryDto siesaCategoryDto in siesaCategoriesDto.familias)
             {
-                categories.Add(mockSiesaCategoryDto.toCategory());
+                categories.Add(siesaCategoryDto.toCategory());
             }
             return categories.ToArray();
+        }
+
+        private async Task setHeaders()
+        {
+            this.httpClient.DefaultRequestHeaders.Remove("Authorization");
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await this.siesaAuth.getToken());
         }
     }
 }
