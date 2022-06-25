@@ -13,10 +13,10 @@
             this.skusLocalRepository = skusLocalRepository;
             this.promotionsLocalRepository = promotionsLocalRepository;
         }
-        public async Task<SendOrderToSiesaDto> getSiesaOrder(VtexOrderDto vtexOrder)
+        public async Task<SiesaOrderDto> getSiesaOrder(VtexOrderDto vtexOrder)
         {
-            SendOrderToSiesaDto siesaOrder = new SendOrderToSiesaDto();
-            SendOrderToSiesaHeaderDto header = new SendOrderToSiesaHeaderDto();
+            SiesaOrderDto siesaOrder = new SiesaOrderDto();
+            SiesaOrderHeaderDto header = new SiesaOrderHeaderDto();
             siesaOrder.Encabezado = header;
             //Header
             siesaOrder.Encabezado.C263CO = vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId;
@@ -31,14 +31,14 @@
             siesaOrder.Encabezado.C263TotalPedido = this.getTotal(vtexOrder.totals, "Items");
             siesaOrder.Encabezado.C263TotalDescuentos = this.getTotal(vtexOrder.totals, "Discounts");
             //Details
-            List<SendOrderToSiesaDetailDto> details = new List<SendOrderToSiesaDetailDto>();
-            List<SendOrderToSiesaDiscountDto> discounts = new List<SendOrderToSiesaDiscountDto>();
+            List<SiesaOrderDetailDto> details = new List<SiesaOrderDetailDto>();
+            List<SiesaOrderDiscountDto> discounts = new List<SiesaOrderDiscountDto>();
             int consecutive = 0;
 
             foreach (ItemDto vtexItem in vtexOrder.items)
             {
                 consecutive++;
-                SendOrderToSiesaDetailDto siesaDetail = new SendOrderToSiesaDetailDto();
+                SiesaOrderDetailDto siesaDetail = new SiesaOrderDetailDto();
                 siesaDetail.C263DetCO = vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId;
                 siesaDetail.C263NroDetalle = consecutive;
                 siesaDetail.C263ReferenciaItem = await this.getSiesaSkuRefId(vtexItem.refId);
@@ -56,7 +56,7 @@
                 foreach(PriceTagDto vtexDiscount in vtexItem.priceTags)
                 {
                     discountsConsecutive++;
-                    SendOrderToSiesaDiscountDto siesaDiscount = new SendOrderToSiesaDiscountDto();
+                    SiesaOrderDiscountDto siesaDiscount = new SiesaOrderDiscountDto();
                     siesaDiscount.C263DestoCO = vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId;
                     siesaDiscount.C263ReferenciaVTEX = vtexDiscount.identifier;
                     siesaDiscount.C263NroDetalle = consecutive;

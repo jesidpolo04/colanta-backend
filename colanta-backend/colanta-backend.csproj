@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="App\Inventory\Application\" />
+    <Folder Include="App\Orders\SiesaOrders\Application\" />
     <Folder Include="App\Prices\Application\" />
     <Folder Include="App\Promotions\Application\" />
     <Folder Include="Models\" />

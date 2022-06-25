@@ -31,7 +31,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             string endpoint = "/siesa_order_endpoint";
             VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(this.skusLocalRepository, this.promotionLocalRepository);
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(order.order_json);
-            SendOrderToSiesaDto siesaOrderDto = await mapper.getSiesaOrder(vtexOrderDto);
+            SiesaOrderDto siesaOrderDto = await mapper.getSiesaOrder(vtexOrderDto);
             string jsonContent = JsonSerializer.Serialize(siesaOrderDto);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
             await httpClient.PostAsync(this.configuration["SiesaUrl"] + endpoint, httpContent);

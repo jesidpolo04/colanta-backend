@@ -78,6 +78,8 @@ namespace colanta_backend
             services.AddTransient<App.Orders.Domain.OrdersRepository, App.Orders.Infraestructure.OrdersEFRepository>();
             services.AddTransient<App.Orders.Domain.OrdersVtexRepository, App.Orders.Infraestructure.OrdersVtexRepository>();
             services.AddTransient<App.Orders.Domain.OrdersSiesaRepository, App.Orders.Infraestructure.OrdersSiesaRepository>();
+            //Dependencies Injections SiesaOrders
+            services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersEFRepository>();
 
             //Dependencies Injections Shared
             services.AddTransient<ILogs, ProcessLogs>();

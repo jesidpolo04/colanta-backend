@@ -14,6 +14,7 @@ using colanta_backend.App.Promotions.Infraestructure;
 using colanta_backend.App.CustomerCredit.Infraestructure;
 using colanta_backend.App.GiftCards.Infraestructure;
 using colanta_backend.App.Orders.Infraestructure;
+using colanta_backend.App.Orders.SiesaOrders.Infraestructure;
 
 #nullable disable
 
@@ -41,6 +42,9 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFCreditAccount> CreditAccounts { get; set; }
         public virtual DbSet<EFGiftCard> GiftCards { get; set; }
         public virtual DbSet<EFOrder> Orders { get; set; }
+        public virtual DbSet<EFSiesaOrder> SiesaOrders { get; set; }
+        public virtual DbSet<EFSiesaOrderDetail> SiesaOrderDetails { get; set; }
+        public virtual DbSet<EFSiesaOrderDiscount> SiesaOrderDiscounts { get; set; }
         public virtual DbSet<EFProcess> Process { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -294,6 +298,62 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.last_change_date);
                 entity.Property(e => e.business);
                 entity.Property(e => e.order_json).HasColumnType("text");
+            });
+
+            modelBuilder.Entity<EFSiesaOrder>(entity =>
+            {
+                entity.ToTable("siesa_orders");
+
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.siesa_id);
+                entity.Property(e => e.co);
+                entity.Property(e => e.fecha);
+                entity.Property(e => e.doc_tercero);
+                entity.Property(e => e.fecha_entrega);
+                entity.Property(e => e.referencia_vtex);
+                entity.Property(e => e.cond_pago);
+                entity.Property(e => e.notas);
+                entity.Property(e => e.direccion);
+                entity.Property(e => e.negocio);
+                entity.Property(e => e.total_pedido);
+                entity.Property(e => e.total_descuento);
+
+                entity.HasMany(e => e.detalles).WithOne(e => e.order).HasForeignKey(e => e.order_id);
+                entity.HasMany(e => e.descuentos).WithOne(e => e.order).HasForeignKey(e => e.order_id); 
+            });
+
+            modelBuilder.Entity<EFSiesaOrderDetail>(entity =>
+            {
+                entity.ToTable("siesa_order_details");
+
+                entity.Property(e => e.id).ValueGeneratedOnAdd();
+                entity.Property(e => e.det_co);
+                entity.Property(e => e.nro_detalle);
+                entity.Property(e => e.referencia_item);
+                entity.Property(e => e.variacion_item);
+                entity.Property(e => e.ind_obsequio);
+                entity.Property(e => e.cantidad);
+                entity.Property(e => e.precio);
+                entity.Property(e => e.notas);
+                entity.Property(e => e.impuesto);
+                entity.Property(e => e.referencia_vtex);
+                entity.Property(e => e.impuesto);
+
+                entity.HasOne(e => e.order).WithMany(e => e.detalles).HasForeignKey(e => e.order_id);
+            });
+
+            modelBuilder.Entity<EFSiesaOrderDiscount>(entity => { 
+                entity.ToTable("siesa_order_discounts");
+
+                entity.Property(e => e.id).ValueGeneratedOnAdd();
+                entity.Property(e => e.desto_co);
+                entity.Property(e => e.referencia_vtex);
+                entity.Property(e => e.nro_detalle);
+                entity.Property(e => e.orden_descuento);
+                entity.Property(e => e.tasa);
+                entity.Property(e => e.valor);
+
+                entity.HasOne(e => e.order).WithMany(e => e.descuentos).HasForeignKey(e => e.order_id);
             });
 
             OnModelCreatingPartial(modelBuilder);
