@@ -78,10 +78,11 @@
                 foreach(VariacionDto variacionDto in this.variaciones)
                 {
                     Sku sku = new Sku();
-
+                    sku.setProduct(product);
                     sku.siesa_id = variacionDto.id;
                     sku.concat_siesa_id = this.negocio + "_" + this.id + "_" + variacionDto.id;
                     sku.name = variacionDto.nombre;
+                    sku.description = this.descripcion;
                     sku.ref_id = variacionDto.referencia + "_" + variacionDto.id;
                     sku.measurement_unit = this.unidad_medida;
                     sku.packaged_height = variacionDto.dimensiones.alto_producto;

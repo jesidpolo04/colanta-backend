@@ -8,22 +8,27 @@
     using System.Net.Http.Headers;
     using System.Text.Json;
     using Shared.Domain;
+    using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
 
     public class ProductsSiesaRepository : Domain.ProductsSiesaRepository
     {
         private IConfiguration configuration;
         private HttpClient httpClient;
+        private SiesaAuth siesaAuth;
+
 
         public ProductsSiesaRepository(IConfiguration configuration)
         {
             this.configuration = configuration;
             this.httpClient = new HttpClient();
+            this.siesaAuth = new SiesaAuth(configuration);
         }
 
         public async Task<Product[]> getAllProducts()
         {
-            string endpoint = "/productos";
+            await this.setHeaders();
+            string endpoint = "/api/ColantaWS/Productos";
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
@@ -51,6 +56,12 @@
                 }
             }
             return skus.ToArray();
+        }
+
+        private async Task setHeaders()
+        {
+            this.httpClient.DefaultRequestHeaders.Remove("Authorization");
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await this.siesaAuth.getToken());
         }
     }
 }

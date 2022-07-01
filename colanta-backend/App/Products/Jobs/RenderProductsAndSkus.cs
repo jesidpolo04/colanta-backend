@@ -97,7 +97,7 @@
                 try
                 {
                     deltaProduct.is_active = false;
-                    await updateVtexProduct.Invoke(deltaProduct);
+                    /*await updateVtexProduct.Invoke(deltaProduct);*/
                 }
                 catch(VtexException vtexException)
                 {
@@ -111,7 +111,7 @@
                 try
                 {
                     deltaSku.is_active = false;
-                    await updateVtexSku.Invoke(deltaSku);
+                    /*await updateVtexSku.Invoke(deltaSku);
                     this.loadSkus.Add(deltaSku);
                     this.details.Add(new Detail(
                             origin: "vtex",
@@ -119,7 +119,7 @@
                             content: JsonSerializer.Serialize(deltaSku, this.jsonOptions),
                             description: "sku actualizado con éxito",
                             success: true
-                        ));
+                        ));*/
                 }
                 catch(VtexException vtexException)
                 {
@@ -155,13 +155,17 @@
                     try
                     {
                         localProduct = await createProduct.Invoke(siesaProduct);
-                        Product vtexProduct = await createVtexProduct.Invoke(localProduct);
+                        /*Product vtexProduct = await createVtexProduct.Invoke(localProduct);
                         localProduct.vtex_id = vtexProduct.vtex_id;
-                        await updateProduct.Invoke(localProduct);
+                        await updateProduct.Invoke(localProduct);*/
                     }
                     catch (VtexException vtexException)
                     {
 
+                    }
+                    catch (Exception exception)
+                    {
+                        
                     }
                 }
             }
@@ -185,7 +189,7 @@
                     try
                     {
                         localSku = await createSku.Invoke(siesaSku);
-                        Sku vtexSku = await createVtexSku.Invoke(localSku);
+                        /*Sku vtexSku = await createVtexSku.Invoke(localSku);
                         localSku.vtex_id = vtexSku.vtex_id;
                         await updateSku.Invoke(localSku);
 
@@ -196,7 +200,7 @@
                             content: JsonSerializer.Serialize(localSku, this.jsonOptions),
                             description: "sku creado con éxito",
                             success: true
-                        ));
+                        ));*/
                     }
                     catch(VtexException vtexException)
                     {
@@ -208,6 +212,10 @@
                             description: vtexException.Message,
                             success: false
                         ));
+                    }
+                    catch(Exception exception)
+                    {
+                        System.Console.WriteLine("Exception: " + exception.Message + ": Stack: " + exception.StackTrace);
                     }
                 }
             }

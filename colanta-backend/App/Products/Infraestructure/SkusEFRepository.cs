@@ -96,6 +96,8 @@
         public async Task<Sku> saveSku(Sku sku)
         {
             EFSku efSku = new EFSku();
+            System.Console.WriteLine("siesa id del producto = " + sku.product.siesa_id);
+            System.Console.WriteLine("id del producto = " + sku.product.id);
             EFProduct efProduct = this.dbContext.Products.Where(e => e.siesa_id == sku.product.siesa_id).First();
             efSku.setEfSkuFromSku(sku);
             efSku.product = efProduct;

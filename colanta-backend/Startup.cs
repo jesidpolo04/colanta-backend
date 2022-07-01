@@ -94,7 +94,7 @@ namespace colanta_backend
             //services.AddHostedService<ScheduledUpCategoriesToVtex>();
             //services.AddHostedService<ScheduledUpdateCategoriesState>();
 
-            //services.AddHostedService<ScheduledRenderProductsAndSkus>();
+            services.AddHostedService<ScheduledRenderProductsAndSkus>();
             //services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
             //services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
 
