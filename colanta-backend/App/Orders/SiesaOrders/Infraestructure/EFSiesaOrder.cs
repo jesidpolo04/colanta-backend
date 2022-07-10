@@ -6,6 +6,7 @@
     {
         public int id { get; set; }
         public string siesa_id { get; set; }
+        public bool finalizado { get; set; }
         public string co { get; set; }
         public string fecha { get; set; }
         public string doc_tercero { get; set; }
@@ -24,6 +25,7 @@
         {
             this.siesa_id = siesaOrder.siesa_id;
             this.co = siesaOrder.co;
+            this.finalizado = siesaOrder.finalizado;
             this.fecha = siesaOrder.fecha;
             this.doc_tercero = siesaOrder.doc_tercero;
             this.fecha_entrega = siesaOrder.fecha_entrega;
@@ -61,6 +63,7 @@
             siesaOrder.id = this.id;
             siesaOrder.siesa_id = this.siesa_id;
             siesaOrder.co = this.co;
+            siesaOrder.finalizado = this.finalizado;
             siesaOrder.fecha = this.fecha;
             siesaOrder.doc_tercero = this.doc_tercero;
             siesaOrder.fecha_entrega = this.fecha_entrega;

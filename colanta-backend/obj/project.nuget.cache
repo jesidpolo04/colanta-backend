@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "uuC+uUcAWdhdPEYIkaQADfAzJS/jHWxEjTK4x2zfPLZKNbzwQMidwmkgAVXALJu+8ZbyOD2XWTfOnWMVKxoaQw==",
+  "dgSpecHash": "fHfE2YfXjV+m5qyZuwv2X1kMPsyIVNpymf5UZ7tbk6QNAF1//B9LufiVJRWGYvT4kw+lTBm6XZlqXaTP0Q6YIg==",
   "success": true,
   "projectFilePath": "D:\\colanta\\colanta-backend\\colanta-backend\\colanta-backend.csproj",
   "expectedPackageFiles": [
@@ -36,6 +36,7 @@
     "C:\\Users\\JPOLO68\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
     "C:\\Users\\JPOLO68\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\JPOLO68\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\JPOLO68\\.nuget\\packages\\ncrontab.signed\\3.3.2\\ncrontab.signed.3.3.2.nupkg.sha512",
     "C:\\Users\\JPOLO68\\.nuget\\packages\\newtonsoft.json\\10.0.1\\newtonsoft.json.10.0.1.nupkg.sha512",
     "C:\\Users\\JPOLO68\\.nuget\\packages\\quartz\\3.3.3\\quartz.3.3.3.nupkg.sha512",
     "C:\\Users\\JPOLO68\\.nuget\\packages\\runtime.native.system\\4.3.0\\runtime.native.system.4.3.0.nupkg.sha512",

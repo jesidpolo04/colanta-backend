@@ -11,20 +11,24 @@ namespace colanta_backend.App.Promotions.Infraestructure
     using System.Net.Http.Headers;
     using System.Text.Json;
     using Shared.Domain;
+    using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
     public class PromotionsSiesaRepository : Domain.PromotionsSiesaRepository
     {
         private HttpClient httpClient;
         private IConfiguration configuration;
+        private SiesaAuth siesaAuth;
 
         public PromotionsSiesaRepository(IConfiguration configuration)
         {
             this.httpClient = new HttpClient();
             this.configuration = configuration;
+            this.siesaAuth = new SiesaAuth(configuration);
         }
         public async Task<Promotion[]> getAllPromotions()
         {
-            string endpoint = "/promociones";
+            await this.setHeaders();
+            string endpoint = "/api/ColantaWS/Descuentos";
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
@@ -38,6 +42,12 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 promotions.Add(siesaPromotionDto.getPromotionFromDto());
             }
             return promotions.ToArray();
+        }
+
+        private async Task setHeaders()
+        {
+            this.httpClient.DefaultRequestHeaders.Remove("Authorization");
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await this.siesaAuth.getToken());
         }
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using colanta_backend.App.Shared.Infraestructure;
 
 namespace colanta_backend.Migrations
 {
     [DbContext(typeof(ColantaContext))]
-    partial class ColantaContextModelSnapshot : ModelSnapshot
+    [Migration("20220710192741_SiesaOrderHistory")]
+    partial class SiesaOrderHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

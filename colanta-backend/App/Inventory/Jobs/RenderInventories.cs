@@ -76,15 +76,15 @@
                             if (localInventory == null)
                             {
                                 localInventory = await this.localRepository.saveInventory(siesaInventory);
-                                await this.vtexRepository.updateInventory(localInventory);
-                                this.loadInventories.Add(localInventory);
+                                //await this.vtexRepository.updateInventory(localInventory);
+                                //this.loadInventories.Add(localInventory);
 
-                                this.details.Add(new Detail(
-                                    origin: "vtex",
-                                    action: "crear o actualizar inventario",
-                                    content: JsonSerializer.Serialize(localInventory, this.jsonOptions),
-                                    description: "petición completada con éxito",
-                                    success: true));
+                                //this.details.Add(new Detail(
+                                //    origin: "vtex",
+                                //    action: "crear o actualizar inventario",
+                                //    content: JsonSerializer.Serialize(localInventory, this.jsonOptions),
+                                //    description: "petición completada con éxito",
+                                //    success: true));
                             }
                             if (localInventory != null)
                             {
@@ -92,15 +92,15 @@
                                 {
                                     localInventory.quantity = siesaInventory.quantity;
                                     localInventory = await this.localRepository.updateInventory(localInventory);
-                                    await this.vtexRepository.updateInventory(localInventory);
-                                    this.updatedInventories.Add(localInventory);
+                                    //await this.vtexRepository.updateInventory(localInventory);
+                                    //this.updatedInventories.Add(localInventory);
 
-                                    this.details.Add(new Detail(
-                                    origin: "vtex",
-                                    action: "crear o actualizar inventario",
-                                    content: JsonSerializer.Serialize(localInventory, this.jsonOptions),
-                                    description: "petición completada con éxito",
-                                    success: true));
+                                    //this.details.Add(new Detail(
+                                    //origin: "vtex",
+                                    //action: "crear o actualizar inventario",
+                                    //content: JsonSerializer.Serialize(localInventory, this.jsonOptions),
+                                    //description: "petición completada con éxito",
+                                    //success: true));
                                 }
 
                                 if (localInventory.quantity == siesaInventory.quantity)

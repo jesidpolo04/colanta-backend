@@ -58,7 +58,7 @@
                 foreach (Promotion deltaPromotion in deltaPromotions)
                 {
                     deltaPromotion.is_active = false;
-                    await vtexRepository.updatePromotion(deltaPromotion);
+                    //await vtexRepository.updatePromotion(deltaPromotion);
                     await localRepository.updatePromotion(deltaPromotion);
                     this.inactivatedPromotions.Add(deltaPromotion);
                     this.details.Add(new Detail(
@@ -80,17 +80,17 @@
                         if (localPromotion == null)
                         {
                             localPromotion = await this.localRepository.savePromotion(siesaPromotion);
-                            Promotion vtexPromotion = await vtexRepository.savePromotion(localPromotion);
-                            localPromotion.vtex_id = vtexPromotion.vtex_id;
-                            await this.localRepository.updatePromotion(localPromotion);
+                            ////Promotion vtexPromotion = await vtexRepository.savePromotion(localPromotion);
+                            ////localPromotion.vtex_id = vtexPromotion.vtex_id;
+                            ////await this.localRepository.updatePromotion(localPromotion);
 
-                            this.loadPromotions.Add(localPromotion);
-                            this.details.Add(new Detail(
-                                origin: "vtex",
-                                action: "crear o actualizar promoción",
-                                content: JsonSerializer.Serialize(localPromotion, this.jsonOptions),
-                                description: "petición para crear o actualizar promoción, completada con éxito",
-                                success: true));
+                            ////this.loadPromotions.Add(localPromotion);
+                            ////this.details.Add(new Detail(
+                            ////    origin: "vtex",
+                            ////    action: "crear o actualizar promoción",
+                            ////    content: JsonSerializer.Serialize(localPromotion, this.jsonOptions),
+                            ////    description: "petición para crear o actualizar promoción, completada con éxito",
+                            ////    success: true));
                         }
                         if (localPromotion != null)
                         {
@@ -101,17 +101,17 @@
                             if (localPromotion.is_active == false && localPromotion.vtex_id !=  null)
                             {
                                 localPromotion.is_active = true;
-                                Promotion vtexPromotion = await this.vtexRepository.updatePromotion(localPromotion);
-                                localPromotion.is_active = vtexPromotion.is_active;
-                                await this.localRepository.updatePromotion(localPromotion);
+                                //Promotion vtexPromotion = await this.vtexRepository.updatePromotion(localPromotion);
+                                //localPromotion.is_active = vtexPromotion.is_active;
+                                //await this.localRepository.updatePromotion(localPromotion);
 
-                                this.loadPromotions.Add(localPromotion);
-                                this.details.Add(new Detail(
-                                    origin: "vtex",
-                                    action: "actualizar promoción",
-                                    content: JsonSerializer.Serialize(localPromotion, this.jsonOptions),
-                                    description: "petición para actualizar promoción, completada con éxito",
-                                    success: true));
+                                //this.loadPromotions.Add(localPromotion);
+                                //this.details.Add(new Detail(
+                                //    origin: "vtex",
+                                //    action: "actualizar promoción",
+                                //    content: JsonSerializer.Serialize(localPromotion, this.jsonOptions),
+                                //    description: "petición para actualizar promoción, completada con éxito",
+                                //    success: true));
                             }
                         }
                     }

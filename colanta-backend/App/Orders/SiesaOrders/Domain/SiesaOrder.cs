@@ -3,6 +3,7 @@
     public class SiesaOrder
     {
         public int id { get; set; }
+        public bool finalizado { get; set; }
         public string siesa_id { get; set; }
         public string co { get; set; }
         public string fecha { get; set; }

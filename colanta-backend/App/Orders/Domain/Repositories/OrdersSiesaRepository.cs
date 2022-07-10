@@ -1,8 +1,10 @@
 ﻿namespace colanta_backend.App.Orders.Domain
 {
     using System.Threading.Tasks;
+    using Orders.SiesaOrders.Domain;
     public interface OrdersSiesaRepository
     {
-        Task<Order> saveOrder(Order order);
+        Task<SiesaOrder> saveOrder(Order order);
+        Task<SiesaOrder> getOrderBySiesaId(string siesaId);
     }
 }

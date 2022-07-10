@@ -130,18 +130,24 @@
             }
 
             List<string> products_ids = new List<string>();
-            foreach(string siesa_id in this.aplica_a.productos)
+            if(this.aplica_a.productos != null)
             {
-                products_ids.Add(siesa_id);
+                foreach (string siesa_id in this.aplica_a.productos)
+                {
+                    products_ids.Add(siesa_id);
+                }
             }
             promotion.products_ids = JsonSerializer.Serialize(products_ids);
 
             if (this.tipo != "bono" && this.tipo != "regalo")
             {
                 List<string> skus_ids = new List<string>();
-                foreach (string siesa_id in this.aplica_a.variaciones)
+                if (this.aplica_a.variaciones != null)
                 {
-                    skus_ids.Add(siesa_id);
+                    foreach (string siesa_id in this.aplica_a.variaciones)
+                    {
+                        skus_ids.Add(siesa_id);
+                    }
                 }
                 promotion.skus_ids = JsonSerializer.Serialize(skus_ids);
             }
@@ -158,16 +164,22 @@
            
 
             List<string> categories_ids = new List<string>();
-            foreach (string siesa_id in this.aplica_a.categorias)
+            if (this.aplica_a.categorias != null)
             {
-                categories_ids.Add(siesa_id);
+                foreach (string siesa_id in this.aplica_a.categorias)
+                {
+                    categories_ids.Add(siesa_id);
+                }
             }
             promotion.categories_ids = JsonSerializer.Serialize(categories_ids);
 
             List<string> brands_ids = new List<string>();
-            foreach (string siesa_id in this.aplica_a.marcas)
+            if(this.aplica_a.marcas != null)
             {
-                brands_ids.Add(siesa_id);
+                foreach (string siesa_id in this.aplica_a.marcas)
+                {
+                    brands_ids.Add(siesa_id);
+                }
             }
             promotion.brands_ids = JsonSerializer.Serialize(brands_ids);
 
@@ -187,7 +199,7 @@
         public string? tipo { get; set; }   
         public string[]? items_de_regalo { get; set; }
         public int? cantidad_de_regalos_seleccionables { get; set; }
-        public int? cantidad_minima_de_items_para_aplicar { get; set; }
+        public decimal? cantidad_minima_de_items_para_aplicar { get; set; }
         public string[]? lista1 { get; set; }
         public string[]? lista2 { get; set; }
         public decimal? porcentaje_descuento_lista1 { get; set; }

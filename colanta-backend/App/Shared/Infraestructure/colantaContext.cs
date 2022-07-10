@@ -45,6 +45,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFSiesaOrder> SiesaOrders { get; set; }
         public virtual DbSet<EFSiesaOrderDetail> SiesaOrderDetails { get; set; }
         public virtual DbSet<EFSiesaOrderDiscount> SiesaOrderDiscounts { get; set; }
+        public virtual DbSet<EFSiesaOrderHistory> SiesaOrdersHistory { get; set; }
         public virtual DbSet<EFProcess> Process { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -305,6 +306,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.ToTable("siesa_orders");
 
                 entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.finalizado);
                 entity.Property(e => e.siesa_id);
                 entity.Property(e => e.co);
                 entity.Property(e => e.fecha);
@@ -355,6 +357,16 @@ namespace colanta_backend.App.Shared.Infraestructure
 
                 entity.HasOne(e => e.order).WithMany(e => e.descuentos).HasForeignKey(e => e.order_id);
             });
+
+            modelBuilder.Entity<EFSiesaOrderHistory>(entity => {
+                entity.ToTable("siesa_orders_history");
+
+                entity.Property(e => e.id).ValueGeneratedOnAdd();
+                entity.Property(e => e.siesa_id);
+                entity.Property(e => e.vtex_id);
+                entity.Property(e => e.order_json).HasColumnType("text");
+                entity.Property(e => e.created_at).HasDefaultValueSql("getdate()");
+            }); 
 
             OnModelCreatingPartial(modelBuilder);
         }

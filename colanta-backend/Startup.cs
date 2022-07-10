@@ -11,6 +11,7 @@ using colanta_backend.App.Shared.Domain;
 using colanta_backend.App.Inventory.Jobs;
 using colanta_backend.App.Promotions.Jobs;
 using colanta_backend.App.CustomerCredit.Jobs;
+using colanta_backend.App.Orders.Jobs;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -80,6 +81,8 @@ namespace colanta_backend
             services.AddTransient<App.Orders.Domain.OrdersSiesaRepository, App.Orders.Infraestructure.OrdersSiesaRepository>();
             //Dependencies Injections SiesaOrders
             services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersEFRepository>();
+            services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersHistoryRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersHistoryEFRepository>();
+            services.AddTransient<App.Orders.Jobs.UpdateSiesaOrders, App.Orders.Jobs.UpdateSiesaOrders>();
 
             //Dependencies Injections Shared
             services.AddTransient<ILogs, ProcessLogs>();
@@ -98,16 +101,18 @@ namespace colanta_backend
             //services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
             //services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
 
-            //services.AddHostedService<ScheduledRenderPrices>();
+            services.AddHostedService<ScheduledRenderPrices>();
 
             //services.AddHostedService<ScheduledRenderWarehouses>();
 
-            //services.AddHostedService<ScheduledRenderInventories>();
+            services.AddHostedService<ScheduledRenderInventories>();
 
-            //services.AddHostedService<ScheduledRenderPromotions>();
+            services.AddHostedService<ScheduledRenderPromotions>();
             //services.AddHostedService<ScheduledUpToVtexNullPromotions>();
 
             //services.AddHostedService<ScheduledRenderCreditAccounts>();
+
+            services.AddHostedService<ScheduledUpdateSiesaOrders>();
 
             services.AddSwaggerGen(c =>
             {

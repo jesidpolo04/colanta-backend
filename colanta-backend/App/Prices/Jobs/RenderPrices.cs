@@ -76,34 +76,34 @@
                         try
                         {
                             localPrice = await this.localRepository.savePrice(siesaPrice);
-                            Price vtexPrice = await this.vtexRepository.getPriceByVtexId(localPrice.sku.vtex_id);
-                            if (vtexPrice == null)
-                            {
-                                await this.vtexRepository.savePrice(localPrice);
-                                this.loadPrices.Add(localPrice);
-                                this.details.Add(new Detail(
-                                    origin: "vtex",
-                                    action: "crear o actualizar precio",
-                                    content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
-                                    description: "petición de crear o actualizar precio, completada con éxito.",
-                                    success: true
-                                    ));
-                            }
-                            if (vtexPrice != null)
-                            {
-                                if (vtexPrice.price != localPrice.price)
-                                {
-                                    await this.vtexRepository.savePrice(localPrice);
-                                    this.loadPrices.Add(localPrice);
-                                    this.details.Add(new Detail(
-                                        origin: "vtex",
-                                        action: "crear o actualizar precio",
-                                        content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
-                                        description: "petición de crear o actualizar precio, completada con éxito.",
-                                        success: true
-                                        ));
-                                }
-                            }
+                            //Price vtexPrice = await this.vtexRepository.getPriceByVtexId(localPrice.sku.vtex_id);
+                            //if (vtexPrice == null)
+                            //{
+                            //    await this.vtexRepository.savePrice(localPrice);
+                            //    this.loadPrices.Add(localPrice);
+                            //    this.details.Add(new Detail(
+                            //        origin: "vtex",
+                            //        action: "crear o actualizar precio",
+                            //        content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
+                            //        description: "petición de crear o actualizar precio, completada con éxito.",
+                            //        success: true
+                            //        ));
+                            //}
+                            //if (vtexPrice != null)
+                            //{
+                            //    if (vtexPrice.price != localPrice.price)
+                            //    {
+                            //        await this.vtexRepository.savePrice(localPrice);
+                            //        this.loadPrices.Add(localPrice);
+                            //        this.details.Add(new Detail(
+                            //            origin: "vtex",
+                            //            action: "crear o actualizar precio",
+                            //            content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
+                            //            description: "petición de crear o actualizar precio, completada con éxito.",
+                            //            success: true
+                            //            ));
+                            //    }
+                            //}
                         }
                         catch (VtexException vtexException)
                         {
@@ -128,38 +128,38 @@
                                 await this.localRepository.updatePrice(localPrice);
                             }
 
-                            Price vtexPrice = await this.vtexRepository.getPriceByVtexId(localPrice.sku.vtex_id);
-                            if (vtexPrice == null)
-                            {
-                                await this.vtexRepository.savePrice(localPrice);
-                                this.loadPrices.Add(localPrice);
-                                this.details.Add(new Detail(
-                                            origin: "vtex",
-                                            action: "crear o actualizar precio",
-                                            content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
-                                            description: "petición de crear o actualizar precio, completada con éxito.",
-                                            success: true
-                                            ));
-                            }
-                            if (vtexPrice != null)
-                            {
-                                if (vtexPrice.price != localPrice.price)
-                                {
-                                    await this.vtexRepository.savePrice(localPrice);
-                                    this.updatedPrices.Add(localPrice);
-                                    this.details.Add(new Detail(
-                                            origin: "vtex",
-                                            action: "crear o actualizar precio",
-                                            content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
-                                            description: "petición de crear o actualizar precio, completada con éxito.",
-                                            success: true
-                                            ));
-                                }
-                                if (vtexPrice.price == localPrice.price)
-                                {
-                                    this.notProccecedPrices.Add(localPrice);
-                                }
-                            }
+                            //Price vtexPrice = await this.vtexRepository.getPriceByVtexId(localPrice.sku.vtex_id);
+                            //if (vtexPrice == null)
+                            //{
+                            //    await this.vtexRepository.savePrice(localPrice);
+                            //    this.loadPrices.Add(localPrice);
+                            //    this.details.Add(new Detail(
+                            //                origin: "vtex",
+                            //                action: "crear o actualizar precio",
+                            //                content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
+                            //                description: "petición de crear o actualizar precio, completada con éxito.",
+                            //                success: true
+                            //                ));
+                            //}
+                            //if (vtexPrice != null)
+                            //{
+                            //    if (vtexPrice.price != localPrice.price)
+                            //    {
+                            //        await this.vtexRepository.savePrice(localPrice);
+                            //        this.updatedPrices.Add(localPrice);
+                            //        this.details.Add(new Detail(
+                            //                origin: "vtex",
+                            //                action: "crear o actualizar precio",
+                            //                content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
+                            //                description: "petición de crear o actualizar precio, completada con éxito.",
+                            //                success: true
+                            //                ));
+                            //    }
+                            //    if (vtexPrice.price == localPrice.price)
+                            //    {
+                            //        this.notProccecedPrices.Add(localPrice);
+                            //    }
+                            //}
                         }
                         catch (VtexException vtexException)
                         {

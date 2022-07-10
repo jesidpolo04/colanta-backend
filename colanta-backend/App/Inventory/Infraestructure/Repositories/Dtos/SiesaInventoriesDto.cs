@@ -3,7 +3,7 @@
     using App.Inventory.Domain;
     public class SiesaInventoriesDto
     {
-        public SiesaInventoryDto[] inventario { get; set; }
+        public SiesaInventoryDto[] inventario_almacen { get; set; }
     }
 
     public class SiesaInventoryDto

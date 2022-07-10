@@ -32,6 +32,20 @@ namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
             return siesaOrderDiscount;
         }
 
+        public async Task<SiesaOrder[]> getAllSiesaOrdersByFinalizado(bool finalizado)
+        {
+            EFSiesaOrder[] efSiesaOrders = this.dbContext.SiesaOrders
+                .Include(siesaOrder => siesaOrder.detalles)
+                .Include(siesaOrder => siesaOrder.descuentos)
+                .Where(siesaOrder => siesaOrder.finalizado == finalizado).ToArray();
+            List<SiesaOrder> siesaOrders = new List<SiesaOrder>();
+            foreach(EFSiesaOrder efSiesaOrder in efSiesaOrders)
+            {
+                siesaOrders.Add(efSiesaOrder.getSiesaOrderFromEfSiesaOrder());
+            }
+            return siesaOrders.ToArray();
+        }
+
         public async Task<SiesaOrder> getSiesaOrderBySiesaId(string siesaId)
         {
             EFSiesaOrder[] siesaOrders = this.dbContext.SiesaOrders

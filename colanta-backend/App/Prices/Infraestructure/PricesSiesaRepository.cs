@@ -11,19 +11,23 @@ namespace colanta_backend.App.Prices.Infraestructure
     using System.Net.Http.Headers;
     using System.Text.Json;
     using Shared.Domain;
+    using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
     public class PricesSiesaRepository : Domain.PricesSiesaRepository
     {
         private HttpClient httpClient;
         private IConfiguration configuration;
+        private SiesaAuth siesaAuth;
         public PricesSiesaRepository(IConfiguration configuration)
         {
             this.httpClient = new HttpClient();
             this.configuration = configuration;
+            this.siesaAuth = new SiesaAuth(configuration);
         }
         public async Task<Price[]> getAllPrices()
         {
-            string endpoint = "/precios";
+            await this.setHeaders();
+            string endpoint = "/api/ColantaWS/PreciosMercos";
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
@@ -38,5 +42,11 @@ namespace colanta_backend.App.Prices.Infraestructure
             }
             return prices.ToArray();
         }
+        private async Task setHeaders()
+        {
+            this.httpClient.DefaultRequestHeaders.Remove("Authorization");
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await this.siesaAuth.getToken());
+        }
+
     }
 }

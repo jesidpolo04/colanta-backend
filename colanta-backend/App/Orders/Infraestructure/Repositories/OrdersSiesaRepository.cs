@@ -7,7 +7,10 @@ namespace colanta_backend.App.Orders.Infraestructure
     using Promotions.Domain;
     using System.Text.Json;
     using System.Net.Http;
+    using Shared.Domain;
     using Microsoft.Extensions.Configuration;
+    using colanta_backend.App.Orders.SiesaOrders.Domain;
+
     public class OrdersSiesaRepository : Domain.OrdersSiesaRepository
     {
         private SkusRepository skusLocalRepository;
@@ -26,17 +29,41 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.httpClient = new HttpClient();
             this.configuration = configuration;
         }
-        public async Task<Order> saveOrder(Order order)
+
+        public async Task<SiesaOrder> getOrderBySiesaId(string siesaId)
         {
-            string endpoint = "/siesa_order_endpoint";
+            string endpoint = "/ordenes/" + siesaId;
+            HttpResponseMessage siesaResponse = await httpClient.GetAsync("http://localhost:3333" + endpoint);
+            string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
+            if (!siesaResponse.IsSuccessStatusCode)
+            {
+                throw new SiesaException((int)siesaResponse.StatusCode, "Siesa respondió con status: " + siesaResponse.StatusCode + "contenido: '" + siesaResponseBody + "'");
+            }
+            UpdatedSiesaOrderResponseDto siesaOrderDto = JsonSerializer.Deserialize<UpdatedSiesaOrderResponseDto>(siesaResponseBody);
+            SiesaOrder siesaOrder = siesaOrderDto.pedido.getSiesaOrderFtomDto();
+            siesaOrder.finalizado = siesaOrderDto.finalizado;
+            return siesaOrder;
+        }
+
+        public async Task<SiesaOrder> saveOrder(Order order)
+        {
+            string endpoint = "/ordenes";
             VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(this.skusLocalRepository, this.promotionLocalRepository);
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(order.order_json);
             SiesaOrderDto siesaOrderDto = await mapper.getSiesaOrder(vtexOrderDto);
             string jsonContent = JsonSerializer.Serialize(siesaOrderDto);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
-            await httpClient.PostAsync(this.configuration["SiesaUrl"] + endpoint, httpContent);
-            System.Console.WriteLine(jsonContent);
-            return order;
+            HttpResponseMessage siesaResponse = await httpClient.PostAsync("http://localhost:3333" + endpoint, httpContent);
+            string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
+            if (!siesaResponse.IsSuccessStatusCode)
+            {
+                throw new SiesaException((int)siesaResponse.StatusCode, "Siesa respondió con status: " + siesaResponse.StatusCode + "contenido: '" + siesaResponseBody + "'");
+            }
+            SiesaOrderIdResponseDto siesaOrderIdResponseDto = JsonSerializer.Deserialize<SiesaOrderIdResponseDto>(siesaResponseBody);
+            SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFtomDto();
+            siesaOrder.siesa_id = siesaOrderIdResponseDto.id;
+            siesaOrder.finalizado = false;
+            return siesaOrder;
         }
     }
 }

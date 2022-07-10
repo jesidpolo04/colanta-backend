@@ -6,6 +6,8 @@
         Task<SiesaOrder> saveSiesaOrder(SiesaOrder siesaOrder);
         Task<SiesaOrder> getSiesaOrderBySiesaId(string siesaId);
         Task<SiesaOrder> getSiesaOrderByVtexId(string vtexId);
+        Task<SiesaOrder[]> getAllSiesaOrdersByFinalizado(bool finalizado);
+
         Task<SiesaOrder> updateSiesaOrder(SiesaOrder siesaOrder);
 
         Task<SiesaOrderDetail> updateSiesaOrderDetail(SiesaOrderDetail siesaOrderDetail);
