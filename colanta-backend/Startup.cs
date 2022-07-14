@@ -54,6 +54,7 @@ namespace colanta_backend
             services.AddTransient<App.Products.Domain.SkusRepository, App.Products.Infraestructure.SkusEFRepository>();
             services.AddTransient<App.Products.Domain.SkusVtexRepository, App.Products.Infraestructure.SkusVtexRepository>();
             services.AddTransient<App.Products.Domain.ProductsSiesaRepository, App.Products.Infraestructure.ProductsSiesaRepository>();
+            services.AddTransient<App.Products.Domain.GetSkuVtexIdBySiesaId>();
             //Dependencies Injections Prices
             services.AddTransient<App.Prices.Domain.PricesRepository , App.Prices.Infraestructure.PricesEFRepository>();
             services.AddTransient<App.Prices.Domain.PricesVtexRepository, App.Prices.Infraestructure.PricesVtexRepository>();
@@ -79,10 +80,13 @@ namespace colanta_backend
             services.AddTransient<App.Orders.Domain.OrdersRepository, App.Orders.Infraestructure.OrdersEFRepository>();
             services.AddTransient<App.Orders.Domain.OrdersVtexRepository, App.Orders.Infraestructure.OrdersVtexRepository>();
             services.AddTransient<App.Orders.Domain.OrdersSiesaRepository, App.Orders.Infraestructure.OrdersSiesaRepository>();
+            //Dependencies Injections PaymentMethods
+            services.AddTransient<App.Orders.Domain.PaymentMethodsRepository, App.Orders.Infraestructure.PaymentMethodsEFRepository>();
             //Dependencies Injections SiesaOrders
             services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersEFRepository>();
             services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersHistoryRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersHistoryEFRepository>();
             services.AddTransient<App.Orders.Jobs.UpdateSiesaOrders, App.Orders.Jobs.UpdateSiesaOrders>();
+            services.AddTransient<App.Orders.Domain.GetOrderDetailsVtexId>();
 
             //Dependencies Injections Shared
             services.AddTransient<ILogs, ProcessLogs>();

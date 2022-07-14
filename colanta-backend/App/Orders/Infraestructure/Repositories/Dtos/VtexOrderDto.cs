@@ -5,6 +5,8 @@
         public ShippingDataDto shippingData { get; set; }
         public string orderId { get; set; }
         public string creationDate { get; set; }
+        public int value { get; set; }
+        public string status { get; set; }
         public ClientProfileDataDto clientProfileData { get; set; }
         public PaymentDataDto paymentData { get; set; }
         public string salesChannel { get; set; }
@@ -72,5 +74,6 @@
     public class PaymentDto
     {
         public string paymentSystem { get; set; }
+        public string paymentSystemName { get; set; }
     }
 }

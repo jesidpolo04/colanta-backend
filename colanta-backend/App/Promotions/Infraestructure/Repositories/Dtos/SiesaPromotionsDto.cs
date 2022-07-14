@@ -64,7 +64,7 @@
                     }
                     if(this.configuracion.tipo == "maximo_precio")
                     {
-                        // implementar cambiar entidad
+                        promotion.maximum_unit_price_discount = (decimal) this.configuracion.valor;
                     }
                     promotion.gifts_ids = "[]";
                     promotion.list_sku_1_buy_together_ids = "[]";
@@ -107,6 +107,7 @@
                 default:
                     break;
             }
+
             promotion.name = this.nombre;
             promotion.begin_date_utc = this.fecha_inicio_utc;
             promotion.end_date_utc = this.fecha_final_utc;

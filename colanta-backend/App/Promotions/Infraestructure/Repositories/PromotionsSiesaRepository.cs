@@ -29,6 +29,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
         {
             await this.setHeaders();
             string endpoint = "/api/ColantaWS/Descuentos";
+            
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
@@ -37,9 +38,10 @@ namespace colanta_backend.App.Promotions.Infraestructure
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             SiesaPromotionsDto siesaPromotionsDto = JsonSerializer.Deserialize<SiesaPromotionsDto>(siesaResponseBody);
             List<Promotion> promotions = new List<Promotion>();
+            SiesaPromotionMapper promotionMapper = new SiesaPromotionMapper();
             foreach(SiesaPromotionDto siesaPromotionDto in siesaPromotionsDto.promociones)
             {
-                promotions.Add(siesaPromotionDto.getPromotionFromDto());
+                promotions.Add(promotionMapper.getPromotionFromDto(siesaPromotionDto));
             }
             return promotions.ToArray();
         }

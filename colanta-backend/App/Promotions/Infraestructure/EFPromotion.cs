@@ -23,6 +23,7 @@
         public string end_date_utc { get; set; }
         public bool is_active { get; set; }
 
+        public decimal maximum_unit_price_discount { get; set; }
         public decimal nominal_discount_value { get; set; }
         public decimal percentual_discount_value { get; set; }
         public decimal percentual_shipping_discount_value { get; set; }
@@ -67,6 +68,7 @@
             promotion.begin_date_utc = this.begin_date_utc;
             promotion.end_date_utc = this.end_date_utc;
             promotion.is_active = this.is_active;
+            promotion.maximum_unit_price_discount = this.maximum_unit_price_discount;
             promotion.nominal_discount_value = this.nominal_discount_value;
             promotion.percentual_discount_value = this.percentual_discount_value;
             promotion.percentual_shipping_discount_value = this.percentual_shipping_discount_value;
@@ -115,6 +117,7 @@
             this.begin_date_utc = promotion.begin_date_utc;
             this.end_date_utc = promotion.end_date_utc;
             this.is_active = promotion.is_active;
+            this.maximum_unit_price_discount = promotion.maximum_unit_price_discount;
             this.nominal_discount_value = promotion.nominal_discount_value;
             this.percentual_discount_value = promotion.percentual_discount_value;
             this.percentual_shipping_discount_value = promotion.percentual_shipping_discount_value;

@@ -1,5 +1,6 @@
 ﻿namespace colanta_backend.App.Orders.SiesaOrders.Domain
 {
+    using System;
     public class SiesaOrderDetail
     {
         public int id { get; set; }
@@ -16,5 +17,19 @@
         public string referencia_vtex { get; set; }
         public int order_id { get; set; }
         public SiesaOrder order { get; set; }
+
+        public bool thisItemExists(SiesaOrderDetail[] newOrderDetails)
+        {
+            bool exists = false;
+            foreach (SiesaOrderDetail newOrderDetail in newOrderDetails)
+            {
+                if(this.referencia_item == newOrderDetail.referencia_item)
+                {
+                    exists = true;
+                    break;
+                }
+            }
+            return exists;
+        }
     }
 }

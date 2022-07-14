@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace colanta_backend.Migrations
 {
@@ -8,21 +8,21 @@ namespace colanta_backend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-               name: "brands",
-               columns: table => new
-               {
-                   id = table.Column<int>(type: "int", nullable: false)
-                       .Annotation("SqlServer:Identity", "1, 1"),
-                   id_vtex = table.Column<int>(type: "int", nullable: true),
-                   id_siesa = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
-                   business = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                   name = table.Column<string>(type: "varchar(25)", unicode: false, maxLength: 25, nullable: false),
-                   state = table.Column<short>(type: "smallint", nullable: true)
-               },
-               constraints: table =>
-               {
-                   table.PrimaryKey("PK_brands", x => x.id);
-               });
+                name: "brands",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id_vtex = table.Column<int>(type: "int", nullable: true),
+                    id_siesa = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
+                    business = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    name = table.Column<string>(type: "varchar(25)", unicode: false, maxLength: 25, nullable: false),
+                    state = table.Column<short>(type: "smallint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_brands", x => x.id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "categories",
@@ -106,6 +106,19 @@ namespace colanta_backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "order_status",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_order_status", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "orders",
                 columns: table => new
                 {
@@ -122,6 +135,36 @@ namespace colanta_backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_orders", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "orders_history",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    vtex_id = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    json = table.Column<string>(type: "text", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_orders_history", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "payment_methods",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    is_promissory = table.Column<bool>(type: "bit", nullable: false),
+                    vtex_id = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_payment_methods", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -159,6 +202,7 @@ namespace colanta_backend.Migrations
                     begin_date_utc = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     end_date_utc = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
+                    maximum_unit_price_discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     nominal_discount_value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     percentual_discount_value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     percentual_shipping_discount_value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -193,11 +237,15 @@ namespace colanta_backend.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     siesa_id = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    finalizado = table.Column<bool>(type: "bit", nullable: false),
                     co = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     fecha = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     doc_tercero = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     fecha_entrega = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     referencia_vtex = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    estado_vtex = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    id_metodo_pago_vtex = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    metodo_pago_vtex = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     cond_pago = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     notas = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     direccion = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -208,6 +256,22 @@ namespace colanta_backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_siesa_orders", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "siesa_orders_history",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    siesa_id = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    vtex_id = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    order_json = table.Column<string>(type: "text", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_siesa_orders_history", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -489,7 +553,16 @@ namespace colanta_backend.Migrations
                 name: "inventories");
 
             migrationBuilder.DropTable(
+                name: "order_status");
+
+            migrationBuilder.DropTable(
                 name: "orders");
+
+            migrationBuilder.DropTable(
+                name: "orders_history");
+
+            migrationBuilder.DropTable(
+                name: "payment_methods");
 
             migrationBuilder.DropTable(
                 name: "prices");
@@ -505,6 +578,9 @@ namespace colanta_backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "siesa_order_discounts");
+
+            migrationBuilder.DropTable(
+                name: "siesa_orders_history");
 
             migrationBuilder.DropTable(
                 name: "users");

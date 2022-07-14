@@ -14,6 +14,7 @@
 
         public string? discountType { get; set; }
         public bool cumulative { get; set; }
+        public decimal maximumUnitPriceDiscount { get; set; }
         public decimal nominalShippingDiscountValue { get; set; }
         public decimal nominalDiscountValue { get; set; }
         public decimal percentualDiscountValue { get; set; }
@@ -42,7 +43,7 @@
         public decimal? totalValueCeling { get; set; }
         public decimal? itemMaxPrice { get; set; }
         public decimal? itemMinPrice { get; set; }
-        public object[] clusterExpressions { get; set; }
+        public string[] clusterExpressions { get; set; }
         public string? clusterOperator { get; set; }
         public int? maxUsage { get; set; }
         public int? maxUsagePerClient { get; set; }

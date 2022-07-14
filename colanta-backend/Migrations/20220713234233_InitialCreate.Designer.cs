@@ -10,7 +10,7 @@ using colanta_backend.App.Shared.Infraestructure;
 namespace colanta_backend.Migrations
 {
     [DbContext(typeof(ColantaContext))]
-    [Migration("20220625183126_InitialCreate")]
+    [Migration("20220713234233_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -271,6 +271,65 @@ namespace colanta_backend.Migrations
                     b.ToTable("orders");
                 });
 
+            modelBuilder.Entity("colanta_backend.App.Orders.Infraestructure.EFOrderHistory", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("created_at")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("json")
+                        .HasColumnType("text");
+
+                    b.Property<string>("vtex_id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("orders_history");
+                });
+
+            modelBuilder.Entity("colanta_backend.App.Orders.Infraestructure.EFOrderStatus", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("order_status");
+                });
+
+            modelBuilder.Entity("colanta_backend.App.Orders.Infraestructure.EFPaymentMethod", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<bool>("is_promissory")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("vtex_id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("payment_methods");
+                });
+
             modelBuilder.Entity("colanta_backend.App.Orders.SiesaOrders.Infraestructure.EFSiesaOrder", b =>
                 {
                     b.Property<int>("id")
@@ -290,10 +349,22 @@ namespace colanta_backend.Migrations
                     b.Property<string>("doc_tercero")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("estado_vtex")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("fecha")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("fecha_entrega")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("finalizado")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("id_metodo_pago_vtex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("metodo_pago_vtex")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("negocio")
@@ -402,6 +473,32 @@ namespace colanta_backend.Migrations
                     b.HasIndex("order_id");
 
                     b.ToTable("siesa_order_discounts");
+                });
+
+            modelBuilder.Entity("colanta_backend.App.Orders.SiesaOrders.Infraestructure.EFSiesaOrderHistory", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("created_at")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("order_json")
+                        .HasColumnType("text");
+
+                    b.Property<string>("siesa_id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("vtex_id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("siesa_orders_history");
                 });
 
             modelBuilder.Entity("colanta_backend.App.Prices.Infraestructure.EFPrice", b =>
@@ -602,6 +699,9 @@ namespace colanta_backend.Migrations
 
                     b.Property<string>("max_number_of_affected_items_group_key")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("maximum_unit_price_discount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("minimum_quantity_buy_together")
                         .HasColumnType("int");

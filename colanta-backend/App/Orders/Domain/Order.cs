@@ -11,5 +11,6 @@
         public string last_change_date { get; set; }
         public string current_change_date { get; set; }
         public string business { get; set; }
+
     }
 }

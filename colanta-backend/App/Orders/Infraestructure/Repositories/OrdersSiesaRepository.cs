@@ -40,7 +40,7 @@ namespace colanta_backend.App.Orders.Infraestructure
                 throw new SiesaException((int)siesaResponse.StatusCode, "Siesa respondió con status: " + siesaResponse.StatusCode + "contenido: '" + siesaResponseBody + "'");
             }
             UpdatedSiesaOrderResponseDto siesaOrderDto = JsonSerializer.Deserialize<UpdatedSiesaOrderResponseDto>(siesaResponseBody);
-            SiesaOrder siesaOrder = siesaOrderDto.pedido.getSiesaOrderFtomDto();
+            SiesaOrder siesaOrder = siesaOrderDto.pedido.getSiesaOrderFromDto();
             siesaOrder.finalizado = siesaOrderDto.finalizado;
             return siesaOrder;
         }
@@ -50,7 +50,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             string endpoint = "/ordenes";
             VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(this.skusLocalRepository, this.promotionLocalRepository);
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(order.order_json);
-            SiesaOrderDto siesaOrderDto = await mapper.getSiesaOrder(vtexOrderDto);
+            SiesaOrderDto siesaOrderDto = await mapper.getSiesaOrderDto(vtexOrderDto);
             string jsonContent = JsonSerializer.Serialize(siesaOrderDto);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
             HttpResponseMessage siesaResponse = await httpClient.PostAsync("http://localhost:3333" + endpoint, httpContent);
@@ -60,7 +60,7 @@ namespace colanta_backend.App.Orders.Infraestructure
                 throw new SiesaException((int)siesaResponse.StatusCode, "Siesa respondió con status: " + siesaResponse.StatusCode + "contenido: '" + siesaResponseBody + "'");
             }
             SiesaOrderIdResponseDto siesaOrderIdResponseDto = JsonSerializer.Deserialize<SiesaOrderIdResponseDto>(siesaResponseBody);
-            SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFtomDto();
+            SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFromDto();
             siesaOrder.siesa_id = siesaOrderIdResponseDto.id;
             siesaOrder.finalizado = false;
             return siesaOrder;

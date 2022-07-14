@@ -9,7 +9,7 @@
         public SiesaOrderDetailDto[] Detalles { get; set; }
         public SiesaOrderDiscountDto[] Descuentos { get; set; }
 
-        public SiesaOrder getSiesaOrderFtomDto()
+        public SiesaOrder getSiesaOrderFromDto()
         {
             SiesaOrder siesaOrder = new SiesaOrder();
             siesaOrder.co = this.Encabezado.C263CO;

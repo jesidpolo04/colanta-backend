@@ -26,10 +26,22 @@
         public async Task<SiesaOrder> Invoke(Order order)
         {
             string orderJson = await this.vtexRepository.getOrderByVtexId(order.vtex_id);
-            
             order.order_json = orderJson;
-            Order localOrder = await this.localRepository.SaveOrder(order);
+
+            Order localOrder = await this.localRepository.getOrderByVtexId(order.vtex_id);
+            if(localOrder != null)
+            {
+                await this.localRepository.SaveOrderHistory(localOrder);
+                await this.localRepository.deleteOrder(localOrder);
+            }
+
+            localOrder = await this.localRepository.SaveOrder(order);
             SiesaOrder siesaOrder = await this.siesaRepository.saveOrder(localOrder);
+            PaymentMethod paymentMethod = await this.vtexRepository.getOrderPaymentMethod(siesaOrder.referencia_vtex);
+            OrderStatus orderStatus = await this.vtexRepository.getOrderStatus(siesaOrder.referencia_vtex);
+            siesaOrder.estado_vtex = orderStatus.status;
+            siesaOrder.metodo_pago_vtex = paymentMethod.name;
+            siesaOrder.id_metodo_pago_vtex = paymentMethod.vtex_id;
             return await siesaOrdersLocalRepository.saveSiesaOrder(siesaOrder);
         }
     }

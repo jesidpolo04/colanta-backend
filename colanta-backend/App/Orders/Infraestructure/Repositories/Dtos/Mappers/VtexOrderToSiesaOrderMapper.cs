@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using Products.Domain;
     using Promotions.Domain;
+    using SiesaOrders.Domain;
     using System.Threading.Tasks;
     public class VtexOrderToSiesaOrderMapper
     {
@@ -13,7 +14,7 @@
             this.skusLocalRepository = skusLocalRepository;
             this.promotionsLocalRepository = promotionsLocalRepository;
         }
-        public async Task<SiesaOrderDto> getSiesaOrder(VtexOrderDto vtexOrder)
+        public async Task<SiesaOrderDto> getSiesaOrderDto(VtexOrderDto vtexOrder)
         {
             SiesaOrderDto siesaOrder = new SiesaOrderDto();
             SiesaOrderHeaderDto header = new SiesaOrderHeaderDto();

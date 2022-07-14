@@ -109,6 +109,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.beginDateUtc = promotion.begin_date_utc;
             requestBody.endDateUtc = promotion.end_date_utc;
             requestBody.isActive = promotion.is_active;
+            requestBody.maximumUnitPriceDiscount = promotion.maximum_unit_price_discount;
             requestBody.nominalDiscountValue = promotion.nominal_discount_value;
             requestBody.percentualDiscountValue = promotion.percentual_discount_value;
             requestBody.percentualShippingDiscountValue = promotion.percentual_shipping_discount_value;
@@ -230,6 +231,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.beginDateUtc = promotion.begin_date_utc;
             requestBody.endDateUtc = promotion.end_date_utc;
             requestBody.isActive = promotion.is_active;
+            requestBody.maximumUnitPriceDiscount = promotion.maximum_unit_price_discount;
             requestBody.nominalDiscountValue = promotion.nominal_discount_value;
             requestBody.percentualDiscountValue = promotion.percentual_discount_value;
             requestBody.percentualShippingDiscountValue = promotion.percentual_shipping_discount_value;

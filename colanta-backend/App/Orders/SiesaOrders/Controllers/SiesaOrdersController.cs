@@ -23,7 +23,7 @@ namespace colanta_backend.App.Orders.SiesaOrders.Controllers
         [Route("siesa-orders")]
         public async Task<SiesaOrder> saveSiesaOrder(SiesaOrderDto siesaOrderDto)
         {
-            SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFtomDto();
+            SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFromDto();
             siesaOrder = await this.localRepository.saveSiesaOrder(siesaOrder);
             return siesaOrder;
         }
@@ -32,7 +32,7 @@ namespace colanta_backend.App.Orders.SiesaOrders.Controllers
         [Route("siesa-orders")]
         public async Task<SiesaOrder> updateSiesaOrder(SiesaOrderDto siesaOrderDto)
         {
-            SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFtomDto();
+            SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFromDto();
             siesaOrder = await this.localRepository.updateSiesaOrder(siesaOrder);
             return siesaOrder;
         }

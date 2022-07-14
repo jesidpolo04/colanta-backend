@@ -19,6 +19,7 @@
         public string end_date_utc { get; set; }
         public bool is_active { get; set; }
 
+        public decimal maximum_unit_price_discount { get; set; }
         public decimal nominal_discount_value { get; set; }
         public decimal percentual_discount_value { get; set; }
         public decimal percentual_shipping_discount_value { get; set; }

@@ -42,6 +42,9 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFCreditAccount> CreditAccounts { get; set; }
         public virtual DbSet<EFGiftCard> GiftCards { get; set; }
         public virtual DbSet<EFOrder> Orders { get; set; }
+        public virtual DbSet<EFOrderHistory> OrderHistory { get; set; }
+        public virtual DbSet<EFPaymentMethod> PaymentMethods { get; set; }
+        public virtual DbSet<EFOrderStatus> OrderStatus { get; set; }
         public virtual DbSet<EFSiesaOrder> SiesaOrders { get; set; }
         public virtual DbSet<EFSiesaOrderDetail> SiesaOrderDetails { get; set; }
         public virtual DbSet<EFSiesaOrderDiscount> SiesaOrderDiscounts { get; set; }
@@ -235,6 +238,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.name).IsRequired();
                 entity.Property(e => e.begin_date_utc);
                 entity.Property(e => e.end_date_utc);
+                entity.Property(e => e.maximum_unit_price_discount);
                 entity.Property(e => e.nominal_discount_value);
                 entity.Property(e => e.percentual_discount_value);
                 entity.Property(e => e.percentual_shipping_discount_value);
@@ -301,6 +305,33 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.order_json).HasColumnType("text");
             });
 
+            modelBuilder.Entity<EFOrderHistory>(entity =>
+            {
+                entity.ToTable("orders_history");
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.vtex_id);
+                entity.Property(e => e.json).HasColumnType("text");
+                entity.Property(e => e.created_at).HasDefaultValueSql("getdate()");
+            });
+
+            modelBuilder.Entity<EFPaymentMethod>(entity =>
+            {
+                entity.ToTable("payment_methods");
+
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.name);
+                entity.Property(e => e.is_promissory);
+                entity.Property(e => e.vtex_id);
+            });
+
+            modelBuilder.Entity<EFOrderStatus>(entity =>
+            {
+                entity.ToTable("order_status");
+
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.status);
+            });
+
             modelBuilder.Entity<EFSiesaOrder>(entity =>
             {
                 entity.ToTable("siesa_orders");
@@ -313,6 +344,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.doc_tercero);
                 entity.Property(e => e.fecha_entrega);
                 entity.Property(e => e.referencia_vtex);
+                entity.Property(e => e.estado_vtex);
                 entity.Property(e => e.cond_pago);
                 entity.Property(e => e.notas);
                 entity.Property(e => e.direccion);

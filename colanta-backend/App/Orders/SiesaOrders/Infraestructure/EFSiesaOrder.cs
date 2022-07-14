@@ -12,6 +12,9 @@
         public string doc_tercero { get; set; }
         public string fecha_entrega { get; set; }
         public string referencia_vtex { get; set; }
+        public string estado_vtex { get; set; }
+        public string id_metodo_pago_vtex { get; set; }
+        public string metodo_pago_vtex { get; set; }
         public string cond_pago { get; set; }
         public string notas { get; set; }
         public string direccion { get; set; }
@@ -30,6 +33,9 @@
             this.doc_tercero = siesaOrder.doc_tercero;
             this.fecha_entrega = siesaOrder.fecha_entrega;
             this.referencia_vtex = siesaOrder.referencia_vtex;
+            this.estado_vtex = siesaOrder.estado_vtex;
+            this.id_metodo_pago_vtex = siesaOrder.id_metodo_pago_vtex;
+            this.metodo_pago_vtex = siesaOrder.metodo_pago_vtex;
             this.cond_pago = siesaOrder.cond_pago;
             this.notas = siesaOrder.notas;
             this.direccion = siesaOrder.direccion;
@@ -68,6 +74,9 @@
             siesaOrder.doc_tercero = this.doc_tercero;
             siesaOrder.fecha_entrega = this.fecha_entrega;
             siesaOrder.referencia_vtex = this.referencia_vtex;
+            siesaOrder.estado_vtex = this.estado_vtex;
+            siesaOrder.id_metodo_pago_vtex = this.id_metodo_pago_vtex;
+            siesaOrder.metodo_pago_vtex = this.metodo_pago_vtex;
             siesaOrder.cond_pago = this.cond_pago;
             siesaOrder.notas = this.notas;
             siesaOrder.direccion = this.direccion;
