@@ -38,6 +38,7 @@
         public string brands_ids { get; set; }
         public Category[] categories { get; set; }
         public string categories_ids { get; set; }
+        public string cluster_expressions { get; set; }
 
         public int gift_quantity_selectable { get; set; }
         public Sku[] gifts { get; set; }

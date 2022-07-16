@@ -52,7 +52,7 @@ namespace colanta_backend.App.Users.Infraestructure
             HttpResponseMessage siesaResponse = await this.httpClient.PostAsync(configuration["SiesaUrl"] + endpoint, httpContent);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException(400, "Hubo un problema con Siesa, respondió con estado: " + siesaResponse.StatusCode);
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string responseBody = await siesaResponse.Content.ReadAsStringAsync();
             SaveUserSiesaResponseDto responseDto = JsonSerializer.Deserialize<SaveUserSiesaResponseDto>(responseBody);

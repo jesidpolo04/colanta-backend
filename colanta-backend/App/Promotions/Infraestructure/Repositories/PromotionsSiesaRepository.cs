@@ -33,7 +33,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException(400, "Hubo un problema al consultar las promociones en Siesa, respondió con status" + siesaResponse.StatusCode);
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             SiesaPromotionsDto siesaPromotionsDto = JsonSerializer.Deserialize<SiesaPromotionsDto>(siesaResponseBody);

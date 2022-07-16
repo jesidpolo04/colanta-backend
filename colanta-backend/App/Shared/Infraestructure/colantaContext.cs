@@ -250,6 +250,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.skus_ids);
                 entity.Property(e => e.brands_ids);
                 entity.Property(e => e.categories_ids);
+                entity.Property(e => e.cluster_expressions);
                 entity.Property(e => e.gifts_ids);
                 entity.Property(e => e.list_sku_1_buy_together_ids);
                 entity.Property(e => e.list_sku_2_buy_together_ids);

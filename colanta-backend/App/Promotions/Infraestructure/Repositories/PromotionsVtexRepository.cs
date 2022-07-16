@@ -85,7 +85,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
             if(vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
-                throw new VtexException("No fue posible obtener la promoción con Vtex Id " + vtexId + ", respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             if(vtexResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
@@ -162,6 +162,8 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.brands = vtexPromotionBrands.ToArray();
             requestBody.brandsAreInclusive = true;
 
+            requestBody.clusterExpressions = JsonSerializer.Deserialize<string[]>(promotion.cluster_expressions);
+
             VtexPromotionGifts vtexPromotionGifts = new VtexPromotionGifts();
             vtexPromotionGifts.quantitySelectable = promotion.gift_quantity_selectable;
             List<VtexPromotionGift> vtexGiftList = new List<VtexPromotionGift>();
@@ -208,7 +210,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             HttpResponseMessage vtexResponse = await this.httpClient.PostAsync(url, httpContent);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible crear la promoción, Vtex respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
 
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
@@ -284,6 +286,8 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.brands = vtexPromotionBrands.ToArray();
             requestBody.brandsAreInclusive = true;
 
+            requestBody.clusterExpressions = JsonSerializer.Deserialize<string[]>(promotion.cluster_expressions);
+
             VtexPromotionGifts vtexPromotionGifts = new VtexPromotionGifts();
             vtexPromotionGifts.quantitySelectable = promotion.gift_quantity_selectable;
             List<VtexPromotionGift> vtexGiftList = new List<VtexPromotionGift>();
@@ -330,7 +334,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             if (!vtexResponse.IsSuccessStatusCode)
             {
                 System.Console.WriteLine(await vtexResponse.Content.ReadAsStringAsync());
-                throw new VtexException("No fue posible actualizar la promoción, Vtex respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
 
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();

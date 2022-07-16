@@ -79,16 +79,16 @@ namespace colanta_backend.App.Prices.Infraestructure
             string endpoint = "/pricing/prices/" + vtexId;
             string url = "https://api.vtex.com/" + accountName;
 
-            HttpResponseMessage vtexReponse = await this.httpClient.GetAsync(url + endpoint);
-            if(vtexReponse.StatusCode != System.Net.HttpStatusCode.OK && vtexReponse.StatusCode != System.Net.HttpStatusCode.NotFound)
+            HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url + endpoint);
+            if(vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
-                throw new VtexException("Hubo un problema con Vtex, respondió con status" + vtexReponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
-            if(vtexReponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if(vtexResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 return null;
             }
-            string vtexResponseBody = await vtexReponse.Content.ReadAsStringAsync();
+            string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             GetPriceDto getPriceDto = JsonSerializer.Deserialize<GetPriceDto>(vtexResponseBody);
             return getPriceDto.getPriceFromDto();
         }
@@ -110,7 +110,7 @@ namespace colanta_backend.App.Prices.Infraestructure
             HttpResponseMessage vtexResponse = await this.httpClient.PutAsync(url + endpoint, httpContent);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("Hubo un problema con Vtex, respondió con status" + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             return price;
         }
@@ -132,7 +132,7 @@ namespace colanta_backend.App.Prices.Infraestructure
             HttpResponseMessage vtexResponse = await this.httpClient.PutAsync(url + endpoint, httpContent);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("Hubo un problema con Vtex, respondió con status" + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             return price;
         }

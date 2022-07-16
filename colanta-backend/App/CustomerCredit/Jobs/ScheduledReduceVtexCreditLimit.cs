@@ -1,22 +1,22 @@
-﻿namespace colanta_backend.App.Orders.Jobs
+﻿namespace colanta_backend.App.CustomerCredit.Jobs
 {
     using Microsoft.Extensions.Hosting;
     using NCrontab;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    public class ScheduledUpdateSiesaOrders : IHostedService, IDisposable
+    public class ScheduledReduceVtexCreditLimit : IHostedService, IDisposable
     {
         private readonly CrontabSchedule _crontabSchedule;
         private DateTime _nextRun;
         private const string Schedule = "0 0/5 * * * *"; // run each 5 min
-        private readonly UpdateSiesaOrders _task;
+        private readonly ReduceVtexCreditLimit _task;
 
-        public ScheduledUpdateSiesaOrders(UpdateSiesaOrders task)
+        public ScheduledReduceVtexCreditLimit(ReduceVtexCreditLimit task)
         {
-            _task = task;
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
+            _task = task;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

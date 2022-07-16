@@ -51,7 +51,7 @@
             HttpResponseMessage vtexResponse = await this.httpClient.PutAsync(url, httpContent);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible actualizar el limite de crédito de la cuenta: " + vtexCreditAccountId + " Vtex Respondio con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             JObject vtexCreditAccount = JObject.Parse(vtexResponseBody);
@@ -86,7 +86,7 @@
             {
                 System.Console.WriteLine("Excepcion - Vtex Response");
                 System.Console.WriteLine(await invoiceVtexResponse.Content.ReadAsStringAsync());
-                throw new VtexException("No fue posible crear la factura, Vtex respondió con status" + invoiceVtexResponse.StatusCode);
+                throw new VtexException(invoiceVtexResponse, $"Vtex respondió con status {invoiceVtexResponse.StatusCode}");
             }
         }
 
@@ -105,7 +105,7 @@
             {
                 System.Console.WriteLine("Excepcion - Vtex Response");
                 System.Console.WriteLine(await preAuthorizationVtexResponse.Content.ReadAsStringAsync());
-                throw new VtexException("No fue posible crear la transacción (pre-autorización) en Vtex, respondió con status" + preAuthorizationVtexResponse.StatusCode);
+                throw new VtexException(preAuthorizationVtexResponse, $"Vtex respondió con status {preAuthorizationVtexResponse.StatusCode}");
             }
             string preAuthorizationVtexResponseBody = await preAuthorizationVtexResponse.Content.ReadAsStringAsync();
             JObject preAuthorization = JObject.Parse(preAuthorizationVtexResponseBody);
@@ -122,7 +122,7 @@
             {
                 System.Console.WriteLine("Excepcion - Vtex Response");
                 System.Console.WriteLine(await vtexResponse.Content.ReadAsStringAsync());
-                throw new VtexException("No fue posible consultar las facturas por cuenta, (cuenta: "+ accountVtexId +") Vtex respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             InvoicesByAccountDto invoicesByAccountDto = JsonSerializer.Deserialize<InvoicesByAccountDto>(vtexResponseBody);
@@ -152,7 +152,7 @@
             }
             if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
-                throw new VtexException("Hubo un problema al intentar consultar la cuenta: " + vtexId + "Vtex respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             AccountDto accountDto = JsonSerializer.Deserialize<AccountDto>(vtexResponseBody);
@@ -177,16 +177,16 @@
             HttpResponseMessage vtexResponse = await this.httpClient.PostAsync(url, httpContent);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible crear la cuenta de crédito con documento: " + creditAccount.document + " y email: " + creditAccount.email + ", Vtex respondio con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             AccountDto accountDto = JsonSerializer.Deserialize<AccountDto>(vtexResponseBody);
             return accountDto.getCreditAccountFromDto();
         }
 
-        public async Task paidInvoice(string invoiceId, string vtexCreditAccountId)
+        public async Task paidInvoice(Invoice invoice)
         {
-            string endpoint = "/api/creditcontrol/accounts/"+ vtexCreditAccountId +"/invoices/" + invoiceId;
+            string endpoint = "/api/creditcontrol/accounts/"+ invoice.creditAccountId +"/invoices/" + invoice.id;
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint;
             object requestBody = new {
                 status = "Paid",
@@ -198,7 +198,7 @@
             HttpResponseMessage vtexResponse = await this.httpClient.PutAsync(url, httpContent);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible pagar la factura: " + invoiceId + "Vtex respondió con status:" + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
         }
     }

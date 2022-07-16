@@ -30,7 +30,7 @@ namespace colanta_backend.App.GiftCards.Infraestructure
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException(((int)siesaResponse.StatusCode), "Falló la petición a siesa con estado: " + siesaResponse.StatusCode);
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string siesaBodyResponse = await siesaResponse.Content.ReadAsStringAsync();
             SiesaGiftCardsDto siesaGiftCardsDto = JsonSerializer.Deserialize<SiesaGiftCardsDto>(siesaBodyResponse);
@@ -53,7 +53,7 @@ namespace colanta_backend.App.GiftCards.Infraestructure
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException(((int)siesaResponse.StatusCode), "Falló la petición a siesa con estado: " + siesaResponse.StatusCode);
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string siesaBodyResponse = await siesaResponse.Content.ReadAsStringAsync();
             SiesaBalanceGiftCardDto siesaBalanceGiftCardDto = JsonSerializer.Deserialize<SiesaBalanceGiftCardDto>(siesaBodyResponse);
@@ -66,7 +66,7 @@ namespace colanta_backend.App.GiftCards.Infraestructure
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException(((int)siesaResponse.StatusCode), "Falló la petición a siesa con estado: " + siesaResponse.StatusCode);
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string siesaBodyResponse = await siesaResponse.Content.ReadAsStringAsync();
             SiesaGiftCardsDto siesaGiftCardsDto = JsonSerializer.Deserialize<SiesaGiftCardsDto>(siesaBodyResponse);

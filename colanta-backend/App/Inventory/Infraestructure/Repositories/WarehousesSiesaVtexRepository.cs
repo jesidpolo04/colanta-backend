@@ -28,7 +28,7 @@
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(url);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException(400, "Hubo un problema al consultar los alamacenes existentes");
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             WarehouseDto[] warehousesDto = JsonSerializer.Deserialize<WarehouseDto[]>(siesaResponseBody);

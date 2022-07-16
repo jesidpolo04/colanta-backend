@@ -89,7 +89,7 @@
 
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible actualizar el inventario, Vtex respondió con status" + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
 
             return inventory;

@@ -78,15 +78,11 @@
 
         public async Task<Brand> getBrandByVtexId(int? id)
         {
-            if (id == null)
-            {
-                throw new VtexException("El id vtex es nulo, no se puede realizar la consulta con un id nulo");
-            }
             string requestEndpoint = "https://" + this.accountName + "." + this.vtexEnviroment + "/api/catalog_system/pvt/brand/" + id.ToString();
             HttpResponseMessage responseVtex = await this.httpClient.GetAsync(requestEndpoint);
             if (!responseVtex.IsSuccessStatusCode)
             {
-                throw new VtexException("VTEX repondió con status: " + responseVtex.StatusCode + " al intentar obtener la marca con id vtex: " + id);
+                throw new VtexException(responseVtex, $"Vtex respondió con status {responseVtex.StatusCode}");
             }
             string responseBodyVtex = await responseVtex.Content.ReadAsStringAsync();
             GetVtexBrandDTO vtexBrand = JsonSerializer.Deserialize<GetVtexBrandDTO>(responseBodyVtex);
@@ -110,7 +106,7 @@
             HttpResponseMessage responseVtex = await this.httpClient.PostAsync(url + endpoint, content);
             if (!responseVtex.IsSuccessStatusCode)
             {
-                throw new VtexException("VTEX repondió con status: "+responseVtex.StatusCode+" al intentar crear la marca: "+brand.name);
+                throw new VtexException(responseVtex, $"Vtex respondió con status {responseVtex.StatusCode}");
             }
             string responseBodyVtex = await responseVtex.Content.ReadAsStringAsync();
             VtexBrandDTO vtexBrand = JsonSerializer.Deserialize<VtexBrandDTO>(responseBodyVtex);
@@ -135,7 +131,7 @@
             HttpResponseMessage responseVtex = await this.httpClient.PutAsync(url + endpoint, content);
             if (!responseVtex.IsSuccessStatusCode)
             {
-                throw new VtexException("VTEX repondió con status: " + responseVtex.StatusCode + " al intentar actualizar la marca: " + brand.name);
+                throw new VtexException(responseVtex, $"Vtex respondió con status {responseVtex.StatusCode}");
             }
             return brand;
         }
@@ -147,7 +143,7 @@
             HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible traer la lista de marcas, Vtex respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string responseBody = await vtexResponse.Content.ReadAsStringAsync();
             VtexListBrandDto[] listBrandsDto = JsonSerializer.Deserialize<VtexListBrandDto[]>(responseBody);

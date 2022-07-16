@@ -31,7 +31,7 @@
             HttpResponseMessage responseSiesaBrands = await this.httpClient.GetAsync(this.configuration["SiesaUrl"] + endpoint);
             if (!responseSiesaBrands.IsSuccessStatusCode)
             {
-                throw new SiesaException(500, "error en marcas");
+                throw new SiesaException(responseSiesaBrands, $"Siesa respondió con status: {responseSiesaBrands.StatusCode}");
             }
             string siesaBrandsBody = await responseSiesaBrands.Content.ReadAsStringAsync();
             SiesaBrandsDTO siesaBrandsDto = JsonSerializer.Deserialize<SiesaBrandsDTO>(siesaBrandsBody);

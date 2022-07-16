@@ -28,7 +28,7 @@ namespace colanta_backend.App.CustomerCredit.Infraestructure
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException((int)siesaResponse.StatusCode, "No fue posible obtener el credito actual de la cuenta con documento" + document + ", siesa respondió con status: " + siesaResponse.StatusCode);
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             SiesaAccountCurrentCreditDto currentCreditDto = JsonSerializer.Deserialize<SiesaAccountCurrentCreditDto>(siesaResponseBody);
@@ -42,7 +42,7 @@ namespace colanta_backend.App.CustomerCredit.Infraestructure
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException((int)siesaResponse.StatusCode, "No fue posible obtener las cuentas de crédito, siesa respondió con status: " + siesaResponse.StatusCode);
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             SiesaAllAccountsDto siesaAllAccounts = JsonSerializer.Deserialize<SiesaAllAccountsDto>(siesaResponseBody);

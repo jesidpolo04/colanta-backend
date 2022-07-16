@@ -91,7 +91,7 @@
             HttpResponseMessage vtexResponse = await this.httpClient.GetAsync("https://" + this.accountName + "." + this.vtexEnvironment + endpoint + treeLevel);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible traer el arbol de categorías, Vtex respondió con estado: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             VtexTreeCategoryDto[] treeCategoriesDto = JsonSerializer.Deserialize<VtexTreeCategoryDto[]>(vtexResponseBody);
@@ -161,7 +161,7 @@
             HttpResponseMessage vtexResponse = await this.httpClient.PostAsync("https://" + this.accountName + "." + this.vtexEnvironment + endpoint, content);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible crear la categoría, Vtex respondió con estado: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexBodyResponse = await vtexResponse.Content.ReadAsStringAsync();
             CreatedVtexCategoryDto createdCategoryDto = JsonSerializer.Deserialize<CreatedVtexCategoryDto>(vtexBodyResponse);
@@ -198,7 +198,7 @@
             HttpResponseMessage vtexResponse = await this.httpClient.PutAsync("https://" + this.accountName + "." + this.vtexEnvironment + endpoint + vtexId, content);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible actualizar la categoría, Vtex respondió con estado: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             return category;
         }

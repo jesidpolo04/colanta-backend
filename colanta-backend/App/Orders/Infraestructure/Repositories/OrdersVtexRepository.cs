@@ -40,7 +40,7 @@
             HttpResponseMessage vtexResponse = await httpClient.GetAsync(url);
             if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
-                throw new VtexException("No fue posible consultar la orden con Vtex Id" + vtexOrderId + " Vtex respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             return vtexResponseBody;
@@ -53,7 +53,7 @@
             HttpResponseMessage vtexResponse = await httpClient.GetAsync(url);
             if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
-                throw new VtexException("No fue posible consultar la orden con Vtex Id" + orderVtexId + " Vtex respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(vtexResponseBody);
@@ -70,7 +70,7 @@
             HttpResponseMessage vtexResponse = await httpClient.GetAsync(url);
             if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
-                throw new VtexException("No fue posible consultar la orden con Vtex Id" + orderVtexId + " Vtex respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(vtexResponseBody);
@@ -87,7 +87,7 @@
             HttpResponseMessage vtexResponse = await this.httpClient.PostAsync(url, httpContent);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible cambiar el estado de la orden:" + orderVtexId + " Vtex respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             return true;
         }
@@ -138,7 +138,7 @@
             Console.WriteLine("La Response:" + await vtexResponse.Content.ReadAsStringAsync());
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible actualizar la orden con Vtex Id" + oldSiesaOrder.referencia_vtex + " Vtex respondió con status: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             
             return await vtexResponse.Content.ReadAsStringAsync();

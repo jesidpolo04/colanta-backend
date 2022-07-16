@@ -38,6 +38,7 @@
         public string skus_ids { get; set; }
         public string brands_ids { get; set; }
         public string categories_ids { get; set; }
+        public string cluster_expressions { get; set; }
 
         public int gift_quantity_selectable { get; set; }
         public string gifts_ids { get; set; }
@@ -77,14 +78,11 @@
             promotion.minimum_quantity_buy_together = this.minimum_quantity_buy_together;
             promotion.quantity_to_affect_buy_together = this.quantity_to_affect_buy_together;
 
-
             promotion.products_ids = this.products_ids;
-
             promotion.skus_ids = this.skus_ids;
-
             promotion.brands_ids = this.brands_ids;
-
             promotion.categories_ids = this.categories_ids;
+            promotion.cluster_expressions = this.cluster_expressions;
 
             promotion.gift_quantity_selectable = this.gift_quantity_selectable;
   
@@ -129,6 +127,7 @@
             this.skus_ids = promotion.skus_ids;
             this.brands_ids = promotion.brands_ids;
             this.categories_ids = promotion.categories_ids;
+            this.cluster_expressions = promotion.cluster_expressions;
             this.gift_quantity_selectable = promotion.gift_quantity_selectable;
             this.gifts_ids = promotion.gifts_ids;
             this.percentual_discount_value_list_1 = promotion.percentual_discount_value_list_1;

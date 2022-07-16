@@ -158,6 +158,8 @@
 
         private Promotion setApplyProperties(Promotion promotion, SiesaPromotionDto promotionDto)
         {
+            const string customerTypeField = "customerClass";  
+
             List<string> products_ids = new List<string>();
             if (promotionDto.aplica_a.productos != null)
             {
@@ -211,6 +213,16 @@
                 }
             }
             promotion.brands_ids = JsonSerializer.Serialize(brands_ids);
+
+            List<string> customer_expressions = new List<string>();
+            if (promotionDto.aplica_a.tipo_cliente != null)
+            {
+                foreach(string tipoCliente in promotionDto.aplica_a.tipo_cliente)
+                {
+                    customer_expressions.Add($"{customerTypeField} = \"{tipoCliente}\"");
+                }
+            }
+            promotion.cluster_expressions = JsonSerializer.Serialize(customer_expressions);
 
             return promotion;
         }

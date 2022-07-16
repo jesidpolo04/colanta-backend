@@ -76,6 +76,7 @@ namespace colanta_backend
             services.AddTransient<App.CustomerCredit.Domain.CreditAccountsRepository, App.CustomerCredit.Infraestructure.CreditAccountsEFRepository>();
             services.AddTransient<App.CustomerCredit.Domain.CreditAccountsVtexRepository, App.CustomerCredit.Infraestructure.CreditAccountsVtexRepository>();
             services.AddTransient<App.CustomerCredit.Domain.CreditAccountsSiesaRepository, App.CustomerCredit.Infraestructure.CreditAccountsSiesaRepository>();
+            services.AddTransient<App.CustomerCredit.Jobs.ReduceVtexCreditLimit>();
             //Dependencies Injections Orders
             services.AddTransient<App.Orders.Domain.OrdersRepository, App.Orders.Infraestructure.OrdersEFRepository>();
             services.AddTransient<App.Orders.Domain.OrdersVtexRepository, App.Orders.Infraestructure.OrdersVtexRepository>();
@@ -115,6 +116,7 @@ namespace colanta_backend
             //services.AddHostedService<ScheduledUpToVtexNullPromotions>();
 
             //services.AddHostedService<ScheduledRenderCreditAccounts>();
+            //services.AddHostedService<ScheduledReduceVtexCreditLimit>();
 
             services.AddHostedService<ScheduledUpdateSiesaOrders>();
 

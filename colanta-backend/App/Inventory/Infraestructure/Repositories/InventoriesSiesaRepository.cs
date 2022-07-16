@@ -33,7 +33,7 @@ namespace colanta_backend.App.Inventory.Infraestructure
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException(400, "Hubo un problema con Siesa, al consultar los inventarios del almacen: " + warehouseSiesaId);
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             SiesaInventoriesDto siesaInventoriesDto = JsonSerializer.Deserialize<SiesaInventoriesDto>(siesaResponseBody);

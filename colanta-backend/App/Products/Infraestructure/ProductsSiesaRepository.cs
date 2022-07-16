@@ -32,7 +32,7 @@
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException(((int)siesaResponse.StatusCode), "Falló la petición a siesa con estado: " + siesaResponse.StatusCode);
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string siesaBodyResponse = await siesaResponse.Content.ReadAsStringAsync();
             SiesaProductsDto siesaProductsDto = JsonSerializer.Deserialize<SiesaProductsDto>(siesaBodyResponse);

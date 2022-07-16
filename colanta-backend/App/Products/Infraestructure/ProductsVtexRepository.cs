@@ -82,7 +82,7 @@ namespace colanta_backend.App.Products.Infraestructure
             HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
             if(vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
-                throw new VtexException("Hubo un problema con Vtex al intentar buscar el producto con referencia id: " + refId);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             if (vtexResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
@@ -104,7 +104,7 @@ namespace colanta_backend.App.Products.Infraestructure
             HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
             if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
-                throw new VtexException("Hubo un problema con Vtex al intentar buscar el producto con Vtex Id: " + vtexId);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             if (vtexResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
@@ -135,7 +135,7 @@ namespace colanta_backend.App.Products.Infraestructure
             HttpResponseMessage vtexResponse = await this.httpClient.PostAsync(url, httpContent);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                throw new VtexException("No fue posible crear el producto, Vtex respondió con estado: " + vtexResponse.StatusCode);
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             CreatedVtexProductDto productDto = JsonSerializer.Deserialize<CreatedVtexProductDto>(vtexResponseBody);
