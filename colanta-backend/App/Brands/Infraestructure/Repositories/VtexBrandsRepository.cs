@@ -91,6 +91,11 @@
 
         public async Task<Brand?> saveBrand(Brand brand)
         {
+            Brand existVtexBrand =  await this.getBrandByName(brand.name);
+            if(existVtexBrand != null)
+            {
+                return existVtexBrand;
+            }
             string url = "https://" + this.accountName + "." + this.vtexEnviroment;
             string endpoint = "/api/catalog/pvt/brand";
             string jsonContent = JsonSerializer.Serialize(new

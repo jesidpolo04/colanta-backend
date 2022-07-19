@@ -47,7 +47,7 @@
             HttpResponseMessage siesaResponse = await this.httpClient.PostAsync(url, httpContent);
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException((int)siesaResponse.StatusCode, "Error al autenticarse en Siesa, respondió con status: " + siesaResponse.StatusCode);
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             string stringResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             JObject responseBody = JObject.Parse(stringResponseBody);

@@ -22,6 +22,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
         private string apiToken;
         private string accountName;
         private string vtexEnvironment;
+        private JsonSerializerOptions jsonOptions;
 
         public PromotionsVtexRepository(IConfiguration configuration)
         {
@@ -30,6 +31,8 @@ namespace colanta_backend.App.Promotions.Infraestructure
             this.apiToken = configuration["MercolantaVtexToken"];
             this.accountName = configuration["MercolantaAccountName"];
             this.vtexEnvironment = configuration["MercolantaEnvironment"];
+            this.jsonOptions = new JsonSerializerOptions();
+            this.jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
 
             this.httpClient = new HttpClient();
             this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -162,7 +165,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.brands = vtexPromotionBrands.ToArray();
             requestBody.brandsAreInclusive = true;
 
-            requestBody.clusterExpressions = JsonSerializer.Deserialize<string[]>(promotion.cluster_expressions);
+            requestBody.clusterExpressions = JsonSerializer.Deserialize<string[]>(promotion.cluster_expressions, jsonOptions);
 
             VtexPromotionGifts vtexPromotionGifts = new VtexPromotionGifts();
             vtexPromotionGifts.quantitySelectable = promotion.gift_quantity_selectable;
@@ -203,8 +206,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.cumulative = promotion.cumulative;
             requestBody.origin = "Marketplace";
 
-            string jsonContent = JsonSerializer.Serialize(requestBody);
-            System.Console.WriteLine(jsonContent);
+            string jsonContent = JsonSerializer.Serialize(requestBody, jsonOptions);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
 
             HttpResponseMessage vtexResponse = await this.httpClient.PostAsync(url, httpContent);
@@ -214,7 +216,6 @@ namespace colanta_backend.App.Promotions.Infraestructure
             }
 
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
-            System.Console.WriteLine(vtexResponseBody);
             ResponseCreateVtexPromotionDto responseCreateVtexPromotionDto = JsonSerializer.Deserialize<ResponseCreateVtexPromotionDto>(vtexResponseBody);
             return responseCreateVtexPromotionDto.getPromotionFromDto();
         }
@@ -286,7 +287,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.brands = vtexPromotionBrands.ToArray();
             requestBody.brandsAreInclusive = true;
 
-            requestBody.clusterExpressions = JsonSerializer.Deserialize<string[]>(promotion.cluster_expressions);
+            requestBody.clusterExpressions = JsonSerializer.Deserialize<string[]>(promotion.cluster_expressions, jsonOptions);
 
             VtexPromotionGifts vtexPromotionGifts = new VtexPromotionGifts();
             vtexPromotionGifts.quantitySelectable = promotion.gift_quantity_selectable;
@@ -327,13 +328,12 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.cumulative = promotion.cumulative;
             requestBody.origin = "Marketplace";
 
-            string jsonContent = JsonSerializer.Serialize(requestBody);
+            string jsonContent = JsonSerializer.Serialize(requestBody, jsonOptions);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
 
             HttpResponseMessage vtexResponse = await this.httpClient.PostAsync(url, httpContent);
             if (!vtexResponse.IsSuccessStatusCode)
             {
-                System.Console.WriteLine(await vtexResponse.Content.ReadAsStringAsync());
                 throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
 

@@ -665,6 +665,9 @@ namespace colanta_backend.Migrations
                     b.Property<string>("categories_ids")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("cluster_expressions")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("concat_siesa_id")
                         .HasColumnType("nvarchar(max)");
 
@@ -753,6 +756,31 @@ namespace colanta_backend.Migrations
                     b.HasKey("id");
 
                     b.ToTable("promotions");
+                });
+
+            modelBuilder.Entity("colanta_backend.App.Shared.Infraestructure.EFLog", b =>
+                {
+                    b.Property<string>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("exception")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("stack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("throw_at")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("dateTime")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.HasKey("id");
+
+                    b.ToTable("logs");
                 });
 
             modelBuilder.Entity("colanta_backend.App.Shared.Infraestructure.EFProcess", b =>

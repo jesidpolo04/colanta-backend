@@ -16,7 +16,7 @@
         {
             if(brand.id_vtex == null)
             {
-                throw new VtexException("id vtex nulo");
+                return null;
             }
             return await this.brandsVtexRepository.getBrandByVtexId(brand.id_vtex);
         }

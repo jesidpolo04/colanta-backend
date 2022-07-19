@@ -12,14 +12,14 @@
         private string processName = "Carga de categorías nulas a Vtex";
         private CategoriesRepository localRepository;
         private CategoriesVtexRepository vtexRepository;
-        private ILogs logs;
+        private IProcess logs;
         private List<Detail> details;
         private JsonSerializerOptions jsonOptions;
 
         private List<Category> failedCategories;
         private List<Category> loadCategories;
 
-        public UpCategoriesToVtex(CategoriesRepository localRepository, CategoriesVtexRepository vtexRepository, ILogs logs)
+        public UpCategoriesToVtex(CategoriesRepository localRepository, CategoriesVtexRepository vtexRepository, IProcess logs)
         {
             
             this.localRepository = localRepository;

@@ -2,7 +2,7 @@
 {
     using App.Shared.Application;
     using Microsoft.Extensions.Configuration;
-    public class ProcessLogs : ILogs
+    public class ProcessLogs : IProcess
     {
         private ColantaContext dbContext;
         public ProcessLogs(IConfiguration configuration)

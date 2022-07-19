@@ -42,7 +42,6 @@
             sku.unit_multiplier = this.UnitMultiplier;
             sku.ref_id = this.RefId;
             sku.is_active = this.IsActive;
-            sku.product_id = this.ProductId;
 
             return sku;
         }

@@ -7,6 +7,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
 
     public class SkusEFRepository : Domain.SkusRepository
     {
@@ -84,7 +85,9 @@
 
         public async Task<Sku[]> getVtexSkus()
         {
-            EFSku[] efSkus = this.dbContext.Skus.Where(sku => sku.vtex_id != null).ToArray();
+            EFSku[] efSkus = this.dbContext.Skus.Where(sku => sku.vtex_id != null)
+                .Include(s => s.product)
+                .ToArray();
             List<Sku> skus = new List<Sku>();
             foreach (EFSku efSku in efSkus)
             {
@@ -96,8 +99,6 @@
         public async Task<Sku> saveSku(Sku sku)
         {
             EFSku efSku = new EFSku();
-            System.Console.WriteLine("siesa id del producto = " + sku.product.siesa_id);
-            System.Console.WriteLine("id del producto = " + sku.product.id);
             EFProduct efProduct = this.dbContext.Products.Where(e => e.siesa_id == sku.product.siesa_id).First();
             efSku.setEfSkuFromSku(sku);
             efSku.product = efProduct;

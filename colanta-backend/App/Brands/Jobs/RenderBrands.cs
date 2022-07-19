@@ -14,7 +14,8 @@
         public string processName = "Renderizado de marcas";
         private BrandsRepository brandsLocalRepository;
         private BrandsVtexRepository brandsVtexRepository;
-        private ILogs logs;
+        private IProcess processLogger;
+        private ILogger logger;
         private IConfiguration configuration;
         private RenderBrandsMail renderBrandsMail;
 
@@ -26,14 +27,22 @@
         private List<Brand> failedLoadBrands;
         private List<Brand> notProccecedBrands;
         private List<Brand> inactivatedBrands;
+        private int obtainedBrands;
         private JsonSerializerOptions jsonOptions;
 
-        public RenderBrands(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository, ILogs logs, EmailSender emailSender, IConfiguration configuration)
+        public RenderBrands(
+            BrandsRepository brandsLocalRepository, 
+            BrandsVtexRepository brandsVtexRepository, 
+            IProcess processLogger,
+            ILogger logger,
+            EmailSender emailSender, 
+            IConfiguration configuration)
         {
             this.brandsLocalRepository = brandsLocalRepository;
             this.brandsVtexRepository = brandsVtexRepository;
             this.configuration = configuration;
-            this.logs = logs;
+            this.processLogger = processLogger;
+            this.logger = logger;
             this.renderBrandsMail = new RenderBrandsMail(emailSender);
 
             this.console = new CustomConsole();
@@ -46,97 +55,116 @@
             this.failedLoadBrands = new List<Brand>();
             this.notProccecedBrands = new List<Brand>();
             this.inactivatedBrands = new List<Brand>();
-
-            this.console.warningColor().write("Iniciando proceso:")
-                .infoColor().write(this.processName)
-                .grayColor().write("Fecha:")
-                .magentaColor().write(DateTime.Now.ToString()).endPharagraph();
         }
 
-        public async Task<bool> Invoke()
+        public async Task Invoke()
         {
-            BrandsSiesaRepository brandsSiesaRepository = new BrandsSiesaRepository(this.configuration);
-
-            Brand[] siesaBrands = await brandsSiesaRepository.getAllBrands();
-
-            System.Console.WriteLine("LLegó hasta aquí");
-            this.details.Add(new Detail(
-                    origin: "siesa",
-                    success: true,
-                    description: "Petición para obtener todas las marcas de siesa, completada con éxito",
-                    content: JsonSerializer.Serialize(siesaBrands)
-                ));
-            Brand[] deltaBrands = this.brandsLocalRepository.getDeltaBrands(siesaBrands);
-            if (deltaBrands.Length > 0)
+            try
             {
-                foreach (Brand deltaBrand in deltaBrands)
-                {
-                    deltaBrand.state = false;
-                    //await this.brandsVtexRepository.updateBrand(deltaBrand);
-                    this.inactivatedBrands.Add(deltaBrand);
-                    this.details.Add(new Detail(
-                            origin: "vtex",
-                            success: true,
-                            description: "inactivación de la marca, completada con éxito",
-                            content: JsonSerializer.Serialize(deltaBrand, this.jsonOptions)
-                        ));
-                }
-                this.brandsLocalRepository.updateBrands(deltaBrands);
-            }
+                this.console.processStartsAt(processName, DateTime.Now);
+                BrandsSiesaRepository brandsSiesaRepository = new BrandsSiesaRepository(this.configuration);
 
-            foreach (Brand siesaBrand in siesaBrands)
-            {
-                try
+                Brand[] siesaBrands = await brandsSiesaRepository.getAllBrands();
+                this.obtainedBrands = siesaBrands.Length;
+                this.details.Add(new Detail(
+                        origin: "siesa",
+                        action: "obtener todas las marcas",
+                        success: true,
+                        description: null,
+                        content: JsonSerializer.Serialize(siesaBrands)
+                    ));
+                Brand[] deltaBrands = this.brandsLocalRepository.getDeltaBrands(siesaBrands);
+                if (deltaBrands.Length > 0)
                 {
-                    Brand? localBrand = this.brandsLocalRepository.getBrandBySiesaId(siesaBrand.id_siesa);
-
-                    if (localBrand != null && localBrand.state == true)
+                    foreach (Brand deltaBrand in deltaBrands)
                     {
-                        //all right
-                        this.notProccecedBrands.Add(siesaBrand);
+                        try
+                        {
+                            deltaBrand.state = false;
+                            await this.brandsVtexRepository.updateBrand(deltaBrand);
+                            this.inactivatedBrands.Add(deltaBrand);
+                            this.details.Add(new Detail(
+                                    origin: "vtex",
+                                    success: true,
+                                    action: "desactivar marca",
+                                    description: null,
+                                    content: null
+                                )); 
+                        }
+                        catch (VtexException vtexException)
+                        {
+                            this.console.throwException(vtexException.Message);
+                            this.details.Add(new Detail(
+                                    origin: "vtex",
+                                    action: vtexException.requestUrl,
+                                    success: false,
+                                    description: vtexException.Message,
+                                    content: vtexException.responseBody
+                                ));
+                            await this.logger.writelog(vtexException);
+                        }
                     }
-
-                    if (localBrand != null && localBrand.state == false && localBrand.id_vtex != null)
-                    {
-                        //not yet active brand
-                        this.inactiveBrands.Add(localBrand);
-                    }
-
-                    if (localBrand == null)
-                    {
-                        localBrand = this.brandsLocalRepository.saveBrand(siesaBrand);
-                        //Brand? vtexBrand = await this.brandsVtexRepository.saveBrand(localBrand);
-
-                        /*this.details.Add(
-                            new Detail(
-                                origin: "vtex",
-                                success: true,
-                                description: "Petición para crear la marca en vtex, completada con éxito",
-                                content: JsonSerializer.Serialize(vtexBrand, jsonOptions)
-                        ));
-
-                        localBrand.id_vtex = vtexBrand.id_vtex;
-                        this.brandsLocalRepository.updateBrand(localBrand);
-                        this.loadBrands.Add(vtexBrand); */
-                    }
-
+                    this.brandsLocalRepository.updateBrands(deltaBrands);
                 }
-                catch (VtexException vtexException)
+
+                foreach (Brand siesaBrand in siesaBrands)
                 {
-                    this.details.Add(new Detail(
-                                            origin: "vtex",
-                                            success: false,
-                                            description: vtexException.Message
-                                        ));
-                    this.failedLoadBrands.Add(siesaBrand);
-                }
-                catch (Exception exception)
-                {
-                    throw exception;
-                }
-            }
+                    try
+                    {
+                        Brand? localBrand = this.brandsLocalRepository.getBrandBySiesaId(siesaBrand.id_siesa);
 
-            this.logs.Log(
+                        if (localBrand != null && localBrand.state == true)
+                        {
+                            //all right
+                            this.notProccecedBrands.Add(siesaBrand);
+                        }
+
+                        if (localBrand != null && localBrand.state == false && localBrand.id_vtex != null)
+                        {
+                            //not yet active brand
+                            this.inactiveBrands.Add(localBrand);
+                        }
+
+                        if (localBrand == null)
+                        {
+                            localBrand = this.brandsLocalRepository.saveBrand(siesaBrand);
+                            Brand? vtexBrand = await this.brandsVtexRepository.saveBrand(localBrand);
+
+                            this.details.Add(
+                                new Detail(
+                                    origin: "vtex",
+                                    action: "guardar marca",
+                                    success: true,
+                                    description: null,
+                                    content: JsonSerializer.Serialize(vtexBrand, jsonOptions)
+                            ));
+
+                            localBrand.id_vtex = vtexBrand.id_vtex;
+                            this.brandsLocalRepository.updateBrand(localBrand);
+                            this.loadBrands.Add(vtexBrand);
+                        }
+
+                    }
+                    catch (VtexException vtexException)
+                    {
+                        this.console.throwException(vtexException.Message);
+                        this.details.Add(new Detail(
+                                                origin: "vtex",
+                                                action: vtexException.requestUrl,
+                                                success: false,
+                                                description: vtexException.Message,
+                                                content: vtexException.responseBody
+                                            ));
+                        this.failedLoadBrands.Add(siesaBrand);
+                        await this.logger.writelog(vtexException);
+                    }
+                    catch (Exception exception)
+                    {
+                        this.console.throwException(exception.Message);
+                        await this.logger.writelog(exception);
+                    }
+                }
+                this.processLogger.Log(
                     name: this.processName,
                     total_loads: this.loadBrands.Count,
                     total_errors: this.failedLoadBrands.Count,
@@ -144,94 +172,42 @@
                     total_obtained: siesaBrands.Length,
                     json_details: JsonSerializer.Serialize(this.details, jsonOptions)
                 );
-
-            this.writeConsoleLogs();
-            this.renderBrandsMail.sendMail(
-                        loadBrands.ToArray(),
-                        inactiveBrands.ToArray(),
-                        failedLoadBrands.ToArray(),
-                        notProccecedBrands.ToArray(),
-                        inactivatedBrands.ToArray()
-                    );
-
-            this.console.warningColor().write("Proceso Finalizado:")
-                .infoColor().write(this.processName)
-                .grayColor().write("Fecha:")
-                .magentaColor().write(DateTime.Now.ToString()).endPharagraph();
-
-            return true;
-        }
-
-        private void writeConsoleLogs()
-        {
-            if (this.inactivatedBrands.Count > 0)
-            {
-                this.console.errorColor().writeLine("Marcas desactivadas");
-                foreach(Brand inactivatedBrand in this.inactivatedBrands)
-                {
-                    this.console.whiteColor().write(inactivatedBrand.name)
-                        .grayColor().write("siesa id: ")
-                        .infoColor().write(inactivatedBrand.id_siesa)
-                        .grayColor().write("vtex id:")
-                        .infoColor().write(inactivatedBrand.id_vtex.ToString()).skipLine();
-                }
-                this.console.endPharagraph();
+                this.console.processEndstAt(processName, DateTime.Now);
             }
-
-            if (this.loadBrands.Count > 0)
+            catch (SiesaException siesaException)
             {
-                this.console.successColor().writeLine("Marcas Creadas");
-                foreach (Brand loadBrand in this.loadBrands)
-                {
-                    this.console.whiteColor().write(loadBrand.name)
-                        .grayColor().write("siesa id: ")
-                        .infoColor().write(loadBrand.id_siesa)
-                        .grayColor().write("vtex id:")
-                        .infoColor().write(loadBrand.id_vtex.ToString()).skipLine();
-                }
-                this.console.endPharagraph();
+                this.console.throwException(siesaException.Message);
+                this.details.Add(new Detail(
+                    origin: "siesa",
+                    action: siesaException.requestUrl,
+                    content: siesaException.responseBody,
+                    description: siesaException.Message,
+                    success: false
+                    ));
+                this.processLogger.Log(
+                    name: this.processName,
+                    total_loads: this.loadBrands.Count,
+                    total_errors: this.failedLoadBrands.Count,
+                    total_not_procecced: this.inactiveBrands.Count + notProccecedBrands.Count,
+                    total_obtained: obtainedBrands,
+                    json_details: JsonSerializer.Serialize(this.details, jsonOptions)
+                );
+                await this.logger.writelog(siesaException);
+                this.console.processEndstAt(processName, DateTime.Now);
             }
-
-            if (this.failedLoadBrands.Count > 0)
+            catch (Exception exception)
             {
-                this.console.errorColor().writeLine("Marcas no subidas a VTEX debido a error");
-                foreach (Brand failedBrand in this.failedLoadBrands)
-                {
-                    this.console.whiteColor().write(failedBrand.name)
-                        .grayColor().write("siesa id: ")
-                        .infoColor().write(failedBrand.id_siesa)
-                        .grayColor().write("vtex id:")
-                        .infoColor().write(failedBrand.id_vtex.ToString()).skipLine();
-                }
-                this.console.endPharagraph();
-            }
-
-            if (this.inactiveBrands.Count > 0)
-            {
-                this.console.warningColor().writeLine("Marcas por activar en VTEX");
-                foreach (Brand inactiveBrand in this.inactiveBrands)
-                {
-                    this.console.whiteColor().write(inactiveBrand.name)
-                        .grayColor().write("siesa id: ")
-                        .infoColor().write(inactiveBrand.id_siesa)
-                        .grayColor().write("vtex id:")
-                        .infoColor().write(inactiveBrand.id_vtex.ToString()).skipLine();
-                }
-                this.console.endPharagraph();
-            }
-
-            if (this.notProccecedBrands.Count > 0)
-            {
-                this.console.successColor().writeLine("Marcas no procesadas");
-                foreach (Brand notProccecedBrand in this.notProccecedBrands)
-                {
-                    this.console.whiteColor().write(notProccecedBrand.name)
-                        .grayColor().write("siesa id: ")
-                        .infoColor().write(notProccecedBrand.id_siesa)
-                        .grayColor().write("vtex id:")
-                        .infoColor().write(notProccecedBrand.id_vtex.ToString()).skipLine();
-                }
-                this.console.endPharagraph();
+                this.console.throwException(exception.Message);
+                this.processLogger.Log(
+                    name: this.processName,
+                    total_loads: this.loadBrands.Count,
+                    total_errors: this.failedLoadBrands.Count,
+                    total_not_procecced: this.inactiveBrands.Count + notProccecedBrands.Count,
+                    total_obtained: obtainedBrands,
+                    json_details: JsonSerializer.Serialize(this.details, jsonOptions)
+                );
+                await this.logger.writelog(exception);
+                this.console.processEndstAt(processName, DateTime.Now);
             }
         }
     }

@@ -4,51 +4,24 @@
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Configuration;
-    using App.Prices.Domain;
-    using App.Shared.Domain;
-    using App.Shared.Application;
     public class ScheduledRenderPrices : IHostedService, IDisposable
     {
         private Timer _timer;
-        private PricesRepository localRepository;
-        private PricesVtexRepository vtexRepository;
-        private PricesSiesaRepository siesaRepositoy;
-        private EmailSender emailSender;
-        private ILogs logs;
+        private RenderPrices renderPrices;
 
-        public ScheduledRenderPrices
-        (
-            PricesRepository localRepository,
-            PricesVtexRepository vtexRepository,
-            PricesSiesaRepository siesaRepositoy,
-            EmailSender emailSender,
-            ILogs logs
-
-        )
+        public ScheduledRenderPrices(RenderPrices renderPrices)
         {
-            this.localRepository = localRepository;
-            this.vtexRepository = vtexRepository;
-            this.siesaRepositoy = siesaRepositoy;
-            this.emailSender = emailSender;
-            this.logs = logs;
+            this.renderPrices = renderPrices;
         }
 
         public async void Execute(object state)
         {
-            RenderPrices renderPrices = new RenderPrices(
-                this.localRepository,
-                this.vtexRepository,
-                this.siesaRepositoy,
-                this.emailSender,
-                this.logs
-                );
-            await renderPrices.Invoke();
+            await this.renderPrices.Invoke();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(5));
+            _timer = new Timer(Execute, null, TimeSpan.FromMinutes(4), TimeSpan.FromMinutes(5));
             return Task.CompletedTask;
         }
 

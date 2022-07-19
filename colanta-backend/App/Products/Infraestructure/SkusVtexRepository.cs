@@ -124,7 +124,7 @@ namespace colanta_backend.App.Products.Infraestructure
             string endpoint = "/api/catalog/pvt/stockkeepingunit";
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint;
             CreateVtexSkuDto requestBody = new CreateVtexSkuDto();
-            requestBody.ProductId = sku.product_id;
+            requestBody.ProductId = (int)sku.product.vtex_id;
             requestBody.Name = sku.name;
             requestBody.RefId = sku.concat_siesa_id;
             requestBody.UnitMultiplier = sku.unit_multiplier;
@@ -147,9 +147,33 @@ namespace colanta_backend.App.Products.Infraestructure
             return skuDto.getSkuFromDto();
         }
 
-        public Task<Sku> updateSku(Sku sku)
+        public async Task<Sku> updateSku(Sku sku)
         {
-            throw new System.NotImplementedException();
+            string endpoint = "/api/catalog/pvt/stockkeepingunit/" + sku.vtex_id;
+            string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint;
+            UpdateVtexSkuDto requestBody = new UpdateVtexSkuDto();
+            requestBody.Id = (int)sku.vtex_id;
+            requestBody.ProductId = (int)sku.product.vtex_id;
+            requestBody.Name = sku.name;
+            requestBody.RefId = sku.concat_siesa_id;
+            requestBody.UnitMultiplier = sku.unit_multiplier;
+            requestBody.MeasurementUnit = sku.measurement_unit;
+            requestBody.IsActive = sku.is_active;
+            requestBody.PackagedHeight = sku.packaged_height;
+            requestBody.PackagedWidth = sku.packaged_width;
+            requestBody.PackagedLength = sku.packaged_length;
+            requestBody.PackagedWeightKg = sku.packaged_weight_kg;
+
+            string jsonContent = JsonSerializer.Serialize(requestBody);
+            HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage vtexResponse = await this.httpClient.PutAsync(url, httpContent);
+            if (!vtexResponse.IsSuccessStatusCode)
+            {
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
+            }
+            string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
+            CreatedVtexSkuDto skuDto = JsonSerializer.Deserialize<CreatedVtexSkuDto>(vtexResponseBody);
+            return skuDto.getSkuFromDto();
         }
     }
 }

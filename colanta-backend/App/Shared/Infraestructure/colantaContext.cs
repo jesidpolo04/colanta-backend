@@ -50,6 +50,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFSiesaOrderDiscount> SiesaOrderDiscounts { get; set; }
         public virtual DbSet<EFSiesaOrderHistory> SiesaOrdersHistory { get; set; }
         public virtual DbSet<EFProcess> Process { get; set; }
+        public virtual DbSet<EFLog> Logs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -129,6 +130,17 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.total_obtained).HasColumnName("total_obtained");
                 entity.Property(e => e.json_details).HasColumnType("text").HasColumnName("json_details");
                 entity.Property(e => e.dateTime).HasColumnType("dateTime").HasDefaultValueSql("getdate()");
+            });
+
+            modelBuilder.Entity<EFLog>(entity =>
+            {
+                entity.ToTable("logs");
+
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.message);
+                entity.Property(e => e.stack);
+                entity.Property(e => e.exception);
+                entity.Property(e => e.throw_at).HasColumnType("dateTime").HasDefaultValueSql("getdate()");
             });
 
             modelBuilder.Entity<EFCategory>(entity =>

@@ -41,13 +41,16 @@ namespace colanta_backend
             //Dependencies Injections Brands
             services.AddTransient<UsersRepository, UsersEFRepository>();
             services.AddTransient<App.Users.Domain.UsersSiesaRepository, App.Users.Infraestructure.UsersSiesaRepository>();
+            
             //Dependencies Injections Brands
             services.AddTransient<BrandsRepository, EFBrandsRepository>();
             services.AddTransient<BrandsVtexRepository, VtexBrandsRepository>();
+            services.AddTransient<App.Brands.Jobs.RenderBrands>();
             //Dependencies Injections Cattegories
             services.AddTransient<App.Categories.Domain.CategoriesRepository , App.Categories.Infraestructure.CategoriesEFRepository>(); //s
             services.AddTransient<App.Categories.Domain.CategoriesVtexRepository, App.Categories.Infraestructure.CategoriesVtexRepository>();
             services.AddTransient<App.Categories.Domain.CategoriesSiesaRepository, App.Categories.Infraestructure.CategoriesMockSiesaRepository>();//s
+            services.AddTransient<App.Categories.Jobs.RenderCategories>();
             //Dependencies Injections Products
             services.AddTransient<App.Products.Domain.ProductsRepository , App.Products.Infraestructure.ProductsEFRepository>();
             services.AddTransient<App.Products.Domain.ProductsVtexRepository, App.Products.Infraestructure.ProductsVtexRepository>();
@@ -55,20 +58,25 @@ namespace colanta_backend
             services.AddTransient<App.Products.Domain.SkusVtexRepository, App.Products.Infraestructure.SkusVtexRepository>();
             services.AddTransient<App.Products.Domain.ProductsSiesaRepository, App.Products.Infraestructure.ProductsSiesaRepository>();
             services.AddTransient<App.Products.Domain.GetSkuVtexIdBySiesaId>();
+            services.AddTransient<App.Products.Jobs.RenderProductsAndSkus>();
+            services.AddTransient<App.Products.Jobs.FixProductSkus>();
             //Dependencies Injections Prices
             services.AddTransient<App.Prices.Domain.PricesRepository , App.Prices.Infraestructure.PricesEFRepository>();
             services.AddTransient<App.Prices.Domain.PricesVtexRepository, App.Prices.Infraestructure.PricesVtexRepository>();
             services.AddTransient<App.Prices.Domain.PricesSiesaRepository, App.Prices.Infraestructure.PricesSiesaRepository>();
+            services.AddTransient<App.Prices.Jobs.RenderPrices>();
             //Depndencies Injectios Inventory
             services.AddTransient<App.Inventory.Domain.InventoriesRepository, App.Inventory.Infraestructure.InventoriesEFRepository>();
             services.AddTransient<App.Inventory.Domain.InventoriesVtexRepository, App.Inventory.Infraestructure.InventoriesVtexRepository>();
             services.AddTransient<App.Inventory.Domain.InventoriesSiesaRepository, App.Inventory.Infraestructure.InventoriesSiesaRepository>();
             services.AddTransient<App.Inventory.Domain.WarehousesRepository, App.Inventory.Infraestructure.WarehousesEFRepository>();
             services.AddTransient<App.Inventory.Domain.WarehousesSiesaVtexRepository, App.Inventory.Infraestructure.WarehousesSiesaVtexRepository>();
+            services.AddTransient<App.Inventory.Jobs.RenderInventories>();
             //Dependencies Injections Promotions
             services.AddTransient<App.Promotions.Domain.PromotionsRepository, App.Promotions.Infraestructure.PromotionsEFRepository>();
             services.AddTransient<App.Promotions.Domain.PromotionsVtexRepository, App.Promotions.Infraestructure.PromotionsVtexRepository>();
             services.AddTransient<App.Promotions.Domain.PromotionsSiesaRepository, App.Promotions.Infraestructure.PromotionsSiesaRepository>();
+            services.AddTransient<App.Promotions.Jobs.RenderPromotions>();
             //Dependencies Injections GiftCards
             services.AddTransient<App.GiftCards.Domain.GiftCardsRepository, App.GiftCards.Infraestructure.GiftCardsEFRepository>();
             services.AddTransient<App.GiftCards.Domain.GiftCardsSiesaRepository, App.GiftCards.Infraestructure.GiftCardsSiesaRepository>();
@@ -90,27 +98,29 @@ namespace colanta_backend
             services.AddTransient<App.Orders.Domain.GetOrderDetailsVtexId>();
 
             //Dependencies Injections Shared
-            services.AddTransient<ILogs, ProcessLogs>();
+            services.AddTransient<IProcess, ProcessLogs>();
+            services.AddTransient<ILogger, EFLogger>();
             services.AddTransient<EmailSender, GmailSender>();
 
             //Scheduled Tasks
-            services.AddHostedService<ScheduledRenderBrands>();
+            //services.AddHostedService<ScheduledRenderBrands>();
             //services.AddHostedService<ScheduledUpdateBrandsState>();
             //services.AddHostedService<ScheduledUpBrandsToVtex>();
 
-            services.AddHostedService<ScheduledRenderCategories>();
+            //services.AddHostedService<ScheduledRenderCategories>();
             //services.AddHostedService<ScheduledUpCategoriesToVtex>();
             //services.AddHostedService<ScheduledUpdateCategoriesState>();
 
-            services.AddHostedService<ScheduledRenderProductsAndSkus>();
+            //services.AddHostedService<ScheduledRenderProductsAndSkus>();
             //services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
             //services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
+            //services.AddHostedService<ScheduledFixProductSku>();
 
-            services.AddHostedService<ScheduledRenderPrices>();
+            //services.AddHostedService<ScheduledRenderPrices>();
 
             //services.AddHostedService<ScheduledRenderWarehouses>();
 
-            services.AddHostedService<ScheduledRenderInventories>();
+            //services.AddHostedService<ScheduledRenderInventories>();
 
             services.AddHostedService<ScheduledRenderPromotions>();
             //services.AddHostedService<ScheduledUpToVtexNullPromotions>();
@@ -118,7 +128,7 @@ namespace colanta_backend
             //services.AddHostedService<ScheduledRenderCreditAccounts>();
             //services.AddHostedService<ScheduledReduceVtexCreditLimit>();
 
-            services.AddHostedService<ScheduledUpdateSiesaOrders>();
+            //services.AddHostedService<ScheduledUpdateSiesaOrders>();
 
             services.AddSwaggerGen(c =>
             {

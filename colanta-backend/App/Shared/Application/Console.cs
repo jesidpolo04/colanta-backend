@@ -95,5 +95,27 @@
             this.color(ConsoleColor.Magenta);
             return this;
         }
+
+        public void processStartsAt(string processName, DateTime at)
+        {
+            this.warningColor().write("Iniciando proceso:")
+                .infoColor().write(processName)
+                .grayColor().write("Fecha Inicio:")
+                .whiteColor().write(DateTime.Now.ToString()).dot();
+        }
+
+        public void processEndstAt(string processName, DateTime at)
+        {
+            this.warningColor().write("Finalizando proceso:")
+                .infoColor().write(processName)
+                .grayColor().write("Fecha Finalización:")
+                .whiteColor().write(DateTime.Now.ToString()).dot();
+        }
+
+        public void throwException(string message)
+        {
+            this.errorColor().write("Error: ")
+                .whiteColor().write(message).dot();
+        }
     }
 }

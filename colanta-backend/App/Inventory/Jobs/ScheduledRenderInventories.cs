@@ -11,43 +11,21 @@
     public class ScheduledRenderInventories : IHostedService, IDisposable
     {
         private Timer _timer;
-        private InventoriesRepository localRepository;
-        private InventoriesVtexRepository vtexRepository;
-        private InventoriesSiesaRepository siesaRepository;
-        private WarehousesRepository warehousesRepository;
-        private ILogs logs;
+        private RenderInventories renderInventories;
 
-        public ScheduledRenderInventories
-            (
-            InventoriesRepository localRepository,
-            InventoriesVtexRepository vtexRepository,
-            InventoriesSiesaRepository siesaRepository,
-            WarehousesRepository warehousesRepository,
-            ILogs logs
-            )
+        public ScheduledRenderInventories(RenderInventories renderInventories)
         {
-            this.localRepository = localRepository;
-            this.vtexRepository = vtexRepository;
-            this.siesaRepository = siesaRepository;
-            this.warehousesRepository = warehousesRepository;
-            this.logs = logs;
+            this.renderInventories = renderInventories;
         }
 
         public async void Execute(object state)
         {
-            RenderInventories renderWarehouses = new RenderInventories(
-                this.localRepository,
-                this.vtexRepository,
-                this.siesaRepository,
-                this.warehousesRepository,
-                this.logs
-                );
-            await renderWarehouses.Invoke();
+            await renderInventories.Invoke();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromMinutes(4), TimeSpan.FromMinutes(5));
+            _timer = new Timer(Execute, null, TimeSpan.Zero, TimeSpan.FromMinutes(15));
             return Task.CompletedTask;
         }
 

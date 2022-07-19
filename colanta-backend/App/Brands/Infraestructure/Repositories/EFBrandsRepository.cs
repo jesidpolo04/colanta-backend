@@ -87,10 +87,11 @@ namespace colanta_backend.App.Brands.Infraestructure
 
         public Brand saveBrand(Brand brand)
         {
-            EFBrand EFBrand = new EFBrand();
-            EFBrand.setEFBrandFromBrand(brand);
-            dbContext.Brands.Add(EFBrand);
+            EFBrand efBrand = new EFBrand();
+            efBrand.setEFBrandFromBrand(brand);
+            dbContext.Brands.Add(efBrand);
             dbContext.SaveChanges();
+            brand.id = efBrand.id;
             return brand;
         }
 

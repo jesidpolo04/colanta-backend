@@ -219,10 +219,12 @@
             {
                 foreach(string tipoCliente in promotionDto.aplica_a.tipo_cliente)
                 {
-                    customer_expressions.Add($"{customerTypeField} = \"{tipoCliente}\"");
+                    customer_expressions.Add($"{customerTypeField}=\"{tipoCliente}\"");
                 }
             }
-            promotion.cluster_expressions = JsonSerializer.Serialize(customer_expressions);
+            var jsonOptions = new JsonSerializerOptions();
+            jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+            promotion.cluster_expressions = JsonSerializer.Serialize(customer_expressions, jsonOptions);
 
             return promotion;
         }

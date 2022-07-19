@@ -9,6 +9,7 @@
     using System.Collections.Generic;
     using Microsoft.Extensions.Configuration;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
     public class CategoriesEFRepository : CategoriesRepository
     {
         private ColantaContext dbContext;
@@ -19,7 +20,9 @@
 
         public async Task<Category[]> getAllCategories()
         {
-            EFCategory[] efCategories = this.dbContext.Categories.ToArray();
+            EFCategory[] efCategories = this.dbContext.Categories
+                                        .Include(c => c.childs)
+                                        .ToArray();
             List<Category> categories = new List<Category>();
             foreach(EFCategory efCategory in efCategories)
             {
@@ -41,7 +44,7 @@
 
         public async Task<Category?> getCategoryBySiesaId(string id)
         {
-            var efCategories = this.dbContext.Categories.Where(category => category.siesa_id == id);
+            var efCategories = this.dbContext.Categories.Where(category => category.siesa_id == id).Include(c => c.childs);
             if(efCategories.ToArray().Length > 0)
             {
                 EFCategory efCategory = efCategories.First();

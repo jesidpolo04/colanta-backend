@@ -13,12 +13,12 @@
         private Timer _timer;
         private CategoriesRepository localRepository;
         private CategoriesVtexRepository vtexRepository;
-        private ILogs logs;
+        private IProcess logs;
 
         public ScheduledUpCategoriesToVtex(
             CategoriesRepository localRepository,
             CategoriesVtexRepository vtexRepository,
-            ILogs logs
+            IProcess logs
 )
         {
             this.localRepository = localRepository;

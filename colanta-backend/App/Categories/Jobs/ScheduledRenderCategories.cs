@@ -10,31 +10,17 @@
     using Microsoft.Extensions.Hosting;
     public class ScheduledRenderCategories : IHostedService, IDisposable
     {
-        private CategoriesRepository localRepository;
-        private CategoriesVtexRepository vtexRepository;
-        private CategoriesSiesaRepository siesaRepository;
-        private ILogs logs;
-        private EmailSender emailSender;
 
         private Timer _timer;
-        public ScheduledRenderCategories(
-            CategoriesRepository localRepository, 
-            CategoriesVtexRepository vtexRepository, 
-            CategoriesSiesaRepository siesaReposiory,
-            ILogs logs,
-            EmailSender emailSender)
+        private RenderCategories renderCategories;
+        public ScheduledRenderCategories(RenderCategories renderCategories)
         {
-            this.localRepository = localRepository;
-            this.vtexRepository = vtexRepository;
-            this.siesaRepository = siesaReposiory;
-            this.logs = logs;
-            this.emailSender = emailSender;
+            this.renderCategories = renderCategories;
         }
 
         public async void Execute(object state)
         {
-            RenderCategories renderCategories = new RenderCategories(this.localRepository, this.vtexRepository, this.siesaRepository, this.logs, this.emailSender);
-            await renderCategories.Invoke();
+            this.renderCategories.Invoke();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

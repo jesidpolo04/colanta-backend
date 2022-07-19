@@ -11,38 +11,20 @@
     public class ScheduledRenderPromotions : IHostedService, IDisposable
     {
         private Timer _timer;
-        private PromotionsRepository localRepository;
-        private PromotionsVtexRepository vtexRepository;
-        private PromotionsSiesaRepository siesaRepositoy;
-        private ILogs logs;
-        public ScheduledRenderPromotions
-        (
-            PromotionsRepository localRepository,
-            PromotionsVtexRepository vtexRepository,
-            PromotionsSiesaRepository siesaRepositoy,
-            ILogs logs
-        )
+        private RenderPromotions renderPromotions;
+        public ScheduledRenderPromotions(RenderPromotions renderPromotions)
         {
-            this.localRepository = localRepository;
-            this.vtexRepository = vtexRepository;
-            this.siesaRepositoy = siesaRepositoy;
-            this.logs = logs;
+            this.renderPromotions = renderPromotions;
         }
 
         public async void Execute(object state)
         {
-            RenderPromotions renderPromotions = new RenderPromotions(
-                this.localRepository,
-                this.vtexRepository,
-                this.siesaRepositoy,
-                this.logs
-                );
-            await renderPromotions.Invoke();
+            await this.renderPromotions.Invoke();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+            _timer = new Timer(Execute, null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
             return Task.CompletedTask;
         }
 

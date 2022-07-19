@@ -57,7 +57,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             if (!siesaResponse.IsSuccessStatusCode)
             {
-                throw new SiesaException((int)siesaResponse.StatusCode, "Siesa respondió con status: " + siesaResponse.StatusCode + "contenido: '" + siesaResponseBody + "'");
+                throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             SiesaOrderIdResponseDto siesaOrderIdResponseDto = JsonSerializer.Deserialize<SiesaOrderIdResponseDto>(siesaResponseBody);
             SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFromDto();
