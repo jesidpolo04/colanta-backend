@@ -8,7 +8,7 @@
 
         public TransactionSummaryDto(string siesaCardId, string transactionId)
         {
-            this.id = id;
+            this.id = transactionId;
             this.cardId = siesaCardId;
             _self = new _self();
             _self.href = $"/giftcards/{siesaCardId}/transactions/{transactionId}";
