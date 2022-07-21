@@ -24,6 +24,7 @@
             this.date = transactionCancellation.date;
             this.value = transactionCancellation.value;
             this.oid = transactionCancellation.oid;
+            this.transaction = new EFGiftCardTransaction();
             this.transaction.setEfTransaction(transactionCancellation.transaction);
         }
     }

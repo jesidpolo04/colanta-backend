@@ -34,6 +34,7 @@
             this.date = transactionAuthorization.date;
             this.value = transactionAuthorization.value;
             this.oid = transactionAuthorization.oid;
+            this.transaction = new EFGiftCardTransaction();
             this.transaction.setEfTransaction(transactionAuthorization.transaction);
         }
     }

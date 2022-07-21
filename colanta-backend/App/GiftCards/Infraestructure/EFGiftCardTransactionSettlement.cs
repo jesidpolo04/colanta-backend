@@ -24,6 +24,7 @@
             this.date = transactionSettlement.date;
             this.value = transactionSettlement.value;
             this.oid = transactionSettlement.oid;
+            this.transaction = new EFGiftCardTransaction();
             this.transaction.setEfTransaction(transactionSettlement.transaction);
         }
     }
