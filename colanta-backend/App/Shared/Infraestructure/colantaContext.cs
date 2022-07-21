@@ -318,7 +318,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.date).HasDefaultValueSql("getdate()");
 
                 entity.HasOne(e => e.card).WithMany().HasForeignKey(e => e.card_id);
-                entity.OwnsOne(e => e.transaction_authorization).WithOwner(e => e.transaction).HasPrincipalKey(e => e.transaction_authorization_id);
+                entity.HasOne(e => e.transaction_authorization).WithOne(e => e.transaction).HasForeignKey<EFGiftCardTransaction>(e => e.transaction_authorization_id);
             });
 
             modelBuilder.Entity<EFGiftCardTransactionAuthorization>(entity =>
