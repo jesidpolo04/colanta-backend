@@ -38,8 +38,7 @@
             this.transaction_authorization_id = transaction.transaction_authorization_id;
             this.date = transaction.date;
 
-            this.card = new EFGiftCard();
-            this.card.setEfGiftCardFromGiftCard(transaction.card);
+            this.card_id = transaction.card.id;
 
             EFGiftCardTransactionAuthorization efTransactionAuthorization = new EFGiftCardTransactionAuthorization();
             efTransactionAuthorization.date = transaction.transaction_authorization.date;
