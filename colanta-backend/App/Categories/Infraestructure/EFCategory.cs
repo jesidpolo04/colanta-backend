@@ -71,12 +71,12 @@
             if(this.father != null)
             {
                 Category father = new Category(
-                        id: this.id,
-                        siesa_id: this.siesa_id,
-                        vtex_id: this.vtex_id,
-                        name: this.name,
-                        business: this.business,
-                        isActive: this.isActive
+                        id: this.father.id,
+                        siesa_id: this.father.siesa_id,
+                        vtex_id: this.father.vtex_id,
+                        name: this.father.name,
+                        business: this.father.business,
+                        isActive: this.father.isActive
                     );
                 category.setFather(father);
             }

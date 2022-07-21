@@ -41,6 +41,10 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFPromotion> Promotions { get; set; }
         public virtual DbSet<EFCreditAccount> CreditAccounts { get; set; }
         public virtual DbSet<EFGiftCard> GiftCards { get; set; }
+        public virtual DbSet<EFGiftCardTransaction> GiftCardsTransactions { get; set; }
+        public virtual DbSet<EFGiftCardTransactionAuthorization> GiftCardsTransactionsAuthorizations { get; set; }
+        public virtual DbSet<EFGiftCardTransactionCancellation> GiftCardsTransactionsCancellations { get; set; }
+        public virtual DbSet<EFGiftCardTransactionSettlement> GiftCardsTransactionsSettlements { get; set; }
         public virtual DbSet<EFOrder> Orders { get; set; }
         public virtual DbSet<EFOrderHistory> OrderHistory { get; set; }
         public virtual DbSet<EFPaymentMethod> PaymentMethods { get; set; }
@@ -302,6 +306,51 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.token);
                 entity.Property(e => e.expire_date);
                 entity.Property(e => e.emision_date);
+            });
+
+            modelBuilder.Entity<EFGiftCardTransaction>(entity =>
+            {
+                entity.ToTable("giftcards_transactions");
+
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.json);
+                entity.Property(e => e.value);
+                entity.Property(e => e.date).HasDefaultValueSql("getdate()");
+
+                entity.HasOne(e => e.card).WithMany().HasForeignKey(e => e.card_id);
+                entity.OwnsOne(e => e.transaction_authorization).WithOwner(e => e.transaction).HasPrincipalKey(e => e.transaction_authorization_id);
+            });
+
+            modelBuilder.Entity<EFGiftCardTransactionAuthorization>(entity =>
+            {
+                entity.ToTable("giftcards_transactions_authorizations");
+
+                entity.Property(e => e.oid).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.value);
+                entity.Property(e => e.date).HasDefaultValueSql("getdate()");
+                entity.HasOne(e => e.transaction).WithOne(e => e.transaction_authorization).HasForeignKey<EFGiftCardTransaction>(e => e.transaction_authorization_id);
+            });
+
+            modelBuilder.Entity<EFGiftCardTransactionCancellation>(entity =>
+            {
+                entity.ToTable("giftcards_transactions_cancellations");
+
+                entity.Property(e => e.oid).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.date).HasDefaultValueSql("getdate()");
+                entity.Property(e => e.value);
+
+                entity.HasOne(e => e.transaction).WithMany().HasForeignKey("transaction_id");
+            });
+
+            modelBuilder.Entity<EFGiftCardTransactionSettlement>(entity =>
+            {
+                entity.ToTable("giftcards_transactions_settlements");
+
+                entity.Property(e => e.oid).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.date).HasDefaultValueSql("getdate()");
+                entity.Property(e => e.value);
+
+                entity.HasOne(e => e.transaction).WithMany().HasForeignKey("transaction_id");
             });
 
             modelBuilder.Entity<EFOrder>(entity =>

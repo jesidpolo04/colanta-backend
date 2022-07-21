@@ -1,4 +1,4 @@
-﻿namespace colanta_backend.App.GiftCards.Controllers
+﻿namespace colanta_backend.App.GiftCards.Application
 {
     public class TransactionSummaryDto
     {
@@ -6,16 +6,12 @@
         public string id  { get; set; }
         public _self _self { get; set; }
 
-        public TransactionSummaryDto()
+        public TransactionSummaryDto(string siesaCardId, string transactionId)
         {
-            id = "642e_21a12_2022_06";
+            this.id = id;
+            this.cardId = siesaCardId;
             _self = new _self();
-            _self.href = "";
-        }
-
-        public void setCardId(string cardId)
-        {
-            this.cardId = cardId;
+            _self.href = $"/giftcards/{siesaCardId}/transactions/{transactionId}";
         }
     }
 

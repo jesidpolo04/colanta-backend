@@ -1,17 +1,10 @@
 using colanta_backend.App.Users.Domain;
 using colanta_backend.App.Users.Infraestructure;
-using colanta_backend.App.Brands.Jobs;
 using colanta_backend.App.Categories.Jobs;
-using colanta_backend.App.Products.Jobs;
-using colanta_backend.App.Prices.Jobs;
 using colanta_backend.App.Brands.Domain;
 using colanta_backend.App.Brands.Infraestructure;
 using colanta_backend.App.Shared.Application;
 using colanta_backend.App.Shared.Domain;
-using colanta_backend.App.Inventory.Jobs;
-using colanta_backend.App.Promotions.Jobs;
-using colanta_backend.App.CustomerCredit.Jobs;
-using colanta_backend.App.Orders.Jobs;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -51,6 +44,7 @@ namespace colanta_backend
             services.AddTransient<App.Categories.Domain.CategoriesVtexRepository, App.Categories.Infraestructure.CategoriesVtexRepository>();
             services.AddTransient<App.Categories.Domain.CategoriesSiesaRepository, App.Categories.Infraestructure.CategoriesMockSiesaRepository>();//s
             services.AddTransient<App.Categories.Jobs.RenderCategories>();
+            services.AddTransient<App.Categories.Jobs.ActivateAllCategories>();
             //Dependencies Injections Products
             services.AddTransient<App.Products.Domain.ProductsRepository , App.Products.Infraestructure.ProductsEFRepository>();
             services.AddTransient<App.Products.Domain.ProductsVtexRepository, App.Products.Infraestructure.ProductsVtexRepository>();
@@ -110,6 +104,7 @@ namespace colanta_backend
             //services.AddHostedService<ScheduledRenderCategories>();
             //services.AddHostedService<ScheduledUpCategoriesToVtex>();
             //services.AddHostedService<ScheduledUpdateCategoriesState>();
+            //services.AddHostedService<ScheduledActivateAllCategories>();
 
             //services.AddHostedService<ScheduledRenderProductsAndSkus>();
             //services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
@@ -122,7 +117,7 @@ namespace colanta_backend
 
             //services.AddHostedService<ScheduledRenderInventories>();
 
-            services.AddHostedService<ScheduledRenderPromotions>();
+            //services.AddHostedService<ScheduledRenderPromotions>();
             //services.AddHostedService<ScheduledUpToVtexNullPromotions>();
 
             //services.AddHostedService<ScheduledRenderCreditAccounts>();

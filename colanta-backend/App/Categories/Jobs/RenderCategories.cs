@@ -34,6 +34,7 @@
             CategoriesVtexRepository categoriesVtexRepository, 
             CategoriesSiesaRepository categoriesSiesaRepository,
             IProcess logs,
+            ILogger logger,
             EmailSender emailSender
         )
         {
@@ -41,6 +42,7 @@
             this.vtexRepository = categoriesVtexRepository;
             this.siesaRepository = categoriesSiesaRepository;
             this.processLogger = logs;
+            this.logger = logger;
             this.console = new CustomConsole();
             this.renderCategoriesMail = new RenderCategoriesMail(emailSender);
 

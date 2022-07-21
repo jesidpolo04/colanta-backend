@@ -27,7 +27,7 @@ namespace colanta_backend.App.GiftCards.Infraestructure
         public async Task<GiftCard[]> getAllGiftCards()
         {
             string endpoint = "/tarjetas";
-            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
+            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["MockSiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
@@ -42,15 +42,10 @@ namespace colanta_backend.App.GiftCards.Infraestructure
             return gifCards.ToArray();
         }
 
-        public Task<string> getAuthenticationToken(string user, string password)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public async Task<decimal> getGiftCardBalanceBySiesaId(string siesaId)
         {
             string endpoint = "/balance_tarjeta";
-            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
+            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["MockSiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
@@ -63,7 +58,7 @@ namespace colanta_backend.App.GiftCards.Infraestructure
         public async Task<GiftCard[]> getGiftCardsByDocumentAndBusiness(string document, string business)
         {
             string endpoint = "/tarjetas_documento_negocio";
-            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
+            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["MockSiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");

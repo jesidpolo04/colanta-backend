@@ -20,10 +20,10 @@ namespace colanta_backend.App.GiftCards.Controllers
             this.localRepository = localRepository;
             this.siesaRepository = siesaRepository;
         }
-        // GET: api/<ValuesController>
+
         [HttpPost]
-        [Route("api/giftcards/_search")]
-        public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(object vtexInfo)
+        [Route("api/giftcards/_search")] // obtener giftcards
+        public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
             ListAllGiftCardByDocumentAndBusiness listAllGiftCardsByDocumentAndBussines = new ListAllGiftCardByDocumentAndBusiness(this.localRepository, this.siesaRepository);
             GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke("1002999476", "mercolanta");
@@ -41,8 +41,7 @@ namespace colanta_backend.App.GiftCards.Controllers
             return giftCardProviderDtos.ToArray();
         }
 
-        // GET api/<ValuesController>/5
-        [HttpGet("api/giftcards/{giftCardId}")]
+        [HttpGet("api/giftcards/{giftCardId}")] // obtener giftcard
         public async Task<GiftCardDetailProviderResponseDto> getGiftCardBySiesaId(string giftCardId)
         {
             GetAndUpdateGiftCardBySiesaId getAndUpdateGiftCardBySiesaId = new GetAndUpdateGiftCardBySiesaId(
@@ -56,13 +55,54 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpPost]
-        [Route("/giftcards/{giftCardId}/transactions/{transactionId}/cancellations")]
-        public async Task<TransactionSummaryDto> giftCardTransaction(string giftCardId, string transactionId, object body)
+        [Route("/giftcards/{giftCardId}/transactions")] //crear transaccion
+        public async Task<TransactionSummaryDto> createGiftCardTransaction(string giftCardId, CreateGiftCardTransactionDto request)
         {
-            TransactionSummaryDto transactionSummaryDto = new TransactionSummaryDto();
-            transactionSummaryDto.setCardId(giftCardId);
-            return transactionSummaryDto;
+            CreateGiftCardTransaction useCase = new CreateGiftCardTransaction(this.localRepository);
+            return await useCase.Invoke(giftCardId, request);
         }
 
+        [HttpGet]
+        [Route("/giftcards/{giftCardId}/transactions/{transactionId}")] //obtener transaccion
+        public async Task<GetTransactionByIdResponseDto> getGiftCardTransactionById (string giftCardId, string transactionId)
+        {
+            GetTransactionById useCase = new GetTransactionById(this.localRepository);
+            Transaction transaction = await useCase.Invoke(transactionId);
+            var response = GetTransactionByIdResponseMapper.getDto(transaction);
+            return response;
+        }
+
+        [HttpGet]
+        [Route("/giftcards/{giftCardId}/transactions/{transactionId}/authorization")] //obtener autorización
+        public async Task<AuthorizationInfo> getGiftCardTransactionAuthorization(string giftCardId, string transactionId)
+        {
+            GetAuthorization useCase = new GetAuthorization(this.localRepository);
+            TransactionAuthorization transactionAuthorization = await useCase.Invoke(transactionId);
+            AuthorizationInfo response = new AuthorizationInfo();
+            response.setFromTransactionAuthorization(transactionAuthorization);
+            return response;
+        }
+
+        [HttpPost]
+        [Route("/giftcards/{giftCardId}/transactions/{transactionId}/settlements")] //generar liquidacion
+        public async Task<SettlementInfoDto> generateGiftCardTransactionSettlement(string giftCardId, string transactionId, SettlementTransactionRequest body)
+        {
+            SettlementTransaction useCase = new SettlementTransaction(this.localRepository);
+            TransactionSettlement settlement = await useCase.Invoke(transactionId, body.value);
+            SettlementInfoDto response = new SettlementInfoDto();
+            response.setFromTransactionSettlement(settlement);
+            return response;
+        }
+
+        [HttpPost]
+        [Route("/giftcards/{giftCardId}/transactions/{transactionId}/cancellations")] // cancelar
+        public async Task<CancelInfoDto> cancelGiftcardTransaction(string giftCardId, string transactionId, CancelTransactionRequest body)
+        {
+            CancelTransaction useCase = new CancelTransaction(this.localRepository);
+            TransactionCancellation transactionCancellation = await useCase.Invoke(transactionId, body.value);
+            CancelInfoDto response = new CancelInfoDto();
+            response.setFromTransactionCancellation(transactionCancellation);
+            return response;
+        }
     }
 }
