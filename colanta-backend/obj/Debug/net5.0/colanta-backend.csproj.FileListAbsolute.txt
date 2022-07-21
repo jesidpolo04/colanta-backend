@@ -5,8 +5,6 @@ D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\colanta-backend.Asse
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\colanta-backend.csproj.CoreCompileInputs.cache
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\colanta-backend.MvcApplicationPartsAssemblyInfo.cs
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\colanta-backend.MvcApplicationPartsAssemblyInfo.cache
-D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\appsettings.Development.json
-D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\appsettings.json
 D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\colanta-backend.exe
 D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\colanta-backend.deps.json
 D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\colanta-backend.runtimeconfig.json
