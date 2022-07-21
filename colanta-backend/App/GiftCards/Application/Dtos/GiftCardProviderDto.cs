@@ -1,4 +1,4 @@
-﻿namespace colanta_backend.App.GiftCards.Controllers
+﻿namespace colanta_backend.App.GiftCards.Application
 {
     using GiftCards.Domain;
     public class GiftCardProviderDto
