@@ -15,7 +15,7 @@
         public async Task<TransactionSummaryDto> Invoke(string giftcardId, CreateGiftCardTransactionDto request)
         {
             GiftCard giftcard = await this.localRepository.getGiftCardBySiesaId(giftcardId);
-            Transaction transaction = new Transaction(giftcard.id, request.value, JsonSerializer.Serialize(request));
+            Transaction transaction = new Transaction(giftcard, request.value, JsonSerializer.Serialize(request));
             transaction = await this.localRepository.saveGiftCardTransaction(transaction);
             return new TransactionSummaryDto(giftcardId, transaction.id);
         }

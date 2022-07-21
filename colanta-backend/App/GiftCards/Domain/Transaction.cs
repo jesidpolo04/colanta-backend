@@ -12,10 +12,11 @@
         public string transaction_authorization_id { get; set; }
         public DateTime date { get; set; }
 
-        public Transaction(int card_id, decimal value, string transactionJson) 
+        public Transaction(GiftCard card, decimal value, string transactionJson) 
         {
             this.id = Guid.NewGuid().ToString();
-            this.card_id = card_id;
+            this.card = card;
+            this.card_id = card.id;
             this.json = transactionJson;
             this.date = DateTime.Now;
             this.transaction_authorization = this.authorize();

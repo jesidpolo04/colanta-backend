@@ -16,8 +16,6 @@
         public GiftCardDetailProviderResponseDto()
         {
             this.provider = "middleware";
-            this.transaction = new TransactionDto();
-            this.transaction.href = "";
         }
 
 
@@ -30,6 +28,8 @@
             this.relationName = giftCard.name;
             this.emissionDate = giftCard.emision_date;
             this.expiringDate = giftCard.expire_date;
+            this.transaction = new TransactionDto();
+            this.transaction.href = $"/api/giftcards/{id}/transactions";
         }
     }
 
