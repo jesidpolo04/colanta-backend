@@ -312,7 +312,7 @@ namespace colanta_backend.App.Shared.Infraestructure
             {
                 entity.ToTable("giftcards_transactions");
 
-                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.HasKey(e => e.id);
                 entity.Property(e => e.json);
                 entity.Property(e => e.value);
                 entity.Property(e => e.date).HasDefaultValueSql("getdate()");
@@ -325,7 +325,7 @@ namespace colanta_backend.App.Shared.Infraestructure
             {
                 entity.ToTable("giftcards_transactions_authorizations");
 
-                entity.Property(e => e.oid).IsRequired().ValueGeneratedOnAdd();
+                entity.HasKey(e => e.oid);
                 entity.Property(e => e.value);
                 entity.Property(e => e.date).HasDefaultValueSql("getdate()");
                 entity.HasOne(e => e.transaction).WithOne(e => e.transaction_authorization).HasForeignKey<EFGiftCardTransaction>(e => e.transaction_authorization_id);
@@ -335,7 +335,7 @@ namespace colanta_backend.App.Shared.Infraestructure
             {
                 entity.ToTable("giftcards_transactions_cancellations");
 
-                entity.Property(e => e.oid).IsRequired().ValueGeneratedOnAdd();
+                entity.HasKey(e => e.oid);
                 entity.Property(e => e.date).HasDefaultValueSql("getdate()");
                 entity.Property(e => e.value);
 
@@ -346,7 +346,7 @@ namespace colanta_backend.App.Shared.Infraestructure
             {
                 entity.ToTable("giftcards_transactions_settlements");
 
-                entity.Property(e => e.oid).IsRequired().ValueGeneratedOnAdd();
+                entity.HasKey(e => e.oid);
                 entity.Property(e => e.date).HasDefaultValueSql("getdate()");
                 entity.Property(e => e.value);
 
