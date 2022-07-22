@@ -7,6 +7,7 @@
         public string oid { get; set; }
         public decimal value { get; set; }
         public EFGiftCardTransaction transaction { get; set; }
+        public string transaction_id { get; set; }
         public DateTime date { get; set; }
 
         public TransactionCancellation getTransactionCancellation()
@@ -24,8 +25,7 @@
             this.date = transactionCancellation.date;
             this.value = transactionCancellation.value;
             this.oid = transactionCancellation.oid;
-            this.transaction = new EFGiftCardTransaction();
-            this.transaction.setEfTransaction(transactionCancellation.transaction);
+            this.transaction_id = transactionCancellation.transaction.id;
         }
     }
 }
