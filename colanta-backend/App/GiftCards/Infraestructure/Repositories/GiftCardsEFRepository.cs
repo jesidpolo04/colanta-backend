@@ -83,7 +83,8 @@
         public async Task<TransactionCancellation[]> getTransactionCancellations(string transactionId)
         {
             EFGiftCardTransactionCancellation[] efTransactionCancellations = this.dbContext.GiftCardsTransactionsCancellations
-                .Include(authorization => authorization.transaction)
+                .Include(cancellation => cancellation.transaction)
+                .Include(cancellation => cancellation.transaction.card)
                 .Where(cancellations => cancellations.transaction.id == transactionId).ToArray();
             List<TransactionCancellation> transactionCancellations = new List<TransactionCancellation>();
             foreach(EFGiftCardTransactionCancellation efCancellation in efTransactionCancellations)
@@ -96,7 +97,8 @@
         public async Task<TransactionSettlement[]> GetTransactionSettlements(string transactionId)
         {
             EFGiftCardTransactionSettlement[] efTransactionSettlements = this.dbContext.GiftCardsTransactionsSettlements
-                .Include(authorization => authorization.transaction)
+                .Include(settlement => settlement.transaction)
+                .Include(settlement => settlement.transaction.card)
                 .Where(settlements => settlements.transaction.id == transactionId).ToArray();
             List<TransactionSettlement> transactionSettlements = new List<TransactionSettlement>();
             foreach(EFGiftCardTransactionSettlement efSettlement in efTransactionSettlements)
