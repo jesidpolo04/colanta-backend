@@ -63,6 +63,21 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpGet]
+        [Route("giftcards/{giftCardId}/transactions")]
+        public async Task<TransactionSummaryDto[]> getGiftCardTransactions(string giftCardId)
+        {
+            GetGiftCardTransactions useCase = new GetGiftCardTransactions(this.localRepository);
+            Transaction[] transactions = await useCase.Invoke(giftCardId);
+            List<TransactionSummaryDto> transactionsDto = new List<TransactionSummaryDto>();
+            foreach(Transaction transaction in transactions)
+            {
+                TransactionSummaryDto transactionDto = new TransactionSummaryDto(transaction.card.siesa_id, transaction.id);
+                transactionsDto.Add(transactionDto);
+            }
+            return transactionsDto.ToArray();
+        } 
+
+        [HttpGet]
         [Route("/giftcards/{giftCardId}/transactions/{transactionId}")] //obtener transaccion
         public async Task<GetTransactionByIdResponseDto> getGiftCardTransactionById (string giftCardId, string transactionId)
         {
@@ -94,6 +109,22 @@ namespace colanta_backend.App.GiftCards.Controllers
             return response;
         }
 
+        [HttpGet]
+        [Route("/giftcards/{giftCardId}/transactions/{transactionId}/settlements")]
+        public async Task<SettlementInfoDto[]> getGiftCardTransactionSettlements(string giftCardId, string transactionId)
+        {
+            GetTransactionSettlements useCase = new GetTransactionSettlements(this.localRepository);
+            TransactionSettlement[] settlements = await useCase.Invoke(transactionId);
+            List<SettlementInfoDto> settlementsDto = new List<SettlementInfoDto>();
+            foreach(TransactionSettlement settlement in settlements)
+            {
+                SettlementInfoDto settlementDto = new SettlementInfoDto();
+                settlementDto.setFromTransactionSettlement(settlement);
+                settlementsDto.Add(settlementDto);
+            }
+            return settlementsDto.ToArray();
+        } 
+
         [HttpPost]
         [Route("/giftcards/{giftCardId}/transactions/{transactionId}/cancellations")] // cancelar
         public async Task<CancelInfoDto> cancelGiftcardTransaction(string giftCardId, string transactionId, CancelTransactionRequest body)
@@ -103,6 +134,22 @@ namespace colanta_backend.App.GiftCards.Controllers
             CancelInfoDto response = new CancelInfoDto();
             response.setFromTransactionCancellation(transactionCancellation);
             return response;
+        }
+
+        [HttpGet]
+        [Route("giftcards/{giftCardId}/transactions/{transactionId}/cancellations")]
+        public async Task<CancelInfoDto[]> getGiftCardTransactionCancellations(string giftCardId, string transactionId)
+        {
+            GetTransactionCancellations useCase = new GetTransactionCancellations(this.localRepository);
+            TransactionCancellation[] cancellations = await useCase.Invoke(transactionId);
+            List<CancelInfoDto> cancellationsDto = new List<CancelInfoDto>();
+            foreach (TransactionCancellation cancellation in cancellations)
+            {
+                CancelInfoDto cancellationDto = new CancelInfoDto();
+                cancellationDto.setFromTransactionCancellation(cancellation);
+                cancellationsDto.Add(cancellationDto);
+            }
+            return cancellationsDto.ToArray();
         }
     }
 }

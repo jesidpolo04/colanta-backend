@@ -11,7 +11,7 @@
         {
             this.oid = transactionSettlement.oid;
             this.value = transactionSettlement.value;
-            this.date = transactionSettlement.date.ToUniversalTime().ToString();
+            this.date = transactionSettlement.date.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
         }
     }
 }

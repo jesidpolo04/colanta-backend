@@ -47,6 +47,19 @@
             return giftCards.ToArray();
         }
 
+        public async Task<Transaction[]> getGiftCardTransactions(int giftCardId)
+        {
+            EFGiftCardTransaction[] efTransactions = this.dbContext.GiftCardsTransactions
+                .Include(transaction => transaction.card)
+                .Where(transaction => transaction.card_id == giftCardId).ToArray();
+            List<Transaction> transactions = new List<Transaction>();
+            foreach(EFGiftCardTransaction efTransaction in efTransactions)
+            {
+                transactions.Add(efTransaction.getTransaction());
+            }
+            return transactions.ToArray();
+        }
+
         public async Task<Transaction> getTransaction(string transactionId)
         {
             EFGiftCardTransaction efTransaction = this.dbContext.GiftCardsTransactions

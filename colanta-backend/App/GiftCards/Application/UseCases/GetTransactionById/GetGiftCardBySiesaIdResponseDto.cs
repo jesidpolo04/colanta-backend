@@ -6,7 +6,7 @@
     {
         public double value { get; set; }
         public string description { get; set; }
-        public DateTime date { get; set; }
+        public string date { get; set; }
         public string requestId { get; set; }
         public GetTransactionByIdResponseOrderInfoDto orderInfo { get; set; }
         public GetTransactionByIdResponseSettlementDto settlement { get; set; }
@@ -43,7 +43,7 @@
         public string document { get; set; }
         public string documentType { get; set; }
         public string phone { get; set; }
-        public DateTime birthDate { get; set; }
+        public string birthDate { get; set; }
         public bool isCorporate { get; set; }
     }
 

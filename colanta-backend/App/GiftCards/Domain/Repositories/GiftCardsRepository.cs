@@ -15,6 +15,7 @@
         Task<TransactionSettlement> saveTransactionSettlement(TransactionSettlement transactionSettlement);
 
         Task<Transaction> getTransaction(string transactionId);
+        Task<Transaction[]> getGiftCardTransactions(int giftCardId);
         Task<TransactionAuthorization> getTransactionAuthorization(string transactionId);
         Task<TransactionCancellation[]> getTransactionCancellations(string transactionId);
         Task<TransactionSettlement[]> GetTransactionSettlements(string transactionId);

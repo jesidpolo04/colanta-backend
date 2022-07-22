@@ -11,7 +11,7 @@
         {
             this.oid = transactionCancellation.oid;
             this.value = transactionCancellation.value;
-            this.date = transactionCancellation.date.ToUniversalTime().ToString();
+            this.date = transactionCancellation.date.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
         }
     }
 }
