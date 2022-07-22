@@ -75,6 +75,7 @@
         {
             EFGiftCardTransactionAuthorization efTransactionAuthorization = this.dbContext.GiftCardsTransactionsAuthorizations
                 .Include(authorization => authorization.transaction)
+                .Include(authorization => authorization.transaction.card)
                 .Where(authorization => authorization.transaction.id == transactionId).First();
             return efTransactionAuthorization.getTransactionAuthorization();
         }
