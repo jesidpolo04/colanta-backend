@@ -6,6 +6,7 @@
     {
         public double value { get; set; }
         public string description { get; set; }
+        public string redemptionCode { get; set; }
         public string date { get; set; }
         public string requestId { get; set; }
         public GetTransactionByIdResponseOrderInfoDto orderInfo { get; set; }

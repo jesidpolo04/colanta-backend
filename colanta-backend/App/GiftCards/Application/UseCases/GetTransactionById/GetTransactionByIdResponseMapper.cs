@@ -15,6 +15,7 @@
             settlement.href = $"/giftcards/{transaction.card.siesa_id}/transactions/{transaction.id}/settlements";
             cancellation.href = $"/giftcards/{transaction.card.siesa_id}/transactions/{transaction.id}/cancellations";
 
+            dto.date = transaction.date.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
             dto.authorization = authorization;
             dto.settlement = settlement;
             dto.cancellation = cancellation;
