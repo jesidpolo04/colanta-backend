@@ -63,7 +63,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpGet]
-        [Route("giftcards/{giftCardId}/transactions")]
+        [Route("/giftcards/{giftCardId}/transactions")] // obtener transacciones
         public async Task<TransactionSummaryDto[]> getGiftCardTransactions(string giftCardId)
         {
             GetGiftCardTransactions useCase = new GetGiftCardTransactions(this.localRepository);
