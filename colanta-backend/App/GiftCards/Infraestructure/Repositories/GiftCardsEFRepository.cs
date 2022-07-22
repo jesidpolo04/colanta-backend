@@ -51,6 +51,7 @@
         {
             EFGiftCardTransaction[] efTransactions = this.dbContext.GiftCardsTransactions
                 .Include(transaction => transaction.card)
+                .Include(transaction => transaction.transaction_authorization)
                 .Where(transaction => transaction.card_id == giftCardId).ToArray();
             List<Transaction> transactions = new List<Transaction>();
             foreach(EFGiftCardTransaction efTransaction in efTransactions)
