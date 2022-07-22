@@ -13,7 +13,8 @@
 
         public async Task<Transaction[]> Invoke(string giftCardId)
         {
-            return await this.localRepository.getGiftCardTransactions(giftCardId);
+            GiftCard giftcard = await this.localRepository.getGiftCardBySiesaId(giftCardId);
+            return await this.localRepository.getGiftCardTransactions(giftcard.id);
         }
     }
 }
