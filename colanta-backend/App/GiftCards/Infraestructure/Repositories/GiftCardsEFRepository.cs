@@ -85,6 +85,7 @@
             EFGiftCardTransactionCancellation[] efTransactionCancellations = this.dbContext.GiftCardsTransactionsCancellations
                 .Include(cancellation => cancellation.transaction)
                 .Include(cancellation => cancellation.transaction.card)
+                .Include(cancellation => cancellation.transaction.transaction_authorization)
                 .Where(cancellations => cancellations.transaction.id == transactionId).ToArray();
             List<TransactionCancellation> transactionCancellations = new List<TransactionCancellation>();
             foreach(EFGiftCardTransactionCancellation efCancellation in efTransactionCancellations)
@@ -99,6 +100,7 @@
             EFGiftCardTransactionSettlement[] efTransactionSettlements = this.dbContext.GiftCardsTransactionsSettlements
                 .Include(settlement => settlement.transaction)
                 .Include(settlement => settlement.transaction.card)
+                .Include(settlement => settlement.transaction.transaction_authorization)
                 .Where(settlements => settlements.transaction.id == transactionId).ToArray();
             List<TransactionSettlement> transactionSettlements = new List<TransactionSettlement>();
             foreach(EFGiftCardTransactionSettlement efSettlement in efTransactionSettlements)
