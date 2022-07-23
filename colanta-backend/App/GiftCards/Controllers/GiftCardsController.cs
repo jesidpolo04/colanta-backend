@@ -22,6 +22,17 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpPost]
+        [Route("api/giftcards")]
+        public async Task<CreateGiftCardResponse> createGiftCard(CreateGiftCardRequest request)
+        {
+            CreateGiftcard useCase = new CreateGiftcard(this.localRepository);
+            GiftCard giftCard = await useCase.Invoke(request);
+            CreateGiftCardResponse response = new CreateGiftCardResponse();
+            response.setFromGiftCard(giftCard);
+            return response;
+        }
+
+        [HttpPost]
         [Route("api/giftcards/_search")] // obtener giftcards
         public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
