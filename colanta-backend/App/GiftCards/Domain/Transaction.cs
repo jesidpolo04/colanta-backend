@@ -15,6 +15,7 @@
         public Transaction(GiftCard card, decimal value, string transactionJson) 
         {
             this.id = Guid.NewGuid().ToString();
+            this.value = value;
             this.card = card;
             this.card_id = card.id;
             this.json = transactionJson;
