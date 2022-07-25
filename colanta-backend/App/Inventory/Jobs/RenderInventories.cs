@@ -154,7 +154,7 @@
                 this.obtainedInventories.Count, 
                 JsonSerializer.Serialize(this.details, jsonOptions));
 
-            this.renderInventoriesMail.sendMail(this.failedInventories.ToArray());
+            this.renderInventoriesMail.sendMail(this.failedInventories.ToArray(), this.loadInventories.ToArray(), this.updatedInventories.ToArray());
             this.console.processEndstAt(processName, DateTime.Now);
         }
 

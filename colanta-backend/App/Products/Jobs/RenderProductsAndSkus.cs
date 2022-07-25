@@ -253,6 +253,7 @@
                 this.logger.writelog(exception);
                 this.console.processEndstAt(processName, DateTime.Now);
             }
+            this.renderProductsMail.sendMail(this.inactiveSkus.ToArray(), this.failedSkus.ToArray(), this.loadSkus.ToArray());
         }
     }
 }

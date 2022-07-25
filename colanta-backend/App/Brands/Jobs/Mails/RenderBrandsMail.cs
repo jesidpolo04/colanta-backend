@@ -17,12 +17,25 @@
             this.emailSender = emailSender;
             this.dateTime = DateTime.Now;
         }
-        public void sendMail(Brand[] inactiveBrands, Brand[] failedLoadBrands)
+        public void sendMail(Brand[] inactiveBrands, Brand[] failedLoadBrands, Brand[] loadBrands)
         {
             bool sendEmail = false;
             string body = "";
 
-            if(inactiveBrands.Length > 0)
+            if (loadBrands.Length > 0)
+            {
+                sendEmail = true;
+                body += htmlWriter.h("5", "Marcas creadas en VTEX") + "\n";
+                List<string> loadBrandsInfo = new List<string>();
+                foreach (Brand loadBrand in loadBrands)
+                {
+                    loadBrandsInfo.Add($"{loadBrand.name}, con SIESA id: {loadBrand.id_siesa} y VTEX id: {loadBrand.id_vtex}");
+                }
+                body += htmlWriter.ul(loadBrandsInfo.ToArray());
+                body += "\n";
+            }
+
+            if (inactiveBrands.Length > 0)
             {
                 sendEmail = true;
                 body += htmlWriter.h("5", "Marcas Inactivas en VTEX") + "\n";

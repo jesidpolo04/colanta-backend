@@ -8,7 +8,6 @@
     {
         private HtmlWriter htmlWriter;
         private EmailSender emailSender;
-        private string[] headers = { "siesa_id", "vtex_id", "nombre_producto", "antiguo_precio", "nuevo_precio" };
         public string emailTitle = "Renderizado de Precios";
         public string emailSubtitle = "Middleware Colanta";
         public DateTime dateTime;
@@ -20,56 +19,54 @@
             this.dateTime = DateTime.Now;
         }
 
-        public void sendMail(Price[] loadPrices, Price[] updatedPrices, Price[] failedPrices)
+        public void sendMail(Price[] failedPrices, Price[] loadPrices, Price[] updatePrices)
         {
-            string mailBody = "<html>";
-            mailBody += "<head>";
-            mailBody += "<style>";
-            mailBody += "td, th{border: 1px solid black; padding: 2px 3px}";
-            mailBody += "</style>";
-            mailBody += "</head>";
-            mailBody += "<body>";
-            mailBody += htmlWriter.h("1", this.emailTitle);
-            mailBody += htmlWriter.h("2", this.emailSubtitle);
-
-            if (loadPrices.Length > 0)
-            {
-                List<string[]> stringPrices = new List<string[]>();
-                foreach (Price price in loadPrices)
-                {
-                    string[] stringPrice = { price.sku.siesa_id, price.sku.vtex_id.ToString(), price.sku.name, " - ", price.price.ToString() };
-                    stringPrices.Add(stringPrice);
-                }
-                mailBody += htmlWriter.h("3", "Precios cargados a Vtex");
-                mailBody += htmlWriter.table(this.headers, stringPrices.ToArray());
-            }
+            bool sendEmail = false;
+            string body = "";
 
             if (failedPrices.Length > 0)
             {
-                List<string[]> stringPrices = new List<string[]>();
-                foreach (Price price in failedPrices)
+                sendEmail = true;
+                body += htmlWriter.h("4", "Precios que no pudieron ser asignados en VTEX") + "\n";
+                List<string> failedPricesInfo = new List<string>();
+                foreach (Price failedPrice in failedPrices)
                 {
-                    string[] stringPrice = { price.sku.siesa_id, price.sku.vtex_id.ToString(), price.sku.name, " - ", price.price.ToString() };
-                    stringPrices.Add(stringPrice);
+                    failedPricesInfo.Add($"{failedPrice.sku.name} ({failedPrice.sku.siesa_id}), precio: {string.Format("{0:C}", failedPrice.price)}");
                 }
-                mailBody += htmlWriter.h("3", "Precios que no fueron cargados a Vtex debido a error");
-                mailBody += htmlWriter.table(this.headers, stringPrices.ToArray());
+                body += htmlWriter.ul(failedPricesInfo.ToArray());
+                body += "\n";
             }
 
-            if (updatedPrices.Length > 0)
+            if (loadPrices.Length > 0)
             {
-                List<string[]> stringPrices = new List<string[]>();
-                foreach (Price price in updatedPrices)
+                sendEmail = true;
+                body += htmlWriter.h("4", "Precios asignados en VTEX") + "\n";
+                List<string> loadPricesInfo = new List<string>();
+                foreach (Price loadPrice in loadPrices)
                 {
-                    string[] stringPrice = { price.sku.siesa_id, price.sku.vtex_id.ToString(), price.sku.name, " - ", price.price.ToString() };
-                    stringPrices.Add(stringPrice);
+                    loadPricesInfo.Add($"{loadPrice.sku.name} ({loadPrice.sku.siesa_id}), precio: {string.Format("{0:C}", loadPrice.price)}");
                 }
-                mailBody += htmlWriter.h("3", "Precios actualizados en Vtex");
-                mailBody += htmlWriter.table(this.headers, stringPrices.ToArray());
+                body += htmlWriter.ul(loadPricesInfo.ToArray());
+                body += "\n";
             }
 
-            mailBody += "</body> </html>";
-            this.emailSender.SendEmail(this.emailTitle + " " + this.dateTime.ToString(), mailBody);
+            if (updatePrices.Length > 0)
+            {
+                sendEmail = true;
+                body += htmlWriter.h("4", "Precios actualizados en VTEX") + "\n";
+                List<string> updatePricesInfo = new List<string>();
+                foreach (Price updatePrice in updatePrices)
+                {
+                    updatePricesInfo.Add($"{updatePrice.sku.name} ({updatePrice.sku.siesa_id}), precio: {string.Format("{0:C}", updatePrice.price)}");
+                }
+                body += htmlWriter.ul(updatePricesInfo.ToArray());
+                body += "\n";
+            }
+
+            if (sendEmail)
+            {
+                this.emailSender.SendEmail(this.emailTitle, body);
+            }
         }
     }
 }

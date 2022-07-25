@@ -8,7 +8,6 @@
     {
         private HtmlWriter htmlWriter;
         private EmailSender emailSender;
-        private string[] headers = { "siesa_id", "vtex_id", "nombre" };
         public string emailTitle = "Renderizado de Productos";
         public string emailSubtitle = "Middleware Colanta";
         public DateTime dateTime;
@@ -19,79 +18,54 @@
             this.dateTime = DateTime.Now;
         }
 
-        public void sendMail(Sku[] loadSkus, Sku[] inactiveSkus, Sku[] failedSkus, Sku[] notProccecedSkus, Sku[] inactivatedSkus)
+        public void sendMail(Sku[] inactiveSkus, Sku[] failedSkus, Sku[] loadSkus)
         {
-            string mailBody = "<html>";
-            mailBody += "<head>";
-            mailBody += "<style>";
-            mailBody += "td, th{border: 1px solid black; padding: 2px 3px}";
-            mailBody += "</style>";
-            mailBody += "</head>";
-            mailBody += "<body>";
-            mailBody += htmlWriter.h("1", this.emailTitle);
-            mailBody += htmlWriter.h("2", this.emailSubtitle);
+            bool sendEmail = false;
+            string body = "";
 
             if (loadSkus.Length > 0)
             {
-                List<string[]> stringSkus = new List<string[]>();
-                foreach (Sku sku in loadSkus)
+                sendEmail = true;
+                body += htmlWriter.h("4", "Productos cargados en VTEX") + "\n";
+                List<string> loadSkusInfo = new List<string>();
+                foreach (Sku loadSku in loadSkus)
                 {
-                    string[] stringSku = { sku.siesa_id, sku.vtex_id.ToString(), sku.name };
-                    stringSkus.Add(stringSku);
+                    loadSkusInfo.Add($"{loadSku.name}, con SIESA id: {loadSku.siesa_id} y VTEX id: {loadSku.vtex_id}");
                 }
-                mailBody += htmlWriter.h("3", "Productos (sku) cargados a Vtex");
-                mailBody += htmlWriter.table(this.headers, stringSkus.ToArray());
-            }
-
-            if (failedSkus.Length > 0)
-            {
-                List<string[]> stringSkus = new List<string[]>();
-                foreach (Sku sku in failedSkus)
-                {
-                    string[] stringSku = { sku.siesa_id, sku.vtex_id.ToString(), sku.name };
-                    stringSkus.Add(stringSku);
-                }
-                mailBody += htmlWriter.h("3", "Productos (sku) que no se cargaron en Vtex (errores)");
-                mailBody += htmlWriter.table(this.headers, stringSkus.ToArray());
+                body += htmlWriter.ul(loadSkusInfo.ToArray());
+                body += "\n";
             }
 
             if (inactiveSkus.Length > 0)
             {
-                List<string[]> stringSkus = new List<string[]>();
-                foreach (Sku sku in inactiveSkus)
+                sendEmail = true;
+                body += htmlWriter.h("4", "Productos Inactivos en VTEX") + "\n";
+                List<string> inactiveSkusInfo = new List<string>();
+                foreach (Sku inactiveSku in inactiveSkus)
                 {
-                    string[] stringSku = { sku.siesa_id, sku.vtex_id.ToString(), sku.name };
-                    stringSkus.Add(stringSku);
+                    inactiveSkusInfo.Add($"{inactiveSku.name}, con SIESA id: {inactiveSku.siesa_id} y VTEX id: {inactiveSku.vtex_id}");
                 }
-                mailBody += htmlWriter.h("3", "Productos (sku) pendientes de activar en Vtex");
-                mailBody += htmlWriter.table(this.headers, stringSkus.ToArray());
+                body += htmlWriter.ul(inactiveSkusInfo.ToArray());
+                body += "\n";
             }
 
-            if (inactivatedSkus.Length > 0)
+            if (failedSkus.Length > 0)
             {
-                List<string[]> stringSkus = new List<string[]>();
-                foreach (Sku sku in inactivatedSkus)
+                sendEmail = true;
+                body += htmlWriter.h("4", "Productos que fallaron al cargarse a VTEX") + "\n";
+                List<string> failedSkusInfo = new List<string>();
+                foreach (Sku failedSku in failedSkus)
                 {
-                    string[] stringSku = { sku.siesa_id, sku.vtex_id.ToString(), sku.name };
-                    stringSkus.Add(stringSku);
+                    failedSkusInfo.Add($"{failedSku.name}, con SIESA id: {failedSku.siesa_id}");
                 }
-                mailBody += htmlWriter.h("3", "Productos (sku) desactivados por el Middleware");
-                mailBody += htmlWriter.table(this.headers, stringSkus.ToArray());
+                body += htmlWriter.ul(failedSkusInfo.ToArray());
+                body += "\n";
             }
 
-            if (notProccecedSkus.Length > 0)
+            if (sendEmail)
             {
-                List<string[]> stringSkus = new List<string[]>();
-                foreach (Sku sku in notProccecedSkus)
-                {
-                    string[] stringSku = { sku.siesa_id, sku.vtex_id.ToString(), sku.name };
-                    stringSkus.Add(stringSku);
-                }
-                mailBody += htmlWriter.h("3", "Productos sin procesar");
-                mailBody += htmlWriter.table(this.headers, stringSkus.ToArray());
+                this.emailSender.SendEmail(this.emailTitle, body);
             }
-            mailBody += "</body> </html>";
-            this.emailSender.SendEmail(this.emailTitle + " " + this.dateTime.ToString(), mailBody);
         }
     }
 }

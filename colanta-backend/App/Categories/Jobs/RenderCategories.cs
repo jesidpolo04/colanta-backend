@@ -185,7 +185,7 @@
                     JsonSerializer.Serialize(details, jsonOptions));
                 this.console.processEndstAt(processName, DateTime.Now);
             }
-            this.renderCategoriesMail.sendMail(this.inactiveCategories.ToArray(), this.failedLoadCategories.ToArray());
+            this.renderCategoriesMail.sendMail(this.inactiveCategories.ToArray(), this.failedLoadCategories.ToArray(), this.loadCategories.ToArray());
         }
     }
 }

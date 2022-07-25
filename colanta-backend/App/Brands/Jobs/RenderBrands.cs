@@ -210,7 +210,7 @@
                 this.console.processEndstAt(processName, DateTime.Now);
             }
 
-            this.renderBrandsMail.sendMail(inactiveBrands.ToArray(), failedLoadBrands.ToArray());
+            this.renderBrandsMail.sendMail(inactiveBrands.ToArray(), failedLoadBrands.ToArray(), loadBrands.ToArray());
         }
     }
 }

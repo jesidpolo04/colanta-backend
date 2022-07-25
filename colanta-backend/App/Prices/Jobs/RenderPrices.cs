@@ -201,6 +201,7 @@
                 this.logger.writelog(genericException);
             }
 
+            this.renderPricesMail.sendMail(this.failedPrices.ToArray(), this.loadPrices.ToArray(), this.updatedPrices.ToArray());
             this.console.processEndstAt(processName, DateTime.Now);
 
             this.processLogger.Log(

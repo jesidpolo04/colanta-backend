@@ -19,10 +19,23 @@
             this.dateTime = DateTime.Now;
         }
 
-        public void sendMail(Category[] inactiveCategories, Category[] failedLoadCategories)
+        public void sendMail(Category[] inactiveCategories, Category[] failedLoadCategories, Category[] loadCategories)
         {
             bool sendEmail = false;
             string body = "";
+
+            if (loadCategories.Length > 0)
+            {
+                sendEmail = true;
+                body += htmlWriter.h("4", "Categorías creadas en VTEX") + "\n";
+                List<string> loadCategoriesInfo = new List<string>();
+                foreach (Category loadCategory in loadCategories)
+                {
+                    loadCategoriesInfo.Add($"{loadCategory.name}, con SIESA id: {loadCategory.siesa_id} y VTEX id: {loadCategory.vtex_id}");
+                }
+                body += htmlWriter.ul(loadCategoriesInfo.ToArray());
+                body += "\n";
+            }
 
             if (inactiveCategories.Length > 0)
             {
