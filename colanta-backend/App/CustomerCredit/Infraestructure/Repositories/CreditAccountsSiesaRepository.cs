@@ -11,20 +11,24 @@ namespace colanta_backend.App.CustomerCredit.Infraestructure
     using System.Net.Http.Headers;
     using System.Text.Json;
     using Shared.Domain;
+    using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
     public class CreditAccountsSiesaRepository : Domain.CreditAccountsSiesaRepository
     {
         private HttpClient httpClient;
         private IConfiguration configuration;
+        private SiesaAuth siesaAuth;
 
         public CreditAccountsSiesaRepository(IConfiguration configuration)
         {
             this.httpClient = new HttpClient();
             this.configuration = configuration;
+            this.siesaAuth = new SiesaAuth(configuration);
         }
         public async Task<decimal> getAccountByDocumentAndBusiness(string document, string business)
         {
-            string endpoint = "/balance_cuenta";
+            await this.setHeaders();
+            string endpoint = $"/api/ColantaWS/tarjetas/documento/{document}/{business}" ;
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
@@ -38,7 +42,8 @@ namespace colanta_backend.App.CustomerCredit.Infraestructure
 
         public async Task<CreditAccount[]> getAllAccounts()
         {
-            string endpoint = "/cuentas";
+            await this.setHeaders();
+            string endpoint = "/api/ColantaWS/Cuentas";
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
@@ -52,6 +57,12 @@ namespace colanta_backend.App.CustomerCredit.Infraestructure
                 creditAccounts.Add(siesaAccount.getCreditAccountFromDto());
             }
             return creditAccounts.ToArray();
+        }
+
+        private async Task setHeaders()
+        {
+            this.httpClient.DefaultRequestHeaders.Remove("Authorization");
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await this.siesaAuth.getToken());
         }
     }
 }
