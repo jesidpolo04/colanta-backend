@@ -119,6 +119,12 @@
                                         ));
                             this.logger.writelog(vtexException);
                         }
+                        catch (Exception exception)
+                        {
+                            this.failedPrices.Add(siesaPrice);
+                            this.console.throwException(exception.Message);
+                            this.logger.writelog(exception);
+                        }
                     }
 
                     if (localPrice != null)
@@ -179,6 +185,12 @@
                                         success: false
                                         ));
                             this.logger.writelog(vtexException);
+                        }
+                        catch (Exception exception)
+                        {
+                            this.failedPrices.Add(siesaPrice);
+                            this.console.throwException(exception.Message);
+                            this.logger.writelog(exception);
                         }
                     }
                 }

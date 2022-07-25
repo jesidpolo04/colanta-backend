@@ -127,6 +127,12 @@
                                     success: false));
                             this.logger.writelog(vtexException);
                         }
+                        catch (Exception exception)
+                        {
+                            this.failedInventories.Add(siesaInventory);
+                            this.console.throwException(exception.Message);
+                            this.logger.writelog(exception);
+                        }
                     }
                 }
                 catch (SiesaException siesaException)

@@ -21,7 +21,7 @@
         public string? MetaTagDescription { get; set; }
         public int? SupplierId { get; set; }
         public bool ShowWithoutStock { get; set; }
-        public int? ListStoreId { get; set; }
+        public int[]? ListStoreId { get; set; }
         public string? AdWordsRemarketingCode { get; set; }
         public string? LomadeeCampaignCode { get; set; }
         public int? Score { get; set; }
@@ -33,7 +33,7 @@
             product.vtex_id = this.Id;
             product.name = this.Name;
             product.description = this.Description;
-            product.ref_id = this.RefId;
+            product.concat_siesa_id = this.RefId;
             product.is_active = this.IsActive;
 
             return product;

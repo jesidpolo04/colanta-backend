@@ -19,6 +19,7 @@
         private ProductsSiesaRepository siesaRepository;
         private IProcess processLogger;
         private ILogger logger;
+        private EmailSender emailSender;
         private CustomConsole console = new CustomConsole();
         private RenderProductsAndSkusMail renderProductsMail;
 
@@ -50,6 +51,7 @@
             this.siesaRepository = siesaRepository;
             this.processLogger = processLogger;
             this.logger = logger;
+            this.emailSender = emailSender;
             this.renderProductsMail = new RenderProductsAndSkusMail(emailSender);
 
             this.loadSkus = new List<Sku>();
@@ -91,6 +93,11 @@
                         this.console.throwException(vtexException.Message);
                         this.logger.writelog(vtexException);
                     }
+                    catch(Exception exception)
+                    {
+                        this.console.throwException(exception.Message);
+                        this.logger.writelog(exception);
+                    }
                 }
                 await productsLocalRepository.updateProducts(deltaProducts);
 
@@ -120,6 +127,11 @@
                                 success: false
                                 ));
                         this.logger.writelog(vtexException);
+                    }
+                    catch (Exception exception)
+                    {
+                        this.console.throwException(exception.Message);
+                        this.logger.writelog(exception);
                     }
 
                 }
@@ -152,6 +164,10 @@
                         {
                             this.console.throwException(vtexException.Message);
                             this.logger.writelog(vtexException);
+                        }
+                        catch (BrandMustExistException exception)
+                        {
+                            this.emailSender.SendEmail("Alerta Producto sin Marca", exception.Message);
                         }
                         catch (Exception exception)
                         {
@@ -208,6 +224,7 @@
                         }
                         catch (Exception exception)
                         {
+                            this.failedSkus.Add(siesaSku);
                             this.console.throwException(exception.Message);
                             this.logger.writelog(exception);
                         }

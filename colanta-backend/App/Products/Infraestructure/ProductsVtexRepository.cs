@@ -80,7 +80,7 @@ namespace colanta_backend.App.Products.Infraestructure
             string refId = siesaId;
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint + refId;
             HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
-            if(vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
+            if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
                 throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }

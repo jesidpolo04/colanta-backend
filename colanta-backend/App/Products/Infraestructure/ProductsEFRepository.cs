@@ -41,7 +41,12 @@ namespace colanta_backend.App.Products.Infraestructure
             if (efProducts.ToArray().Length > 0)
             {
                 EFProduct efProduct = efProducts.First();
-
+                //if(efProduct.brand_id == null)
+                //{
+                //    System.Console.WriteLine("Excepcion en get product");
+                //    Product product = efProduct.getProductFromEfProduct();
+                //    throw new BrandMustExistException($"Producto: {product.name} ({product.siesa_id}), no posee una marca", product);
+                //}
                 EFBrand efBrand = this.dbContext.Brands.Find(efProduct.brand_id);
                 EFCategory efCategory = this.dbContext.Categories.Find(efProduct.category_id);
                 efProduct.brand = efBrand;
@@ -87,7 +92,11 @@ namespace colanta_backend.App.Products.Infraestructure
         public async Task<Product> saveProduct(Product product)
         {
             EFProduct efProduct = new EFProduct();
-
+            //if (product.brand.id_siesa == null);
+            //{
+            //    System.Console.WriteLine("Excepcion en save product");
+            //    throw new BrandMustExistException($"Producto: {product.name} ({product.siesa_id}), no posee una marca", product);
+            //}
             EFBrand efBrand = this.dbContext.Brands.Where(brand => brand.id_siesa == product.brand.id_siesa).First();
             EFCategory efCategory = this.dbContext.Categories.Where(category => category.siesa_id == product.category.siesa_id).First();
 

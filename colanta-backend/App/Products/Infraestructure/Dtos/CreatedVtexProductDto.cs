@@ -32,7 +32,7 @@
             product.vtex_id = this.Id;
             product.name = this.Name;
             product.description = this.Description;
-            product.ref_id = this.RefId;
+            product.concat_siesa_id = this.RefId;
             product.is_active = this.IsActive;
 
             return product;
