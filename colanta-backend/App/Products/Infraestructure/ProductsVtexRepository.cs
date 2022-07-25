@@ -121,6 +121,11 @@ namespace colanta_backend.App.Products.Infraestructure
 
         public async Task<Product> saveProduct(Product product)
         {
+            Product existProduct = await this.getProductBySiesaId(product.concat_siesa_id);
+            if(existProduct != null)
+            {
+                return existProduct;
+            }
             string endpoint = "/api/catalog/pvt/product";
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint;
             CreateVtexProductDto requestBody = new CreateVtexProductDto();

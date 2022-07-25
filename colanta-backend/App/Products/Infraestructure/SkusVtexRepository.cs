@@ -121,6 +121,11 @@ namespace colanta_backend.App.Products.Infraestructure
 
         public async Task<Sku> saveSku(Sku sku)
         {
+            Sku existSku = await this.getSkuByInVtexRef(sku.concat_siesa_id);
+            if(existSku != null)
+            {
+                return existSku;
+            }
             string endpoint = "/api/catalog/pvt/stockkeepingunit";
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint;
             CreateVtexSkuDto requestBody = new CreateVtexSkuDto();
