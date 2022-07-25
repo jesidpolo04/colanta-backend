@@ -56,3 +56,5 @@ D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\runtimes\win-x86\nat
 D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.pdb
 D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\NCrontab.Signed.dll
+D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\appsettings.Development.json
+D:\colanta\colanta-backend\colanta-backend\bin\Debug\net5.0\appsettings.json

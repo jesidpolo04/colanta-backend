@@ -8,7 +8,6 @@
     {
         private HtmlWriter htmlWriter;
         private EmailSender emailSender;
-        private string[] headers = {"siesa_id", "vtex_id", "nombre"};
         public string emailTitle = "Renderizado de Marcas";
         public string emailSubtitle = "Middleware Colanta";
         public DateTime dateTime;
@@ -18,79 +17,41 @@
             this.emailSender = emailSender;
             this.dateTime = DateTime.Now;
         }
-        public void sendMail(Brand[] loadBrands, Brand[] inactiveBrands, Brand[] failedLoadBrands, Brand[] notProccecedBrands, Brand[] inactivatedBrands)
+        public void sendMail(Brand[] inactiveBrands, Brand[] failedLoadBrands)
         {
-            string mailBody = "<html>";
-            mailBody += "<head>";
-            mailBody += "<style>";
-            mailBody += "td, th{border: 1px solid black; padding: 2px 3px}";
-            mailBody += "</style>";
-            mailBody += "</head>";
-            mailBody += "<body>";
-            mailBody += htmlWriter.h("1", this.emailTitle);
-            mailBody += htmlWriter.h("2", this.emailSubtitle);
+            bool sendEmail = false;
+            string body = "";
 
-            if (loadBrands.Length > 0)
+            if(inactiveBrands.Length > 0)
             {
-                List<string[]> stringBrands = new List<string[]>();
-                foreach(Brand brand in loadBrands)
+                sendEmail = true;
+                body += htmlWriter.h("5", "Marcas Inactivas en VTEX") + "\n";
+                List<string> inactiveBrandsInfo = new List<string>();
+                foreach (Brand inactiveBrand in inactiveBrands)
                 {
-                    string[] stringBrand = { brand.id_siesa, brand.id_vtex.ToString(), brand.name };
-                    stringBrands.Add(stringBrand);
+                    inactiveBrandsInfo.Add($"{inactiveBrand.name}, con SIESA id: {inactiveBrand.id_siesa} y VTEX id: {inactiveBrand.id_vtex}");
                 }
-                mailBody += htmlWriter.h("3", "Marcas cargadas a Vtex");
-                mailBody += htmlWriter.table(this.headers, stringBrands.ToArray());
+                body += htmlWriter.ul(inactiveBrandsInfo.ToArray());
+                body += "\n";
+            }
+           
+            if(failedLoadBrands.Length > 0)
+            {
+                sendEmail = true;
+                body += htmlWriter.h("5", "Marcas que fallaron al cargarse a VTEX") + "\n";
+                List<string> failedLoadBrandsInfo = new List<string>();
+                foreach (Brand failedLoadBrand in failedLoadBrands)
+                {
+                    failedLoadBrandsInfo.Add($"{failedLoadBrand.name}, con SIESA id: {failedLoadBrand.id_siesa}");
+                }
+                body += htmlWriter.ul(failedLoadBrandsInfo.ToArray());
+                body += "\n";
             }
 
-            if (failedLoadBrands.Length > 0)
+            if (sendEmail)
             {
-                List<string[]> stringBrands = new List<string[]>();
-                foreach (Brand brand in failedLoadBrands)
-                {
-                    string[] stringBrand = { brand.id_siesa, brand.id_vtex.ToString(), brand.name };
-                    stringBrands.Add(stringBrand);
-                }
-                mailBody += htmlWriter.h("3", "Marcas que no se cargaron en Vtex (errores)");
-                mailBody += htmlWriter.table(this.headers, stringBrands.ToArray());
+                this.emailSender.SendEmail(this.emailTitle, body);
             }
-
-            if (inactiveBrands.Length > 0)
-            {
-                List<string[]> stringBrands = new List<string[]>();
-                foreach (Brand brand in inactiveBrands)
-                {
-                    string[] stringBrand = { brand.id_siesa, brand.id_vtex.ToString(), brand.name };
-                    stringBrands.Add(stringBrand);
-                }
-                mailBody += htmlWriter.h("3", "Marcas pendientes de activar en Vtex");
-                mailBody += htmlWriter.table(this.headers, stringBrands.ToArray());
-            }
-
-            if (inactivatedBrands.Length > 0)
-            {
-                List<string[]> stringBrands = new List<string[]>();
-                foreach (Brand brand in inactivatedBrands)
-                {
-                    string[] stringBrand = { brand.id_siesa, brand.id_vtex.ToString(), brand.name };
-                    stringBrands.Add(stringBrand);
-                }
-                mailBody += htmlWriter.h("3", "Marcas desactivadas por el Middleware");
-                mailBody += htmlWriter.table(this.headers, stringBrands.ToArray());
-            }
-
-            if (notProccecedBrands.Length > 0)
-            {
-                List<string[]> stringBrands = new List<string[]>();
-                foreach (Brand brand in notProccecedBrands)
-                {
-                    string[] stringBrand = { brand.id_siesa, brand.id_vtex.ToString(), brand.name };
-                    stringBrands.Add(stringBrand);
-                }
-                mailBody += htmlWriter.h("3", "Marcas desactivadas por el Middleware");
-                mailBody += htmlWriter.table(this.headers, stringBrands.ToArray());
-            }
-            mailBody += "</body> </html>";
-            this.emailSender.SendEmail(this.emailTitle + " " + this.dateTime.ToString(), mailBody);
         }
     }
 }

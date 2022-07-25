@@ -19,6 +19,7 @@
         private ILogger logger;
 
         private List<Promotion> loadPromotions = new List<Promotion>();
+        private List<Promotion> inactivePromotions = new List<Promotion>();
         private List<Promotion> inactivatedPromotions = new List<Promotion>();
         private List<Promotion> failedPromotions = new List<Promotion>();
         private List<Promotion> notProccecedPromotions = new List<Promotion>();
@@ -26,6 +27,7 @@
 
         private List<Detail> details = new List<Detail>();
 
+        private RenderPromotionsMail renderPromotionsMail;
         private CustomConsole console = new CustomConsole();
         private JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
 
@@ -34,7 +36,8 @@
                 PromotionsVtexRepository vtexRepository,
                 PromotionsSiesaRepository siesaRepository,
                 IProcess process,
-                ILogger logger
+                ILogger logger,
+                EmailSender emailSender
             )
         {
             this.localRepository = localRepository;
@@ -42,6 +45,7 @@
             this.siesaRepository = siesaRepository;
             this.process = process;
             this.logger = logger;
+            this.renderPromotionsMail = new RenderPromotionsMail(emailSender);
             this.jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
         }
 
@@ -97,6 +101,7 @@
                             }
                             if (localPromotion.is_active == false && localPromotion.vtex_id !=  null)
                             {
+                                this.inactivePromotions.Add(localPromotion);
                                 //localPromotion.is_active = true;
                                 //Promotion vtexPromotion = await this.vtexRepository.updatePromotion(localPromotion);
                                 //localPromotion.is_active = vtexPromotion.is_active;
@@ -159,6 +164,7 @@
                 this.logger.writelog(genericException);
             }
 
+            this.renderPromotionsMail.sendMail(this.inactivePromotions.ToArray(), this.failedPromotions.ToArray());
             this.process.Log(
                         name: processName,
                         total_loads: this.loadPromotions.Count,

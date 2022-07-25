@@ -1,8 +1,11 @@
 using colanta_backend.App.Users.Domain;
 using colanta_backend.App.Users.Infraestructure;
 using colanta_backend.App.Categories.Jobs;
+
 using colanta_backend.App.Brands.Domain;
 using colanta_backend.App.Brands.Infraestructure;
+using colanta_backend.App.Brands.Jobs;
+
 using colanta_backend.App.Shared.Application;
 using colanta_backend.App.Shared.Domain;
 
@@ -17,6 +20,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace colanta_backend
 {
+    using App.Brands.Jobs;
+    using App.Categories.Jobs;
+    using App.Products.Jobs;
+    using App.Prices.Jobs;
+    using App.Inventory.Jobs;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -101,7 +110,7 @@ namespace colanta_backend
             //services.AddHostedService<ScheduledUpdateBrandsState>();
             //services.AddHostedService<ScheduledUpBrandsToVtex>();
 
-            //services.AddHostedService<ScheduledRenderCategories>();
+            services.AddHostedService<ScheduledRenderCategories>();
             //services.AddHostedService<ScheduledUpCategoriesToVtex>();
             //services.AddHostedService<ScheduledUpdateCategoriesState>();
             //services.AddHostedService<ScheduledActivateAllCategories>();

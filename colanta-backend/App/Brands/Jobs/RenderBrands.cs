@@ -209,6 +209,8 @@
                 await this.logger.writelog(exception);
                 this.console.processEndstAt(processName, DateTime.Now);
             }
+
+            this.renderBrandsMail.sendMail(inactiveBrands.ToArray(), failedLoadBrands.ToArray());
         }
     }
 }

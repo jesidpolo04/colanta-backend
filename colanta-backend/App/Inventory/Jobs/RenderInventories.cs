@@ -17,6 +17,7 @@
         private WarehousesRepository warehousesRepository;
         private IProcess process;
         private ILogger logger;
+        private EmailSender emailSender;
 
         private List<Inventory> loadInventories = new List<Inventory>();
         private List<Inventory> updatedInventories = new List<Inventory>();
@@ -28,13 +29,15 @@
 
         private JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
         private CustomConsole console = new CustomConsole();
+        private RenderInventoriesMail renderInventoriesMail;
         public RenderInventories(
             InventoriesRepository localRepository, 
             InventoriesVtexRepository vtexRepository, 
             InventoriesSiesaRepository siesaRepository,
             WarehousesRepository warehousesRepository,
             IProcess process,
-            ILogger logger
+            ILogger logger,
+            EmailSender emailSender
             )
         {
             this.localRepository = localRepository;
@@ -43,6 +46,8 @@
             this.warehousesRepository = warehousesRepository;
             this.process = process;
             this.logger = logger;
+            this.emailSender = emailSender;
+            this.renderInventoriesMail = new RenderInventoriesMail(emailSender);
 
             this.jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
         }
@@ -112,6 +117,7 @@
                         }
                         catch (VtexException vtexException)
                         {
+                            this.failedInventories.Add(siesaInventory);
                             this.console.throwException(vtexException.Message);
                             this.details.Add(new Detail(
                                     origin: "vtex",
@@ -148,7 +154,9 @@
                 this.obtainedInventories.Count, 
                 JsonSerializer.Serialize(this.details, jsonOptions));
 
+            this.renderInventoriesMail.sendMail(this.failedInventories.ToArray());
             this.console.processEndstAt(processName, DateTime.Now);
         }
+
     }
 }

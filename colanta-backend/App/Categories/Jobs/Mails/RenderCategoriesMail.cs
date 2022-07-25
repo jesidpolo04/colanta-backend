@@ -8,7 +8,6 @@
     {
         private HtmlWriter htmlWriter;
         private EmailSender emailSender;
-        private string[] headers = { "siesa_id", "vtex_id", "nombre" };
         public string emailTitle = "Renderizado de Categorías";
         public string emailSubtitle = "Middleware Colanta";
         public DateTime dateTime;
@@ -20,79 +19,41 @@
             this.dateTime = DateTime.Now;
         }
 
-        public void sendMail(Category[] loadCategories, Category[] inactiveCategories, Category[] failedLoadCategories, Category[] notProccecedCategories, Category[] inactivatedCategories)
+        public void sendMail(Category[] inactiveCategories, Category[] failedLoadCategories)
         {
-            string mailBody = "<html>";
-            mailBody += "<head>";
-            mailBody += "<style>";
-            mailBody += "td, th{border: 1px solid black; padding: 2px 3px}";
-            mailBody += "</style>";
-            mailBody += "</head>";
-            mailBody += "<body>";
-            mailBody += htmlWriter.h("1", this.emailTitle);
-            mailBody += htmlWriter.h("2", this.emailSubtitle);
+            bool sendEmail = false;
+            string body = "";
 
-            if (loadCategories.Length > 0)
+            if (inactiveCategories.Length > 0)
             {
-                List<string[]> stringCategories = new List<string[]>();
-                foreach (Category category in loadCategories)
+                sendEmail = true;
+                body += htmlWriter.h("4", "Categorías Inactivas en VTEX") + "\n";
+                List<string> inactiveCategoriesInfo = new List<string>();
+                foreach (Category inactiveCategory in inactiveCategories)
                 {
-                    string[] stringBrand = { category.siesa_id, category.vtex_id.ToString(), category.name };
-                    stringCategories.Add(stringBrand);
+                    inactiveCategoriesInfo.Add($"{inactiveCategory.name}, con SIESA id: {inactiveCategory.siesa_id} y VTEX id: {inactiveCategory.vtex_id}");
                 }
-                mailBody += htmlWriter.h("3", "Categorías cargadas a Vtex");
-                mailBody += htmlWriter.table(this.headers, stringCategories.ToArray());
+                body += htmlWriter.ul(inactiveCategoriesInfo.ToArray());
+                body += "\n";
             }
 
             if (failedLoadCategories.Length > 0)
             {
-                List<string[]> stringCategories = new List<string[]>();
-                foreach (Category category in failedLoadCategories)
+                sendEmail = true;
+                body += htmlWriter.h("4", "Categorías que fallaron al cargarse a VTEX") + "\n";
+                List<string> failedLoadCategoriesInfo = new List<string>();
+                foreach (Category failedLoadCategory in failedLoadCategories)
                 {
-                    string[] stringBrand = { category.siesa_id, category.vtex_id.ToString(), category.name };
-                    stringCategories.Add(stringBrand);
+                    failedLoadCategoriesInfo.Add($"{failedLoadCategory.name}, con SIESA id: {failedLoadCategory.siesa_id}");
                 }
-                mailBody += htmlWriter.h("3", "Categorías que no se cargaron en Vtex (errores)");
-                mailBody += htmlWriter.table(this.headers, stringCategories.ToArray());
+                body += htmlWriter.ul(failedLoadCategoriesInfo.ToArray());
+                body += "\n";
             }
 
-            if (inactiveCategories.Length > 0)
+            if (sendEmail)
             {
-                List<string[]> stringCategories = new List<string[]>();
-                foreach (Category category in inactiveCategories)
-                {
-                    string[] stringBrand = { category.siesa_id, category.vtex_id.ToString(), category.name };
-                    stringCategories.Add(stringBrand);
-                }
-                mailBody += htmlWriter.h("3", "Categorías pendientes de activar en Vtex");
-                mailBody += htmlWriter.table(this.headers, stringCategories.ToArray());
+                this.emailSender.SendEmail(this.emailTitle, body);
             }
-
-            if (inactivatedCategories.Length > 0)
-            {
-                List<string[]> stringCategories = new List<string[]>();
-                foreach (Category category in inactivatedCategories)
-                {
-                    string[] stringBrand = { category.siesa_id, category.vtex_id.ToString(), category.name };
-                    stringCategories.Add(stringBrand);
-                }
-                mailBody += htmlWriter.h("3", "Categorías desactivadas por el Middleware");
-                mailBody += htmlWriter.table(this.headers, stringCategories.ToArray());
-            }
-
-            if (notProccecedCategories.Length > 0)
-            {
-                List<string[]> stringCategories = new List<string[]>();
-                foreach (Category category in notProccecedCategories)
-                {
-                    string[] stringBrand = { category.siesa_id, category.vtex_id.ToString(), category.name };
-                    stringCategories.Add(stringBrand);
-                }
-                mailBody += htmlWriter.h("3", "Categorías desactivadas por el Middleware");
-                mailBody += htmlWriter.table(this.headers, stringCategories.ToArray());
-            }
-            mailBody += "</body> </html>";
-            this.emailSender.SendEmail(this.emailTitle + " " + this.dateTime.ToString(), mailBody);
         }
     }
 }

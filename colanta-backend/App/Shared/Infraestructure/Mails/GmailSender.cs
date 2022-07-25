@@ -21,7 +21,7 @@
             this.user = configuration["SmtpUser"];
 
             this.smtpClient = new SmtpClient(configuration["SmtpServer"]);
-            this.smtpClient.Port = configuration.GetValue<int>("SmtpPort");
+            this.smtpClient.Port = Int32.Parse(configuration["SmtpPort"]);
             this.smtpClient.EnableSsl = true;
             this.smtpClient.UseDefaultCredentials = false;
             this.smtpClient.Credentials = new NetworkCredential(this.user, this.password);
@@ -36,8 +36,7 @@
         {
             MailMessage mail = new MailMessage(this.from, this.to, title, message);
             mail.IsBodyHtml = true;
-            
-            //this.smtpClient.Send(mail);
+            this.smtpClient.Send(mail);
         }
     }
 }
