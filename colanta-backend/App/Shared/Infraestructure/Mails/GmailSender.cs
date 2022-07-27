@@ -1,10 +1,14 @@
 ﻿namespace colanta_backend.App.Shared.Infraestructure
 {
     using Shared.Domain;
+    using System.Threading.Tasks;
     using System.Net.Mail;
     using System.Net;
     using System;
     using Microsoft.Extensions.Configuration;
+    using FluentEmail.Core;
+    using FluentEmail.Razor;
+    using FluentEmail.Smtp;
 
     public class GmailSender : EmailSender, IDisposable
     {
@@ -25,6 +29,8 @@
             this.smtpClient.EnableSsl = true;
             this.smtpClient.UseDefaultCredentials = false;
             this.smtpClient.Credentials = new NetworkCredential(this.user, this.password);
+            Email.DefaultSender = new SmtpSender(this.smtpClient);
+            Email.DefaultRenderer = new RazorRenderer();
         }
 
         public void Dispose()
@@ -32,11 +38,14 @@
             this.smtpClient?.Dispose();
         }
 
-        public void SendEmail(string title, string message)
+        public void SendEmail(string title, string templatePath, object model )
         {
-            MailMessage mail = new MailMessage(this.from, this.to, title, message);
-            mail.IsBodyHtml = true;
-            this.smtpClient.Send(mail);
+            Email
+                .From(this.from, "Middleware Colanta")
+                .To(this.to)
+                .Subject(title)
+                .UsingTemplateFromFile(templatePath, model, true)
+                .Send();
         }
     }
 }

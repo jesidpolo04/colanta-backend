@@ -10,19 +10,22 @@
     using Shared.Domain;
     using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
+    using FluentEmail.Core;
 
     public class ProductsSiesaRepository : Domain.ProductsSiesaRepository
     {
         private IConfiguration configuration;
+        private EmailSender emailSender;
         private HttpClient httpClient;
         private SiesaAuth siesaAuth;
 
 
-        public ProductsSiesaRepository(IConfiguration configuration)
+        public ProductsSiesaRepository(IConfiguration configuration, EmailSender emailSender)
         {
             this.configuration = configuration;
             this.httpClient = new HttpClient();
             this.siesaAuth = new SiesaAuth(configuration);
+            this.emailSender = emailSender;
         }
 
         public async Task<Product[]> getAllProducts()
@@ -39,7 +42,19 @@
             List<Product> products = new List<Product>();
             foreach (SiesaProductDto siesaProductDto in siesaProductsDto.productos)
             {
-                products.Add(siesaProductDto.getProductFromDto());
+                try
+                {
+                    products.Add(siesaProductDto.getProductFromDto());
+                }
+                catch(BrandMustExistException exception)
+                {
+                    BrandMustExistMail email = new BrandMustExistMail(exception, this.emailSender);
+                    email.sendMail();
+                }
+                catch(CategoryMustExistException exception)
+                {
+
+                }
             }
             return products.ToArray();
         }

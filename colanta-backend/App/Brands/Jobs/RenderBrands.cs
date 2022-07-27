@@ -17,7 +17,7 @@
         private IProcess processLogger;
         private ILogger logger;
         private IConfiguration configuration;
-        private RenderBrandsMail renderBrandsMail;
+        private IRenderBrandsMail mail;
 
         private CustomConsole console;
         
@@ -35,7 +35,7 @@
             BrandsVtexRepository brandsVtexRepository, 
             IProcess processLogger,
             ILogger logger,
-            EmailSender emailSender, 
+            IRenderBrandsMail mail,
             IConfiguration configuration)
         {
             this.brandsLocalRepository = brandsLocalRepository;
@@ -43,7 +43,7 @@
             this.configuration = configuration;
             this.processLogger = processLogger;
             this.logger = logger;
-            this.renderBrandsMail = new RenderBrandsMail(emailSender);
+            this.mail = mail;
 
             this.console = new CustomConsole();
             this.details = new List<Detail>();
@@ -81,7 +81,7 @@
                         try
                         {
                             deltaBrand.state = false;
-                            await this.brandsVtexRepository.updateBrand(deltaBrand);
+                            await this.brandsVtexRepository.updateBrandState((int)deltaBrand.id_vtex, false);
                             this.inactivatedBrands.Add(deltaBrand);
                             this.details.Add(new Detail(
                                     origin: "vtex",
@@ -141,7 +141,7 @@
 
                             localBrand.id_vtex = vtexBrand.id_vtex;
                             this.brandsLocalRepository.updateBrand(localBrand);
-                            this.loadBrands.Add(vtexBrand);
+                            this.loadBrands.Add(localBrand);
                         }
 
                     }
@@ -209,8 +209,7 @@
                 await this.logger.writelog(exception);
                 this.console.processEndstAt(processName, DateTime.Now);
             }
-
-            this.renderBrandsMail.sendMail(inactiveBrands.ToArray(), failedLoadBrands.ToArray(), loadBrands.ToArray());
+            this.mail.sendMail(this.loadBrands, this.inactivatedBrands, this.failedLoadBrands);
         }
     }
 }

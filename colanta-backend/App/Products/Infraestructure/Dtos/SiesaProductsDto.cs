@@ -42,6 +42,8 @@
                 product.setBrand(new Brand(null, id_siesa: this.id_marca));
                 product.setCategory(new Category("", siesa_id: this.id_linea));
 
+                this.validate(product);
+
                 Sku sku = new Sku();
 
                 sku.setProduct(product);
@@ -75,7 +77,9 @@
                 product.setBrand(new Brand(null, id_siesa: this.id_marca));
                 product.setCategory(new Category("", siesa_id: this.id_linea));
 
-                foreach(VariacionDto variacionDto in this.variaciones)
+                this.validate(product);
+
+                foreach (VariacionDto variacionDto in this.variaciones)
                 {
                     Sku sku = new Sku();
                     sku.setProduct(product);
@@ -93,6 +97,19 @@
                     product.addSku(sku);
                 }
                 return product;
+            }
+        }
+
+        private void validate(Product product)
+        {
+            if(product.category.siesa_id == null)
+            {
+                throw new CategoryMustExistException($"El producto \"{product.name}\" con id SIESA \"{product.siesa_id}\" no posee una categoría válida", product);
+            }
+
+            if(product.brand.id_siesa != null)
+            {
+                throw new BrandMustExistException($"El producto \"{product.name}\" con id SIESA \"{product.siesa_id}\" no posee una marca válida", product);
             }
         }
     }

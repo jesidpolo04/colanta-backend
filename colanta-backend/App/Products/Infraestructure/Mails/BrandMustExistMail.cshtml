@@ -1,0 +1,15 @@
+﻿@{
+    @model colanta_backend.App.Products.Infraestructure.BrandMustExistMailModel
+    Layout = "App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+<h2 class="header">Hubo un problema al crear el producto</h2>
+<p>
+    Al intentar crear el producto: <b>@Model.product.name</b> con id siesa: <b>@Model.product.siesa_id</b> <br />
+    nos encontramos con que el producto no posee una marca válida.<br />
+</p> <br />
+<span>Marca: <b class="second-color">@Model.product.brand.id_siesa</b></span>
+        
+
+ 
+
+

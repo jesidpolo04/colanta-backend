@@ -139,6 +139,7 @@
 
                 foreach (Product siesaProduct in allSiesaProducts)
                 {
+                    
                     Product? localProduct = await productsLocalRepository.getProductBySiesaId(siesaProduct.siesa_id);
 
                     if (localProduct != null && localProduct.is_active == false)
@@ -167,7 +168,6 @@
                         }
                         catch (BrandMustExistException exception)
                         {
-                            this.emailSender.SendEmail("Alerta Producto sin Marca", exception.Message);
                         }
                         catch (Exception exception)
                         {

@@ -16,12 +16,12 @@ namespace colanta_backend.App.Brands.Jobs
 
         public async void Execute(object state)
         {
-            this.renderBrands.Invoke();
+            await this.renderBrands.Invoke();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromSeconds(5), TimeSpan.FromMinutes(30));
+            _timer = new Timer(Execute, null, TimeSpan.FromSeconds(10), TimeSpan.FromMinutes(1));
             return Task.CompletedTask;
         }
 

@@ -10,5 +10,6 @@ namespace colanta_backend.App.Brands.Domain
         Task<Brand> getBrandByVtexId(int? id);
         Task<Brand[]> getAllBrands();
         Task<Brand> updateBrand(Brand brand);
+        Task<Brand> updateBrandState(int vtexId, bool state);
     }
 }

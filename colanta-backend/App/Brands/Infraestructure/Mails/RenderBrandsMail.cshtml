@@ -1,0 +1,82 @@
+﻿
+@{
+    @model colanta_backend.App.Brands.Infraestructure.RenderBrandsMailModel;
+    Layout = "./App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+<h2 class="header">Renderizado de marcas</h2>
+
+<p>
+    El proceso de renderizado de marcas del middleware finalizó a las <b>@Model.dateTime.ToString("HH:mm:ss")</b> de manera exitosa,
+    a continuación los detalles de las acciones realizadas.
+</p>
+
+@if(Model.loadedBrands.Count > 0){
+    <p>Las siguientes marcas fueron creadas exitosamente en <b>VTEX</b></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Marca</th>
+                <th>Siesa Id</th>
+                <th>Vtex Id</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var brand in @Model.loadedBrands)
+            {
+                <tr>
+                    <td>@brand.name</td>
+                    <td>@brand.id_siesa</td>
+                    <td>@brand.id_vtex</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.inactivatedBrands.Count > 0)
+{
+    <p>Las siguientes marcas fueron desactivadas de Vtex debido a que no vinieron en el <b>json</b> de <b>SIESA</b></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Marca</th>
+                <th>Siesa Id</th>
+                <th>Vtex Id</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var brand in @Model.inactivatedBrands)
+            {
+                <tr>
+                    <td>@brand.name</td>
+                    <td>@brand.id_siesa</td>
+                    <td>@brand.id_vtex</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.failedBrands.Count > 0)
+{
+    <p>Las siguientes marcas no pudieron ser cargadas a <b>VTEX</b> debido a un error inesperado, se reintentará una inserción con estas marcas mas tarde.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Marca</th>
+                <th>Siesa Id</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var brand in @Model.inactivatedBrands)
+            {
+                <tr>
+                    <td>@brand.name</td>
+                    <td>@brand.id_siesa</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

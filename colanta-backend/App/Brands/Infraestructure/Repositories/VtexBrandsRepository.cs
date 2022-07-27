@@ -161,5 +161,12 @@
             }
             return null;
         }
+
+        public async Task<Brand> updateBrandState(int vtexId, bool state)
+        {
+            Brand brand = await this.getBrandByVtexId(vtexId);
+            brand.state = state;
+            return await this.updateBrand(brand);
+        }
     }
 }

@@ -65,7 +65,7 @@
 
             if (sendEmail)
             {
-                this.emailSender.SendEmail(this.emailTitle, body);
+                //this.emailSender.SendEmail(this.emailTitle, body);
             }
         }
     }

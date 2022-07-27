@@ -8,6 +8,7 @@ using colanta_backend.App.Brands.Jobs;
 
 using colanta_backend.App.Shared.Application;
 using colanta_backend.App.Shared.Domain;
+using colanta_backend.App.Shared.Infraestructure;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +18,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using colanta_backend.App.Shared.Infraestructure;
 using Microsoft.EntityFrameworkCore;
+using FluentEmail;
+using FluentEmail.Core;
 
 namespace colanta_backend
 {
@@ -40,15 +43,19 @@ namespace colanta_backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
-            //Dependencies Injections Brands
+            services
+                .AddFluentEmail(Configuration["SmtpUser"], "Colanta Middleware")
+                .AddRazorRenderer();
+
+            //Dependencies Injections Users
             services.AddTransient<UsersRepository, UsersEFRepository>();
             services.AddTransient<App.Users.Domain.UsersSiesaRepository, App.Users.Infraestructure.UsersSiesaRepository>();
             
             //Dependencies Injections Brands
             services.AddTransient<BrandsRepository, EFBrandsRepository>();
             services.AddTransient<BrandsVtexRepository, VtexBrandsRepository>();
+            services.AddTransient<IRenderBrandsMail, RenderBrandsMail>();
             services.AddTransient<App.Brands.Jobs.RenderBrands>();
             //Dependencies Injections Cattegories
             services.AddTransient<App.Categories.Domain.CategoriesRepository , App.Categories.Infraestructure.CategoriesEFRepository>(); //s
@@ -112,26 +119,26 @@ namespace colanta_backend
             services.AddHostedService<ScheduledUpdateBrandsState>();
             services.AddHostedService<ScheduledUpBrandsToVtex>();
 
-            services.AddHostedService<ScheduledRenderCategories>();
-            services.AddHostedService<ScheduledUpCategoriesToVtex>();
-            services.AddHostedService<ScheduledUpdateCategoriesState>();
+            //services.AddHostedService<ScheduledRenderCategories>();
+            //services.AddHostedService<ScheduledUpCategoriesToVtex>();
+            //services.AddHostedService<ScheduledUpdateCategoriesState>();
             //services.AddHostedService<ScheduledActivateAllCategories>();
 
-            services.AddHostedService<ScheduledRenderProductsAndSkus>();
-            services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
-            services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
+            //services.AddHostedService<ScheduledRenderProductsAndSkus>();
+            //services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
+            //services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
             //services.AddHostedService<ScheduledFixProductSku>();
 
-            services.AddHostedService<ScheduledRenderPrices>();
+            //services.AddHostedService<ScheduledRenderPrices>();
 
-            services.AddHostedService<ScheduledRenderWarehouses>();
+            //services.AddHostedService<ScheduledRenderWarehouses>();
 
-            services.AddHostedService<ScheduledRenderInventories>();
+            //services.AddHostedService<ScheduledRenderInventories>();
 
-            services.AddHostedService<ScheduledRenderPromotions>();
+            //services.AddHostedService<ScheduledRenderPromotions>();
             //services.AddHostedService<ScheduledUpToVtexNullPromotions>();
 
-            services.AddHostedService<ScheduledRenderCreditAccounts>();
+            //services.AddHostedService<ScheduledRenderCreditAccounts>();
             //services.AddHostedService<ScheduledReduceVtexCreditLimit>();
 
             //services.AddHostedService<ScheduledUpdateSiesaOrders>();
