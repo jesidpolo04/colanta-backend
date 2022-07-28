@@ -44,7 +44,12 @@
 
         public async Task<Category?> getCategoryBySiesaId(string id)
         {
-            var efCategories = this.dbContext.Categories.Where(category => category.siesa_id == id).Include(c => c.childs);
+            var efCategories = this.dbContext.Categories
+                .Include(c => c.father)
+                .Include(c => c.childs)
+                .ThenInclude(child => child.father)
+                .Where(category => category.siesa_id == id);
+                
             if(efCategories.ToArray().Length > 0)
             {
                 EFCategory efCategory = efCategories.First();

@@ -16,7 +16,10 @@ namespace colanta_backend.App.Brands.Jobs
 
         public async void Execute(object state)
         {
-            await this.renderBrands.Invoke();
+            using (renderBrands)
+            {
+                await this.renderBrands.Invoke();
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -33,6 +36,7 @@ namespace colanta_backend.App.Brands.Jobs
 
         public void Dispose()
         {
+            
             _timer?.Dispose();
         }
     }

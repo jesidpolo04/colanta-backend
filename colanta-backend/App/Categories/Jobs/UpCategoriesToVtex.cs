@@ -66,7 +66,6 @@
                         ));
                 }
             }
-            System.Console.WriteLine("Categorias Nulls ejecutandose... llegando a log");
             this.logs.Log(
                        name: processName,
                        total_loads: this.loadCategories.Count,

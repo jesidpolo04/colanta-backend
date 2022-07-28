@@ -23,11 +23,13 @@
 
         public Category toCategory()
         {
-            return new Category(
+            var category = new Category(
                             name: this.Name,
                             vtex_id: this.Id,
                             isActive: this.IsActive
                         );
+            category.setFather(new Category(vtex_id: FatherCategoryId, name: ""));
+            return category;
         }
     }
 }

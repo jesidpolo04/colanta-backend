@@ -38,6 +38,10 @@
             List<Brand> brands = new List<Brand>();
             foreach (SiesaBrandDTO siesaBrandDTO in siesaBrandsDto.marcas)
             {
+                if (siesaBrandDTO.id == "C008")
+                {
+                    continue;
+                }
                 brands.Add(this.siesaBrandMapper.DtoToEntity(siesaBrandDTO));
             }
             

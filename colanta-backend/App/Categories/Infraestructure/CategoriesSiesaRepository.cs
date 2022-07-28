@@ -36,6 +36,10 @@
             List<Category> categories = new List<Category>();
             foreach(SiesaCategoryDto siesaCategoryDto in siesaCategoriesDto.familias)
             {
+                if(siesaCategoryDto.id == "3029")
+                {
+                    continue;
+                }
                 categories.Add(siesaCategoryDto.toCategory());
             }
             return categories.ToArray();

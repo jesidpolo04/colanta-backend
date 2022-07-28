@@ -9,7 +9,7 @@
     using Shared.Application;
     using System.Text.Json.Serialization;
 
-    public class RenderCategories
+    public class RenderCategories : IDisposable
     {
         private string processName = "Renderizado de categorías";
         private CategoriesRepository localRepository;
@@ -17,8 +17,8 @@
         private CategoriesSiesaRepository siesaRepository;
         private IProcess processLogger;
         private ILogger logger;
+        private IRenderCategoriesMail mail;
         private CustomConsole console;
-        private RenderCategoriesMail renderCategoriesMail;
 
         private List<Category> loadCategories = new List<Category>();
         private List<Category> failedLoadCategories = new List<Category>();
@@ -35,22 +35,20 @@
             CategoriesSiesaRepository categoriesSiesaRepository,
             IProcess logs,
             ILogger logger,
-            EmailSender emailSender
+            IRenderCategoriesMail mail
         )
         {
             this.localRepository = categoriesLocalRepository;
             this.vtexRepository = categoriesVtexRepository;
             this.siesaRepository = categoriesSiesaRepository;
             this.processLogger = logs;
+            this.mail = mail;
             this.logger = logger;
             this.console = new CustomConsole();
-            this.renderCategoriesMail = new RenderCategoriesMail(emailSender);
 
             this.jsonOptions = new JsonSerializerOptions();
             this.jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
             this.jsonOptions.ReferenceHandler = ReferenceHandler.Preserve;
-
-            
         }
 
         public async Task Invoke()
@@ -69,7 +67,7 @@
                     try
                     {
                         deltaCategory.isActive = false;
-                        await vtexRepository.updateCategory(deltaCategory);
+                        await vtexRepository.updateCategoryState((int)deltaCategory.vtex_id, false);
                         await localRepository.updateCategory(deltaCategory);
 
                         //metrics
@@ -127,7 +125,7 @@
                                     Category vtexChildCategory = await this.vtexRepository.saveCategory(localChildCategory);
                                     localChildCategory.vtex_id = vtexChildCategory.vtex_id;
                                     await this.localRepository.updateCategory(localChildCategory);
-                                    this.loadCategories.Add(localCategory);
+                                    this.loadCategories.Add(localChildCategory);
                                     this.details.Add(new Detail("vtex", "Guardar categoría", null, null, true));
                                 }
                                 catch(VtexException exception)
@@ -143,6 +141,10 @@
                         {
                             this.console.throwException(exception.Message);
                             this.failedLoadCategories.Add(localCategory);
+                            foreach (Category child in localCategory.childs)
+                            {
+                                this.failedLoadCategories.Add(child);
+                            }
                             this.details.Add(new Detail("vtex", exception.requestUrl, exception.responseBody, exception.Message, false));
                             this.logger.writelog(exception);
                         }
@@ -185,7 +187,17 @@
                     JsonSerializer.Serialize(details, jsonOptions));
                 this.console.processEndstAt(processName, DateTime.Now);
             }
-            this.renderCategoriesMail.sendMail(this.inactiveCategories.ToArray(), this.failedLoadCategories.ToArray(), this.loadCategories.ToArray());
+            this.mail.sendMail(this.loadCategories, this.inactivatedCategories, this.failedLoadCategories);
+        }
+
+        public void Dispose()
+        {
+            this.loadCategories.Clear();
+            this.inactivatedCategories.Clear();
+            this.inactiveCategories.Clear();
+            this.failedLoadCategories.Clear();
+            this.notProccecedCategories.Clear();
+            this.details.Clear();
         }
     }
 }

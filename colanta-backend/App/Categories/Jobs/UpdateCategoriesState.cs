@@ -34,13 +34,13 @@
                     }
                     catch(VtexException vtexException)
                     {
-
+                        throw vtexException;
                     }
                 }
             }
             catch (Exception exception)
             {
-
+                throw exception;
             }
         }
     }

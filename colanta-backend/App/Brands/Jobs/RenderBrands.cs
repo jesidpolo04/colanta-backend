@@ -9,7 +9,7 @@
     using System.Text.Json;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
-    public class RenderBrands
+    public class RenderBrands : IDisposable
     {
         public string processName = "Renderizado de marcas";
         private BrandsRepository brandsLocalRepository;
@@ -31,8 +31,8 @@
         private JsonSerializerOptions jsonOptions;
 
         public RenderBrands(
-            BrandsRepository brandsLocalRepository, 
-            BrandsVtexRepository brandsVtexRepository, 
+            BrandsRepository brandsLocalRepository,
+            BrandsVtexRepository brandsVtexRepository,
             IProcess processLogger,
             ILogger logger,
             IRenderBrandsMail mail,
@@ -210,6 +210,16 @@
                 this.console.processEndstAt(processName, DateTime.Now);
             }
             this.mail.sendMail(this.loadBrands, this.inactivatedBrands, this.failedLoadBrands);
+        }
+
+        public void Dispose()
+        {
+            loadBrands.Clear();
+            failedLoadBrands.Clear();
+            inactiveBrands.Clear();
+            inactivatedBrands.Clear();
+            notProccecedBrands.Clear();
+            details.Clear();
         }
     }
 }

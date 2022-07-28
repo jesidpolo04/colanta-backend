@@ -202,5 +202,12 @@
             }
             return category;
         }
+
+        public async Task<Category> updateCategoryState(int vtexId, bool state)
+        {
+            Category category = await this.getCategoryById(vtexId);
+            category.isActive = state;
+            return await this.updateCategory(category);
+        }
     }
 }

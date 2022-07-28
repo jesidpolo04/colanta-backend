@@ -60,9 +60,10 @@ namespace colanta_backend
             //Dependencies Injections Cattegories
             services.AddTransient<App.Categories.Domain.CategoriesRepository , App.Categories.Infraestructure.CategoriesEFRepository>(); //s
             services.AddTransient<App.Categories.Domain.CategoriesVtexRepository, App.Categories.Infraestructure.CategoriesVtexRepository>();
-            services.AddTransient<App.Categories.Domain.CategoriesSiesaRepository, App.Categories.Infraestructure.CategoriesMockSiesaRepository>();//s
-            services.AddTransient<App.Categories.Jobs.RenderCategories>();
-            services.AddTransient<App.Categories.Jobs.ActivateAllCategories>();
+            services.AddTransient<App.Categories.Domain.CategoriesSiesaRepository, App.Categories.Infraestructure.CategoriesMockSiesaRepository>();//
+            services.AddTransient<App.Categories.Domain.IRenderCategoriesMail, App.Categories.Infraestructure.RenderCategoriesMail>();
+            services.AddTransient<RenderCategories>();
+            services.AddTransient<ActivateAllCategories>();
             //Dependencies Injections Products
             services.AddTransient<App.Products.Domain.ProductsRepository , App.Products.Infraestructure.ProductsEFRepository>();
             services.AddTransient<App.Products.Domain.ProductsVtexRepository, App.Products.Infraestructure.ProductsVtexRepository>();
@@ -115,13 +116,13 @@ namespace colanta_backend
             services.AddTransient<EmailSender, GmailSender>();
 
             //Scheduled Tasks
-            services.AddHostedService<ScheduledRenderBrands>();
-            services.AddHostedService<ScheduledUpdateBrandsState>();
-            services.AddHostedService<ScheduledUpBrandsToVtex>();
+            //services.AddHostedService<ScheduledRenderBrands>();
+            //services.AddHostedService<ScheduledUpdateBrandsState>();
+            //services.AddHostedService<ScheduledUpBrandsToVtex>();
 
-            //services.AddHostedService<ScheduledRenderCategories>();
-            //services.AddHostedService<ScheduledUpCategoriesToVtex>();
-            //services.AddHostedService<ScheduledUpdateCategoriesState>();
+            services.AddHostedService<ScheduledRenderCategories>();
+            services.AddHostedService<ScheduledUpCategoriesToVtex>();
+            services.AddHostedService<ScheduledUpdateCategoriesState>();
             //services.AddHostedService<ScheduledActivateAllCategories>();
 
             //services.AddHostedService<ScheduledRenderProductsAndSkus>();

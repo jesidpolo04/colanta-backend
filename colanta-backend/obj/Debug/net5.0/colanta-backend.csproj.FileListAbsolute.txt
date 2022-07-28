@@ -388,3 +388,4 @@ D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\colanta-backend.Razo
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\colanta-backend.Views.pdb
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Brands\Infraestructure\Mails\RenderBrandsMail.cshtml.g.cs
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Shared\Infraestructure\Mails\EmailLayout.cshtml.g.cs
+D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Categories\Infraestructure\Mails\RenderCategoriesMail.cshtml.g.cs
