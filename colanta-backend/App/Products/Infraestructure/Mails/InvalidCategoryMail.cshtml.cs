@@ -4,17 +4,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace colanta_backend.App.Products.Infraestructure
 {
     using Products.Domain;
-    public class BrandMustExistMailModel : PageModel
+    public class InvalidCategoryMailModel : PageModel
     {
-        public Product product { get; set; }
+        public Product product;
 
-        public BrandMustExistMailModel(Product product)
+        public InvalidCategoryMailModel(Product product)
         {
             this.product = product;
         }
-        public void OnGet(Product product)
+        public void OnGet()
         {
-            this.product = product;
         }
     }
 }

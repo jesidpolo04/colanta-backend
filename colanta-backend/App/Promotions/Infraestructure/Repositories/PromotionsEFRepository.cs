@@ -155,7 +155,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 }
 
                 string[] gifts_ids = JsonSerializer.Deserialize<string[]>(efPromotion.gifts_ids);
-                EFSku[] efGifts = this.dbContext.Skus.Where(sku => gifts_ids.Contains(sku.siesa_id)).ToArray();
+                EFSku[] efGifts = this.dbContext.Skus.Where(sku => gifts_ids.Contains(sku.concat_siesa_id)).ToArray();
                 List<Sku> gifts = new List<Sku>();
                 foreach(EFSku efGift in efGifts)
                 {
@@ -163,7 +163,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 }
                 
                 string[] list_sku_1_buy_together_ids = JsonSerializer.Deserialize<string[]>(efPromotion.list_sku_1_buy_together_ids);
-                EFSku[] efListSku1 = this.dbContext.Skus.Where(sku => list_sku_1_buy_together_ids.Contains(sku.siesa_id)).ToArray();
+                EFSku[] efListSku1 = this.dbContext.Skus.Where(sku => list_sku_1_buy_together_ids.Contains(sku.concat_siesa_id)).ToArray();
                 List<Sku> listSku1 = new List<Sku>();
                 foreach(EFSku efSku in efListSku1)
                 {
@@ -171,7 +171,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 }
              
                 string[] list_sku_2_buy_together_ids = JsonSerializer.Deserialize<string[]>(efPromotion.list_sku_2_buy_together_ids);
-                EFSku[] efListSku2 = this.dbContext.Skus.Where(sku => list_sku_2_buy_together_ids.Contains(sku.siesa_id)).ToArray();
+                EFSku[] efListSku2 = this.dbContext.Skus.Where(sku => list_sku_2_buy_together_ids.Contains(sku.concat_siesa_id)).ToArray();
                 List<Sku> listSku2 = new List<Sku>();
                 foreach(EFSku efSku in efListSku2)
                 {

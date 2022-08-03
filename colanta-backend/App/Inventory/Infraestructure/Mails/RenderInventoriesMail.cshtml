@@ -1,0 +1,106 @@
+﻿@{
+    @model colanta_backend.App.Inventory.Infraestructure.RenderInventoriesMailModel
+    Layout = "./App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+<h2 class="header">Renderizado de Inventarios</h2>
+
+<p>
+    El proceso de renderizado de inventarios del middleware finalizó a las <b>@Model.dateTime.ToString("HH:mm:ss")</b> de manera exitosa,
+    a continuación los detalles de las acciones realizadas.
+</p>
+
+@if(Model.loadedInventories.Count > 0){
+
+    <p>Los siguientes inventarios fueron asignados exitosamente en <b>VTEX</b></p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Producto</th>
+               <th>Siesa Id</th>
+               <th>Vtex Id</th>
+               <th>Almacen</th>
+               <th>Almacen Id</th>
+               <th>Cantidad</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var price in @Model.loadedInventories)
+            {
+                 <tr>
+                    <td>@price.sku.name</td>
+                    <td>@price.sku.siesa_id</td>
+                    <td>@price.sku.vtex_id</td>
+                    <td>@price.warehouse.name</td>
+                    <td>@price.warehouse.siesa_id</td>
+                    <td>@price.quantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.updatedInventories.Count > 0){
+
+    <p>Los siguientes inventarios fueron actualizados exitosamente en <b>VTEX</b></p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Producto</th>
+               <th>Siesa Id</th>
+               <th>Vtex Id</th>
+               <th>Almacen</th>
+               <th>Almacen Id</th>
+               <th>Cantidad</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var price in @Model.updatedInventories)
+            {
+                 <tr>
+                    <td>@price.sku.name</td>
+                    <td>@price.sku.siesa_id</td>
+                    <td>@price.sku.vtex_id</td>
+                    <td>@price.warehouse.name</td>
+                    <td>@price.warehouse.siesa_id</td>
+                    <td>@price.quantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.failedInventories.Count > 0){
+
+    <p>Tubimos inconvenientes con <b>VTEX</b> al intentar crear o actualizar los siguientes inventarios.</p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Producto</th>
+               <th>Siesa Id</th>
+               <th>Vtex Id</th>
+               <th>Almacen</th>
+               <th>Almacen Id</th>
+               <th>Cantidad</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var price in @Model.failedInventories)
+            {
+                 <tr>
+                    <td>@price.sku.name</td>
+                    <td>@price.sku.siesa_id</td>
+                    <td>@price.sku.vtex_id</td>
+                    <td>@price.warehouse.name</td>
+                    <td>@price.warehouse.siesa_id</td>
+                    <td>@price.quantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -38,7 +38,7 @@
             List<Brand> brands = new List<Brand>();
             foreach (SiesaBrandDTO siesaBrandDTO in siesaBrandsDto.marcas)
             {
-                if (siesaBrandDTO.id == "C008")
+                if (siesaBrandDTO.id == "C008_failed") //C008
                 {
                     continue;
                 }

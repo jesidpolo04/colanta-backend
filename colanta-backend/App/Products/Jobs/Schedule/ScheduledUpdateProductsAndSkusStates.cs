@@ -16,6 +16,9 @@ namespace colanta_backend.App.Products.Jobs
         private ProductsVtexRepository productsVtexRepository;
         private SkusRepository skusLocalRepository;
         private SkusVtexRepository skusVtexRepository;
+
+        private TimeSpan timeout = TimeSpan.FromSeconds(5);
+        private TimeSpan interval = TimeSpan.FromMinutes(8);
         
         public ScheduledUpdateProductsAndSkusStates(
             ProductsRepository productsLocalRepository,
@@ -43,7 +46,7 @@ namespace colanta_backend.App.Products.Jobs
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(30));
+            _timer = new Timer(Execute, null, timeout, interval);
             return Task.CompletedTask;
         }
 

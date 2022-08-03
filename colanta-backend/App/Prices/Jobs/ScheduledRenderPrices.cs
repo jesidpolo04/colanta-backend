@@ -16,12 +16,16 @@
 
         public async void Execute(object state)
         {
-            await this.renderPrices.Invoke();
+            using (renderPrices)
+            {
+                await this.renderPrices.Invoke();
+            }
+            
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(30));
+            _timer = new Timer(Execute, null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
             return Task.CompletedTask;
         }
 

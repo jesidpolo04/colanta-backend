@@ -8,8 +8,8 @@ namespace colanta_backend.App.Prices.Infraestructure
     using App.Products.Domain;
     using App.Products.Infraestructure;
     using Microsoft.Extensions.Configuration;
-    using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.EntityFrameworkCore;
     public class PricesEFRepository : Domain.PricesRepository
     {
         private ColantaContext dbContext;
@@ -20,15 +20,13 @@ namespace colanta_backend.App.Prices.Infraestructure
 
         public async Task<Price?> getPriceBySkuConcatSiesaId(string concat_siesa_id)
         {
-            var efPrices = this.dbContext.Prices.Where(e => e.sku_concat_siesa_id == concat_siesa_id);
+            var efPrices = this.dbContext.Prices
+                .Include(price => price.sku)
+                .Where(e => e.sku_concat_siesa_id == concat_siesa_id);
 
             if (efPrices.ToArray().Length > 0)
             {
                 EFPrice efPrice = efPrices.First();
-                EFSku efSku = this.dbContext.Skus.Find(efPrice.sku_id);
-
-                efPrice.sku = efSku;
-
                 return efPrice.getPriceFromEfPrice();
             }
 
@@ -37,15 +35,13 @@ namespace colanta_backend.App.Prices.Infraestructure
 
         public async Task<Price?> getPriceBySkuId(int sku_id)
         {
-            var efPrices = this.dbContext.Prices.Where(e => e.sku.id == sku_id);
+            var efPrices = this.dbContext.Prices
+                .Include(price => price.sku)
+                .Where(e => e.sku.id == sku_id);
 
             if (efPrices.ToArray().Length > 0)
             {
                 EFPrice efPrice = efPrices.First();
-                EFSku efSku = this.dbContext.Skus.Find(efPrice.sku_id);
-
-                efPrice.sku = efSku;
-
                 return efPrice.getPriceFromEfPrice();
             }
 

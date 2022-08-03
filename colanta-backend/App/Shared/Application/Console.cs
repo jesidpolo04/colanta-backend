@@ -62,7 +62,7 @@
 
         public CustomConsole errorColor()
         {
-            this.color(ConsoleColor.DarkGreen);
+            this.color(ConsoleColor.DarkRed);
             return this;
         }
 

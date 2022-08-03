@@ -1,0 +1,91 @@
+﻿@{
+    @model colanta_backend.App.Prices.Infraestructure.RenderPricesMailModel
+    Layout = "./App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+<h2 class="header">Renderizado de precios</h2>
+
+<p>
+    El proceso de renderizado de precios del middleware finalizó a las <b>@Model.dateTime.ToString("HH:mm:ss")</b> de manera exitosa,
+    a continuación los detalles de las acciones realizadas.
+</p>
+
+@if(Model.loadedPrices.Count > 0){
+
+    <p>Los siguientes precios fueron asignados exitosamente en <b>VTEX</b></p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Producto</th>
+               <th>Siesa Id</th>
+               <th>Vtex Id</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var price in @Model.loadedPrices)
+            {
+                 <tr>
+                    <td>@price.sku.name</td>
+                    <td>@price.sku.siesa_id</td>
+                    <td>@price.sku.vtex_id</td>
+                    <td>@price.price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.updatedPrices.Count > 0){
+
+    <p>Los siguientes precios fueron actualizados exitosamente en <b>VTEX</b></p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Producto</th>
+               <th>Siesa Id</th>
+               <th>Vtex Id</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var price in @Model.updatedPrices)
+            {
+                 <tr>
+                    <td>@price.sku.name</td>
+                    <td>@price.sku.siesa_id</td>
+                    <td>@price.sku.vtex_id</td>
+                    <td>@price.price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.failedPrices.Count > 0){
+
+    <p>Tubimos inconvenientes con <b>VTEX</b> al intentar crear o actualizar los siguientes precios.</p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Producto</th>
+               <th>Siesa Id</th>
+               <th>Vtex Id</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var price in @Model.failedPrices)
+            {
+                 <tr>
+                    <td>@price.sku.name</td>
+                    <td>@price.sku.siesa_id</td>
+                    <td>@price.sku.vtex_id</td>
+                    <td>@price.price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,17 @@
+﻿@{
+    @model colanta_backend.App.Products.Infraestructure.InvalidCategoryMailModel
+    Layout = "App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+<h2 class="header">Hubo un problema al crear el producto</h2>
+<p>
+    Al intentar crear el producto: <b>@Model.product.name</b> con SIESA id: <b>@Model.product.siesa_id</b> 
+    nos encontramos con que el producto no posee una categoría válida, esto puede ocurrir por al menos una de las siguientes razones: <br />
+    
+</p>
+<ul>
+    <li>La categoría no está viniendo en el JSON de categorías que se le provee al middleware.</li>
+    <li>La categoría es nula en el JSON de productos que se le provee al middleware.</li>
+    <li>Hubo un error al crear la categoría en el middleware.</li>
+</ul>
+<br />
+<span>Valor de la categoría que vino en el JSON de productos: <b class="second-color">@Model.product.category.siesa_id</b></span>

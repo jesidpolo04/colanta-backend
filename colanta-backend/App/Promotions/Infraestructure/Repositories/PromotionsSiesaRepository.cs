@@ -22,6 +22,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
         public PromotionsSiesaRepository(IConfiguration configuration)
         {
             this.httpClient = new HttpClient();
+            this.httpClient.Timeout = TimeSpan.FromMinutes(5);
             this.configuration = configuration;
             this.siesaAuth = new SiesaAuth(configuration);
         }

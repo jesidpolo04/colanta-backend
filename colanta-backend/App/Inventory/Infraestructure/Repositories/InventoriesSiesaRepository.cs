@@ -27,10 +27,12 @@ namespace colanta_backend.App.Inventory.Infraestructure
 
         public async Task<Inventory[]> getAllInventoriesByWarehouse(string warehouseSiesaId)
         {
-            System.Console.WriteLine("warehouse id: " + warehouseSiesaId);
-            await this.setHeaders();
+            Console.WriteLine("warehouse id: " + warehouseSiesaId);
+            string token = await this.siesaAuth.getToken();
             string endpoint = "/api/ColantaWS/Inventario/" + warehouseSiesaId;
-            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, configuration["SiesaUrl"] + endpoint);
+            request.Headers.Add("Authorization", $"Bearer {token}");
+            HttpResponseMessage siesaResponse = await this.httpClient.SendAsync(request);
             if (!siesaResponse.IsSuccessStatusCode)
             {
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
@@ -45,12 +47,6 @@ namespace colanta_backend.App.Inventory.Infraestructure
                 inventories.Add(inventory);
             }
             return inventories.ToArray();
-        }
-
-        private async Task setHeaders()
-        {
-            this.httpClient.DefaultRequestHeaders.Remove("Authorization");
-            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await this.siesaAuth.getToken());
         }
     }
 }

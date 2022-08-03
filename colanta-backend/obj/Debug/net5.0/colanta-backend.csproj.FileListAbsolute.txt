@@ -389,3 +389,10 @@ D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\colanta-backend.View
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Brands\Infraestructure\Mails\RenderBrandsMail.cshtml.g.cs
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Shared\Infraestructure\Mails\EmailLayout.cshtml.g.cs
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Categories\Infraestructure\Mails\RenderCategoriesMail.cshtml.g.cs
+D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Products\Infraestructure\Mails\RenderProductsMail.cshtml.g.cs
+D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Products\Infraestructure\Mails\InvalidCategoryMail.cshtml.g.cs
+D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Prices\Infraestructure\Mails\RenderPricesMail.cshtml.g.cs
+D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Inventory\Infraestructure\Mails\RenderInventoriesMail.cshtml.g.cs
+D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\CustomerCredit\Infraestructure\Mails\RenderAccountsMail.cshtml.g.cs
+D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Promotions\Infraestructure\Mails\InvalidPromotionMail.cshtml.g.cs
+D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Promotions\Infraestructure\Mails\RenderPromotionsMail.cshtml.g.cs

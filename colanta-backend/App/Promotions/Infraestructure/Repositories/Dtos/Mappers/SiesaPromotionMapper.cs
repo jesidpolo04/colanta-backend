@@ -119,9 +119,16 @@
 
                 case "regalo":
                     List<string> gifts_ids = new List<string>();
-                    foreach (string gift_id in promotionDto.configuracion.items_de_regalo)
+                    foreach (ProductoDto gift in promotionDto.configuracion.items_de_regalo)
                     {
-                        gifts_ids.Add(gift_id);
+                        if(gift.id_variacion == null)
+                        {
+                            gifts_ids.Add($"{promotion.business}_{gift.id_producto}_{gift.id_producto}");
+                        }
+                        else
+                        {
+                            gifts_ids.Add($"{promotion.business}_{gift.id_producto}_{gift.id_variacion}");
+                        }
                     }
                     promotion.gifts_ids = JsonSerializer.Serialize(gifts_ids);
                     promotion.gift_quantity_selectable = (int)promotionDto.configuracion.cantidad_de_regalos_seleccionables;
@@ -132,16 +139,30 @@
                 case "kit":
 
                     List<string> list1 = new List<string>();
-                    foreach (string sku_siesa_id in promotionDto.configuracion.lista1)
+                    foreach (ProductoDto product in promotionDto.configuracion.lista1)
                     {
-                        list1.Add(sku_siesa_id);
+                        if (product.id_variacion == null)
+                        {
+                            list1.Add($"{promotion.business}_{product.id_producto}_{product.id_producto}");
+                        }
+                        else
+                        {
+                            list1.Add($"{promotion.business}_{product.id_producto}_{product.id_variacion}");
+                        }
                     }
                     promotion.list_sku_1_buy_together_ids = JsonSerializer.Serialize(list1);
 
                     List<string> list2 = new List<string>();
-                    foreach (string sku_siesa_id in promotionDto.configuracion.lista1)
+                    foreach (ProductoDto product in promotionDto.configuracion.lista2)
                     {
-                        list2.Add(sku_siesa_id);
+                        if (product.id_variacion == null)
+                        {
+                            list2.Add($"{promotion.business}_{product.id_producto}_{product.id_producto}");
+                        }
+                        else
+                        {
+                            list2.Add($"{promotion.business}_{product.id_producto}_{product.id_variacion}");
+                        }
                     }
                     promotion.list_sku_2_buy_together_ids = JsonSerializer.Serialize(list2);
 
@@ -184,13 +205,16 @@
             }
             else
             {
-                List<string> skus_ids = new List<string>();
-                foreach (string siesa_id in promotionDto.aplica_a.variaciones)
+               if(promotionDto.aplica_a.variaciones != null)
                 {
-                    skus_ids.Add(siesa_id);
+                    List<string> skus_ids = new List<string>();
+                    foreach (string siesa_id in promotionDto.aplica_a.variaciones)
+                    {
+                        skus_ids.Add(siesa_id);
+                    }
+                    promotion.list_sku_1_buy_together_ids = JsonSerializer.Serialize(skus_ids);
+                    promotion.skus_ids = "[]";
                 }
-                promotion.list_sku_1_buy_together_ids = JsonSerializer.Serialize(skus_ids);
-                promotion.skus_ids = "[]";
             }
 
 

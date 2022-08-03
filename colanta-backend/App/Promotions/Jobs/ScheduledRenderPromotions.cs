@@ -12,6 +12,8 @@
     {
         private Timer _timer;
         private RenderPromotions renderPromotions;
+        private TimeSpan timeout = TimeSpan.FromSeconds(5);
+        private TimeSpan interval = TimeSpan.FromMinutes(8);
         public ScheduledRenderPromotions(RenderPromotions renderPromotions)
         {
             this.renderPromotions = renderPromotions;
@@ -24,7 +26,7 @@
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30));
+            _timer = new Timer(Execute, null, timeout, interval);
             return Task.CompletedTask;
         }
 

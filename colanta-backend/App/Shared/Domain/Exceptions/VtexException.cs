@@ -8,14 +8,14 @@
         public int status;
         public string responseBody;
         public string requestUrl;
-        public string requestBody;
+        public string? requestBody;
         public VtexException(HttpResponseMessage httpResponse, string message)
             :base(message)
         {
             this.status = (int)httpResponse.StatusCode;
             this.responseBody = httpResponse.Content.ReadAsStringAsync().Result;
             this.requestUrl = httpResponse.RequestMessage.RequestUri.ToString();
-            this.requestBody = httpResponse.RequestMessage.Content.ReadAsStringAsync().Result;
+            this.requestBody = httpResponse.RequestMessage.Content != null ? httpResponse.RequestMessage.Content.ReadAsStringAsync().Result : null;
         }
 
         public override string ToString()

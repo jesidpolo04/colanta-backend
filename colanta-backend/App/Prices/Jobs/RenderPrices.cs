@@ -2,52 +2,53 @@
 {
     using System.Threading.Tasks;
     using App.Prices.Domain;
+    using App.Products.Domain;
     using App.Shared.Domain;
     using App.Shared.Application;
     using System.Collections.Generic;
     using System.Text.Json;
     using System.Text.Json.Serialization;
     using System;
-    public class RenderPrices
+    public class RenderPrices : IDisposable
     {
         public string processName = "Renderizado de precios";
         public PricesRepository localRepository; 
         public PricesVtexRepository vtexRepository ;
         public PricesSiesaRepository siesaRepository;
-        public EmailSender emailSender;
+        public SkusRepository skusLocalRepository;
         public IProcess processLogger;
         public ILogger logger;
+        private IRenderPricesMail mail;
 
         public List<Price> loadPrices = new List<Price>();
         public List<Price> updatedPrices = new List<Price>();
         public List<Price> failedPrices = new List<Price>();
         public List<Price> notProccecedPrices = new List<Price>();
-        public List<Price> obtainedPrices = new List<Price>();
+        public int obtainedPrices = 0;
         public List<Detail> details = new List<Detail>();
 
         public CustomConsole console = new CustomConsole();
-
         public JsonSerializerOptions jsonOptions;
-        public RenderPricesMail renderPricesMail;
+
         public RenderPrices(
-            PricesRepository localRepository, 
-            PricesVtexRepository vtexRepository, 
+            PricesRepository localRepository,
+            PricesVtexRepository vtexRepository,
             PricesSiesaRepository siesaRepository,
-            EmailSender emailSender,
+            SkusRepository skusLocalRepository,
             IProcess processLogger,
-            ILogger logger)
+            ILogger logger,
+            IRenderPricesMail mail)
         {
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
-            this.emailSender = emailSender;
+            this.skusLocalRepository = skusLocalRepository;
             this.processLogger = processLogger;
             this.logger = logger;
+            this.mail = mail;
 
             this.jsonOptions = new JsonSerializerOptions();
             this.jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-
-            this.renderPricesMail = new RenderPricesMail(emailSender);
         }
 
         public async Task Invoke()
@@ -66,9 +67,83 @@
 
                 foreach (Price siesaPrice in allSiesaPrices)
                 {
-                    this.obtainedPrices.Add(siesaPrice);
+                    this.obtainedPrices ++;
+
+                    if (!this.skuExist(siesaPrice))
+                    {
+                        this.notProccecedPrices.Add(siesaPrice);
+                        continue;
+                    }
 
                     Price localPrice = await this.localRepository.getPriceBySkuConcatSiesaId(siesaPrice.sku_concat_siesa_id);
+
+                    if (localPrice != null)
+                    {
+                        try
+                        {
+                            if (localPrice.price != siesaPrice.price)
+                            {
+                                localPrice.price = siesaPrice.price;
+                                await this.localRepository.updatePrice(localPrice);
+                            }
+
+                            Price vtexPrice = await this.vtexRepository.getPriceByVtexId(localPrice.sku.vtex_id);
+
+                            if (vtexPrice == null)
+                            {
+                                await this.vtexRepository.savePrice(localPrice);
+                                this.loadPrices.Add(localPrice);
+                                this.details.Add(new Detail(
+                                            origin: "vtex",
+                                            action: "crear o actualizar precio",
+                                            content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
+                                            description: "petición de crear o actualizar precio, completada con éxito.",
+                                            success: true
+                                            ));
+                                continue;
+                            }
+                            if (vtexPrice != null)
+                            {
+                                if (vtexPrice.price != localPrice.price)
+                                {
+                                    await this.vtexRepository.savePrice(localPrice);
+                                    this.updatedPrices.Add(localPrice);
+                                    this.details.Add(new Detail(
+                                            origin: "vtex",
+                                            action: "crear o actualizar precio",
+                                            content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
+                                            description: "petición de crear o actualizar precio, completada con éxito.",
+                                            success: true
+                                            ));
+                                    continue;
+                                }
+                                if (vtexPrice.price == localPrice.price)
+                                {
+                                    this.notProccecedPrices.Add(localPrice);
+                                    continue;
+                                }
+                            }
+                        }
+                        catch (VtexException vtexException)
+                        {
+                            this.console.throwException(vtexException.Message);
+                            this.failedPrices.Add(siesaPrice);
+                            this.details.Add(new Detail(
+                                        origin: "vtex",
+                                        action: vtexException.requestUrl,
+                                        content: vtexException.responseBody,
+                                        description: vtexException.Message,
+                                        success: false
+                                        ));
+                            this.logger.writelog(vtexException);
+                        }
+                        catch (Exception exception)
+                        {
+                            this.failedPrices.Add(siesaPrice);
+                            this.console.throwException(exception.Message);
+                            this.logger.writelog(exception);
+                        }
+                    }
 
                     if (localPrice == null)
                     {
@@ -126,73 +201,6 @@
                             this.logger.writelog(exception);
                         }
                     }
-
-                    if (localPrice != null)
-                    {
-                        try
-                        {
-                            if (localPrice.price != siesaPrice.price)
-                            {
-                                localPrice.price = siesaPrice.price;
-                                await this.localRepository.updatePrice(localPrice);
-                            }
-
-                            Price vtexPrice = await this.vtexRepository.getPriceByVtexId(localPrice.sku.vtex_id);
-                            if (vtexPrice == null)
-                            {
-                                await this.vtexRepository.savePrice(localPrice);
-                                this.loadPrices.Add(localPrice);
-                                this.details.Add(new Detail(
-                                            origin: "vtex",
-                                            action: "crear o actualizar precio",
-                                            content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
-                                            description: "petición de crear o actualizar precio, completada con éxito.",
-                                            success: true
-                                            ));
-                                continue;
-                            }
-                            if (vtexPrice != null)
-                            {
-                                if (vtexPrice.price != localPrice.price)
-                                {
-                                    await this.vtexRepository.savePrice(localPrice);
-                                    this.updatedPrices.Add(localPrice);
-                                    this.details.Add(new Detail(
-                                            origin: "vtex",
-                                            action: "crear o actualizar precio",
-                                            content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
-                                            description: "petición de crear o actualizar precio, completada con éxito.",
-                                            success: true
-                                            ));
-                                    continue;
-                                }
-                                if (vtexPrice.price == localPrice.price)
-                                {
-                                    this.notProccecedPrices.Add(localPrice);
-                                    continue;
-                                }
-                            }
-                        }
-                        catch (VtexException vtexException)
-                        {
-                            this.console.throwException(vtexException.Message);
-                            this.failedPrices.Add(siesaPrice);
-                            this.details.Add(new Detail(
-                                        origin: "vtex",
-                                        action: vtexException.requestUrl,
-                                        content: vtexException.responseBody,
-                                        description: vtexException.Message,
-                                        success: false
-                                        ));
-                            this.logger.writelog(vtexException);
-                        }
-                        catch (Exception exception)
-                        {
-                            this.failedPrices.Add(siesaPrice);
-                            this.console.throwException(exception.Message);
-                            this.logger.writelog(exception);
-                        }
-                    }
                 }
             }
             catch(SiesaException siesaException)
@@ -213,7 +221,6 @@
                 this.logger.writelog(genericException);
             }
 
-            this.renderPricesMail.sendMail(this.failedPrices.ToArray(), this.loadPrices.ToArray(), this.updatedPrices.ToArray());
             this.console.processEndstAt(processName, DateTime.Now);
 
             this.processLogger.Log(
@@ -221,9 +228,28 @@
                 total_loads: this.loadPrices.Count + this.updatedPrices.Count,
                 total_errors: this.failedPrices.Count,
                 total_not_procecced: this.notProccecedPrices.Count,
-                total_obtained: this.obtainedPrices.Count,
+                total_obtained: this.obtainedPrices,
                 json_details: JsonSerializer.Serialize(this.details, jsonOptions)
                 );
+            this.mail.sendMail(this.loadPrices, this.updatedPrices, this.failedPrices);
+        }
+
+        private bool skuExist(Price price)
+        {
+            Task<Sku?> sku = this.skusLocalRepository.getSkuByConcatSiesaId(price.sku_concat_siesa_id);
+            if (sku.Result == null) {
+                return false;
+            }
+            return true;
+        }
+
+        public void Dispose()
+        {
+            this.loadPrices.Clear();
+            this.updatedPrices.Clear();
+            this.failedPrices.Clear();
+            this.notProccecedPrices.Clear();
+            this.details.Clear();
         }
     }
 }

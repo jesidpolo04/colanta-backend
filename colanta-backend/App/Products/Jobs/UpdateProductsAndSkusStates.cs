@@ -11,6 +11,7 @@
         private ProductsVtexRepository productsVtexRepository;
         private SkusRepository skusLocalRepository;
         private SkusVtexRepository skusVtexRepository;
+        private CustomConsole console = new CustomConsole();
         public UpdateProductsAndSkusStates(
             ProductsRepository productsLocalRepository,
             ProductsVtexRepository productsVtexRepository,
@@ -27,8 +28,9 @@
 
         public async Task Invoke()
         {
-            try
-            {
+            this.console.processStartsAt("Actualizando estados de productos", DateTime.Now);
+            //try
+            //{
                 Product[] localNotNullProducts = await this.productsLocalRepository.getVtexProducts();
                 foreach (Product localNotNullVtexProduct in localNotNullProducts)
                 {
@@ -64,11 +66,12 @@
 
                     }
                 }
-            }
-            catch (Exception exception)
-            {
+            //}
+            //catch (Exception exception)
+            //{
 
-            }
+            //}
+            this.console.processEndstAt("Actualizando estados de productos", DateTime.Now);
         }
     }
 }

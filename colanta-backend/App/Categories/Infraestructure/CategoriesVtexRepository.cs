@@ -130,6 +130,8 @@
         {
             string endpoint = "/api/catalog/pvt/category";
             string jsonContent;
+            var MERCOLANTA_DEFAULT_CATEGORY = 412;
+            var AGROCOLANTA_DEFAULT_CATEGORY = 111;
 
             Category existCategory = await this.getCategoryByName(category.name);
             if(existCategory != null)
@@ -144,7 +146,8 @@
                     Name = category.name,
                     IsActive = category.isActive,
                     Title = category.name,
-                    FatherCategoryId = category.father.vtex_id
+                    FatherCategoryId = category.father.vtex_id,
+                    GlobalCategoryId = category.business == "mercolanta" ? MERCOLANTA_DEFAULT_CATEGORY : AGROCOLANTA_DEFAULT_CATEGORY,
                 });
             }
             else
@@ -154,6 +157,7 @@
                     Name = category.name,
                     IsActive = category.isActive,
                     Title = category.name,
+                    GlobalCategoryId = category.business == "mercolanta" ? MERCOLANTA_DEFAULT_CATEGORY : AGROCOLANTA_DEFAULT_CATEGORY,
                 });
             }
             
@@ -203,11 +207,25 @@
             return category;
         }
 
-        public async Task<Category> updateCategoryState(int vtexId, bool state)
+        public async Task<bool> updateCategoryState(int vtexId, bool state)
         {
-            Category category = await this.getCategoryById(vtexId);
-            category.isActive = state;
-            return await this.updateCategory(category);
+            string getCategoryEndpoint = $"https://{this.accountName}.{this.vtexEnvironment}/api/catalog/pvt/category/{vtexId}";
+            HttpResponseMessage getCategoryResponse = await this.httpClient.GetAsync(getCategoryEndpoint);
+            if (getCategoryResponse.IsSuccessStatusCode != true)
+            {
+                throw new VtexException(getCategoryResponse, $"Vtex respondió con Status {getCategoryResponse.StatusCode}");
+            }
+            string getCategoryResponseBody = await getCategoryResponse.Content.ReadAsStringAsync();
+            VtexCategoryDto categoryDto = JsonSerializer.Deserialize<VtexCategoryDto>(getCategoryResponseBody);
+            categoryDto.IsActive = state;
+            string updateCategoryEndpoint = $"https://{this.accountName}.{this.vtexEnvironment}/api/catalog/pvt/category/{vtexId}";
+            HttpContent requestBody = new StringContent(JsonSerializer.Serialize(categoryDto), System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage updateCategoryResponse = await this.httpClient.PutAsync(updateCategoryEndpoint, requestBody);
+            if (updateCategoryResponse.IsSuccessStatusCode != true)
+            {
+                throw new VtexException(updateCategoryResponse, $"Vtex respondió con Status {updateCategoryResponse.StatusCode}");
+            }
+            return true;
         }
     }
 }

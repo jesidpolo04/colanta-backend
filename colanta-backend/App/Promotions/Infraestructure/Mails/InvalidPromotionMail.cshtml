@@ -1,0 +1,84 @@
+﻿@{
+    @model colanta_backend.App.Promotions.Infraestructure.InvalidPromotionMailModel
+    Layout = "./App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+
+<h2>Promoción Inválida</h2>
+<p>Al intentar crear la promoción con SIESA id: <b>@Model.promotion.siesa_id</b>,
+    nos topamos con algunas inconcistencias por las cuales la promoción no pudo ser creada.</p>
+
+@if(Model.config.invalidBrands.Count > 0){
+    <p>Los siguientes identificadores de marcas no se corresponden con una marca existente en el middleware.</p>
+    <ul>
+        @foreach(var brandId in Model.config.invalidBrands)
+        {
+            <li>@brandId</li>
+        }
+    </ul>
+}
+
+@if(Model.config.invalidCategories.Count > 0){
+    <p>Los siguientes identificadores de categorías no se corresponden con una categoría existente en el middleware.</p>
+    <ul>
+        @foreach(var categoryId in Model.config.invalidCategories)
+        {
+            <li>@categoryId</li>
+        }
+    </ul>
+}
+
+@if(Model.config.invalidProducts.Count > 0){
+    <p>Los siguientes identificadores de producto no se corresponden con un producto existente en el middleware.</p>
+    <ul>
+        @foreach(var productId in Model.config.invalidProducts)
+        {
+            <li>@productId</li>
+        }
+    </ul>
+}
+
+@if(Model.config.invalidSkus.Count > 0){
+    <p>Los siguientes identificadores de producto no se corresponden con un producto existente en el middleware.</p>
+    <ul>
+        @foreach(var skuId in Model.config.invalidSkus)
+        {
+            <li>@skuId</li>
+        }
+    </ul>
+}
+
+@if(Model.config.invalidGifts.Count > 0){
+    <p>Los siguientes identificadores de productos de regalo no se corresponden con un producto existente en el middleware.
+        (el formato de identificación que verá se corresponde con el siguiente: <b>{ tienda }_{ id de producto }_{ id de variación }</b> )
+    </p>
+    <ul>
+        @foreach(var giftId in Model.config.invalidGifts)
+        {
+            <li>@giftId</li>
+        }
+    </ul>
+}
+
+@if(Model.config.invalidList1Skus.Count > 0){
+    <p>Los siguientes identificadores de productos no se corresponden con un producto existente en el middleware.
+        (el formato de identificación que verá se corresponde con el siguiente: <b>{ tienda }_{ id de producto }_{ id de variación }</b> )
+    </p>
+    <ul>
+        @foreach(var skuId in Model.config.invalidList1Skus)
+        {
+            <li>@skuId</li>
+        }
+    </ul>
+}
+
+@if(Model.config.invalidList2Skus.Count > 0){
+    <p>Los siguientes identificadores de productos no se corresponden con un producto existente en el middleware.
+        (el formato de identificación que verá se corresponde con el siguiente: <b>{ tienda }_{ id de producto }_{ id de variación }</b> )
+    </p>
+    <ul>
+        @foreach(var skuId in Model.config.invalidList2Skus)
+        {
+            <li>@skuId</li>
+        }
+    </ul>
+}

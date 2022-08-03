@@ -1,44 +1,30 @@
 ﻿namespace colanta_backend.App.CustomerCredit.Jobs
 {
-    using CustomerCredit.Domain;
     using Microsoft.Extensions.Hosting;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Configuration;
-    using Shared.Domain;
-    using Shared.Application;
     public class ScheduledRenderCreditAccounts : IHostedService, IDisposable
     {
         private Timer _timer;
-        private CreditAccountsRepository localRepository;
-        private CreditAccountsVtexRepository vtexRepository;
-        private CreditAccountsSiesaRepository siesaRepository;
+        private RenderCreditAccounts renderCreditAccounts;
 
-        public ScheduledRenderCreditAccounts(
-                CreditAccountsRepository localRepository,
-                CreditAccountsVtexRepository vtexRepository,
-                CreditAccountsSiesaRepository siesaRepository
-            )
+        public ScheduledRenderCreditAccounts(RenderCreditAccounts renderCreditAccounts)
         {
-            this.localRepository = localRepository;
-            this.vtexRepository = vtexRepository;
-            this.siesaRepository = siesaRepository;
+            this.renderCreditAccounts = renderCreditAccounts;
         }
 
         public async void Execute(object state)
         {
-            RenderCreditAccounts renderAccounts = new RenderCreditAccounts(
-                this.localRepository,
-                this.vtexRepository,
-                this.siesaRepository
-                );
-            await renderAccounts.Invoke();
+            using (renderCreditAccounts)
+            {
+                await renderCreditAccounts.Invoke();
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromMinutes(25), TimeSpan.FromMinutes(30));
+            _timer = new Timer(Execute, null, TimeSpan.FromSeconds(5), TimeSpan.FromMinutes(5));
             return Task.CompletedTask;
         }
 

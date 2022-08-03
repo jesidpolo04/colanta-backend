@@ -36,7 +36,7 @@
             List<Category> categories = new List<Category>();
             foreach(SiesaCategoryDto siesaCategoryDto in siesaCategoriesDto.familias)
             {
-                if(siesaCategoryDto.id == "3029")
+                if(siesaCategoryDto.id == "3029_fail") //3029
                 {
                     continue;
                 }

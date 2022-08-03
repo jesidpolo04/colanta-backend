@@ -67,7 +67,7 @@
                     try
                     {
                         deltaCategory.isActive = false;
-                        await vtexRepository.updateCategoryState((int)deltaCategory.vtex_id, false);
+                        vtexRepository.updateCategoryState((int)deltaCategory.vtex_id, false).Wait();
                         await localRepository.updateCategory(deltaCategory);
 
                         //metrics
@@ -78,7 +78,7 @@
                     {
                         this.console.throwException(exception.Message);
                         this.details.Add(new Detail("vtex", exception.requestUrl, exception.responseBody, exception.Message, false));
-                        this.logger.writelog(exception);
+                        await this.logger.writelog(exception);
                     }
                 }
 

@@ -1,0 +1,87 @@
+﻿@{
+    @model colanta_backend.App.Promotions.Infraestructure.RenderPromotionsMailModel
+     Layout = "./App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+
+<h2>Renderizado de promociones</h2>
+<p>
+    El proceso de renderizado de promociones del middleware finalizó a las <b>@Model.dateTime.ToString("HH:mm:ss")</b> de manera exitosa,
+    a continuación los detalles de las acciones realizadas.
+</p>
+
+@if(Model.loadedPromotions.Count > 0){
+
+    <p>Las siguientes promociones fueron creadas exitosamente en <b>VTEX</b></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Promocion</th>
+                <th>Siesa Id</th>
+                <th>Vtex Id</th>
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var promotion in @Model.loadedPromotions)
+            {
+                <tr>
+                    <td>@promotion.name</td>
+                    <td>@promotion.siesa_id</td>
+                    <td>@promotion.vtex_id</td>
+                    <td>@promotion.type</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.inactivatedPromotions.Count > 0){
+
+    <p>Las siguientes promociones fueron desactivadas exitosamente en <b>VTEX</b> debido a que ya no vinieron en el json de promociones
+        que se le proporciona al middleware.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Promocion</th>
+                <th>Siesa Id</th>
+                <th>Vtex Id</th>
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var promotion in @Model.inactivatedPromotions)
+            {
+                <tr>
+                    <td>@promotion.name</td>
+                    <td>@promotion.siesa_id</td>
+                    <td>@promotion.vtex_id</td>
+                    <td>@promotion.type</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.failedPromotions.Count > 0)
+{
+    <p>Las siguientes promociones no pudieron ser cargadas a <b>VTEX</b> debido a un error inesperado, se intentará una reinserción más tarde.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Promocion</th>
+                <th>Siesa Id</th>
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var promotion in @Model.inactivatedPromotions)
+            {
+                <tr>
+                    <td>@promotion.name</td>
+                    <td>@promotion.siesa_id</td>
+                    <td>@promotion.type</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

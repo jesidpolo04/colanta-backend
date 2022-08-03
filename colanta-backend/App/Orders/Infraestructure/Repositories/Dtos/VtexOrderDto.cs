@@ -76,4 +76,14 @@
         public string paymentSystem { get; set; }
         public string paymentSystemName { get; set; }
     }
+
+    public class AddressDto
+    {
+        public string adressType { get; set; }
+        public string receiverName { get; set; }
+        public string addressId { get; set; }
+        public string city { get; set; }
+        public string state { get; set; }
+        
+    }
 }

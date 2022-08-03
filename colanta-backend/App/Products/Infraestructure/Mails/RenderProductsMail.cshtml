@@ -1,0 +1,89 @@
+﻿@{
+    @model colanta_backend.App.Products.Infraestructure.RenderProductsMailModel
+    Layout = "App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+<h2 class="header">@Model.title</h2>
+
+<p>
+    El proceso de renderizado de productos del middleware finalizó a las <b>@Model.dateTime.ToString("HH:mm:ss")</b> de manera exitosa,
+    a continuación los detalles de las acciones realizadas.
+</p>
+
+@if(Model.loadedSkus.Count > 0){
+
+    <p>Los siguientes productos fueron creados exitosamente en <b>VTEX</b></p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Producto</th>
+                <th>Siesa Id</th>
+                <th>Vtex Id</th>
+                <th>Referencia</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sku in @Model.loadedSkus)
+            {
+                 <tr>
+                    <td>@sku.name</td>
+                    <td>@sku.siesa_id</td>
+                    <td>@sku.vtex_id</td>
+                    <td>@sku.ref_id</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.inactivatedSkus.Count > 0){
+
+    <p>Los siguientes productos fueron inactivados en <b>VTEX</b> debido a que ya no vinieron en el <b>json</b> de <b>SIESA</b></p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Producto</th>
+                <th>Siesa Id</th>
+                <th>Vtex Id</th>
+                <th>Referencia</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sku in @Model.inactivatedSkus)
+            {
+                 <tr>
+                    <td>@sku.name</td>
+                    <td>@sku.siesa_id</td>
+                    <td>@sku.vtex_id</td>
+                    <td>@sku.ref_id</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.failedSkus.Count > 0)
+{
+    <p>Los siguientes productos no fueron cargados a <b>VTEX</b>, debido a un error inesperado, se reintentará una inserción más tarde</p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Producto</th>
+                <th>Siesa Id</th>
+                <th>Referencia</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sku in @Model.failedSkus)
+            {
+                 <tr>
+                    <td>@sku.name</td>
+                    <td>@sku.siesa_id</td>
+                    <td>@sku.ref_id</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

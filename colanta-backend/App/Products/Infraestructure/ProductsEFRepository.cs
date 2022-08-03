@@ -85,14 +85,6 @@ namespace colanta_backend.App.Products.Infraestructure
         public async Task<Product> saveProduct(Product product)
         {
             EFProduct efProduct = new EFProduct();
-            if (product.brand.id_siesa == null || product.brand == null)
-            {
-                throw new BrandMustExistException($"El producto: {product.name} \"{product.siesa_id}\", no posee una marca válida", product);
-            }
-            if(product.category.siesa_id == null || product.category == null)
-            {
-                throw new CategoryMustExistException($"El producto: {product.name} con id SIESA \"{product.siesa_id}\", no posee una categoría válida", product);
-            }
             EFBrand efBrand = this.dbContext.Brands.Where(brand => brand.id_siesa == product.brand.id_siesa).First();
             EFCategory efCategory = this.dbContext.Categories.Where(category => category.siesa_id == product.category.siesa_id).First();
 

@@ -1,0 +1,126 @@
+﻿@{
+    @model colanta_backend.App.CustomerCredit.Infraestructure.RenderCreditAccountMailModel
+    Layout = "./App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+<h2 class="header">@Model.title</h2>
+
+<p>
+    El proceso de renderizado de cupos del middleware finalizó a las <b>@Model.dateTime.ToString("HH:mm:ss")</b> de manera exitosa,
+    a continuación los detalles de las acciones realizadas.
+</p>
+
+@if(Model.loadedAccounts.Count > 0){
+
+    <p>Las siguientes cuentas de crédito fueron creadas exitosamente en <b>VTEX</b></p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Documento</th>
+                <th>Tienda</th>
+                <th>Vtex Id</th>
+                <th>Cupo Máximo</th>
+                <th>Cupo Actual</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var account in @Model.loadedAccounts)
+            {
+                 <tr>
+                    <td>@account.document</td>
+                    <td>@account.business</td>
+                    <td>@account.vtex_id</td>
+                    <td>@account.credit_limit</td>
+                    <td>@account.current_credit</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.loadedAccounts.Count > 0){
+
+    <p>Las siguientes cuentas de crédito fueron creadas exitosamente en <b>VTEX</b></p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Documento</th>
+                <th>Tienda</th>
+                <th>Vtex Id</th>
+                <th>Cupo Máximo</th>
+                <th>Cupo Actual</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var account in @Model.loadedAccounts)
+            {
+                 <tr>
+                    <td>@account.document</td>
+                    <td>@account.business</td>
+                    <td>@account.vtex_id</td>
+                    <td>@account.credit_limit</td>
+                    <td>@account.current_credit</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.updatedAccounts.Count > 0){
+
+    <p>Las siguientes cuentas de crédito fueron actualizadas exitosamente en <b>VTEX</b></p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Documento</th>
+                <th>Tienda</th>
+                <th>Vtex Id</th>
+                <th>Cupo Máximo</th>
+                <th>Cupo Actual</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var account in @Model.updatedAccounts)
+            {
+                 <tr>
+                    <td>@account.document</td>
+                    <td>@account.business</td>
+                    <td>@account.vtex_id</td>
+                    <td>@account.credit_limit</td>
+                    <td>@account.current_credit</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if(Model.failedAccounts.Count > 0){
+
+    <p>Las siguientes cuentas de crédito no pudieron ser cargadas o actualizadas, debido a un error inesperado por parte de <b>VTEX</b>. </p>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Documento</th>
+                <th>Tienda</th>
+                <th>Vtex Id</th>
+                <th>Cupo Máximo</th>
+                <th>Cupo Actual</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var account in @Model.failedAccounts)
+            {
+                 <tr>
+                    <td>@account.document</td>
+                    <td>@account.business</td>
+                    <td>@account.vtex_id</td>
+                    <td>@account.credit_limit</td>
+                    <td>@account.current_credit</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

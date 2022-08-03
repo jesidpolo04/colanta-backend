@@ -180,5 +180,37 @@ namespace colanta_backend.App.Products.Infraestructure
             CreatedVtexSkuDto skuDto = JsonSerializer.Deserialize<CreatedVtexSkuDto>(vtexResponseBody);
             return skuDto.getSkuFromDto();
         }
+
+        public async Task<bool> changeSkuState(int vtexId, bool state)
+        {
+            string getEndpoint = "/api/catalog/pvt/stockkeepingunit/";
+            string url = "https://" + this.accountName + "." + this.vtexEnvironment + getEndpoint + vtexId;
+            HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
+            if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
+            {
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
+            }
+            if (vtexResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
+            }
+            string getResponseBody = await vtexResponse.Content.ReadAsStringAsync();
+            VtexSkuDto vtexSkuDto = JsonSerializer.Deserialize<VtexSkuDto>(getResponseBody);
+            vtexSkuDto.IsActive = state;
+
+            //return to vtex updated
+
+            string updateEndpoint = "/api/catalog/pvt/stockkeepingunit/" + vtexId;
+            string urlUpdate = "https://" + this.accountName + "." + this.vtexEnvironment + updateEndpoint;
+
+            string updateRequestBody = JsonSerializer.Serialize(vtexSkuDto);
+            HttpContent httpContent = new StringContent(updateRequestBody, System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage updateVtexResponse = await this.httpClient.PutAsync(urlUpdate, httpContent);
+            if (!updateVtexResponse.IsSuccessStatusCode)
+            {
+                throw new VtexException(updateVtexResponse, $"Vtex respondió con status {updateVtexResponse.StatusCode}");
+            }
+            return true;
+        }
     }
 }

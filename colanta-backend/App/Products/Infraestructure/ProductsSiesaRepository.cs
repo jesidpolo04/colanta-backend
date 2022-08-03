@@ -42,19 +42,7 @@
             List<Product> products = new List<Product>();
             foreach (SiesaProductDto siesaProductDto in siesaProductsDto.productos)
             {
-                try
-                {
-                    products.Add(siesaProductDto.getProductFromDto());
-                }
-                catch(BrandMustExistException exception)
-                {
-                    BrandMustExistMail email = new BrandMustExistMail(exception, this.emailSender);
-                    email.sendMail();
-                }
-                catch(CategoryMustExistException exception)
-                {
-
-                }
+                products.Add(siesaProductDto.getProductFromDto());
             }
             return products.ToArray();
         }

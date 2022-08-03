@@ -99,7 +99,7 @@ namespace colanta_backend.App.Products.Infraestructure
 
         public async Task<Product> getProductByVtexId(string vtexId)
         {
-            string endpoint = "api/catalog/pvt/product/";
+            string endpoint = "/api/catalog/pvt/product/";
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint + vtexId;
             HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
             if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)

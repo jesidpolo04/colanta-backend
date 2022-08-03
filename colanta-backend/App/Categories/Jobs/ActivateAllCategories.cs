@@ -27,7 +27,7 @@
             foreach (Category category in allCategories)
             {
                 category.isActive = true;
-                await vtexRepository.updateCategory(category);
+                vtexRepository.updateCategoryState((int)category.vtex_id, true).Wait();
                 await localRepository.updateCategory(category);
             }
         }

@@ -5,10 +5,10 @@
     using System.Threading.Tasks;
     using colanta_backend.App.Inventory.Domain;
     using System.Linq;
-    using System.Collections.Generic;
+    using Microsoft.EntityFrameworkCore;
     using App.Products.Infraestructure;
 
-    public class InventoriesEFRepository : Domain.InventoriesRepository
+    public class InventoriesEFRepository : InventoriesRepository
     {
         private ColantaContext dbContext;
 
@@ -19,17 +19,13 @@
 
         public async Task<Inventory> getInventoryByConcatSiesaIdAndWarehouseSiesaId(string concatSiesaId, string warehouseSiesaId)
         {
-            var efInventories = this.dbContext.Inventories.Where(inventory => inventory.sku_concat_siesa_id == concatSiesaId && inventory.warehouse_siesa_id == warehouseSiesaId);
+            var efInventories = this.dbContext.Inventories
+                .Include(inventory => inventory.warehouse)
+                .Include(inventory => inventory.sku)
+                .Where(inventory => inventory.sku_concat_siesa_id == concatSiesaId && inventory.warehouse_siesa_id == warehouseSiesaId);
             if(efInventories.ToArray().Length > 0)
             {
                 EFInventory efInventory = efInventories.First();
-
-                EFWarehouse efWarehouse = this.dbContext.Warehouses.Find(efInventory.warehouse_id);
-                efInventory.warehouse = efWarehouse;
-
-                EFSku efSku = this.dbContext.Skus.Find(efInventory.sku_id);
-                efInventory.sku = efSku;
-
                 return efInventory.getInventoryFromEfInventory();
             }
             return null;   
