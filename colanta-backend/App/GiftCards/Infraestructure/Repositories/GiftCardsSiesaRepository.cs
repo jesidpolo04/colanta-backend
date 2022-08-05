@@ -11,12 +11,14 @@ namespace colanta_backend.App.GiftCards.Infraestructure
     using System.Threading.Tasks;
     using GiftCards.Domain;
     using Shared.Domain;
+    using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
 
     public class GiftCardsSiesaRepository : Domain.GiftCardsSiesaRepository
     {
         private IConfiguration configuration;
         private HttpClient httpClient;
+        private SiesaAuth siesaAuth;
 
         public GiftCardsSiesaRepository(IConfiguration configuration)
         {
@@ -26,8 +28,9 @@ namespace colanta_backend.App.GiftCards.Infraestructure
 
         public async Task<GiftCard[]> getAllGiftCards()
         {
+            this.setHeaders().Wait();
             string endpoint = "/tarjetas";
-            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["MockSiesaUrl"] + endpoint);
+            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
@@ -42,10 +45,11 @@ namespace colanta_backend.App.GiftCards.Infraestructure
             return gifCards.ToArray();
         }
 
-        public async Task<decimal> getGiftCardBalanceBySiesaId(string siesaId)
+        public async Task<decimal> getGiftCardBalanceBySiesaId(string cardSiesaId)
         {
-            string endpoint = "/balance_tarjeta";
-            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["MockSiesaUrl"] + endpoint);
+            this.setHeaders().Wait();
+            string endpoint = $"/api/ColantaWS/tarjetas/{cardSiesaId}";
+            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
@@ -57,8 +61,9 @@ namespace colanta_backend.App.GiftCards.Infraestructure
 
         public async Task<GiftCard[]> getGiftCardsByDocumentAndBusiness(string document, string business)
         {
-            string endpoint = "/tarjetas_documento_negocio";
-            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["MockSiesaUrl"] + endpoint);
+            this.setHeaders().Wait();
+            string endpoint = $"/api/ColantaWS/tarjetas/documento/{document}/{business}";
+            HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
@@ -71,6 +76,12 @@ namespace colanta_backend.App.GiftCards.Infraestructure
                 gifCards.Add(siesaGiftCardDto.getGiftCardFromDto());
             }
             return gifCards.ToArray();
+        }
+
+        private async Task setHeaders()
+        {
+            this.httpClient.DefaultRequestHeaders.Remove("Authorization");
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await this.siesaAuth.getToken());
         }
     }
 }

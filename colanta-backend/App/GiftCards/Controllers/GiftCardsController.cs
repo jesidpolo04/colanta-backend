@@ -9,7 +9,7 @@ namespace colanta_backend.App.GiftCards.Controllers
     using GiftCards.Domain;
     using GiftCards.Application;
 
-    [Route("")]
+    [Route("api")]
     [ApiController]
     public class GiftCardsController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpPost]
-        [Route("api/giftcards")]
+        [Route("giftcards")]
         public async Task<CreateGiftCardResponse> createGiftCard(CreateGiftCardRequest request)
         {
             CreateGiftcard useCase = new CreateGiftcard(this.localRepository);
@@ -33,7 +33,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpPost]
-        [Route("api/giftcards/_search")] // obtener giftcards
+        [Route("giftcards/_search")] // obtener giftcards
         public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
             ListAllGiftCardByDocumentAndBusiness listAllGiftCardsByDocumentAndBussines = new ListAllGiftCardByDocumentAndBusiness(this.localRepository, this.siesaRepository);
@@ -52,7 +52,7 @@ namespace colanta_backend.App.GiftCards.Controllers
             return giftCardProviderDtos.ToArray();
         }
 
-        [HttpGet("api/giftcards/{giftCardId}")] // obtener giftcard
+        [HttpGet("giftcards/{giftCardId}")] // obtener giftcard
         public async Task<GiftCardDetailProviderResponseDto> getGiftCardBySiesaId(string giftCardId)
         {
             GetAndUpdateGiftCardBySiesaId getAndUpdateGiftCardBySiesaId = new GetAndUpdateGiftCardBySiesaId(
@@ -66,7 +66,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpPost]
-        [Route("/giftcards/{giftCardId}/transactions")] //crear transaccion
+        [Route("giftcards/{giftCardId}/transactions")] //crear transaccion
         public async Task<TransactionSummaryDto> createGiftCardTransaction(string giftCardId, CreateGiftCardTransactionDto request)
         {
             CreateGiftCardTransaction useCase = new CreateGiftCardTransaction(this.localRepository);
@@ -74,7 +74,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpGet]
-        [Route("/giftcards/{giftCardId}/transactions")] // obtener transacciones
+        [Route("giftcards/{giftCardId}/transactions")] // obtener transacciones
         public async Task<TransactionSummaryDto[]> getGiftCardTransactions(string giftCardId)
         {
             GetGiftCardTransactions useCase = new GetGiftCardTransactions(this.localRepository);
@@ -89,7 +89,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         } 
 
         [HttpGet]
-        [Route("/giftcards/{giftCardId}/transactions/{transactionId}")] //obtener transaccion
+        [Route("giftcards/{giftCardId}/transactions/{transactionId}")] //obtener transaccion
         public async Task<GetTransactionByIdResponseDto> getGiftCardTransactionById (string giftCardId, string transactionId)
         {
             GetTransactionById useCase = new GetTransactionById(this.localRepository);
@@ -99,7 +99,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpGet]
-        [Route("/giftcards/{giftCardId}/transactions/{transactionId}/authorization")] //obtener autorización
+        [Route("giftcards/{giftCardId}/transactions/{transactionId}/authorization")] //obtener autorización
         public async Task<AuthorizationInfo> getGiftCardTransactionAuthorization(string giftCardId, string transactionId)
         {
             GetAuthorization useCase = new GetAuthorization(this.localRepository);
@@ -110,7 +110,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpPost]
-        [Route("/giftcards/{giftCardId}/transactions/{transactionId}/settlements")] //generar liquidacion
+        [Route("giftcards/{giftCardId}/transactions/{transactionId}/settlements")] //generar liquidacion
         public async Task<SettlementInfoDto> generateGiftCardTransactionSettlement(string giftCardId, string transactionId, SettlementTransactionRequest body)
         {
             SettlementTransaction useCase = new SettlementTransaction(this.localRepository);
@@ -121,7 +121,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         }
 
         [HttpGet]
-        [Route("/giftcards/{giftCardId}/transactions/{transactionId}/settlements")]
+        [Route("giftcards/{giftCardId}/transactions/{transactionId}/settlements")]
         public async Task<SettlementInfoDto[]> getGiftCardTransactionSettlements(string giftCardId, string transactionId)
         {
             GetTransactionSettlements useCase = new GetTransactionSettlements(this.localRepository);
@@ -137,7 +137,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         } 
 
         [HttpPost]
-        [Route("/giftcards/{giftCardId}/transactions/{transactionId}/cancellations")] // cancelar
+        [Route("giftcards/{giftCardId}/transactions/{transactionId}/cancellations")] // cancelar
         public async Task<CancelInfoDto> cancelGiftcardTransaction(string giftCardId, string transactionId, CancelTransactionRequest body)
         {
             CancelTransaction useCase = new CancelTransaction(this.localRepository);
