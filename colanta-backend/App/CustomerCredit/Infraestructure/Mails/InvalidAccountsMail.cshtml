@@ -1,0 +1,29 @@
+﻿@{
+    @model colanta_backend.App.CustomerCredit.Infraestructure.InvalidAccountsMailModel
+    Layout = "./App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+
+<h2 class="header">No pudimos crear las siguientes cuentas</h2>
+
+<p>Hemos tenido inconvenientes al momento de crear las siguientes cuentas (cupos) por los siguientes motivos</p>
+<table>
+    <thead>
+        <tr>
+            <th>Tienda</th>
+            <th>Nro Documento</th>
+            <th>Email</th>
+            <th>Motivo</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var exception in @Model.exceptions)
+        {
+            <tr>
+                <td>@exception.account.business</td>
+                <td>@exception.account.document</td>
+                <td>@exception.account.email</td>
+                <td>@exception.Message</td>
+            </tr>
+        }
+    </tbody>
+</table>

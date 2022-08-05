@@ -12,7 +12,7 @@
         public string documento { get; set; }
         public decimal cupo_limite { get; set; }
         public decimal cupo_actual { get; set; }
-        public string email { get; set; }
+        public string? email { get; set; }
 
         public CreditAccount getCreditAccountFromDto()
         {

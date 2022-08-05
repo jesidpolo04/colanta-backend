@@ -38,6 +38,16 @@
             return null;
         }
 
+        public async Task<CreditAccount> getCreditAccountByEmail(string email)
+        {
+            var efCreditAccounts = this.dbContext.CreditAccounts.Where(creditAccount => creditAccount.email == email);
+            if (efCreditAccounts.ToArray().Length > 0)
+            {
+                return efCreditAccounts.First().getCreditAccountFromEfCreditAccount();
+            }
+            return null;
+        }
+
         public async Task<CreditAccount> getCreditAccountByVtexId(string vtexId)
         {
             var efCreditAccounts = this.dbContext.CreditAccounts.Where(creditAccount => creditAccount.vtex_id == vtexId);

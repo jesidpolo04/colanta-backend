@@ -16,6 +16,7 @@
         private ILogger logger;
         private IProcess process;
         private IRenderAccountsMail mail;
+        private IInvalidAccountsMail invalidAccountsMail;
         private CustomConsole console;
         private JsonSerializerOptions jsonOptions;
 
@@ -24,6 +25,7 @@
         private List<CreditAccount> updatedAccounts = new List<CreditAccount>();
         private List<CreditAccount> failedAccounts = new List<CreditAccount>();
         private List<CreditAccount> notProccecedCreditAccounts = new List<CreditAccount>();
+        private List<InvalidAccountException> invalidAccountExceptions = new List<InvalidAccountException>();
         private List<Detail> details = new List<Detail>();
         public RenderCreditAccounts(
             CreditAccountsRepository localRepository,
@@ -31,7 +33,8 @@
             CreditAccountsSiesaRepository siesaRepository,
             ILogger logger,
             IProcess process,
-            IRenderAccountsMail mail
+            IRenderAccountsMail mail,
+            IInvalidAccountsMail invalidAccountsMail
             )
         {
             this.localRepository = localRepository;
@@ -40,6 +43,7 @@
             this.logger = logger;
             this.process = process;
             this.mail = mail;
+            this.invalidAccountsMail = invalidAccountsMail;
             this.console = new CustomConsole();
             this.jsonOptions = new JsonSerializerOptions();
             jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
@@ -128,6 +132,7 @@
                             }
                             else
                             {
+                                if(!this.validateEmail(siesaCreditAccount)) continue;
                                 localCreditAccount = await localRepository.saveAccount(siesaCreditAccount);
                                 vtexAccount = await vtexRepository.SaveCreditAccount(localCreditAccount);
                                 localCreditAccount.vtex_id = vtexAccount.vtex_id;
@@ -174,6 +179,24 @@
                 JsonSerializer.Serialize(this.details, jsonOptions));
             this.console.processEndstAt(processName, DateTime.Now);
             this.mail.sendMail(this.loadedAccounts, this.updatedAccounts, this.failedAccounts);
+            this.invalidAccountsMail.sendMail(this.invalidAccountExceptions);
+        }
+
+        private bool validateEmail(CreditAccount account)
+        {
+            string email = account.email;
+            if (email == null)
+            {
+                this.invalidAccountExceptions.Add(new EmailIsRequiredException(account));
+                return false;
+            }
+            Task<CreditAccount> creditAccount = this.localRepository.getCreditAccountByEmail(email);
+            if(creditAccount.Result == null)
+            {
+                this.invalidAccountExceptions.Add(new EmailAlreadyExistException(account, $"El email: {email} ya está asociado a una cuenta"));
+                return false;
+            }
+            return true;
         }
 
         public void Dispose()
@@ -182,6 +205,7 @@
             this.updatedAccounts.Clear();
             this.failedAccounts.Clear();
             this.notProccecedCreditAccounts.Clear();
+            this.invalidAccountExceptions.Clear();
             this.totalObtained = 0;
             this.details.Clear();
         }

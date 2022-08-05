@@ -7,6 +7,7 @@
         Task<CreditAccount[]> getDeltaAccounts(CreditAccount[] currentAccounts);
         Task<CreditAccount> getCreditAccountByDocumentAndBusiness(string document, string business);
         Task<CreditAccount> getCreditAccountByVtexId(string vtexId);
+        Task<CreditAccount> getCreditAccountByEmail(string email);
         Task<CreditAccount> saveAccount(CreditAccount creditAccount);
         Task<CreditAccount> updateCreditAccount(CreditAccount creditAccount);
         Task<CreditAccount[]> updateCreditAccounts(CreditAccount[] creditAccounts);

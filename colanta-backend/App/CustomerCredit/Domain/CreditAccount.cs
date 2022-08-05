@@ -6,7 +6,7 @@
         public int id { get; set; }
         public string vtex_id { get; set; }
         public string document { get; set; }
-        public string email { get; set; }
+        public string? email { get; set; }
         public decimal credit_limit { get; set; }
         public decimal vtex_credit_limit { get; set; }
         public decimal current_credit { get; set; }
