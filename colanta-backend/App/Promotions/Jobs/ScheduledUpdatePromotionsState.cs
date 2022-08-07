@@ -13,7 +13,7 @@
         private Timer _timer;
         private UpdatePromotionsState updatePromotionsState;
         private TimeSpan timeout = TimeSpan.FromSeconds(5);
-        private TimeSpan interval = TimeSpan.FromMinutes(8);
+        private TimeSpan interval = TimeSpan.FromMinutes(15);
         public ScheduledUpdatePromotionsState(UpdatePromotionsState updatePromotionsState)
         {
             this.updatePromotionsState = updatePromotionsState;

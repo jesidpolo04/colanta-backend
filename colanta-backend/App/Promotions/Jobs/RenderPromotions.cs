@@ -191,13 +191,13 @@
         {
             bool validPromotion = true;
 
-            List<string> inexistBrandsIds = this.validBrands(promotion.brands_ids);
-            List<string> inexistCategoriesIds = this.validCategories(promotion.categories_ids);
-            List<string> inexistSkusIds = this.validSkus(promotion.skus_ids);
-            List<string> inexistProductsIds = this.validProducts(promotion.products_ids);
-            List<string> inexistGiftsIds = this.validGifts(promotion.gifts_ids);
-            List<string> inexistList1SkusIds = this.validList(promotion.list_sku_1_buy_together_ids);
-            List<string> inexistList2SkusIds = this.validList(promotion.list_sku_2_buy_together_ids);
+            List<string> inexistBrandsIds = this.invalidBrands(promotion.brands_ids);
+            List<string> inexistCategoriesIds = this.invalidCategories(promotion.categories_ids);
+            List<string> inexistSkusIds = this.invalidSkus(promotion.skus_ids);
+            List<string> inexistProductsIds = this.invalidProducts(promotion.products_ids);
+            List<string> inexistGiftsIds = this.invalidGifts(promotion.gifts_ids);
+            List<string> inexistList1SkusIds = this.invalidListSkus(promotion.list_sku_1_buy_together_ids);
+            List<string> inexistList2SkusIds = this.invalidListSkus(promotion.list_sku_2_buy_together_ids);
 
             validPromotion = inexistBrandsIds.Count > 0 ? false : validPromotion;
             validPromotion = inexistCategoriesIds.Count > 0 ? false : validPromotion;
@@ -224,7 +224,7 @@
             return validPromotion;
         }
 
-        private List<string> validBrands(string brandsIds)
+        private List<string> invalidBrands(string brandsIds)
         {
             List<string> inexistBrandsIds = new List<string>();
             List<string> brandsIdsList = JsonSerializer.Deserialize<List<string>>(brandsIds);
@@ -238,7 +238,7 @@
             return inexistBrandsIds;
         }
 
-        private List<string> validCategories(string categoriesIds)
+        private List<string> invalidCategories(string categoriesIds)
         {
             List<string> inexistCateories = new List<string>();
             List<string> categoriesIdsList = JsonSerializer.Deserialize<List<string>>(categoriesIds);
@@ -252,7 +252,7 @@
             return inexistCateories;
         }
 
-        private List<string> validSkus(string skusIds)
+        private List<string> invalidSkus(string skusIds)
         {
             List<string> inexistSkus = new List<string>();
             List<string> skusIdsList = JsonSerializer.Deserialize<List<string>>(skusIds);
@@ -266,7 +266,7 @@
             return inexistSkus;
         }
 
-        private List<string> validProducts(string productsIds)
+        private List<string> invalidProducts(string productsIds)
         {
             List<string> inexistProducts = new List<string>();
             List<string> productsIdsList = JsonSerializer.Deserialize<List<string>>(productsIds);
@@ -280,7 +280,7 @@
             return inexistProducts;
         }
 
-        private List<string> validGifts(string giftsConcatSiesaIds)
+        private List<string> invalidGifts(string giftsConcatSiesaIds)
         {
             List<string> inexistSkusIds = new List<string>();
             List<string> giftConcatSiesaIdsList = JsonSerializer.Deserialize<List<string>>(giftsConcatSiesaIds);
@@ -294,7 +294,7 @@
             return inexistSkusIds;
         }
 
-        private List<string> validList(string listConcatSiesaIds)
+        private List<string> invalidListSkus(string listConcatSiesaIds)
         {
             List<string> inexistSkusIds = new List<string>();
             List<string> listConcatSiesaIdsList = JsonSerializer.Deserialize<List<string>>(listConcatSiesaIds);

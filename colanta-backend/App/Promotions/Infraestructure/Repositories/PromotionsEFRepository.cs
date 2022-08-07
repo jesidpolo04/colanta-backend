@@ -107,7 +107,8 @@ namespace colanta_backend.App.Promotions.Infraestructure
             {
                 currentPromotionsIds.Add(currentPromotion.siesa_id);
             }
-            EFPromotion[] efDeltaPromotions = this.dbContext.Promotions.Where(promotion => !currentPromotionsIds.Contains(promotion.siesa_id)).ToArray();
+            EFPromotion[] efDeltaPromotions = this.dbContext.Promotions
+                .Where(promotion => !currentPromotionsIds.Contains(promotion.siesa_id) && promotion.is_active == true).ToArray();
             foreach(EFPromotion efDeltaPromotion in efDeltaPromotions)
             {
                 deltaPromotions.Add(await this.addRelationsToPromotion(efDeltaPromotion));

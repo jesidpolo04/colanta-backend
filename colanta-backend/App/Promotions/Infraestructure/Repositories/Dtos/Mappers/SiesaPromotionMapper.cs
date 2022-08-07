@@ -181,12 +181,9 @@
         {
             const string customerTypeField = "customerClass";  
 
-            List<string> products_ids = new List<string>();
-            
-            promotion.products_ids = JsonSerializer.Serialize(products_ids);
-
             if (promotionDto.tipo != "bono" && promotionDto.tipo != "regalo")
             {
+                List<string> products_ids = new List<string>();
                 if (promotionDto.aplica_a.productos != null)
                 {
                     foreach (string siesa_id in promotionDto.aplica_a.productos)
@@ -194,6 +191,7 @@
                         products_ids.Add(siesa_id);
                     }
                 }
+                promotion.products_ids = JsonSerializer.Serialize(products_ids);
 
                 List<string> skus_ids = new List<string>();
                 if (promotionDto.aplica_a.variaciones != null)
@@ -207,6 +205,7 @@
             }
             else
             {
+                List<string> products_ids = new List<string>();
                 if (promotionDto.aplica_a.productos != null)
                 {
                     foreach (string siesa_id in promotionDto.aplica_a.productos)
@@ -214,17 +213,19 @@
                         products_ids.Add(siesa_id);
                     }
                 }
+                promotion.list_sku_1_buy_together_ids = JsonSerializer.Serialize(products_ids);
+                promotion.products_ids = "[]";
 
+                List<string> skus_ids = new List<string>();
                 if (promotionDto.aplica_a.variaciones != null)
                 {
-                    List<string> skus_ids = new List<string>();
                     foreach (string siesa_id in promotionDto.aplica_a.variaciones)
                     {
                         skus_ids.Add(siesa_id);
                     }
-                    promotion.list_sku_1_buy_together_ids = JsonSerializer.Serialize(skus_ids);
-                    promotion.skus_ids = "[]";
                 }
+                promotion.list_sku_1_buy_together_ids = JsonSerializer.Serialize(skus_ids);
+                promotion.skus_ids = "[]";
             }
 
 

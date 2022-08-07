@@ -19,7 +19,7 @@
 
         public int? offset { get; set; }
         public bool activateGiftsMultiplier { get; set; }
-        public int? newOffset { get; set; }
+        public float? newOffset { get; set; }
         public object[] maxPricesPerItems { get; set; }
         public bool cumulative { get; set; }
         public decimal nominalShippingDiscountValue { get; set; }
@@ -55,7 +55,7 @@
         public bool categoriesAreInclusive { get; set; }
         public VtexPromotionBrand[] brands { get; set; }
         public bool brandsAreInclusive { get; set; }
-        public VtexPromotionProduct products { get; set; }
+        public VtexPromotionProduct[] products { get; set; }
         public bool productsAreInclusive { get; set; }
         public VtexPromotionSku[] skus { get; set; }
         public bool skusAreInclusive { get; set; }

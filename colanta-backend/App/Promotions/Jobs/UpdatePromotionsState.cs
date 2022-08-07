@@ -1,6 +1,7 @@
 ﻿namespace colanta_backend.App.Promotions.Jobs
 {
     using Promotions.Domain;
+    using System;
     using System.Threading.Tasks;
     public class UpdatePromotionsState
     {
@@ -27,9 +28,10 @@
                         await this.localRepository.updatePromotion(promotion);
                     }
                 }
-                catch
+                catch(Exception exception)
                 {
-
+                    Console.WriteLine(exception.Message);
+                    Console.WriteLine(exception.StackTrace);
                 }
             }
         }
