@@ -8,6 +8,7 @@ namespace colanta_backend.App.Orders.Infraestructure
     using System.Text.Json;
     using System.Net.Http;
     using Shared.Domain;
+    using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
     using colanta_backend.App.Orders.SiesaOrders.Domain;
 
@@ -16,6 +17,7 @@ namespace colanta_backend.App.Orders.Infraestructure
         private SkusRepository skusLocalRepository;
         private PromotionsRepository promotionLocalRepository;
         private HttpClient httpClient;
+        private SiesaAuth siesaAuth;
         private IConfiguration configuration;
         
         public OrdersSiesaRepository(
@@ -28,6 +30,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.promotionLocalRepository = promotionLocalRepository;
             this.httpClient = new HttpClient();
             this.configuration = configuration;
+            this.siesaAuth = new SiesaAuth(configuration);
         }
 
         public async Task<SiesaOrder> getOrderBySiesaId(string siesaId)
@@ -47,13 +50,14 @@ namespace colanta_backend.App.Orders.Infraestructure
 
         public async Task<SiesaOrder> saveOrder(Order order)
         {
-            string endpoint = "/ordenes";
+            this.setHeaders().Wait();
+            string endpoint = "/api/ColantaWS/EnviarPedido";
             VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(this.skusLocalRepository, this.promotionLocalRepository);
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(order.order_json);
             SiesaOrderDto siesaOrderDto = await mapper.getSiesaOrderDto(vtexOrderDto);
             string jsonContent = JsonSerializer.Serialize(siesaOrderDto);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
-            HttpResponseMessage siesaResponse = await httpClient.PostAsync("http://localhost:3333" + endpoint, httpContent);
+            HttpResponseMessage siesaResponse = await httpClient.PostAsync(this.configuration["SiesaUrl"] + endpoint, httpContent);
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             if (!siesaResponse.IsSuccessStatusCode)
             {
@@ -64,6 +68,12 @@ namespace colanta_backend.App.Orders.Infraestructure
             siesaOrder.siesa_id = siesaOrderIdResponseDto.id;
             siesaOrder.finalizado = false;
             return siesaOrder;
+        }
+
+        private async Task setHeaders()
+        {
+            this.httpClient.DefaultRequestHeaders.Remove("Authorization");
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await this.siesaAuth.getToken());
         }
     }
 }
