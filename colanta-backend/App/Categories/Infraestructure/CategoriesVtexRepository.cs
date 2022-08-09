@@ -228,5 +228,26 @@
             }
             return true;
         }
+
+        public async Task<bool> updateCategoryFather(int vtexId, int fatherVtexId)
+        {
+            string getCategoryEndpoint = $"https://{this.accountName}.{this.vtexEnvironment}/api/catalog/pvt/category/{vtexId}";
+            HttpResponseMessage getCategoryResponse = await this.httpClient.GetAsync(getCategoryEndpoint);
+            if (getCategoryResponse.IsSuccessStatusCode != true)
+            {
+                throw new VtexException(getCategoryResponse, $"Vtex respondió con Status {getCategoryResponse.StatusCode}");
+            }
+            string getCategoryResponseBody = await getCategoryResponse.Content.ReadAsStringAsync();
+            VtexCategoryDto categoryDto = JsonSerializer.Deserialize<VtexCategoryDto>(getCategoryResponseBody);
+            categoryDto.FatherCategoryId = fatherVtexId;
+            string updateCategoryEndpoint = $"https://{this.accountName}.{this.vtexEnvironment}/api/catalog/pvt/category/{vtexId}";
+            HttpContent requestBody = new StringContent(JsonSerializer.Serialize(categoryDto), System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage updateCategoryResponse = await this.httpClient.PutAsync(updateCategoryEndpoint, requestBody);
+            if (updateCategoryResponse.IsSuccessStatusCode != true)
+            {
+                throw new VtexException(updateCategoryResponse, $"Vtex respondió con Status {updateCategoryResponse.StatusCode}");
+            }
+            return true;
+        }
     }
 }

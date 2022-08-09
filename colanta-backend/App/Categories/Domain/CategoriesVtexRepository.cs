@@ -10,5 +10,7 @@
         Task<Category> saveCategory(Category category);
         Task<Category> updateCategory(Category category);
         Task<bool> updateCategoryState(int vtexId, bool state);
+
+        Task<bool> updateCategoryFather(int vtexId, int fatherVtexId);
     }
 }

@@ -64,6 +64,7 @@ namespace colanta_backend
             services.AddTransient<App.Categories.Domain.IRenderCategoriesMail, App.Categories.Infraestructure.RenderCategoriesMail>();
             services.AddTransient<RenderCategories>();
             services.AddTransient<ActivateAllCategories>();
+            services.AddTransient<MapFamiliesToStore>();
             //Dependencies Injections Products
             services.AddTransient<App.Products.Domain.ProductsRepository , App.Products.Infraestructure.ProductsEFRepository>();
             services.AddTransient<App.Products.Domain.ProductsVtexRepository, App.Products.Infraestructure.ProductsVtexRepository>();
@@ -137,6 +138,7 @@ namespace colanta_backend
             //services.AddHostedService<ScheduledUpCategoriesToVtex>();
             //services.AddHostedService<ScheduledUpdateCategoriesState>();
             //services.AddHostedService<ScheduledActivateAllCategories>();
+            services.AddHostedService<ScheduledMapFamiliesToStore>();
 
             //services.AddHostedService<ScheduledRenderProductsAndSkus>();
             //services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
