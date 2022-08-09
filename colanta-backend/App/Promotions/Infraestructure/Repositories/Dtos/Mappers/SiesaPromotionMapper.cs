@@ -1,5 +1,6 @@
 ﻿namespace colanta_backend.App.Promotions.Infraestructure
 {
+    using System;
     using Promotions.Domain;
     using System.Collections.Generic;
     using System.Text.Json;
@@ -14,7 +15,7 @@
             
             promotion.name = siesaPromotionDto.nombre;
             promotion.begin_date_utc = siesaPromotionDto.fecha_inicio_utc;
-            promotion.end_date_utc = siesaPromotionDto.fecha_final_utc;
+            promotion.end_date_utc = this.setEndDate(siesaPromotionDto.fecha_final_utc);
             promotion.is_active = false;
             promotion.max_number_of_affected_items = siesaPromotionDto.restricciones.maximo_items_validos;
             promotion.max_number_of_affected_items_group_key = this.getRestrictionsPer(siesaPromotionDto.restricciones.maximo_items_validos_por);
@@ -262,6 +263,13 @@
             promotion.cluster_expressions = JsonSerializer.Serialize(customer_expressions, jsonOptions);
 
             return promotion;
+        }
+
+        private string setEndDate(string? UTCDate)
+        {
+            int defaultMonths = 1;
+            if (UTCDate == null) return DateTime.Now.AddMonths(defaultMonths).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
+            else return UTCDate;
         }
     }
 }

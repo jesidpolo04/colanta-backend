@@ -20,9 +20,12 @@
             siesaOrder.cond_pago = this.Encabezado.C263CondPago;
             siesaOrder.notas = this.Encabezado.C263Notas;
             siesaOrder.direccion = this.Encabezado.C263Direccion;
+            siesaOrder.departamento = this.Encabezado.C263Departamento;
+            siesaOrder.ciudad = this.Encabezado.C263Ciudad;
             siesaOrder.negocio = this.Encabezado.C263Negocio;
             siesaOrder.total_pedido = this.Encabezado.C263TotalPedido;
             siesaOrder.total_descuento = this.Encabezado.C263TotalDescuentos;
+            siesaOrder.recoge_en_tienda = this.Encabezado.C263RecogeEnTienda;
             
             List<SiesaOrderDetail> siesaOrderDetails = new List<SiesaOrderDetail>();
             foreach(SiesaOrderDetailDto siesaOrderDetailDto in this.Detalles)
@@ -72,9 +75,12 @@
         public string C263CondPago { get; set; }
         public string C263Notas { get; set; }
         public string C263Direccion { get; set; }
+        public string C263Ciudad { get; set; }
+        public string C263Departamento { get; set; }
         public string C263Negocio { get; set; }
         public decimal C263TotalPedido { get; set; }
         public decimal C263TotalDescuentos { get; set; }
+        public bool C263RecogeEnTienda { get; set; }
     }
 
     public class SiesaOrderDetailDto

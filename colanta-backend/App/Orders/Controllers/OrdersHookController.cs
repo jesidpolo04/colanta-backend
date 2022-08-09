@@ -9,6 +9,7 @@ namespace colanta_backend.App.Orders.Controllers
     using System.Threading.Tasks;
     using Newtonsoft.Json.Linq;
     using System.Text.Json;
+    using System.Dynamic;
 
     [ApiController]
     [Route("api")]
@@ -33,18 +34,27 @@ namespace colanta_backend.App.Orders.Controllers
 
         [Route("orders/hook")]
         [HttpPost]
-        public async Task<object> orderHook(object request)
+        public async Task<dynamic> orderHook(OrderHookDto request)
         {
-            string stringRequest = JsonSerializer.Serialize(request);
-            JObject jrequest = JObject.Parse(stringRequest);
-            if(jrequest.Property("hookConfig") != null) 
+            if(request.hookConfig != null) 
             {
                 return new { hookConfig = "alive!" };
             }
-            OrderHookDto orderSummary = JsonSerializer.Deserialize<OrderHookDto>(stringRequest);
-            SaveVtexOrderInSiesa saveVtexOrderInSiesa = new SaveVtexOrderInSiesa(this.localRepository, this.siesaOrdersLocalRepository, this.vtexRepository, this.siesaRepository);
-            SiesaOrder siesaOrder = await saveVtexOrderInSiesa.Invoke(orderSummary.getOrderFromDto());
-            return siesaOrder;
+            //OrderHookDto orderSummary = JsonSerializer.Deserialize<OrderHookDto>(JsonSerializer.Serialize(request));
+            OrderHookDto orderSummary = request;
+            ProcessOrderUseCase useCase = new ProcessOrderUseCase(
+                this.localRepository, 
+                this.siesaOrdersLocalRepository, 
+                this.vtexRepository, 
+                this.siesaRepository);
+
+            await useCase.Invoke(
+                orderSummary.OrderId, 
+                orderSummary.State, 
+                orderSummary.LastState, 
+                orderSummary.LastChange,
+                orderSummary.CurrentChange);
+            return Ok();
         }
     }
 }

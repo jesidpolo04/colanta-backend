@@ -47,8 +47,6 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFGiftCardTransactionSettlement> GiftCardsTransactionsSettlements { get; set; }
         public virtual DbSet<EFOrder> Orders { get; set; }
         public virtual DbSet<EFOrderHistory> OrderHistory { get; set; }
-        public virtual DbSet<EFPaymentMethod> PaymentMethods { get; set; }
-        public virtual DbSet<EFOrderStatus> OrderStatus { get; set; }
         public virtual DbSet<EFSiesaOrder> SiesaOrders { get; set; }
         public virtual DbSet<EFSiesaOrderDetail> SiesaOrderDetails { get; set; }
         public virtual DbSet<EFSiesaOrderDiscount> SiesaOrderDiscounts { get; set; }
@@ -376,24 +374,6 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.created_at).HasDefaultValueSql("getdate()");
             });
 
-            modelBuilder.Entity<EFPaymentMethod>(entity =>
-            {
-                entity.ToTable("payment_methods");
-
-                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
-                entity.Property(e => e.name);
-                entity.Property(e => e.is_promissory);
-                entity.Property(e => e.vtex_id);
-            });
-
-            modelBuilder.Entity<EFOrderStatus>(entity =>
-            {
-                entity.ToTable("order_status");
-
-                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
-                entity.Property(e => e.status);
-            });
-
             modelBuilder.Entity<EFSiesaOrder>(entity =>
             {
                 entity.ToTable("siesa_orders");
@@ -410,9 +390,12 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.cond_pago);
                 entity.Property(e => e.notas);
                 entity.Property(e => e.direccion);
+                entity.Property(e => e.departamento);
+                entity.Property(e => e.ciudad);
                 entity.Property(e => e.negocio);
                 entity.Property(e => e.total_pedido);
                 entity.Property(e => e.total_descuento);
+                entity.Property(e => e.recoge_en_tienda);
 
                 entity.HasMany(e => e.detalles).WithOne(e => e.order).HasForeignKey(e => e.order_id);
                 entity.HasMany(e => e.descuentos).WithOne(e => e.order).HasForeignKey(e => e.order_id); 

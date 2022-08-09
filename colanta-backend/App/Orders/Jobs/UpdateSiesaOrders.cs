@@ -8,7 +8,6 @@
     public class UpdateSiesaOrders
     {
         private OrdersRepository localRepository;
-        private PaymentMethodsRepository paymentMethodsLocalRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
         private SiesaOrdersHistoryRepository siesaOrdersHistoryLocalRepository;
         private OrdersSiesaRepository siesaRepository;
@@ -17,7 +16,6 @@
 
         public UpdateSiesaOrders(
             OrdersRepository localRepository,
-            PaymentMethodsRepository paymentMethodsLocalRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
             SiesaOrdersHistoryRepository siesaOrdersHistoryLocalRepository,
             OrdersSiesaRepository siesaRepository,
@@ -26,7 +24,6 @@
             )
         {
             this.localRepository = localRepository;
-            this.paymentMethodsLocalRepository = paymentMethodsLocalRepository;
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
             this.siesaOrdersHistoryLocalRepository = siesaOrdersHistoryLocalRepository;
             this.siesaRepository = siesaRepository;
@@ -53,14 +50,14 @@
                             newSiesaOrder.estado_vtex = unfinishedSiesaOrder.estado_vtex;
                             newSiesaOrder.id_metodo_pago_vtex = unfinishedSiesaOrder.id_metodo_pago_vtex;
                             newSiesaOrder.metodo_pago_vtex = unfinishedSiesaOrder.metodo_pago_vtex;
-                            PaymentMethod paymentMethod = await this.paymentMethodsLocalRepository.getPaymentMethodByVtexId(newSiesaOrder.id_metodo_pago_vtex);
-                            bool isPromissoryPaymentMethod = paymentMethod != null ? paymentMethod.is_promissory : false;
+                            //PaymentMethod paymentMethod = await this.paymentMethodsLocalRepository.getPaymentMethodByVtexId(newSiesaOrder.id_metodo_pago_vtex);
+                            //bool isPromissoryPaymentMethod = paymentMethod != null ? paymentMethod.is_promissory : false;
                             if(newSiesaOrder.estado_vtex == "ready-for-handling")
                             {
                                 await vtexRepository.startHandlingOrder(newSiesaOrder.referencia_vtex);
                                 newSiesaOrder.estado_vtex = "handling";
                             }
-                            if (isPromissoryPaymentMethod && newSiesaOrder.estado_vtex == "handling") //metodo de pago promisorio
+                            //if (isPromissoryPaymentMethod && newSiesaOrder.estado_vtex == "handling") //metodo de pago promisorio
                             {
                                 await this.vtexRepository.updateVtexOrder(unfinishedSiesaOrder, newSiesaOrder);
                             }

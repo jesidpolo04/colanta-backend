@@ -16,10 +16,13 @@
         public string metodo_pago_vtex { get; set; }
         public string cond_pago { get; set; }
         public string notas { get; set; }
+        public string departamento { get; set; }
+        public string ciudad { get; set; }
         public string direccion { get; set; }
         public string negocio { get; set; }
         public decimal total_pedido { get; set; }
         public decimal total_descuento { get; set; }
+        public bool recoge_en_tienda { get; set; }
         public SiesaOrderDetail[] detalles { get; set; }
         public SiesaOrderDiscount[] descuentos { get; set; }
 

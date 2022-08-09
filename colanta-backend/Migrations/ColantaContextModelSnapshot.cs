@@ -176,6 +176,103 @@ namespace colanta_backend.Migrations
                     b.ToTable("giftcards");
                 });
 
+            modelBuilder.Entity("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransaction", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("card_id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("date")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("json")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("transaction_authorization_id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("card_id");
+
+                    b.HasIndex("transaction_authorization_id")
+                        .IsUnique()
+                        .HasFilter("[transaction_authorization_id] IS NOT NULL");
+
+                    b.ToTable("giftcards_transactions");
+                });
+
+            modelBuilder.Entity("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransactionAuthorization", b =>
+                {
+                    b.Property<string>("oid")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("date")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<decimal>("value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("oid");
+
+                    b.ToTable("giftcards_transactions_authorizations");
+                });
+
+            modelBuilder.Entity("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransactionCancellation", b =>
+                {
+                    b.Property<string>("oid")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("date")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("transaction_id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("oid");
+
+                    b.HasIndex("transaction_id");
+
+                    b.ToTable("giftcards_transactions_cancellations");
+                });
+
+            modelBuilder.Entity("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransactionSettlement", b =>
+                {
+                    b.Property<string>("oid")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("date")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("transaction_id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("oid");
+
+                    b.HasIndex("transaction_id");
+
+                    b.ToTable("giftcards_transactions_settlements");
+                });
+
             modelBuilder.Entity("colanta_backend.App.Inventory.Infraestructure.EFInventory", b =>
                 {
                     b.Property<int>("id")
@@ -335,10 +432,16 @@ namespace colanta_backend.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("ciudad")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("co")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("cond_pago")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("departamento")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("direccion")
@@ -370,6 +473,9 @@ namespace colanta_backend.Migrations
 
                     b.Property<string>("notas")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("recoge_en_tienda")
+                        .HasColumnType("bit");
 
                     b.Property<string>("referencia_vtex")
                         .HasColumnType("nvarchar(max)");
@@ -917,6 +1023,41 @@ namespace colanta_backend.Migrations
                     b.Navigation("father");
                 });
 
+            modelBuilder.Entity("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransaction", b =>
+                {
+                    b.HasOne("colanta_backend.App.GiftCards.Infraestructure.EFGiftCard", "card")
+                        .WithMany()
+                        .HasForeignKey("card_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransactionAuthorization", "transaction_authorization")
+                        .WithOne("transaction")
+                        .HasForeignKey("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransaction", "transaction_authorization_id");
+
+                    b.Navigation("card");
+
+                    b.Navigation("transaction_authorization");
+                });
+
+            modelBuilder.Entity("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransactionCancellation", b =>
+                {
+                    b.HasOne("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransaction", "transaction")
+                        .WithMany()
+                        .HasForeignKey("transaction_id");
+
+                    b.Navigation("transaction");
+                });
+
+            modelBuilder.Entity("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransactionSettlement", b =>
+                {
+                    b.HasOne("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransaction", "transaction")
+                        .WithMany()
+                        .HasForeignKey("transaction_id");
+
+                    b.Navigation("transaction");
+                });
+
             modelBuilder.Entity("colanta_backend.App.Inventory.Infraestructure.EFInventory", b =>
                 {
                     b.HasOne("colanta_backend.App.Products.Infraestructure.EFSku", "sku")
@@ -1002,6 +1143,11 @@ namespace colanta_backend.Migrations
             modelBuilder.Entity("colanta_backend.App.Categories.Infraestructure.EFCategory", b =>
                 {
                     b.Navigation("childs");
+                });
+
+            modelBuilder.Entity("colanta_backend.App.GiftCards.Infraestructure.EFGiftCardTransactionAuthorization", b =>
+                {
+                    b.Navigation("transaction");
                 });
 
             modelBuilder.Entity("colanta_backend.App.Orders.SiesaOrders.Infraestructure.EFSiesaOrder", b =>

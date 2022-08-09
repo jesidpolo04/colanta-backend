@@ -115,8 +115,6 @@ namespace colanta_backend
             services.AddTransient<App.Orders.Domain.OrdersRepository, App.Orders.Infraestructure.OrdersEFRepository>();
             services.AddTransient<App.Orders.Domain.OrdersVtexRepository, App.Orders.Infraestructure.OrdersVtexRepository>();
             services.AddTransient<App.Orders.Domain.OrdersSiesaRepository, App.Orders.Infraestructure.OrdersSiesaRepository>();
-            //Dependencies Injections PaymentMethods
-            services.AddTransient<App.Orders.Domain.PaymentMethodsRepository, App.Orders.Infraestructure.PaymentMethodsEFRepository>();
             //Dependencies Injections SiesaOrders
             services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersEFRepository>();
             services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersHistoryRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersHistoryEFRepository>();
@@ -155,7 +153,7 @@ namespace colanta_backend
             //services.AddHostedService<ScheduledUpdatePromotionsState>();
             //services.AddHostedService<ScheduledUpToVtexNullPromotions>();
 
-            services.AddHostedService<ScheduledRenderCreditAccounts>();
+            //services.AddHostedService<ScheduledRenderCreditAccounts>();
             //services.AddHostedService<ScheduledReduceVtexCreditLimit>();
 
             //services.AddHostedService<ScheduledUpdateSiesaOrders>();

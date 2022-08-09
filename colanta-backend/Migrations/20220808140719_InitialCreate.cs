@@ -106,6 +106,19 @@ namespace colanta_backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "giftcards_transactions_authorizations",
+                columns: table => new
+                {
+                    oid = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_giftcards_transactions_authorizations", x => x.oid);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "logs",
                 columns: table => new
                 {
@@ -265,9 +278,12 @@ namespace colanta_backend.Migrations
                     cond_pago = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     notas = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     direccion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    departamento = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ciudad = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     negocio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     total_pedido = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    total_descuento = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    total_descuento = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    recoge_en_tienda = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -369,6 +385,34 @@ namespace colanta_backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "giftcards_transactions",
+                columns: table => new
+                {
+                    id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    card_id = table.Column<int>(type: "int", nullable: false),
+                    json = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    transaction_authorization_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_giftcards_transactions", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_giftcards_transactions_giftcards_card_id",
+                        column: x => x.card_id,
+                        principalTable: "giftcards",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_giftcards_transactions_giftcards_transactions_authorizations_transaction_authorization_id",
+                        column: x => x.transaction_authorization_id,
+                        principalTable: "giftcards_transactions_authorizations",
+                        principalColumn: "oid",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "siesa_order_details",
                 columns: table => new
                 {
@@ -456,6 +500,46 @@ namespace colanta_backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "giftcards_transactions_cancellations",
+                columns: table => new
+                {
+                    oid = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    transaction_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_giftcards_transactions_cancellations", x => x.oid);
+                    table.ForeignKey(
+                        name: "FK_giftcards_transactions_cancellations_giftcards_transactions_transaction_id",
+                        column: x => x.transaction_id,
+                        principalTable: "giftcards_transactions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "giftcards_transactions_settlements",
+                columns: table => new
+                {
+                    oid = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    transaction_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_giftcards_transactions_settlements", x => x.oid);
+                    table.ForeignKey(
+                        name: "FK_giftcards_transactions_settlements_giftcards_transactions_transaction_id",
+                        column: x => x.transaction_id,
+                        principalTable: "giftcards_transactions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "inventories",
                 columns: table => new
                 {
@@ -513,6 +597,28 @@ namespace colanta_backend.Migrations
                 column: "family");
 
             migrationBuilder.CreateIndex(
+                name: "IX_giftcards_transactions_card_id",
+                table: "giftcards_transactions",
+                column: "card_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_giftcards_transactions_transaction_authorization_id",
+                table: "giftcards_transactions",
+                column: "transaction_authorization_id",
+                unique: true,
+                filter: "[transaction_authorization_id] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_giftcards_transactions_cancellations_transaction_id",
+                table: "giftcards_transactions_cancellations",
+                column: "transaction_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_giftcards_transactions_settlements_transaction_id",
+                table: "giftcards_transactions_settlements",
+                column: "transaction_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_inventories_sku_id",
                 table: "inventories",
                 column: "sku_id");
@@ -563,7 +669,10 @@ namespace colanta_backend.Migrations
                 name: "credit_accounts");
 
             migrationBuilder.DropTable(
-                name: "giftcards");
+                name: "giftcards_transactions_cancellations");
+
+            migrationBuilder.DropTable(
+                name: "giftcards_transactions_settlements");
 
             migrationBuilder.DropTable(
                 name: "inventories");
@@ -605,6 +714,9 @@ namespace colanta_backend.Migrations
                 name: "users");
 
             migrationBuilder.DropTable(
+                name: "giftcards_transactions");
+
+            migrationBuilder.DropTable(
                 name: "warehouses");
 
             migrationBuilder.DropTable(
@@ -612,6 +724,12 @@ namespace colanta_backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "siesa_orders");
+
+            migrationBuilder.DropTable(
+                name: "giftcards");
+
+            migrationBuilder.DropTable(
+                name: "giftcards_transactions_authorizations");
 
             migrationBuilder.DropTable(
                 name: "products");

@@ -1,7 +1,9 @@
 ﻿namespace colanta_backend.App.Orders.Infraestructure
 {
+    using System;
     using System.Collections.Generic;
     using Products.Domain;
+    using Orders.Domain;
     using Promotions.Domain;
     using SiesaOrders.Domain;
     using System.Threading.Tasks;
@@ -20,27 +22,30 @@
             SiesaOrderHeaderDto header = new SiesaOrderHeaderDto();
             siesaOrder.Encabezado = header;
             //Header
-            siesaOrder.Encabezado.C263CO = vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId;
-            siesaOrder.Encabezado.C263Fecha = vtexOrder.creationDate;
+            siesaOrder.Encabezado.C263CO = this.getOperationCenter(vtexOrder.shippingData.address);
+            siesaOrder.Encabezado.C263Fecha = vtexOrder.creationDate.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
             siesaOrder.Encabezado.C263DocTercero = vtexOrder.clientProfileData.document;
-            siesaOrder.Encabezado.C263FechaEntrega = vtexOrder.shippingData.shippingEstimateDate;
+            siesaOrder.Encabezado.C263FechaEntrega = this.getEstimateDeliveryDate(vtexOrder.shippingData.logisticsInfo[0].shippingEstimateDate);
             siesaOrder.Encabezado.C263ReferenciaVTEX = vtexOrder.orderId;
-            siesaOrder.Encabezado.C263CondPago = vtexOrder.paymentData.transactions[0].payments[0].paymentSystem;
+            siesaOrder.Encabezado.C263CondPago = this.getPaymentCondition(vtexOrder.paymentData.transactions[0].payments[0], vtexOrder.clientProfileData);
             siesaOrder.Encabezado.C263Notas = "sin observaciones";
             siesaOrder.Encabezado.C263Direccion = this.getSiesaAddressFromVtexAdress(vtexOrder.shippingData.selectedAddresses[0]);
+            siesaOrder.Encabezado.C263Departamento = vtexOrder.shippingData.address.state;
+            siesaOrder.Encabezado.C263Ciudad = vtexOrder.shippingData.address.city;
             siesaOrder.Encabezado.C263Negocio = this.getBusinessFromSalesChannel(vtexOrder.salesChannel);
             siesaOrder.Encabezado.C263TotalPedido = this.getTotal(vtexOrder.totals, "Items");
             siesaOrder.Encabezado.C263TotalDescuentos = this.getTotal(vtexOrder.totals, "Discounts");
+            siesaOrder.Encabezado.C263RecogeEnTienda = this.pickupInStore(vtexOrder.shippingData.address.addressType);
             //Details
             List<SiesaOrderDetailDto> details = new List<SiesaOrderDetailDto>();
             List<SiesaOrderDiscountDto> discounts = new List<SiesaOrderDiscountDto>();
             int consecutive = 0;
 
-            foreach (ItemDto vtexItem in vtexOrder.items)
+            foreach (Item vtexItem in vtexOrder.items)
             {
                 consecutive++;
                 SiesaOrderDetailDto siesaDetail = new SiesaOrderDetailDto();
-                siesaDetail.C263DetCO = vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId;
+                siesaDetail.C263DetCO = siesaOrder.Encabezado.C263CO;
                 siesaDetail.C263NroDetalle = consecutive;
                 siesaDetail.C263ReferenciaItem = await this.getSiesaSkuRefId(vtexItem.refId);
                 siesaDetail.C263VariacionItem = "";
@@ -54,11 +59,11 @@
                 details.Add(siesaDetail);
 
                 int discountsConsecutive = 0;
-                foreach(PriceTagDto vtexDiscount in vtexItem.priceTags)
+                foreach(PriceTag vtexDiscount in vtexItem.priceTags)
                 {
                     discountsConsecutive++;
                     SiesaOrderDiscountDto siesaDiscount = new SiesaOrderDiscountDto();
-                    siesaDiscount.C263DestoCO = vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId;
+                    siesaDiscount.C263DestoCO = siesaOrder.Encabezado.C263CO;
                     siesaDiscount.C263ReferenciaVTEX = vtexDiscount.identifier;
                     siesaDiscount.C263NroDetalle = consecutive;
                     siesaDiscount.C263OrdenDescto = discountsConsecutive;
@@ -71,7 +76,7 @@
             return siesaOrder;
         }
 
-        private string getSiesaAddressFromVtexAdress(SelectedAddresseDto vtexAddress)
+        private string getSiesaAddressFromVtexAdress(SelectedAddress vtexAddress)
         {
             string address = "Calle " + vtexAddress.street + " " + vtexAddress.complement + " - ";
             address += "Barrio: " + vtexAddress.neighborhood + " ";
@@ -91,11 +96,11 @@
             }
         }
 
-        private decimal getTotal(TotalDto[] totals, string totalId)
+        private decimal getTotal(List<Total> totals, string totalId)
         {
             //values can be: "Items" , "Discounts" , "Shipping"
             decimal value = 0;
-            foreach(TotalDto total in totals)
+            foreach(Total total in totals)
             {
                 if(total.id == totalId)
                 {
@@ -133,6 +138,36 @@
             {
                 return "";
             }
+        }
+
+        private bool pickupInStore(string addressType)
+        { 
+            if (addressType == "pickup") return true;
+            return false;
+        }
+
+        private string getEstimateDeliveryDate(DateTime? date)
+        {
+            if (date== null) return "";
+            DateTime notNullDate = (DateTime)date;
+            return notNullDate.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
+        }
+
+        private string getOperationCenter(Address address)
+        {
+            if (address.addressType == "pickup") return address.addressId;
+            else return "Por Definir";
+        }
+
+        private string getPaymentCondition(Payment payment, ClientProfileData client)
+        {
+            if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem) return "CON";
+            if (PaymentMethods.EFECTIVO.id == payment.paymentSystem) return "CON";
+            if (PaymentMethods.CARD_PROMISSORY.id == payment.paymentSystem) return "CARD_PROMISSORY";
+            if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return "CUPO";
+            if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return "CUPO";
+            if (PaymentMethods.WOMPI.id == payment.paymentSystem) return "WOMPI";
+            else return "OTRO";
         }
     }
 }

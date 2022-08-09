@@ -57,15 +57,20 @@ namespace colanta_backend.App.Orders.Infraestructure
             SiesaOrderDto siesaOrderDto = await mapper.getSiesaOrderDto(vtexOrderDto);
             string jsonContent = JsonSerializer.Serialize(siesaOrderDto);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
-            HttpResponseMessage siesaResponse = await httpClient.PostAsync(this.configuration["SiesaUrl"] + endpoint, httpContent);
+            //HttpResponseMessage siesaResponse = await httpClient.PostAsync(this.configuration["SiesaUrl"] + endpoint, httpContent);
+            HttpResponseMessage siesaResponse = await httpClient.PostAsync("http://localhost:3000/orders", httpContent);
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             if (!siesaResponse.IsSuccessStatusCode)
             {
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
-            SiesaOrderIdResponseDto siesaOrderIdResponseDto = JsonSerializer.Deserialize<SiesaOrderIdResponseDto>(siesaResponseBody);
+            //SiesaOrderIdResponseDto siesaOrderIdResponseDto = JsonSerializer.Deserialize<SiesaOrderIdResponseDto>(siesaResponseBody);
+            SiesaOrderIdResponseDto siesaOrderIdResponseDto = JsonSerializer.Deserialize<SiesaOrderIdResponseDto>("{\"id\":\"1231\"}");
             SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFromDto();
+            siesaOrder.id_metodo_pago_vtex = vtexOrderDto.paymentData.transactions[0].payments[0].paymentSystem;
+            siesaOrder.metodo_pago_vtex = vtexOrderDto.paymentData.transactions[0].payments[0].paymentSystemName;
             siesaOrder.siesa_id = siesaOrderIdResponseDto.id;
+            siesaOrder.estado_vtex = order.status;
             siesaOrder.finalizado = false;
             return siesaOrder;
         }

@@ -33,7 +33,7 @@
             this.httpClient.DefaultRequestHeaders.Add("X-VTEX-API-AppKey", this.apiKey);
         }
 
-        public async Task<string> getOrderByVtexId(string vtexOrderId)
+        public async Task<VtexOrder> getOrderByVtexId(string vtexOrderId)
         {
             string endpoint = "/api/oms/pvt/orders/";
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint + vtexOrderId;
@@ -43,40 +43,7 @@
                 throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
-            return vtexResponseBody;
-        }
-
-        public async Task<PaymentMethod> getOrderPaymentMethod(string orderVtexId)
-        {
-            string endpoint = "/api/oms/pvt/orders/";
-            string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint + orderVtexId;
-            HttpResponseMessage vtexResponse = await httpClient.GetAsync(url);
-            if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
-            {
-                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
-            }
-            string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
-            VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(vtexResponseBody);
-            PaymentMethod paymentMethod = new PaymentMethod();
-            paymentMethod.vtex_id = vtexOrderDto.paymentData.transactions[0].payments[0].paymentSystem;
-            paymentMethod.name = vtexOrderDto.paymentData.transactions[0].payments[0].paymentSystemName;
-            return paymentMethod;
-        }
-
-        public async Task<OrderStatus> getOrderStatus(string orderVtexId)
-        {
-            string endpoint = "/api/oms/pvt/orders/";
-            string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint + orderVtexId;
-            HttpResponseMessage vtexResponse = await httpClient.GetAsync(url);
-            if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
-            {
-                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
-            }
-            string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
-            VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(vtexResponseBody);
-            OrderStatus orderStatus = new OrderStatus();
-            orderStatus.status = vtexOrderDto.status;
-            return orderStatus;
+            return JsonSerializer.Deserialize<VtexOrder>(vtexResponseBody);
         }
 
         public async Task<bool> startHandlingOrder(string orderVtexId)

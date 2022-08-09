@@ -18,9 +18,12 @@
         public string cond_pago { get; set; }
         public string notas { get; set; }
         public string direccion { get; set; }
+        public string departamento { get; set; }
+        public string ciudad { get; set; }
         public string negocio { get; set; }
         public decimal total_pedido { get; set; }
         public decimal total_descuento { get; set; }
+        public bool recoge_en_tienda { get; set; }
         public List<EFSiesaOrderDetail> detalles { get; set; }
         public List<EFSiesaOrderDiscount> descuentos { get; set; }
 
@@ -39,9 +42,12 @@
             this.cond_pago = siesaOrder.cond_pago;
             this.notas = siesaOrder.notas;
             this.direccion = siesaOrder.direccion;
+            this.departamento = siesaOrder.departamento;
+            this.ciudad = siesaOrder.ciudad;
             this.negocio = siesaOrder.negocio;
             this.total_pedido = siesaOrder.total_pedido;
             this.total_descuento = siesaOrder.total_descuento;
+            this.recoge_en_tienda = siesaOrder.recoge_en_tienda;
 
             List<EFSiesaOrderDetail> efSiesaOrderDetails = new List<EFSiesaOrderDetail>();
             foreach(SiesaOrderDetail siesaOrderDetail in siesaOrder.detalles)
@@ -80,6 +86,9 @@
             siesaOrder.cond_pago = this.cond_pago;
             siesaOrder.notas = this.notas;
             siesaOrder.direccion = this.direccion;
+            siesaOrder.departamento = this.departamento;
+            siesaOrder.ciudad = this.ciudad;
+            siesaOrder.recoge_en_tienda = this.recoge_en_tienda;
             siesaOrder.negocio = this.negocio;
             siesaOrder.total_pedido = this.total_pedido;
             siesaOrder.total_descuento = this.total_descuento;

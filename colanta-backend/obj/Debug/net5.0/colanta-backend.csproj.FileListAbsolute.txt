@@ -396,3 +396,4 @@ D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Inventory\
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\CustomerCredit\Infraestructure\Mails\RenderAccountsMail.cshtml.g.cs
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Promotions\Infraestructure\Mails\InvalidPromotionMail.cshtml.g.cs
 D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\Promotions\Infraestructure\Mails\RenderPromotionsMail.cshtml.g.cs
+D:\colanta\colanta-backend\colanta-backend\obj\Debug\net5.0\Razor\App\CustomerCredit\Infraestructure\Mails\InvalidAccountsMail.cshtml.g.cs

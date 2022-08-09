@@ -1,8 +1,8 @@
-﻿namespace colanta_backend.App.Orders.Infraestructure
+﻿namespace colanta_backend.App.Orders.Domain
 {
     using System;
     using System.Collections.Generic;
-    public class VtexOrderDto
+    public class VtexOrder
     {
         public string emailTracked { get; set; }
         public string? approvedBy { get; set; }
@@ -19,7 +19,7 @@
         public string? merchantName { get; set; }
         public string status { get; set; }
         public string statusDescription { get; set; }
-        public decimal value { get; set; }
+        public double value { get; set; }
         public DateTime creationDate { get; set; }
         public DateTime lastChange { get; set; }
         public string? orderGroup { get; set; }
@@ -53,6 +53,16 @@
         public Marketplace marketplace { get; set; }
         public DateTime? authorizedDate { get; set; }
         public object invoicedDate { get; set; }
+
+        //methods
+
+        public PaymentMethod getFirstPaymentMethod()
+        {
+            PaymentMethod paymentMethod = new PaymentMethod(
+                this.paymentData.transactions[0].payments[0].paymentSystem,
+                this.paymentData.transactions[0].payments[0].paymentSystemName);
+            return paymentMethod;
+        }
     }
 
     public class AdditionalInfo
@@ -96,7 +106,7 @@
         public string neighborhood { get; set; }
         public string complement { get; set; }
         public string reference { get; set; }
-        public List<decimal> geoCoordinates { get; set; }
+        public List<double> geoCoordinates { get; set; }
     }
 
     public class ChangesAttachment
@@ -162,11 +172,11 @@
 
     public class Dimension
     {
-        public decimal cubicweight { get; set; }
-        public decimal height { get; set; }
-        public decimal length { get; set; }
-        public decimal weight { get; set; }
-        public decimal width { get; set; }
+        public double cubicweight { get; set; }
+        public double height { get; set; }
+        public double length { get; set; }
+        public double weight { get; set; }
+        public double width { get; set; }
     }
 
     public class Item
@@ -182,9 +192,9 @@
         public string seller { get; set; }
         public string name { get; set; }
         public string refId { get; set; }
-        public decimal price { get; set; }
-        public decimal listPrice { get; set; }
-        public decimal? manualPrice { get; set; }
+        public double price { get; set; }
+        public double listPrice { get; set; }
+        public double? manualPrice { get; set; }
         public List<PriceTag> priceTags { get; set; }
         public string imageUrl { get; set; }
         public string detailUrl { get; set; }
@@ -194,17 +204,17 @@
         public List<object> offerings { get; set; }
         public string sellerSku { get; set; }
         public string? priceValidUntil { get; set; }
-        public decimal commission { get; set; }
-        public decimal tax { get; set; }
+        public double commission { get; set; }
+        public double tax { get; set; }
         public string? preSaleDate { get; set; }
         public AdditionalInfo additionalInfo { get; set; }
         public string measurementUnit { get; set; }
-        public decimal? unitMultiplier { get; set; }
-        public decimal? sellingPrice { get; set; }
+        public double? unitMultiplier { get; set; }
+        public double? sellingPrice { get; set; }
         public bool isGift { get; set; }
         public string? shippingPrice { get; set; }
-        public decimal? rewardValue { get; set; }
-        public decimal? freightCommission { get; set; }
+        public double? rewardValue { get; set; }
+        public double? freightCommission { get; set; }
         public PriceDefinition priceDefinition { get; set; }
         public string? taxCode { get; set; }
         //public object? parentItemIndex { get; set; }
@@ -223,7 +233,7 @@
         public string name { get; set; }
         public int quantity { get; set; }
         public int price { get; set; }
-        public decimal? unitMultiplier { get; set; }
+        public double? unitMultiplier { get; set; }
     }
 
     public class LogisticsInfo
@@ -231,9 +241,9 @@
         public int itemIndex { get; set; }
         public string selectedSla { get; set; }
         public string? lockTTL { get; set; }
-        public decimal price { get; set; }
-        public decimal? listPrice { get; set; }
-        public decimal sellingPrice { get; set; }
+        public double price { get; set; }
+        public double? listPrice { get; set; }
+        public double sellingPrice { get; set; }
         public object deliveryWindow { get; set; }
         public string deliveryCompany { get; set; }
         public string shippingEstimate { get; set; }
@@ -264,9 +274,9 @@
         public string id { get; set; }
         public string paymentSystem { get; set; }
         public string paymentSystemName { get; set; }
-        public decimal value { get; set; }
+        public double value { get; set; }
         public int installments { get; set; }
-        public decimal referenceValue { get; set; }
+        public double referenceValue { get; set; }
         public object cardHolder { get; set; }
         public object firstDigits { get; set; }
         public object lastDigits { get; set; }
@@ -299,7 +309,7 @@
     public class PriceDefinition
     {
         public List<SellingPrice> sellingPrice { get; set; }
-        public decimal total { get; set; }
+        public double total { get; set; }
     }
 
     public class RatesAndBenefitsData
@@ -342,7 +352,7 @@
     public class SellingPrice
     {
         public int quantity { get; set; }
-        public decimal value { get; set; }
+        public double value { get; set; }
     }
 
     public class ShippingData
@@ -360,7 +370,7 @@
         public string name { get; set; }
         public string shippingEstimate { get; set; }
         public object deliveryWindow { get; set; }
-        public decimal price { get; set; }
+        public double price { get; set; }
         public string deliveryChannel { get; set; }
         public PickupStoreInfo pickupStoreInfo { get; set; }
         public string polygonName { get; set; }
@@ -380,7 +390,7 @@
     {
         public string id { get; set; }
         public string name { get; set; }
-        public decimal value { get; set; }
+        public double value { get; set; }
     }
 
     public class Transaction
@@ -399,4 +409,5 @@
         public string identifier { get; set; }
         public bool isPercentual { get; set; }
     }
+
 }

@@ -3,6 +3,7 @@
     using Orders.Domain;
     public class OrderHookDto
     {
+        public string? hookConfig { get; set; }
         public string Domain { get; set; }
         public string OrderId { get; set; }
         public string State { get; set; }
