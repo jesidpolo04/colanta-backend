@@ -2,7 +2,7 @@
 {
     public class AgrocolantaCategory
     {
-        public static int vtexId = 1;
-        public static int defaultGlobalCategory = 1;
+        public static int vtexId = 83;
+        public static int defaultGlobalCategory = 111;
     }
 }

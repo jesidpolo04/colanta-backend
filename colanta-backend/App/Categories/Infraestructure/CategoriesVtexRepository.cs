@@ -130,8 +130,8 @@
         {
             string endpoint = "/api/catalog/pvt/category";
             string jsonContent;
-            var MERCOLANTA_DEFAULT_CATEGORY = 412;
-            var AGROCOLANTA_DEFAULT_CATEGORY = 111;
+            var MERCOLANTA_DEFAULT_CATEGORY = MercolantaCategory.defaultGlobalCategory;
+            var AGROCOLANTA_DEFAULT_CATEGORY = AgrocolantaCategory.defaultGlobalCategory;
 
             Category existCategory = await this.getCategoryByName(category.name);
             if(existCategory != null)
@@ -157,8 +157,9 @@
                     Name = category.name,
                     IsActive = category.isActive,
                     Title = category.name,
+                    FatherCategoryId = category.business == "mercolanta" ? MercolantaCategory.vtexId : AgrocolantaCategory.vtexId,
                     GlobalCategoryId = category.business == "mercolanta" ? MERCOLANTA_DEFAULT_CATEGORY : AGROCOLANTA_DEFAULT_CATEGORY,
-                });
+                }) ;
             }
             
             HttpContent content = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
