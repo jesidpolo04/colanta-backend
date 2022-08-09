@@ -18,9 +18,9 @@
         public async Task<GiftCard> Invoke(string siesaId)
         {
             GiftCard localGiftCard = await localRepository.getGiftCardBySiesaId(siesaId);
-            //decimal newBalance = await siesaRepository.getGiftCardBalanceBySiesaId(siesaId);
-            //localGiftCard.balance = newBalance;
-            //await localRepository.updateGiftCard(localGiftCard);
+            decimal newBalance = await siesaRepository.getGiftCardBalanceBySiesaId(siesaId);
+            localGiftCard.balance = newBalance;
+            await localRepository.updateGiftCard(localGiftCard);
             return localGiftCard;
         }
     }
