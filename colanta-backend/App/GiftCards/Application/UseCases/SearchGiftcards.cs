@@ -2,17 +2,18 @@
 {
     using System.Threading.Tasks;
     using GiftCards.Domain;
-    public class ListAllGiftCardByDocumentAndBusiness
+    using System.Linq;
+    public class SearchGiftcards
     {
         private GiftCardsSiesaRepository siesaRepository;
         private GiftCardsRepository localRepository;
-        public ListAllGiftCardByDocumentAndBusiness(GiftCardsRepository localRepository,GiftCardsSiesaRepository siesaRepository)
+        public SearchGiftcards(GiftCardsRepository localRepository,GiftCardsSiesaRepository siesaRepository)
         {
             this.siesaRepository = siesaRepository;
             this.localRepository = localRepository;
         }
 
-        public async Task<GiftCard[]> Invoke(string document, string business)
+        public async Task<GiftCard[]> Invoke(string document, string business, string redemptionCode)
         {
             GiftCard[] siesaGiftCards = await this.siesaRepository.getGiftCardsByDocumentAndBusiness(document, business);
             foreach(GiftCard siesaGiftCard in siesaGiftCards)
@@ -23,7 +24,8 @@
                     await localRepository.saveGiftCard(siesaGiftCard);
                 }
             }
-            return await this.localRepository.getGiftCardsByDocumentAndBusiness(document, business);
+            GiftCard[] localGiftcards = await this.localRepository.getGiftCardsByDocumentAndBusiness(document, business);
+            return localGiftcards.Where(giftcard => giftcard.code == redemptionCode).ToArray();
         }
     }
 }

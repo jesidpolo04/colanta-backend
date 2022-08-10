@@ -36,7 +36,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         [Route("giftcards/_search")] // obtener giftcards
         public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
-            ListAllGiftCardByDocumentAndBusiness listAllGiftCardsByDocumentAndBussines = new ListAllGiftCardByDocumentAndBusiness(this.localRepository, this.siesaRepository);
+            SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository);
             GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(vtexInfo.client.document, "mercolanta");
             List<GiftCardProviderDto> giftCardProviderDtos = new List<GiftCardProviderDto>();
             foreach (GiftCard giftCard in giftCards)
