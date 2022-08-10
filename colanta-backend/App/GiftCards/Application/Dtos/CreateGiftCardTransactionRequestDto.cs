@@ -6,7 +6,7 @@
     public class CreateGiftCardTransactionDto
     {
         public string operation { get; set; }
-        public int value { get; set; }
+        public decimal value { get; set; }
         public string description { get; set; }
         public string redemptionToken { get; set; }
         public string redemptionCode { get; set; }
@@ -17,11 +17,11 @@
     public class CreateGiftCardTransactionCartDto
     {
         public List<CreateGiftCardTransactionItemDto> items { get; set; }
-        public int grandTotal { get; set; }
-        public int discounts { get; set; }
-        public int shipping { get; set; }
-        public int taxes { get; set; }
-        public int itemsTotal { get; set; }
+        public decimal? grandTotal { get; set; }
+        public decimal? discounts { get; set; }
+        public decimal? shipping { get; set; }
+        public decimal? taxes { get; set; }
+        public decimal? itemsTotal { get; set; }
     }
 
     public class CreateGiftCardTransactionClientProfileDto
@@ -42,11 +42,11 @@
         public string productId { get; set; }
         public string refId { get; set; }
         public string name { get; set; }
-        public int value { get; set; }
-        public int price { get; set; }
+        public decimal value { get; set; }
+        public decimal price { get; set; }
         public int quantity { get; set; }
-        public int shippingDiscount { get; set; }
-        public int discount { get; set; }
+        public decimal? shippingDiscount { get; set; }
+        public decimal? discount { get; set; }
     }
 
     public class CreateGiftCardTransactionOrderInfoDto
