@@ -72,6 +72,7 @@
         public string C263DocTercero { get; set; }
         public string C263FechaEntrega { get; set; }
         public string C263ReferenciaVTEX { get; set; }
+        public string C263ReferenciaPago { get; set; }
         public string C263CondPago { get; set; }
         public string C263Notas { get; set; }
         public string C263Direccion { get; set; }
@@ -102,6 +103,7 @@
     {
         public string C263DestoCO {get; set; }
         public string C263ReferenciaVTEX {get; set; }
+        public string C263ReferenciaDescuento { get; set; }
         public int C263NroDetalle {get; set; }
         public int C263OrdenDescto {get; set; }
         public decimal C263Tasa {get; set; }

@@ -64,6 +64,7 @@
                     discountsConsecutive++;
                     SiesaOrderDiscountDto siesaDiscount = new SiesaOrderDiscountDto();
                     siesaDiscount.C263DestoCO = siesaOrder.Encabezado.C263CO;
+                    siesaDiscount.C263ReferenciaDescuento = await this.getSiesaPromotionId(vtexDiscount.identifier);
                     siesaDiscount.C263ReferenciaVTEX = vtexDiscount.identifier;
                     siesaDiscount.C263NroDetalle = consecutive;
                     siesaDiscount.C263OrdenDescto = discountsConsecutive;
