@@ -7,6 +7,7 @@ namespace colanta_backend.App.GiftCards.Controllers
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using GiftCards.Domain;
+    using Products.Domain;
     using GiftCards.Application;
 
     [Route("api")]
@@ -15,10 +16,12 @@ namespace colanta_backend.App.GiftCards.Controllers
     {
         private GiftCardsRepository localRepository;
         private GiftCardsSiesaRepository siesaRepository;
-        public GiftCardsController(GiftCardsRepository localRepository, GiftCardsSiesaRepository siesaRepository)
+        private SkusRepository skusLocalRepository;
+        public GiftCardsController(GiftCardsRepository localRepository, GiftCardsSiesaRepository siesaRepository, SkusRepository skusLocalRepository)
         {
             this.localRepository = localRepository;
             this.siesaRepository = siesaRepository;
+            this.skusLocalRepository = skusLocalRepository;
         }
 
         [HttpPost]
@@ -36,8 +39,11 @@ namespace colanta_backend.App.GiftCards.Controllers
         [Route("giftcards/_search")] // obtener giftcards
         public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
-            SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository);
-            GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(vtexInfo.client.document, "mercolanta");
+            SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository);
+            GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(
+                vtexInfo.client.document, 
+                vtexInfo.cart.items[0].refId,
+                vtexInfo.cart.redemptionCode);
             List<GiftCardProviderDto> giftCardProviderDtos = new List<GiftCardProviderDto>();
             foreach (GiftCard giftCard in giftCards)
             {

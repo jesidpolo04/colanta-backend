@@ -2,19 +2,25 @@
 {
     using System.Threading.Tasks;
     using GiftCards.Domain;
+    using Products.Domain;
     using System.Linq;
     public class SearchGiftcards
     {
         private GiftCardsSiesaRepository siesaRepository;
         private GiftCardsRepository localRepository;
-        public SearchGiftcards(GiftCardsRepository localRepository,GiftCardsSiesaRepository siesaRepository)
+        private SkusRepository skusLocalRepository;
+        public SearchGiftcards(GiftCardsRepository localRepository,GiftCardsSiesaRepository siesaRepository, SkusRepository skusLocalRepository)
         {
             this.siesaRepository = siesaRepository;
             this.localRepository = localRepository;
+            this.skusLocalRepository = skusLocalRepository;
         }
 
-        public async Task<GiftCard[]> Invoke(string document, string business, string redemptionCode)
+        public async Task<GiftCard[]> Invoke(string document, string skuRefId, string redemptionCode)
         {
+            Sku sku = skusLocalRepository.getSkuByConcatSiesaId(skuRefId).Result;
+            string business = sku != null ? sku.product.business : "";
+            
             GiftCard[] siesaGiftCards = await this.siesaRepository.getGiftCardsByDocumentAndBusiness(document, business);
             foreach(GiftCard siesaGiftCard in siesaGiftCards)
             {
