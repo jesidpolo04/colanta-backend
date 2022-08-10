@@ -28,7 +28,7 @@ namespace colanta_backend.App.CustomerCredit.Infraestructure
         public async Task<decimal> getAccountByDocumentAndBusiness(string document, string business)
         {
             await this.setHeaders();
-            string endpoint = $"/api/ColantaWS/tarjetas/documento/{document}/{business}" ;
+            string endpoint = $"/api/ColantaWS/Cuentas/{document}" ;
             HttpResponseMessage siesaResponse = await this.httpClient.GetAsync(configuration["SiesaUrl"] + endpoint);
             if (!siesaResponse.IsSuccessStatusCode)
             {

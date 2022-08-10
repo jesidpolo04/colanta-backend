@@ -109,6 +109,7 @@ namespace colanta_backend
             services.AddTransient<App.CustomerCredit.Domain.IRenderAccountsMail, App.CustomerCredit.Infraestructure.RenderAccountsMail>();
             services.AddTransient<App.CustomerCredit.Domain.IInvalidAccountsMail, App.CustomerCredit.Infraestructure.InvalidAccountsMail>();
             services.AddTransient<App.CustomerCredit.Jobs.ReduceVtexCreditLimit>();
+            services.AddTransient<App.CustomerCredit.Jobs.UpdateAccountsBalance>();
             services.AddTransient<App.CustomerCredit.Jobs.RenderCreditAccounts>();
 
             services.AddTransient<App.CustomerCredit.Domain.IRenderAccountsMail, App.CustomerCredit.Infraestructure.RenderAccountsMail>();
@@ -138,7 +139,7 @@ namespace colanta_backend
             //services.AddHostedService<ScheduledUpCategoriesToVtex>();
             //services.AddHostedService<ScheduledUpdateCategoriesState>();
             //services.AddHostedService<ScheduledActivateAllCategories>();
-            services.AddHostedService<ScheduledMapFamiliesToStore>();
+            //services.AddHostedService<ScheduledMapFamiliesToStore>();
 
             //services.AddHostedService<ScheduledRenderProductsAndSkus>();
             //services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();

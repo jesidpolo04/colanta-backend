@@ -1,6 +1,7 @@
 ﻿namespace colanta_backend.App.CustomerCredit.Domain
 {
     using Users.Domain;
+    using System;
     public class CreditAccount
     {
         public int id { get; set; }
@@ -14,18 +15,35 @@
         public string business { get; set; }
         public bool is_active { get; set; }
 
-        public CreditAccount transaction(decimal value)
+        public decimal currentCreditDiff(decimal newCredit)
         {
-            if(current_credit + value < 0)
-            {
-                throw new InvalidOperationException(value, this.credit_limit, this.current_credit, "La operación resultante da como resultado un saldo negativo: " + (current_credit + value));
-            }
-            if (current_credit + value > credit_limit)
-            {
-                throw new InvalidOperationException(value, this.credit_limit, this.current_credit, "La operación resultante da como resultado un saldo mayor al limite: " + (current_credit + value));
-            }
-            this.current_credit = current_credit + value;
-            return this;
+            return Math.Abs(this.current_credit - newCredit); 
+        }
+
+        public bool currentCreditIsLowThan(decimal newCredit)
+        {
+            if (this.current_credit < newCredit) return true;
+            else return false;
+        }
+
+        public bool currentCreditIsMoreThan(decimal newCredit)
+        {
+            if(this.current_credit > newCredit) return true;
+            else return false ;
+        }
+
+        public decimal newVtexBalance(decimal extraBalance)
+        {
+            this.vtex_current_credit += extraBalance;
+            this.vtex_credit_limit += extraBalance;
+            return this.vtex_current_credit;
+        }
+
+        public decimal reduceBalance(decimal valueToReduce)
+        {
+            this.vtex_current_credit -= valueToReduce;
+            this.current_credit -= valueToReduce;
+            return this.current_credit;
         }
     }
 }
