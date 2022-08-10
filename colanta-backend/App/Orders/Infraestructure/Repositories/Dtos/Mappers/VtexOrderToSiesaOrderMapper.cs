@@ -28,6 +28,7 @@
             siesaOrder.Encabezado.C263FechaEntrega = this.getEstimateDeliveryDate(vtexOrder.shippingData.logisticsInfo[0].shippingEstimateDate);
             siesaOrder.Encabezado.C263ReferenciaVTEX = vtexOrder.orderId;
             siesaOrder.Encabezado.C263CondPago = this.getPaymentCondition(vtexOrder.paymentData.transactions[0].payments[0], vtexOrder.clientProfileData);
+            siesaOrder.Encabezado.C263ReferenciaPago = vtexOrder.paymentData.transactions[0].payments[0].tid;
             siesaOrder.Encabezado.C263Notas = "sin observaciones";
             siesaOrder.Encabezado.C263Direccion = this.getSiesaAddressFromVtexAdress(vtexOrder.shippingData.selectedAddresses[0]);
             siesaOrder.Encabezado.C263Departamento = vtexOrder.shippingData.address.state;
@@ -47,15 +48,15 @@
                 SiesaOrderDetailDto siesaDetail = new SiesaOrderDetailDto();
                 siesaDetail.C263DetCO = siesaOrder.Encabezado.C263CO;
                 siesaDetail.C263NroDetalle = consecutive;
-                siesaDetail.C263ReferenciaItem = await this.getSiesaSkuRefId(vtexItem.refId);
-                siesaDetail.C263VariacionItem = "";
+                siesaDetail.C263ReferenciaItem = await this.getItemSiesaRef(vtexItem.refId);
+                siesaDetail.C263VariacionItem = this.getItemVariationSiesaRef(vtexItem.refId);
                 siesaDetail.C263IndObsequio = vtexItem.isGift ? 1 : 0;
                 siesaDetail.C263UnidMedida = vtexItem.measurementUnit == "un" ? "UND" : vtexItem.measurementUnit;
                 siesaDetail.C263Cantidad = vtexItem.quantity;
                 siesaDetail.C263Precio = vtexItem.price / 100;
                 siesaDetail.C263Notas = "sin notas";
                 siesaDetail.C263Impuesto = 0;
-                siesaDetail.C263ReferenciaVTEX = vtexItem.id;
+                siesaDetail.C263ReferenciaVTEX = siesaOrder.Encabezado.C263ReferenciaVTEX;
                 details.Add(siesaDetail);
 
                 int discountsConsecutive = 0;
@@ -64,8 +65,8 @@
                     discountsConsecutive++;
                     SiesaOrderDiscountDto siesaDiscount = new SiesaOrderDiscountDto();
                     siesaDiscount.C263DestoCO = siesaOrder.Encabezado.C263CO;
-                    siesaDiscount.C263ReferenciaDescuento = await this.getSiesaPromotionId(vtexDiscount.identifier);
-                    siesaDiscount.C263ReferenciaVTEX = vtexDiscount.identifier;
+                    siesaDiscount.C263ReferenciaDescuento = await this.getPromotionSiesaRef(vtexDiscount.identifier);
+                    siesaDiscount.C263ReferenciaVTEX = siesaOrder.Encabezado.C263ReferenciaVTEX;
                     siesaDiscount.C263NroDetalle = consecutive;
                     siesaDiscount.C263OrdenDescto = discountsConsecutive;
                     siesaDiscount.C263Tasa = 0;
@@ -115,20 +116,21 @@
             return value;
         }
 
-        private async Task<string> getSiesaSkuRefId(string concatSiesaId)
+        private async Task<string> getItemSiesaRef(string concatSiesaId)
         {
             Sku sku = await this.skusLocalRepository.getSkuByConcatSiesaId(concatSiesaId);
-            if(sku != null)
-            {
-                return sku.ref_id;
-            }
-            else
-            {
-                return "";
-            }
+            if (sku != null) return sku.ref_id;
+            else return "";
         }
 
-        private async Task<string> getSiesaPromotionId(string vtexId)
+        private string getItemVariationSiesaRef(string concatSiesaId)
+        {
+            Sku sku = this.skusLocalRepository.getSkuByConcatSiesaId(concatSiesaId).Result;
+            if (sku.siesa_id == sku.ref_id) return "";
+            else return sku.siesa_id;
+        }
+
+        private async Task<string> getPromotionSiesaRef(string vtexId)
         {
             Promotion promotion = await this.promotionsLocalRepository.getPromotionByVtexId(vtexId);
             if(promotion != null)
@@ -165,7 +167,6 @@
             if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem) return "CON";
             if (PaymentMethods.EFECTIVO.id == payment.paymentSystem) return "CON";
             if (PaymentMethods.CARD_PROMISSORY.id == payment.paymentSystem) return "CARD_PROMISSORY";
-            if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return "CUPO";
             if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return "CUPO";
             if (PaymentMethods.WOMPI.id == payment.paymentSystem) return "WOMPI";
             else return "OTRO";

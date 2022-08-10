@@ -16,16 +16,17 @@
 
         public async Task Invoke()
         {
-            Promotion[] promotions = await this.localRepository.getVtexPromotions();
-            foreach(Promotion promotion in promotions)
+            PromotionSummary[] promotionsSummaries = await this.vtexRepository.getPromotionsList();
+            foreach(PromotionSummary promotionSummary in promotionsSummaries)
             {
                 try
                 {
-                    Promotion vtexPromotion = await this.vtexRepository.getPromotionByVtexId(promotion.vtex_id.ToString(), promotion.business);
-                    if(promotion.is_active != vtexPromotion.is_active)
+                    Promotion localPromotion = await this.localRepository.getPromotionByVtexId(promotionSummary.vtexId);
+                    if (localPromotion == null) continue;
+                    if(localPromotion.is_active != promotionSummary.isActive)
                     {
-                        promotion.is_active = vtexPromotion.is_active;
-                        await this.localRepository.updatePromotion(promotion);
+                        localPromotion.is_active = promotionSummary.isActive;
+                        await this.localRepository.updatePromotion(localPromotion);
                     }
                 }
                 catch(Exception exception)

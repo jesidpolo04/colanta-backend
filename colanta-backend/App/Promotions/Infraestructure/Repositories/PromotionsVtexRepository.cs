@@ -341,5 +341,24 @@ namespace colanta_backend.App.Promotions.Infraestructure
             ResponseCreateVtexPromotionDto responseCreateVtexPromotionDto = JsonSerializer.Deserialize<ResponseCreateVtexPromotionDto>(vtexResponseBody);
             return responseCreateVtexPromotionDto.getPromotionFromDto();
         }
+
+        public async Task<PromotionSummary[]> getPromotionsList()
+        {
+            string endpoint = "/api/rnb/pvt/benefits/calculatorconfiguration";
+            string url = $"https://{this.accountName}.{this.vtexEnvironment}{endpoint}";
+            HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
+            if (!vtexResponse.IsSuccessStatusCode)
+            {
+                throw new VtexException(vtexResponse, $"Vtex respondió con status: {vtexResponse.StatusCode}");
+            }
+            string stringBody = await vtexResponse.Content.ReadAsStringAsync();
+            GetAllPromotionsVtexResponseDto responseDto = JsonSerializer.Deserialize<GetAllPromotionsVtexResponseDto>(stringBody);
+            List<PromotionSummary> promotionsSummaries = new List<PromotionSummary>();
+            foreach(VtexPromotionSummaryDto vtexPromotionSummary in responseDto.items)
+            {
+                promotionsSummaries.Add(vtexPromotionSummary.getPromotionSummary());
+            }
+            return promotionsSummaries.ToArray();
+        }
     }
 }
