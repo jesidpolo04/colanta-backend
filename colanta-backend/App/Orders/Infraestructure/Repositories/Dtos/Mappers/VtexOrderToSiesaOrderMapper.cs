@@ -34,7 +34,7 @@
             siesaOrder.Encabezado.C263Departamento = vtexOrder.shippingData.address.state;
             siesaOrder.Encabezado.C263Ciudad = vtexOrder.shippingData.address.city;
             siesaOrder.Encabezado.C263Negocio = this.getBusinessFromSalesChannel(vtexOrder.salesChannel);
-            siesaOrder.Encabezado.C263TotalPedido = this.getTotal(vtexOrder.totals, "Items");
+            siesaOrder.Encabezado.C263ValorTotal = vtexOrder.value / 100;
             siesaOrder.Encabezado.C263TotalDescuentos = this.getTotal(vtexOrder.totals, "Discounts");
             siesaOrder.Encabezado.C263RecogeEnTienda = this.pickupInStore(vtexOrder.shippingData.address.addressType);
             //Details
@@ -71,6 +71,7 @@
                     siesaDiscount.C263OrdenDescto = discountsConsecutive;
                     siesaDiscount.C263Tasa = 0;
                     siesaDiscount.C263Valor = (vtexDiscount.value / 100) * (-1);
+                    discounts.Add(siesaDiscount);
                 }
             }
             siesaOrder.Detalles = details.ToArray();
@@ -126,7 +127,8 @@
         private string getItemVariationSiesaRef(string concatSiesaId)
         {
             Sku sku = this.skusLocalRepository.getSkuByConcatSiesaId(concatSiesaId).Result;
-            if (sku.siesa_id == sku.ref_id) return "";
+            if (sku == null) return "";
+            else if (sku.siesa_id == sku.ref_id) return "";
             else return sku.siesa_id;
         }
 
