@@ -69,7 +69,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFromDto();
             siesaOrder.id_metodo_pago_vtex = vtexOrderDto.paymentData.transactions[0].payments[0].paymentSystem;
             siesaOrder.metodo_pago_vtex = vtexOrderDto.paymentData.transactions[0].payments[0].paymentSystemName;
-            siesaOrder.siesa_id = siesaOrderIdResponseDto.id;
+            siesaOrder.siesa_id = siesaOrderIdResponseDto.id.ToString();
             siesaOrder.estado_vtex = order.status;
             siesaOrder.finalizado = false;
             return siesaOrder;

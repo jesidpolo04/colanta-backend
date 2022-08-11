@@ -6,8 +6,14 @@
     public class SiesaOrderDto
     {
         public SiesaOrderHeaderDto Encabezado { get; set; }
-        public SiesaOrderDetailDto[] Detalles { get; set; }
-        public SiesaOrderDiscountDto[] Descuentos { get; set; }
+        public List<SiesaOrderDetailDto> Detalles { get; set; }
+        public List<SiesaOrderDiscountDto> Descuentos { get; set; }
+
+        public SiesaOrderDto()
+        {
+            this.Detalles = new List<SiesaOrderDetailDto>();
+            this.Descuentos = new List<SiesaOrderDiscountDto>();
+        }
 
         public SiesaOrder getSiesaOrderFromDto()
         {
@@ -23,7 +29,7 @@
             siesaOrder.departamento = this.Encabezado.C263Departamento;
             siesaOrder.ciudad = this.Encabezado.C263Ciudad;
             siesaOrder.negocio = this.Encabezado.C263Negocio;
-            siesaOrder.total_pedido = this.Encabezado.C263ValorTotal;
+            siesaOrder.total_pedido = this.Encabezado.C263TotalPedido;
             siesaOrder.total_descuento = this.Encabezado.C263TotalDescuentos;
             siesaOrder.recoge_en_tienda = this.Encabezado.C263RecogeEnTienda;
             
@@ -79,7 +85,7 @@
         public string C263Ciudad { get; set; }
         public string C263Departamento { get; set; }
         public string C263Negocio { get; set; }
-        public decimal C263ValorTotal { get; set; }
+        public decimal C263TotalPedido { get; set; }
         public decimal C263TotalDescuentos { get; set; }
         public bool C263RecogeEnTienda { get; set; }
     }

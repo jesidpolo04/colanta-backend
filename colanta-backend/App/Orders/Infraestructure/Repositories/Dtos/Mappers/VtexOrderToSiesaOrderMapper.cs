@@ -34,48 +34,43 @@
             siesaOrder.Encabezado.C263Departamento = vtexOrder.shippingData.address.state;
             siesaOrder.Encabezado.C263Ciudad = vtexOrder.shippingData.address.city;
             siesaOrder.Encabezado.C263Negocio = this.getBusinessFromSalesChannel(vtexOrder.salesChannel);
-            siesaOrder.Encabezado.C263ValorTotal = vtexOrder.value / 100;
+            siesaOrder.Encabezado.C263TotalPedido = vtexOrder.value / 100;
             siesaOrder.Encabezado.C263TotalDescuentos = this.getTotal(vtexOrder.totals, "Discounts");
             siesaOrder.Encabezado.C263RecogeEnTienda = this.pickupInStore(vtexOrder.shippingData.address.addressType);
-            //Details
-            List<SiesaOrderDetailDto> details = new List<SiesaOrderDetailDto>();
-            List<SiesaOrderDiscountDto> discounts = new List<SiesaOrderDiscountDto>();
-            int consecutive = 0;
-
+            
+            int itemConsecutive = 0;
             foreach (Item vtexItem in vtexOrder.items)
             {
-                consecutive++;
+                itemConsecutive++;
                 SiesaOrderDetailDto siesaDetail = new SiesaOrderDetailDto();
                 siesaDetail.C263DetCO = siesaOrder.Encabezado.C263CO;
-                siesaDetail.C263NroDetalle = consecutive;
+                siesaDetail.C263NroDetalle = itemConsecutive;
                 siesaDetail.C263ReferenciaItem = await this.getItemSiesaRef(vtexItem.refId);
                 siesaDetail.C263VariacionItem = this.getItemVariationSiesaRef(vtexItem.refId);
-                siesaDetail.C263IndObsequio = vtexItem.isGift ? 1 : 0;
+                siesaDetail.C263IndObsequio = vtexItem.isGift ? 0 : 0;
                 siesaDetail.C263UnidMedida = vtexItem.measurementUnit == "un" ? "UND" : vtexItem.measurementUnit;
                 siesaDetail.C263Cantidad = vtexItem.quantity;
                 siesaDetail.C263Precio = vtexItem.price / 100;
                 siesaDetail.C263Notas = "sin notas";
                 siesaDetail.C263Impuesto = 0;
                 siesaDetail.C263ReferenciaVTEX = siesaOrder.Encabezado.C263ReferenciaVTEX;
-                details.Add(siesaDetail);
+                siesaOrder.Detalles.Add(siesaDetail);
 
-                int discountsConsecutive = 0;
+                int discountConsecutive = 0;
                 foreach(PriceTag vtexDiscount in vtexItem.priceTags)
                 {
-                    discountsConsecutive++;
+                    discountConsecutive++;
                     SiesaOrderDiscountDto siesaDiscount = new SiesaOrderDiscountDto();
                     siesaDiscount.C263DestoCO = siesaOrder.Encabezado.C263CO;
                     siesaDiscount.C263ReferenciaDescuento = await this.getPromotionSiesaRef(vtexDiscount.identifier);
                     siesaDiscount.C263ReferenciaVTEX = siesaOrder.Encabezado.C263ReferenciaVTEX;
-                    siesaDiscount.C263NroDetalle = consecutive;
-                    siesaDiscount.C263OrdenDescto = discountsConsecutive;
+                    siesaDiscount.C263NroDetalle = itemConsecutive;
+                    siesaDiscount.C263OrdenDescto = discountConsecutive;
                     siesaDiscount.C263Tasa = 0;
                     siesaDiscount.C263Valor = (vtexDiscount.value / 100) * (-1);
-                    discounts.Add(siesaDiscount);
+                    siesaOrder.Descuentos.Add(siesaDiscount);
                 }
             }
-            siesaOrder.Detalles = details.ToArray();
-            siesaOrder.Descuentos = discounts.ToArray();
             return siesaOrder;
         }
 
