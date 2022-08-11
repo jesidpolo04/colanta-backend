@@ -29,6 +29,7 @@
             siesaOrder.Encabezado.C263ReferenciaVTEX = vtexOrder.orderId;
             siesaOrder.Encabezado.C263CondPago = this.getPaymentCondition(vtexOrder.paymentData.transactions[0].payments[0], vtexOrder.clientProfileData);
             siesaOrder.Encabezado.C263ReferenciaPago = vtexOrder.paymentData.transactions[0].payments[0].tid;
+            siesaOrder.Encabezado.C263ValorEnvio = this.getTotal(vtexOrder.totals, "Shipping");
             siesaOrder.Encabezado.C263Notas = "sin observaciones";
             siesaOrder.Encabezado.C263Direccion = this.getSiesaAddressFromVtexAdress(vtexOrder.shippingData.selectedAddresses[0]);
             siesaOrder.Encabezado.C263Departamento = vtexOrder.shippingData.address.state;
