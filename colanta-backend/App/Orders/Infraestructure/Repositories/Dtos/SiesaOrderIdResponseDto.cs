@@ -2,6 +2,6 @@
 {
     public class SiesaOrderIdResponseDto
     {
-        public string id { get; set; }
+        public int id { get; set; }
     }
 }
