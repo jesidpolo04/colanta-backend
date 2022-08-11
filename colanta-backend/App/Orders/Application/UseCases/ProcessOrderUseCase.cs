@@ -34,16 +34,15 @@
             if (localOrder != null && localOrder.status != status) //si cambió el estado ...
             {
                 await this.localRepository.SaveOrderHistory(localOrder);
-                await this.localRepository.deleteOrder(localOrder);
-
                 localOrder.status = status;
                 localOrder.order_json = JsonSerializer.Serialize(vtexOrder);
                 localOrder.last_status = lastStatus;
                 localOrder.last_change_date = lastChange;
                 localOrder.current_change_date = currentChange;
+                localOrder = this.localRepository.updateOrder(localOrder).Result;
             }
-            
-            if(localOrder == null) //si no existía
+
+            if (localOrder == null) //si no existía
             {
                 localOrder = new Order();
                 localOrder.vtex_id = vtexOrderId;
@@ -52,9 +51,8 @@
                 localOrder.last_status = lastStatus;
                 localOrder.last_change_date = lastChange;
                 localOrder.current_change_date = currentChange;
+                localOrder = this.localRepository.SaveOrder(localOrder).Result;
             }
-
-            localOrder = await this.localRepository.SaveOrder(localOrder);
 
             PaymentMethod PAYMENT_METHOD = vtexOrder.getFirstPaymentMethod();
             string ORDER_STATUS = vtexOrder.status;

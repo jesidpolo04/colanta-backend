@@ -10,7 +10,7 @@
     using System.Threading.Tasks;
     using System.Text.Json;
 
-    public class OrdersEFRepository : Domain.OrdersRepository
+    public class OrdersEFRepository : OrdersRepository
     {
         private ColantaContext dbContext;
 
@@ -54,6 +54,14 @@
             this.dbContext.OrderHistory.Add(efOrderHistory);
             this.dbContext.SaveChanges();
             return order;
+        }
+
+        public async Task<Order> updateOrder(Order order)
+        {
+            var efOrder = this.dbContext.Orders.Find(order.id);
+            efOrder.setEfOrderFromOrder(order);
+            this.dbContext.SaveChanges();
+            return efOrder.getOrderFromEfOrder();
         }
     }
 }
