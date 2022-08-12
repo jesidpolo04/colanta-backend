@@ -15,10 +15,7 @@
             jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
         }
 
-        public Promotion Map(SiesaPromotionDto promotionDto)
-        {
-            return new Promotion();
-        }
+        public abstract Promotion Map(SiesaPromotionDto promotionDto);
 
         protected string setEndDate(string? UTCDate)
         {
