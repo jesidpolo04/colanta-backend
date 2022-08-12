@@ -28,6 +28,7 @@
             promotion.type = PromotionTypes.REGALO;
             promotion.gifts_ids = this.mapSkuList(dto.configuracion.items_de_regalo, dto.negocio);
             promotion.list_sku_1_buy_together_ids = this.mapSkuList(dto.configuracion.lista1, dto.negocio);
+            promotion.list_sku_2_buy_together_ids = "[]";
             promotion.gift_quantity_selectable = (int) dto.configuracion.cantidad_de_regalos_seleccionables;
             promotion.minimum_quantity_buy_together = (int) dto.configuracion.cantidad_minima_de_items_para_aplicar;
             return promotion;

@@ -28,6 +28,7 @@
             promotion.type = PromotionTypes.KIT;
             promotion.list_sku_1_buy_together_ids = this.mapSkuList(dto.configuracion.lista1, dto.negocio);
             promotion.list_sku_2_buy_together_ids = this.mapSkuList(dto.configuracion.lista2, dto.negocio);
+            promotion.gifts_ids = "[]";
             promotion.percentual_discount_value_list_1 = (decimal) dto.configuracion.porcentaje_descuento_lista1;
             promotion.percentual_discount_value_list_2 = (decimal) dto.configuracion.porcentaje_descuento_lista2;
             promotion.minimum_quantity_buy_together = (int) dto.configuracion.minimo_items_lista_1;
