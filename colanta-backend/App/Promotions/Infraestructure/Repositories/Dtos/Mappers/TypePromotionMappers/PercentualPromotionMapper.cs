@@ -30,7 +30,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
         {
             promotion.type = PromotionTypes.PORCENTUAL;
             promotion.discount_type = PromotionDiscountTypes.PORCENTUAL;
-            promotion.percentual_discount_value = (decimal) dto.configuracion.valor;
+            promotion.percentual_discount_value = (decimal) dto.configuracion.porcentaje;
             promotion.gifts_ids = "[]";
             promotion.list_sku_1_buy_together_ids = "[]";
             promotion.list_sku_2_buy_together_ids = "[]";
