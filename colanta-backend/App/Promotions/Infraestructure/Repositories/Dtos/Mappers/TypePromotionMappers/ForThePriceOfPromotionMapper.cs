@@ -5,7 +5,7 @@
     using System.Text.Json;
     public class ForThePriceOfPromotionMapper : TypePromotionMapper
     {
-        public new Promotion Map(SiesaPromotionDto promotionDto)
+        public override Promotion Map(SiesaPromotionDto promotionDto)
         {
             Promotion promotion = new Promotion();
 

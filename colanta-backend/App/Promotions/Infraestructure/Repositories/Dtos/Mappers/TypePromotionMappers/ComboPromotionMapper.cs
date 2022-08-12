@@ -3,7 +3,7 @@
     using Promotions.Domain;
     public class ComboPromotionMapper : TypePromotionMapper
     {
-        public new Promotion Map(SiesaPromotionDto promotionDto)
+        public override Promotion Map(SiesaPromotionDto promotionDto)
         {
             Promotion promotion = new Promotion();
 
