@@ -48,7 +48,7 @@
                 siesaDetail.C263NroDetalle = itemConsecutive;
                 siesaDetail.C263ReferenciaItem = await this.getItemSiesaRef(vtexItem.refId);
                 siesaDetail.C263VariacionItem = this.getItemVariationSiesaRef(vtexItem.refId);
-                siesaDetail.C263IndObsequio = vtexItem.isGift ? 0 : 0;
+                siesaDetail.C263IndObsequio = vtexItem.isGift ? 1 : 0;
                 siesaDetail.C263UnidMedida = vtexItem.measurementUnit == "un" ? "UND" : vtexItem.measurementUnit;
                 siesaDetail.C263Cantidad = vtexItem.quantity;
                 siesaDetail.C263Precio = vtexItem.price / 100;
@@ -149,7 +149,8 @@
 
         private string getEstimateDeliveryDate(DateTime? date)
         {
-            if (date== null) return "";
+            int defaultHours = 2;
+            if (date == null) return DateTime.Now.AddHours(defaultHours).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
             DateTime notNullDate = (DateTime)date;
             return notNullDate.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
         }
