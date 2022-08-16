@@ -13,6 +13,7 @@
         public bool isActive { get; set; }
 
         public string? discountType { get; set; }
+        public string? discountExpression { get; set; }
         public bool cumulative { get; set; }
         public decimal maximumUnitPriceDiscount { get; set; }
         public decimal nominalShippingDiscountValue { get; set; }

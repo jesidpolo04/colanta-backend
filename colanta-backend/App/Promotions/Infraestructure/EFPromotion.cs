@@ -17,6 +17,7 @@
         public string? business { get; set; }
         public string? type { get; set; }
         public string? discount_type { get; set; }
+        public string? discount_expression { get; set; }
         public string? name { get; set; }
 
         public string begin_date_utc { get; set; }
@@ -65,6 +66,7 @@
             promotion.business = this.business;
             promotion.type = this.type;
             promotion.discount_type = this.discount_type;
+            promotion.discount_expression = this.discount_expression;
             promotion.name = this.name;
             promotion.begin_date_utc = this.begin_date_utc;
             promotion.end_date_utc = this.end_date_utc;
@@ -111,6 +113,7 @@
             this.business = promotion.business;
             this.type = promotion.type;
             this.discount_type = promotion.discount_type;
+            this.discount_expression = promotion.discount_expression;
             this.name = promotion.name;
             this.begin_date_utc = promotion.begin_date_utc;
             this.end_date_utc = promotion.end_date_utc;

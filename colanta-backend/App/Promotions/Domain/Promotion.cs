@@ -13,6 +13,7 @@
         public string? business { get; set; }
         public string? type { get; set; }
         public string? discount_type { get; set; }
+        public string? discount_expression { get; set; }
         public string? name { get; set; }
 
         public string begin_date_utc { get; set; }

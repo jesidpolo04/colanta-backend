@@ -22,6 +22,7 @@
         public float? newOffset { get; set; }
         public object[] maxPricesPerItems { get; set; }
         public bool cumulative { get; set; }
+        public string? discountExpression { get; set; }
         public decimal nominalShippingDiscountValue { get; set; }
         public decimal absoluteShippingDiscountValue { get; set; }
         public decimal nominalDiscountValue { get; set; }

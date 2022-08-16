@@ -108,6 +108,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             RequestCreateVtexPromotionDto requestBody = new RequestCreateVtexPromotionDto();
             requestBody.type = promotion.type;
             requestBody.discountType = promotion.discount_type;
+            requestBody.discountExpression = promotion.discount_expression;
             requestBody.name = promotion.name;
             requestBody.beginDateUtc = promotion.begin_date_utc;
             requestBody.endDateUtc = promotion.end_date_utc;
@@ -230,6 +231,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.idCalculatorConfiguration = promotion.vtex_id;
             requestBody.type = promotion.type;
             requestBody.discountType = promotion.discount_type;
+            requestBody.discountExpression = promotion.discount_expression;
             requestBody.name = promotion.name;
             requestBody.beginDateUtc = promotion.begin_date_utc;
             requestBody.endDateUtc = promotion.end_date_utc;

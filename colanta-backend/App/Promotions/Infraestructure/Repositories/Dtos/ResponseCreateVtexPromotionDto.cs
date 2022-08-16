@@ -23,6 +23,7 @@
         public int? newOffset { get; set; }
         public string? effecType { get; set; }
         public string? discountType { get; set; }
+        public string? discountExpression { get; set; }
         public object[] maxPricesPerItems { get; set; }
         public bool cumulative { get; set; }
         public decimal nominalShippingDiscountValue { get; set; }
