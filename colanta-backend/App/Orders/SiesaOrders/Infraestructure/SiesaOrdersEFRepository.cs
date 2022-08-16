@@ -77,7 +77,7 @@ namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
             EFSiesaOrder[] efSiesaOrders = this.dbContext.SiesaOrders
                 .Include(siesaOrders => siesaOrders.detalles)
                 .Include(siesaOrders => siesaOrders.descuentos)
-                .Where(siesaOrder => siesaOrder.doc_tercero == document && siesaOrder.finalizado == finished).ToArray();
+                .Where(siesaOrder => siesaOrder.doc_tercero == document).ToArray();
             List<SiesaOrder> siesaOrders = new List<SiesaOrder>();
             foreach(EFSiesaOrder efSiesaOrder in efSiesaOrders)
             {
