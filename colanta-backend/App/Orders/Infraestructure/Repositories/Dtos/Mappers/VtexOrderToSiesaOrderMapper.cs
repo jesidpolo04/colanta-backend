@@ -45,7 +45,7 @@
                     var wayToPay = new WayToPayDto();
                     wayToPay.C263FormaPago = this.getPaymentCondition(payment);
                     wayToPay.C263ReferenciaPago = this.getTransactionReference(payment);
-                    wayToPay.C263Valor = payment.value;
+                    wayToPay.C263Valor = payment.value / 100;
                     siesaOrder.Encabezado.FormasPago.Add(wayToPay);
                 }
             }
