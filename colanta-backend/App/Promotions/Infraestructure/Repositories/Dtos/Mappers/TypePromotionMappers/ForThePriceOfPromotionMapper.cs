@@ -27,9 +27,12 @@
 
         private Promotion setConfiguration(Promotion promotion, SiesaPromotionDto dto)
         {
+            var pague = (int)dto.configuracion.pague;
+            var lleve = (int)dto.configuracion.lleve;
+            var obtenga = lleve - pague;
             promotion.type = PromotionTypes.BONO;
-            promotion.minimum_quantity_buy_together = (int)dto.configuracion.pague;
-            promotion.quantity_to_affect_buy_together = (int)dto.configuracion.lleve;
+            promotion.minimum_quantity_buy_together = pague;
+            promotion.quantity_to_affect_buy_together = obtenga;
             promotion = this.setDiscountType(promotion, dto);
             promotion.gifts_ids = "[]";
             promotion.list_sku_1_buy_together_ids = this.mapSkuList(dto.configuracion.lista1, dto.negocio);
