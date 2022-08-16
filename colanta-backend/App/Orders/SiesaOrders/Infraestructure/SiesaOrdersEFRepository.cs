@@ -9,7 +9,7 @@ namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
 
-    public class SiesaOrdersEFRepository : Domain.SiesaOrdersRepository
+    public class SiesaOrdersEFRepository : SiesaOrdersRepository
     {
         private ColantaContext dbContext;
         public SiesaOrdersEFRepository(IConfiguration configuration)
@@ -70,6 +70,20 @@ namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
                 return siesaOrders.First().getSiesaOrderFromEfSiesaOrder();
             }
             return null;
+        }
+
+        public async Task<SiesaOrder[]> getSiesaOrdersByDocument(string document)
+        {
+            EFSiesaOrder[] efSiesaOrders = this.dbContext.SiesaOrders
+                .Include(siesaOrders => siesaOrders.detalles)
+                .Include(siesaOrders => siesaOrders.descuentos)
+                .Where(siesaOrder => siesaOrder.doc_tercero == document && siesaOrder.finalizado == finished).ToArray();
+            List<SiesaOrder> siesaOrders = new List<SiesaOrder>();
+            foreach(EFSiesaOrder efSiesaOrder in efSiesaOrders)
+            {
+                siesaOrders.Add(efSiesaOrder.getSiesaOrderFromEfSiesaOrder());
+            }
+            return siesaOrders.ToArray();
         }
 
         public async Task<SiesaOrder> saveSiesaOrder(SiesaOrder siesaOrder)
