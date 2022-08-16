@@ -8,6 +8,7 @@ namespace colanta_backend.App.GiftCards.Controllers
     using System.Collections.Generic;
     using GiftCards.Domain;
     using Products.Domain;
+    using Orders.SiesaOrders.Domain;
     using GiftCards.Application;
 
     [Route("api")]
@@ -17,11 +18,17 @@ namespace colanta_backend.App.GiftCards.Controllers
         private GiftCardsRepository localRepository;
         private GiftCardsSiesaRepository siesaRepository;
         private SkusRepository skusLocalRepository;
-        public GiftCardsController(GiftCardsRepository localRepository, GiftCardsSiesaRepository siesaRepository, SkusRepository skusLocalRepository)
+        private SiesaOrdersRepository siesaOrdersLocalRepository
+        public GiftCardsController(
+            GiftCardsRepository localRepository, 
+            GiftCardsSiesaRepository siesaRepository, 
+            SkusRepository skusLocalRepository,
+            SiesaOrdersRepository siesaOrdersLocalRepository)
         {
             this.localRepository = localRepository;
             this.siesaRepository = siesaRepository;
             this.skusLocalRepository = skusLocalRepository;
+            this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
         }
 
         [HttpPost]
@@ -39,7 +46,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         [Route("giftcards/_search")] // obtener giftcards
         public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
-            SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository);
+            SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository, this.siesaOrdersLocalRepository);
             GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(
                 vtexInfo.client.document, 
                 vtexInfo.cart.items[0].refId,
