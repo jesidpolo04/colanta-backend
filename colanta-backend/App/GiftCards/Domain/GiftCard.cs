@@ -13,5 +13,20 @@
         public string owner { get; set; }
         public string emision_date { get; set; }
         public string expire_date { get; set; }
+
+        public Transaction newTransaction(decimal value, string requestJson)
+        {
+            decimal resultBalance = balance - value;
+            if (value < 0) throw new InvalidOperationException("El valor de la transacción no puede ser negativo");
+            if (resultBalance < 0) throw new InsufficientBalanceException(resultBalance);
+            var transaction = new Transaction(this, value, requestJson);
+            this.balance -= value;
+            return transaction;
+        }
+
+        public void updateBalance(decimal newBalance)
+        {
+            this.balance = newBalance;
+        }
     }
 }

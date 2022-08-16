@@ -76,7 +76,8 @@ namespace colanta_backend.App.GiftCards.Controllers
         public async Task<TransactionSummaryDto> createGiftCardTransaction(string giftCardId, CreateGiftCardTransactionDto request)
         {
             CreateGiftCardTransaction useCase = new CreateGiftCardTransaction(this.localRepository);
-            return await useCase.Invoke(giftCardId, request);
+            var transaction = await useCase.Invoke(giftCardId, request);
+            return new TransactionSummaryDto(giftCardId, transaction.id);
         }
 
         [HttpGet]

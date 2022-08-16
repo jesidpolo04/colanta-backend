@@ -23,9 +23,7 @@
             this.transaction_authorization = this.authorize();
         }
 
-        public Transaction()
-        {
-        }
+        public Transaction(){}
 
         public TransactionAuthorization authorize()
         {

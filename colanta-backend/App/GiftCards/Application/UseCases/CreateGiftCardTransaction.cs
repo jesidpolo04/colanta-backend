@@ -12,12 +12,13 @@
             this.localRepository = giftCardsRepository;
         }
 
-        public async Task<TransactionSummaryDto> Invoke(string giftcardId, CreateGiftCardTransactionDto request)
+        public async Task<Transaction> Invoke(string giftcardId, CreateGiftCardTransactionDto request)
         {
             GiftCard giftcard = await this.localRepository.getGiftCardBySiesaId(giftcardId);
-            Transaction transaction = new Transaction(giftcard, request.value, JsonSerializer.Serialize(request));
+            Transaction transaction = giftcard.newTransaction(request.value, JsonSerializer.Serialize(request));
             transaction = await this.localRepository.saveGiftCardTransaction(transaction);
-            return new TransactionSummaryDto(giftcardId, transaction.id);
+            await this.localRepository.updateGiftCard(giftcard);
+            return transaction;
         }
     }
 }
