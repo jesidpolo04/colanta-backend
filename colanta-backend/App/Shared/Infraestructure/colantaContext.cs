@@ -249,6 +249,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.business);
                 entity.Property(e => e.type);
                 entity.Property(e => e.discount_type);
+                entity.Property(e => e.discount_expression);
                 entity.Property(e => e.name).IsRequired();
                 entity.Property(e => e.begin_date_utc);
                 entity.Property(e => e.end_date_utc);
