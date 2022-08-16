@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using Products.Domain;
     using Orders.Domain;
+    using Shared.Domain;
     using Promotions.Domain;
     using SiesaOrders.Domain;
     using System.Threading.Tasks;
@@ -21,7 +22,7 @@
             SiesaOrderDto siesaOrder = new SiesaOrderDto();
             //Header
             siesaOrder.Encabezado.C263CO = this.getOperationCenter(vtexOrder.shippingData.address);
-            siesaOrder.Encabezado.C263Fecha = vtexOrder.creationDate.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
+            siesaOrder.Encabezado.C263Fecha = vtexOrder.creationDate.ToString(DateFormats.UTC);
             siesaOrder.Encabezado.C263DocTercero = vtexOrder.clientProfileData.document;
             siesaOrder.Encabezado.C263FechaEntrega = this.getEstimateDeliveryDate(vtexOrder.shippingData.logisticsInfo[0].shippingEstimateDate);
             siesaOrder.Encabezado.C263ReferenciaVTEX = vtexOrder.orderId;
@@ -161,9 +162,9 @@
         private string getEstimateDeliveryDate(DateTime? date)
         {
             int defaultHours = 2;
-            if (date == null) return DateTime.Now.AddHours(defaultHours).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
+            if (date == null) return DateTime.Now.AddHours(defaultHours).ToString(DateFormats.UTC);
             DateTime notNullDate = (DateTime)date;
-            return notNullDate.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
+            return notNullDate.ToString(DateFormats.UTC);
         }
 
         private string getOperationCenter(Address address)
@@ -194,9 +195,9 @@
 
         private string getTransactionReference(Payment payment)
         {
-            if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem) return payment.tid;
+            if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem) return payment.tid != null ? payment.tid : "";
             if (PaymentMethods.EFECTIVO.id == payment.paymentSystem) return payment.tid;
-            if (PaymentMethods.CARD_PROMISSORY.id == payment.paymentSystem) return payment.tid;
+            if (PaymentMethods.CARD_PROMISSORY.id == payment.paymentSystem) return payment.tid != null ? payment.tid : "";
             if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return payment.tid;
             if (PaymentMethods.GIFTCARD.id == payment.paymentSystem) return payment.giftCardId;
             if (PaymentMethods.WOMPI.id == payment.paymentSystem) return payment.tid;
