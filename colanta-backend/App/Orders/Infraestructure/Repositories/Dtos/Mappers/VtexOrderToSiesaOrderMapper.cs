@@ -25,7 +25,7 @@
             siesaOrder.Encabezado.C263DocTercero = vtexOrder.clientProfileData.document;
             siesaOrder.Encabezado.C263FechaEntrega = this.getEstimateDeliveryDate(vtexOrder.shippingData.logisticsInfo[0].shippingEstimateDate);
             siesaOrder.Encabezado.C263ReferenciaVTEX = vtexOrder.orderId;
-            siesaOrder.Encabezado.C263CondPago = this.getPaymentCondition(vtexOrder.paymentData.transactions[0].payments[0]);
+            siesaOrder.Encabezado.C263CondPago = this.getPaymentCondition(vtexOrder.paymentData.transactions[0].payments);
             siesaOrder.Encabezado.C263ReferenciaPago = vtexOrder.paymentData.transactions[0].payments[0].tid;
             siesaOrder.Encabezado.C263ValorEnvio = this.getTotal(vtexOrder.totals, "Shipping");
             siesaOrder.Encabezado.C263Notas = "sin observaciones";
@@ -43,7 +43,7 @@
                 foreach(Payment payment in transaction.payments)
                 {
                     var wayToPay = new WayToPayDto();
-                    wayToPay.C263FormaPago = this.getPaymentCondition(payment);
+                    wayToPay.C263FormaPago = this.getWayToPay(payment);
                     wayToPay.C263ReferenciaPago = this.getTransactionReference(payment);
                     wayToPay.C263Valor = payment.value / 100;
                     siesaOrder.Encabezado.FormasPago.Add(wayToPay);
@@ -172,13 +172,23 @@
             else return "Por Definir";
         }
 
-        private string getPaymentCondition(Payment payment)
+        private string getPaymentCondition(List<Payment> payments)
         {
-            if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem) return "CON";
-            if (PaymentMethods.EFECTIVO.id == payment.paymentSystem) return "CON";
+            foreach (Payment payment in payments)
+            {
+                if (PaymentMethods.GIFTCARD.id == payment.paymentSystem && payment.giftCardProvider == "cupo") return "CUPO";
+            }
+            return "CON";
+        }
+
+        private string getWayToPay(Payment payment)
+        {
+            if (PaymentMethods.GIFTCARD.id == payment.paymentSystem) return "GIFTCARD";
+            if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem) return "CONTRAENTREGA";
+            if (PaymentMethods.WOMPI.id == payment.paymentSystem) return "WOMPI";
+            if (PaymentMethods.EFECTIVO.id == payment.paymentSystem) return "EFECTIVO";
             if (PaymentMethods.CARD_PROMISSORY.id == payment.paymentSystem) return "CARD_PROMISSORY";
             if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return "CUPO";
-            if (PaymentMethods.WOMPI.id == payment.paymentSystem) return "WOMPI";
             else return "OTRO";
         }
 
