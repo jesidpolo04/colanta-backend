@@ -30,7 +30,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
         {
             promotion.type = PromotionTypes.NOMINAL;
             promotion.discount_type = PromotionDiscountTypes.NOMINAL;
-            promotion.discount_expression = $"{dto.configuracion.valor} * quantity";
+            promotion.discount_expression = $"{Math.Truncate((decimal)dto.configuracion.valor)} * quantity";
             promotion.gifts_ids = "[]";
             promotion.list_sku_1_buy_together_ids = "[]";
             promotion.list_sku_2_buy_together_ids = "[]";
