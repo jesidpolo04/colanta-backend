@@ -18,7 +18,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         private GiftCardsRepository localRepository;
         private GiftCardsSiesaRepository siesaRepository;
         private SkusRepository skusLocalRepository;
-        private SiesaOrdersRepository siesaOrdersLocalRepository
+        private SiesaOrdersRepository siesaOrdersLocalRepository;
         public GiftCardsController(
             GiftCardsRepository localRepository, 
             GiftCardsSiesaRepository siesaRepository, 
