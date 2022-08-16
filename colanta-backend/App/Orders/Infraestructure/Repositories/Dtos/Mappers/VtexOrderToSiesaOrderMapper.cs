@@ -184,9 +184,9 @@
         private string getWayToPay(Payment payment)
         {
             if (PaymentMethods.GIFTCARD.id == payment.paymentSystem) return "GIFTCARD";
-            if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem) return "CONTRAENTREGA";
+            if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem && PaymentMethods.CONTRAENTREGA.name == payment.paymentSystemName) return "CONTRAENTREGA";
             if (PaymentMethods.WOMPI.id == payment.paymentSystem) return "WOMPI";
-            if (PaymentMethods.EFECTIVO.id == payment.paymentSystem) return "EFECTIVO";
+            if (PaymentMethods.EFECTIVO.id == payment.paymentSystem && PaymentMethods.EFECTIVO.name == payment.paymentSystemName) return "EFECTIVO";
             if (PaymentMethods.CARD_PROMISSORY.id == payment.paymentSystem) return "CARD_PROMISSORY";
             if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return "CUPO";
             else return "OTRO";
