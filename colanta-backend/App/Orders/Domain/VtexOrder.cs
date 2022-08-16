@@ -63,6 +63,16 @@
                 this.paymentData.transactions[0].payments[0].paymentSystemName);
             return paymentMethod;
         }
+
+        public List<PaymentMethod> getPaymentMethods()
+        {
+            List<PaymentMethod> paymentMethods = new List<PaymentMethod>();
+            foreach(var payment in this.paymentData.transactions[0].payments)
+            {
+                paymentMethods.Add(new PaymentMethod(payment.paymentSystem, payment.paymentSystemName));
+            }
+            return paymentMethods;
+        }
     }
 
     public class AdditionalInfo

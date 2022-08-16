@@ -19,5 +19,13 @@
 
             return isEqual;
         }
+
+        public bool isPromissory()
+        {
+            if (this.id == PaymentMethods.EFECTIVO.id) return true;
+            if (this.id == PaymentMethods.CONTRAENTREGA.id) return true;
+            if (this.id == PaymentMethods.CARD_PROMISSORY.id) return true;
+            else return false;
+        }
     }
 }

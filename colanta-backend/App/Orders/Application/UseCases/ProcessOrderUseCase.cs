@@ -2,6 +2,7 @@
 {
     using Orders.Domain;
     using Orders.SiesaOrders.Domain;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Text.Json;
     public class ProcessOrderUseCase
@@ -54,53 +55,34 @@
                 localOrder = this.localRepository.SaveOrder(localOrder).Result;
             }
 
-            PaymentMethod PAYMENT_METHOD = vtexOrder.getFirstPaymentMethod();
-            string ORDER_STATUS = vtexOrder.status;
+            this.sendToSiesa(vtexOrder.getPaymentMethods(), vtexOrder.status, localOrder).Wait();
+        }
 
-            if (PAYMENT_METHOD.isEqual(PaymentMethods.CONTRAENTREGA))
+        private async Task sendToSiesa(List<PaymentMethod> payments, string status, Order order)
+        {
+            if (status == OrderVtexStates.READY_FOR_HANDLING)
             {
-                if (ORDER_STATUS.Equals(OrderVtexStates.PAYMENT_PENDING))
+                if (!thereArePromissoryPayment(payments))
                 {
-                    SiesaOrder siesaOrder = await this.siesaRepository.saveOrder(localOrder);
-                    await siesaOrdersLocalRepository.saveSiesaOrder(siesaOrder);
+                    await this.siesaRepository.saveOrder(order);
                 }
             }
-
-            if (PAYMENT_METHOD.isEqual(PaymentMethods.EFECTIVO))
+            if(status == OrderVtexStates.PAYMENT_PENDING)
             {
-                if (ORDER_STATUS.Equals(OrderVtexStates.PAYMENT_PENDING))
+                if (thereArePromissoryPayment(payments))
                 {
-                    SiesaOrder siesaOrder = await this.siesaRepository.saveOrder(localOrder);
-                    await siesaOrdersLocalRepository.saveSiesaOrder(siesaOrder);
+                    await this.siesaRepository.saveOrder(order);
                 }
             }
+        }
 
-            if (PAYMENT_METHOD.isEqual(PaymentMethods.CARD_PROMISSORY))
+        private bool thereArePromissoryPayment(List<PaymentMethod> payments)
+        {
+            foreach(var payment in payments)
             {
-                if (ORDER_STATUS.Equals(OrderVtexStates.PAYMENT_PENDING))
-                {
-                    SiesaOrder siesaOrder = await this.siesaRepository.saveOrder(localOrder);
-                    await siesaOrdersLocalRepository.saveSiesaOrder(siesaOrder);
-                }
+                if (payment.isPromissory()) return true;
             }
-
-            if (PAYMENT_METHOD.isEqual(PaymentMethods.CUSTOMER_CREDIT))
-            {
-                if (ORDER_STATUS.Equals(OrderVtexStates.READY_FOR_HANDLING))
-                {
-                    SiesaOrder siesaOrder = await this.siesaRepository.saveOrder(localOrder);
-                    await siesaOrdersLocalRepository.saveSiesaOrder(siesaOrder);
-                }
-            }
-
-            if (PAYMENT_METHOD.isEqual(PaymentMethods.WOMPI))
-            {
-                if (ORDER_STATUS.Equals(OrderVtexStates.READY_FOR_HANDLING))
-                {
-                    SiesaOrder siesaOrder = await this.siesaRepository.saveOrder(localOrder);
-                    await siesaOrdersLocalRepository.saveSiesaOrder(siesaOrder);
-                }
-            }
+            return false;
         }
     }
 }
