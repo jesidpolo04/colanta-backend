@@ -31,7 +31,7 @@
             var lleve = (int)dto.configuracion.lleve;
             var obtenga = lleve - pague;
             promotion.type = PromotionTypes.BONO;
-            promotion.minimum_quantity_buy_together = pague;
+            promotion.minimum_quantity_buy_together = lleve;
             promotion.quantity_to_affect_buy_together = obtenga;
             promotion = this.setDiscountType(promotion, dto);
             promotion.gifts_ids = "[]";
