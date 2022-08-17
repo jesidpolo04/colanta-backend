@@ -12,7 +12,7 @@
     using System.Text.Json;
     using System.Text.Json.Serialization;
     using System.Collections.Generic;
-    public class RenderPromotions
+    public class RenderPromotions : IDisposable
     {
         private string processName = "Renderizado de promociones";
         private PromotionsRepository localRepository;

@@ -21,7 +21,11 @@
 
         public async void Execute(object state)
         {
-            await this.renderPromotions.Invoke();
+            using (renderPromotions)
+            {
+                await this.renderPromotions.Invoke();
+            }
+                
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
