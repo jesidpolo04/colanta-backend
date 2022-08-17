@@ -8,13 +8,15 @@
         public SiesaOrderHeaderDto Encabezado { get; set; }
         public List<SiesaOrderDetailDto> Detalles { get; set; }
         public List<SiesaOrderDiscountDto> Descuentos { get; set; }
+        public List<WayToPayDto> FormasPago { get; set; }
+
 
         public SiesaOrderDto()
         {
             this.Encabezado = new SiesaOrderHeaderDto();
-            this.Encabezado.FormasPago = new List<WayToPayDto>();
             this.Detalles = new List<SiesaOrderDetailDto>();
             this.Descuentos = new List<SiesaOrderDiscountDto>();
+            this.FormasPago = new List<WayToPayDto>();
         }
 
         public SiesaOrder getSiesaOrderFromDto()
@@ -83,7 +85,6 @@
         public string C263ReferenciaPago { get; set; }
         public decimal C263ValorEnvio { get; set; }
         public string C263CondPago { get; set; }
-        public List<WayToPayDto> FormasPago { get; set; }
         public string C263Notas { get; set; }
         public string C263Direccion { get; set; }
         public string C263Ciudad { get; set; }
