@@ -144,12 +144,26 @@ namespace colanta_backend.App.Products.Infraestructure
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             CreatedVtexProductDto productDto = JsonSerializer.Deserialize<CreatedVtexProductDto>(vtexResponseBody);
+            if (product.business == "mercolanta") await this.associateProductToAStore((int)productDto.Id, TradePolicies.Mercolanta.id);
+            if (product.business == "agrocolanta") await this.associateProductToAStore((int)productDto.Id, TradePolicies.Agrocolanta.id);
             return productDto.getProductFromDto();
         }
 
         public Task<Product> updateProduct(Product product)
         {
             throw new System.NotImplementedException();
+        }
+
+        public Task associateProductToAStore(int vtexId, int storeId)
+        {
+            string endpoint = $"/api/catalog/pvt/product/{vtexId}/salespolicy/{storeId}";
+            string url = $"https://{accountName}.{vtexEnvironment}{endpoint}";
+            HttpResponseMessage vtexResponse = this.httpClient.PostAsync(url, null).Result;
+            if (!vtexResponse.IsSuccessStatusCode)
+            {
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
+            }
+            return Task.CompletedTask;
         }
     }
 }

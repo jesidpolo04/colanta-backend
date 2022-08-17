@@ -8,5 +8,6 @@
         Task<Product?> getProductBySiesaId(string siesaId);
         Task<Product?> getProductByVtexId(string vtexId);
         Task<Product> updateProduct(Product product);
+        Task associateProductToAStore(int vtexId, int storeId);
     }
 }

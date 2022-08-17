@@ -149,6 +149,7 @@ namespace colanta_backend.App.Products.Infraestructure
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             CreatedVtexSkuDto skuDto = JsonSerializer.Deserialize<CreatedVtexSkuDto>(vtexResponseBody);
+            this.associateEanSku((int)skuDto.Id, sku.ean).Wait();
             return skuDto.getSkuFromDto();
         }
 
@@ -211,6 +212,18 @@ namespace colanta_backend.App.Products.Infraestructure
                 throw new VtexException(updateVtexResponse, $"Vtex respondió con status {updateVtexResponse.StatusCode}");
             }
             return true;
+        }
+
+        public Task associateEanSku(int skuVtexId, string ean)
+        {
+            string endpoint = $"/api/catalog/pvt/stockkeepingunit/{skuVtexId}/ean/{ean}";
+            string url = $"https://{accountName}.{vtexEnvironment}{endpoint}";
+            HttpResponseMessage vtexResponse = this.httpClient.PostAsync(url, null).Result;
+            if (!vtexResponse.IsSuccessStatusCode)
+            {
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
+            }
+            return Task.CompletedTask;
         }
     }
 }

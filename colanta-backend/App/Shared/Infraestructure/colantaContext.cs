@@ -167,6 +167,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.type).HasColumnName("type");
                 entity.Property(e => e.name).IsRequired().HasColumnName("name");
                 entity.Property(e => e.siesa_id).HasColumnName("siesa_id");
+                entity.Property(e => e.ean);
                 entity.Property(e => e.concat_siesa_id).HasColumnName("concat_siesa_id").IsRequired();
                 entity.Property(e => e.vtex_id).HasColumnName("vtex_id");
                 entity.Property(e => e.is_active).HasColumnName("is_active");
@@ -225,6 +226,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.name).IsRequired();
                 entity.Property(e => e.description).IsRequired();
                 entity.Property(e => e.siesa_id);
+                entity.Property(e => e.ean);
                 entity.Property(e => e.concat_siesa_id).IsRequired();
                 entity.Property(e => e.vtex_id);
                 entity.Property(e => e.measurement_unit);

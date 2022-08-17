@@ -9,6 +9,7 @@
         public int? id { get; set; }
         public int? type { get; set; }
         public string siesa_id { get; set; }
+        public string ean { get; set; }
         public string concat_siesa_id { get; set; }
         public int? vtex_id { get; set; }
         public string name { get; set; }
@@ -27,6 +28,7 @@
             Product product = new Product();
 
             product.id = this.id;
+            product.ean = this.ean;
             product.type = this.type;
             product.brand_id = this.brand_id;
             product.category_id = this.category_id;
@@ -58,6 +60,7 @@
             this.brand_id = product.brand_id;
             this.category_id = product.category_id;
             this.siesa_id = product.siesa_id;
+            this.ean = product.ean;
             this.concat_siesa_id = product.concat_siesa_id;
             this.vtex_id = product.vtex_id;
             this.name = product.name;

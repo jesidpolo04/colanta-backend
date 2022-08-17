@@ -8,6 +8,7 @@
         public int? id { get; set; }
         public int? vtex_id { get; set; }
         public string siesa_id { get; set; }
+        public string ean { get; set; }
         public string concat_siesa_id { get; set; }
         public string name { get; set; }
         public string description { get; set; }
@@ -28,6 +29,7 @@
             sku.product_id = this.product_id;
             sku.vtex_id = this.vtex_id;
             sku.siesa_id = this.siesa_id;
+            sku.ean = this.ean;
             sku.concat_siesa_id = this.concat_siesa_id;
             sku.name = this.name;
             sku.description = this.description;
@@ -49,6 +51,7 @@
                 product.brand_id = this.product.brand_id;
                 product.category_id = this.product.category_id;
                 product.siesa_id = this.product.siesa_id;
+                product.ean = this.product.ean;
                 product.concat_siesa_id = this.product.concat_siesa_id;
                 product.vtex_id = this.product.vtex_id;
                 product.name = this.product.name;
@@ -69,6 +72,7 @@
             this.product_id = sku.product_id;
             this.vtex_id = sku.vtex_id;
             this.siesa_id = sku.siesa_id;
+            this.ean = sku.ean;
             this.concat_siesa_id = sku.concat_siesa_id;
             this.name = sku.name;
             this.description = sku.description;

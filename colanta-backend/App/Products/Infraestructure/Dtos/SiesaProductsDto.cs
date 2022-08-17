@@ -46,6 +46,7 @@
 
                 sku.setProduct(product);
                 sku.siesa_id = this.id;
+                sku.ean = this.ean;
                 sku.concat_siesa_id = this.negocio + "_" + this.id + "_" + this.id;
                 sku.name = this.nombre;
                 sku.ref_id = this.referencia;
@@ -81,6 +82,7 @@
                     Sku sku = new Sku();
                     sku.setProduct(product);
                     sku.siesa_id = variacionDto.id;
+                    sku.ean = variacionDto.ean;
                     sku.concat_siesa_id = this.negocio + "_" + this.id + "_" + variacionDto.id;
                     sku.name = variacionDto.nombre;
                     sku.description = this.descripcion;

@@ -8,6 +8,7 @@
         public int? id { get; set; }
         public int? type { get; set; }
         public string siesa_id { get; set; }
+        public string ean { get; set; }
         public string concat_siesa_id { get; set; }
         public int? vtex_id { get; set; }
         public string name { get; set; }

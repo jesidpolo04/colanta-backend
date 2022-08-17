@@ -9,5 +9,6 @@
         Task<Sku?> getSkuByVtexId(string vtexId);
         Task<Sku> updateSku(Sku sku);
         Task<bool> changeSkuState(int vtexId, bool state);
+        Task associateEanSku(int skuId, string ean);
     }
 }
