@@ -11,18 +11,21 @@
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
+        private MailService mailService;
 
         public ProcessOrderUseCase(
             OrdersRepository localRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
-            OrdersSiesaRepository siesaRepository
+            OrdersSiesaRepository siesaRepository,
+            MailService mailService
             )
         {
             this.localRepository = localRepository;
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
+            this.mailService = mailService;
         }
 
         public async Task Invoke(string vtexOrderId, string status, string lastStatus, string lastChange, string currentChange)
@@ -55,26 +58,25 @@
                 localOrder = this.localRepository.SaveOrder(localOrder).Result;
             }
 
-            this.sendToSiesa(vtexOrder.getPaymentMethods(), vtexOrder.status, localOrder).Wait();
-        }
-
-        private async Task sendToSiesa(List<PaymentMethod> payments, string status, Order order)
-        {
             if (status == OrderVtexStates.READY_FOR_HANDLING)
             {
-                if (!thereArePromissoryPayment(payments))
+                if (!thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
-                    await this.siesaRepository.saveOrder(order);
-                }
+                    this.notifyToStore(vtexOrderId, vtexOrder.shippingData.logisticsInfo[0].addressId);
+                    await this.sendToSiesa(vtexOrder.getPaymentMethods(), localOrder);
+                 }
             }
-            if(status == OrderVtexStates.PAYMENT_PENDING)
+            if (status == OrderVtexStates.PAYMENT_PENDING)
             {
-                if (thereArePromissoryPayment(payments))
+                if (thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
-                    await this.siesaRepository.saveOrder(order);
+                    this.notifyToStore(vtexOrderId, vtexOrder.shippingData.logisticsInfo[0].addressId);
+                    await this.sendToSiesa(vtexOrder.getPaymentMethods(), localOrder);
                 }
             }
         }
+
+        
 
         private bool thereArePromissoryPayment(List<PaymentMethod> payments)
         {
@@ -83,6 +85,28 @@
                 if (payment.isPromissory()) return true;
             }
             return false;
+        }
+
+        private async Task sendToSiesa(List<PaymentMethod> payments, Order order)
+        {
+            try
+            {
+                await this.siesaRepository.saveOrder(order);
+            }
+            catch
+            {
+            }
+        }
+
+        private void notifyToStore(string orderId, string wharehouseId)
+        {
+            try
+            {
+                this.mailService.SendMailToWarehouse(orderId, wharehouseId);
+            }
+            catch
+            {
+            } 
         }
     }
 }

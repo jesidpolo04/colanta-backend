@@ -7,9 +7,6 @@ namespace colanta_backend.App.Orders.Controllers
     using Orders.Application;
     using SiesaOrders.Domain;
     using System.Threading.Tasks;
-    using Newtonsoft.Json.Linq;
-    using System.Text.Json;
-    using System.Dynamic;
 
     [ApiController]
     [Route("api")]
@@ -19,17 +16,20 @@ namespace colanta_backend.App.Orders.Controllers
         private SiesaOrdersRepository siesaOrdersLocalRepository;
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
+        private MailService mailService;
         public OrdersHookController(
             OrdersRepository localRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
-            OrdersSiesaRepository siesaRepository
+            OrdersSiesaRepository siesaRepository,
+            MailService mailService
             )
         {
             this.localRepository = localRepository;
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
+            this.mailService = mailService;
         }
 
         [Route("orders/hook")]
@@ -46,7 +46,8 @@ namespace colanta_backend.App.Orders.Controllers
                 this.localRepository, 
                 this.siesaOrdersLocalRepository, 
                 this.vtexRepository, 
-                this.siesaRepository);
+                this.siesaRepository,
+                this.mailService);
 
             await useCase.Invoke(
                 orderSummary.OrderId, 
