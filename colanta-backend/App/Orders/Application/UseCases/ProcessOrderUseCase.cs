@@ -102,7 +102,7 @@
         {
             try
             {
-                this.mailService.SendMailToWarehouse(orderId, wharehouseId);
+                this.mailService.SendMailToWarehouse(wharehouseId, orderId);
             }
             catch
             {
