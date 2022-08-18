@@ -18,7 +18,7 @@
         {
             this.subject = $"No fue posible crear la promoción {promotion.siesa_id}";
             InvalidPromotionMailModel model = new InvalidPromotionMailModel(promotion, config);
-            this.emailSender.SendEmail(this.subject, this.template, model);
+            this.emailSender.SendEmail(this.subject, this.template, model, EmailAddresses.Tech);
         }
     }
 }

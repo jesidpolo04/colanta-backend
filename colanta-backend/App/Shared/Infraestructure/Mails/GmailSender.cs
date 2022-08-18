@@ -17,7 +17,6 @@
         private string user;
 
         private string from = "jesing482@gmail.com";
-        private string to = "jesdady482@gmail.com";
         
         public GmailSender(IConfiguration configuration)
         {
@@ -38,11 +37,11 @@
             this.smtpClient?.Dispose();
         }
 
-        public void SendEmail(string title, string templatePath, object model )
+        public void SendEmail(string title, string templatePath, object model, string to )
         {
             Email
                 .From(this.from, "Middleware Colanta")
-                .To(this.to)
+                .To(to)
                 .Subject(title)
                 .UsingTemplateFromFile(templatePath, model, true)
                 .Send();

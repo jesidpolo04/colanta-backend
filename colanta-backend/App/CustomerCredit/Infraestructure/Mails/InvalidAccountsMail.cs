@@ -19,7 +19,7 @@
             if(exceptions.Count > 0)
             {
                 InvalidAccountsMailModel model = new InvalidAccountsMailModel(exceptions);
-                this.emailSender.SendEmail(subject, template, model);
+                this.emailSender.SendEmail(subject, template, model, EmailAddresses.Tech);
             }
         }
     }

@@ -23,7 +23,7 @@
             if (sendMail)
             {
                 RenderPricesMailModel model = new RenderPricesMailModel(loadedPrices, updatedPrices, failedPrices);
-                this.emailSender.SendEmail(this.subject, "./App/Prices/Infraestructure/Mails/RenderPricesMail.cshtml", model);
+                this.emailSender.SendEmail(this.subject, "./App/Prices/Infraestructure/Mails/RenderPricesMail.cshtml", model, EmailAddresses.Administrative);
             }
         }
     }

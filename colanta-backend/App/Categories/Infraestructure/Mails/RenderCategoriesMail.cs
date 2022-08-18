@@ -23,7 +23,7 @@
             if (sendMail)
             {
                 RenderCategoriesMailModel model = new RenderCategoriesMailModel(loadedCategories, inactivatedCategories, failedCategories);
-                this.emailSender.SendEmail(this.subject, "./App/Categories/Infraestructure/Mails/RenderCategoriesMail.cshtml", model);
+                this.emailSender.SendEmail(this.subject, "./App/Categories/Infraestructure/Mails/RenderCategoriesMail.cshtml", model, EmailAddresses.Administrative);
             }
         }
     }

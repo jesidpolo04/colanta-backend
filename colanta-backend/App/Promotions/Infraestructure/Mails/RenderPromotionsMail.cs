@@ -23,7 +23,7 @@
             if (sendMail)
             {
                 RenderPromotionsMailModel model = new RenderPromotionsMailModel(loadedPromotions, inactivatedPromotions, failedPromotions);
-                this.emailSender.SendEmail(this.subject, this.template, model);
+                this.emailSender.SendEmail(this.subject, this.template, model, EmailAddresses.Administrative);
             }
 
         }

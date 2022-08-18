@@ -21,7 +21,7 @@
             if (sendMail)
             {
                 RenderCreditAccountMailModel model = new RenderCreditAccountMailModel(loadedAccounts, updatedAccounts, failedAccounts);
-                this.emailSender.SendEmail(this.subject, "./App/CustomerCredit/Infraestructure/Mails/RenderAccountsMail.cshtml", model);
+                this.emailSender.SendEmail(this.subject, "./App/CustomerCredit/Infraestructure/Mails/RenderAccountsMail.cshtml", model, EmailAddresses.Administrative);
             }
         }
     }

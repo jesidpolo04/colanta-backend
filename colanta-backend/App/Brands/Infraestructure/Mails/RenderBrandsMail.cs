@@ -23,7 +23,7 @@
             if (sendMail)
             {
                 RenderBrandsMailModel model = new RenderBrandsMailModel(loadedBrands, inactivatedBrands, failedBrands);
-                this.emailSender.SendEmail(this.subject, "./App/Brands/Infraestructure/Mails/RenderBrandsMail.cshtml", model);
+                this.emailSender.SendEmail(this.subject, "./App/Brands/Infraestructure/Mails/RenderBrandsMail.cshtml", model, EmailAddresses.Administrative);
             }
         }
     }

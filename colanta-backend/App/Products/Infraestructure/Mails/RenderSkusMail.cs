@@ -23,7 +23,7 @@
             if (sendMail)
             {
                 RenderProductsMailModel model = new RenderProductsMailModel(loadedSkus, inactivatedSkus, failedSkus);
-                this.emailSender.SendEmail(subject, "./App/Products/Infraestructure/Mails/RenderProductsMail.cshtml", model);
+                this.emailSender.SendEmail(subject, "./App/Products/Infraestructure/Mails/RenderProductsMail.cshtml", model, EmailAddresses.Administrative);
             }
         }
     }

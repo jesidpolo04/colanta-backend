@@ -16,7 +16,7 @@
         public void sendMail(InvalidCategoryException exception)
         {
             InvalidCategoryMailModel model = new InvalidCategoryMailModel(exception.product);
-            this.emailSender.SendEmail(this.subject, "./App/Products/Infraestructure/Mails/InvalidCategoryMail.cshtml", model);
+            this.emailSender.SendEmail(this.subject, "./App/Products/Infraestructure/Mails/InvalidCategoryMail.cshtml", model, EmailAddresses.Tech);
         }
     }
 }

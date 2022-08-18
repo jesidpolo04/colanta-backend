@@ -4,6 +4,6 @@
     using System.Threading.Tasks;
     public interface EmailSender
     {
-        public void SendEmail(string title, string templatePath, object model);
+        public void SendEmail(string title, string templatePath, object model, string to);
     }
 }

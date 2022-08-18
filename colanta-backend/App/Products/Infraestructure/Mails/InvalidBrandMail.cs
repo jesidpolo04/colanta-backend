@@ -16,7 +16,7 @@
         public async void sendMail(InvalidBrandException exception)
         {
             InvalidBrandMailModel emailModel = new InvalidBrandMailModel(exception.product);
-            this.emailSender.SendEmail(this.subject, "./App/Products/Infraestructure/Mails/InvalidBrandMail.cshtml", emailModel);
+            this.emailSender.SendEmail(this.subject, "./App/Products/Infraestructure/Mails/InvalidBrandMail.cshtml", emailModel, EmailAddresses.Tech);
         }
     }
 }

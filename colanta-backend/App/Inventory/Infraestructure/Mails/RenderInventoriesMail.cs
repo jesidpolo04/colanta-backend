@@ -23,7 +23,7 @@
             if (sendMail)
             {
                 RenderInventoriesMailModel model = new RenderInventoriesMailModel(loadedInventories, updatedInventories, failedInventories);
-                this.emailSender.SendEmail(this.subject, "./App/Inventory/Infraestructure/Mails/RenderInventoriesMail.cshtml", model);
+                this.emailSender.SendEmail(this.subject, "./App/Inventory/Infraestructure/Mails/RenderInventoriesMail.cshtml", model, EmailAddresses.Administrative);
             }
         }
     }
