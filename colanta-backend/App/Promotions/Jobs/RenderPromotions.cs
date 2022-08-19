@@ -82,28 +82,8 @@
                             success: true));
 
                 Promotion[] deltaPromotions = await this.localRepository.getDeltaPromotions(allSiesaPromotions);
-                foreach (Promotion deltaPromotion in deltaPromotions)
-                {
-                    try
-                    {
-                        deltaPromotion.is_active = false;
-                        vtexRepository.updatePromotion(deltaPromotion).Wait();
-                        await localRepository.updatePromotion(deltaPromotion);
-                        this.inactivatedPromotions.Add(deltaPromotion);
-                        this.details.Add(new Detail(
-                                origin: "vtex",
-                                action: "actualizar promoción",
-                                content: JsonSerializer.Serialize(deltaPromotion, this.jsonOptions),
-                                description: "petición para actualizar la promoción, completada con éxito",
-                                success: true));
-                    }
-                    catch(VtexException vtexException)
-                    {
-                        this.console.throwException(vtexException.Message);
-                        this.details.Add(new Detail("vtex", vtexException.requestUrl, vtexException.responseBody, vtexException.Message, false));
-                        await this.logger.writelog(vtexException);
-                    }
-                }
+                await this.inactiveDeltaPromotions(deltaPromotions);
+                
                 foreach (Promotion siesaPromotion in allSiesaPromotions)
                 {
                     try
@@ -306,6 +286,32 @@
                     inexistSkusIds.Add(skuConcatSiesaId);
             }
             return inexistSkusIds;
+        }
+
+        private async Task inactiveDeltaPromotions(Promotion[] deltaPromotions)
+        {
+            foreach (Promotion deltaPromotion in deltaPromotions)
+            {
+                try
+                {
+                    deltaPromotion.is_active = false;
+                    await vtexRepository.changePromotionState(deltaPromotion.vtex_id, false);
+                    await localRepository.updatePromotion(deltaPromotion);
+                    this.inactivatedPromotions.Add(deltaPromotion);
+                    this.details.Add(new Detail(
+                            origin: "vtex",
+                            action: "actualizar promoción",
+                            content: JsonSerializer.Serialize(deltaPromotion, this.jsonOptions),
+                            description: "petición para actualizar la promoción, completada con éxito",
+                            success: true));
+                }
+                catch (VtexException vtexException)
+                {
+                    this.console.throwException(vtexException.Message);
+                    this.details.Add(new Detail("vtex", vtexException.requestUrl, vtexException.responseBody, vtexException.Message, false));
+                    await this.logger.writelog(vtexException);
+                }
+            }
         }
 
         public void Dispose()
