@@ -29,18 +29,12 @@
             if (redemptionCode == "" || redemptionCode == null) return new GiftCard[0]{};
             string business = this.getBusiness(skuRefId);
             GiftCard[] siesaGiftCards = await this.siesaRepository.getGiftCardsByDocumentAndBusiness(document, business);
-
             foreach(GiftCard siesaGiftCard in siesaGiftCards)
             {
                 GiftCard localGiftCard = await localRepository.getGiftCardBySiesaId(siesaGiftCard.siesa_id);
-                if (localGiftCard == null)
-                {
-                    await localRepository.saveGiftCard(siesaGiftCard);
-                }
-                if(localGiftCard != null && !(this.userHasPendingOrders(document)))
-                {
-                    this.updateGiftcardBalance(localGiftCard);
-                }
+
+                if (localGiftCard == null) await localRepository.saveGiftCard(siesaGiftCard);
+                if(localGiftCard != null && !(this.userHasPendingOrders(document))) this.updateGiftcardBalance(localGiftCard);
             }
 
             GiftCard[] localGiftcards = await this.localRepository.getGiftCardsByDocumentAndBusiness(document, business);
