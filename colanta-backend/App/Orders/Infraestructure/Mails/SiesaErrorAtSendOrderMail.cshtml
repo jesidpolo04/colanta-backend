@@ -1,0 +1,89 @@
+﻿@{
+    @model colanta_backend.App.Orders.Infraestructure.SiesaErrorAtSendOrderMailModel
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        *{
+            font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+        }
+        body{
+            background-color: #F1F1F1;
+        }
+        .container{
+            width: 80%;
+            background-color: white;
+            margin: 0 auto;
+        }
+        .header{
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #74BB1F;
+        }
+        .content{
+            box-sizing: border-box;
+            padding: 20px;
+        }
+        .color-white{
+            color: white;
+        }
+        .color-red{
+            color:  rgb(140, 37, 37);
+        }
+        .color-wheat{
+            color: rgb(150, 108, 30);
+        }
+        .status{
+            border-radius: 8px;
+            padding: 2px    5px;
+            background-color: rgb(229, 189, 189);
+        }
+        .order{
+            color: rgb(47, 145, 145);
+        }
+        .json{
+            background-color: rgb(255, 236, 199);
+        }
+        h2{
+            text-align: center;
+        }
+
+        @@media (max-width: 560px) {
+            h2{
+                text-align: center;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2 style="text-align: center;" class="color-white">Error al intentar registrar la orden</h2>
+        </div>
+        
+        <div class="content">
+            <p>Al intentar registrar en siesa la orden <span class="order">#@Model.vtexOrderId</span>, SIESA respondió con el siguiente error</p>
+            <hr>
+            <span>Código: </span><span class="status color-red">@Model.status</span><br><br>
+            <span>Respuesta:</span>
+            <pre class="json color-wheat"><code></code>
+        @Model.responseBody   
+            </code></pre>
+            <span>Petición:</span>
+            <pre class="json color-wheat"><code></code>
+         @Model.requestBody
+            </code></pre>
+        </div>
+        
+    </div>
+</body>
+</html>

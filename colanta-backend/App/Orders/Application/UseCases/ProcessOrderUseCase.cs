@@ -1,5 +1,6 @@
 ﻿namespace colanta_backend.App.Orders.Application
 {
+    using Shared.Domain;
     using Orders.Domain;
     using Orders.SiesaOrders.Domain;
     using System.Collections.Generic;
@@ -63,7 +64,7 @@
                 if (!thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
                     this.notifyToStore(vtexOrderId, vtexOrder.shippingData.logisticsInfo[0].addressId);
-                    await this.sendToSiesa(vtexOrder.getPaymentMethods(), localOrder);
+                    await this.sendToSiesa(localOrder);
                  }
             }
             if (status == OrderVtexStates.PAYMENT_PENDING)
@@ -71,7 +72,7 @@
                 if (thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
                     this.notifyToStore(vtexOrderId, vtexOrder.shippingData.logisticsInfo[0].addressId);
-                    await this.sendToSiesa(vtexOrder.getPaymentMethods(), localOrder);
+                    await this.sendToSiesa(localOrder);
                 }
             }
         }
@@ -87,14 +88,15 @@
             return false;
         }
 
-        private async Task sendToSiesa(List<PaymentMethod> payments, Order order)
+        private async Task sendToSiesa(Order order)
         {
             try
             {
                 await this.siesaRepository.saveOrder(order);
             }
-            catch
+            catch(SiesaException exception)
             {
+                this.mailService.SendSiesaErrorMail(exception, order.vtex_id);
             }
         }
 
