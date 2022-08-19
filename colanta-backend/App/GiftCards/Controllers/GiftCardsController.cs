@@ -68,7 +68,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         [HttpGet("giftcards/{giftCardId}")] // obtener giftcard
         public async Task<GiftCardDetailProviderResponseDto> getGiftCardBySiesaId(string giftCardId)
         {
-            GetAndUpdateGiftCardBySiesaId getAndUpdateGiftCardBySiesaId = new GetAndUpdateGiftCardBySiesaId(
+            GetGiftcardBySiesaId getAndUpdateGiftCardBySiesaId = new GetGiftcardBySiesaId(
                 this.localRepository,
                 this.siesaRepository
                 );
