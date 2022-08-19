@@ -96,6 +96,7 @@
             }
             catch(SiesaException exception)
             {
+                System.Console.WriteLine("Error en al enviar pedido a siesa");
                 this.mailService.SendSiesaErrorMail(exception, order.vtex_id);
             }
         }
