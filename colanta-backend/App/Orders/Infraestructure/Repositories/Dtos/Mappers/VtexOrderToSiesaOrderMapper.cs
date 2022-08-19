@@ -21,13 +21,13 @@
         {
             SiesaOrderDto siesaOrder = new SiesaOrderDto();
             //Header
-            siesaOrder.Encabezado.C263CO = this.getOperationCenter(vtexOrder.shippingData.address);
+            siesaOrder.Encabezado.C263CO = this.getOperationCenter(vtexOrder.shippingData.address, vtexOrder.shippingData.logisticsInfo[0]);
             siesaOrder.Encabezado.C263Fecha = vtexOrder.creationDate.ToString(DateFormats.UTC);
             siesaOrder.Encabezado.C263DocTercero = vtexOrder.clientProfileData.document;
             siesaOrder.Encabezado.C263FechaEntrega = this.getEstimateDeliveryDate(vtexOrder.shippingData.logisticsInfo[0].shippingEstimateDate);
             siesaOrder.Encabezado.C263ReferenciaVTEX = vtexOrder.orderId;
             siesaOrder.Encabezado.C263CondPago = this.getPaymentCondition(vtexOrder.paymentData.transactions[0].payments);
-            siesaOrder.Encabezado.C263ReferenciaPago = vtexOrder.paymentData.transactions[0].payments[0].tid;
+            siesaOrder.Encabezado.C263ReferenciaPago = this.getHeaderPaymentReference(vtexOrder.paymentData.transactions[0].payments);
             siesaOrder.Encabezado.C263ValorEnvio = this.getTotal(vtexOrder.totals, "Shipping");
             siesaOrder.Encabezado.C263Notas = "sin observaciones";
             siesaOrder.Encabezado.C263Direccion = this.getSiesaAddressFromVtexAdress(vtexOrder.shippingData.selectedAddresses[0]);
@@ -154,6 +154,25 @@
             }
         }
 
+        private string getHeaderPaymentReference(List<Payment> payments)
+        {
+            //recorre en busca de pago con cupo
+            foreach (Payment payment in payments)
+            {
+                if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return payment.tid;
+                if (PaymentMethods.GIFTCARD.id == payment.paymentSystem && payment.giftCardProvider == "cupo") return payment.giftCardId;
+            }
+            //ahora recorre en busca de pagos distintos de giftcard
+            foreach (Payment payment in payments)
+            {
+                if (PaymentMethods.WOMPI.id == payment.paymentSystem) return payment.tid;
+                if (PaymentMethods.EFECTIVO.id == payment.paymentSystem) return payment.tid;
+                if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem) return payment.tid;
+            }
+            //devuelve el id de la giftcard como ultimo recurso
+            return payments[0].giftCardId;
+        }
+
         private bool pickupInStore(string addressType)
         { 
             if (addressType == "pickup") return true;
@@ -168,16 +187,17 @@
             return notNullDate.ToString(DateFormats.UTC);
         }
 
-        private string getOperationCenter(Address address)
+        private string getOperationCenter(Address address, LogisticsInfo logisticsInfo)
         {
             if (address.addressType == "pickup") return address.addressId;
-            else return "Por Definir";
+            else return logisticsInfo.polygonName;
         }
 
         private string getPaymentCondition(List<Payment> payments)
         {
             foreach (Payment payment in payments)
             {
+                if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return "CUPO";
                 if (PaymentMethods.GIFTCARD.id == payment.paymentSystem && payment.giftCardProvider == "cupo") return "CUPO";
             }
             return "CON";
