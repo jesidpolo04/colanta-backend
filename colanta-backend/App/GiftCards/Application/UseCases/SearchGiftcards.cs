@@ -26,12 +26,8 @@
 
         public async Task<GiftCard[]> Invoke(string document, string skuRefId, string redemptionCode)
         {
-            SiesaOrder[] userOrders = await this.siesaOrdersLocalRepository.getSiesaOrdersByDocument(document);
-            SiesaOrder[] unfinishedUserOrder = userOrders.Where(siesaOrder => siesaOrder.finalizado == false).ToArray();
-
-            Sku sku = skusLocalRepository.getSkuByConcatSiesaId(skuRefId).Result;
-            string business = sku != null ? sku.product.business : "";
-            
+            if (redemptionCode == "" || redemptionCode == null) return new GiftCard[0]{};
+            string business = this.getBusiness(skuRefId);
             GiftCard[] siesaGiftCards = await this.siesaRepository.getGiftCardsByDocumentAndBusiness(document, business);
 
             foreach(GiftCard siesaGiftCard in siesaGiftCards)
@@ -41,16 +37,34 @@
                 {
                     await localRepository.saveGiftCard(siesaGiftCard);
                 }
-                if(localGiftCard != null && unfinishedUserOrder.Length == 0)
+                if(localGiftCard != null && !(this.userHasPendingOrders(document)))
                 {
-                    decimal newCardBalance = await this.siesaRepository.getGiftCardBalanceBySiesaId(localGiftCard.siesa_id);
-                    localGiftCard.updateBalance(newCardBalance);
-                    this.localRepository.updateGiftCard(localGiftCard).Wait();
+                    this.updateGiftcardBalance(localGiftCard);
                 }
             }
 
             GiftCard[] localGiftcards = await this.localRepository.getGiftCardsByDocumentAndBusiness(document, business);
             return localGiftcards.Where(giftcard => giftcard.code == redemptionCode).ToArray();
+        }
+
+        private string getBusiness(string someSkuRefId)
+        {
+            Sku sku = skusLocalRepository.getSkuByConcatSiesaId(someSkuRefId).Result;
+            return sku != null ? sku.product.business : "";
+        }
+
+        private bool userHasPendingOrders(string document)
+        {
+            SiesaOrder[] userOrders = this.siesaOrdersLocalRepository.getSiesaOrdersByDocument(document).Result;
+            SiesaOrder[] unfinishedUserOrder = userOrders.Where(siesaOrder => siesaOrder.finalizado == false).ToArray();
+            return unfinishedUserOrder.Length > 0 ? true : false;
+        }
+
+        private void updateGiftcardBalance(GiftCard localGiftcard)
+        {
+            decimal newCardBalance = this.siesaRepository.getGiftCardBalanceBySiesaId(localGiftcard.siesa_id).Result;
+            localGiftcard.updateBalance(newCardBalance);
+            this.localRepository.updateGiftCard(localGiftcard).Wait();
         }
     }
 }
