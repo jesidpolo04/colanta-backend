@@ -1,6 +1,7 @@
 ﻿namespace colanta_backend.App.Orders.Domain
 {
     using Shared.Domain;
+    using Orders.SiesaOrders.Domain;
     public class MailService
     {
         private INewOrderMail newOrderMail;
@@ -15,9 +16,9 @@
             this.siesaErrorAtSendOrderMail = siesaErrorMail;
         }
 
-        public void SendMailToWarehouse(string wharehouseId, string vtexOrderId)
+        public void SendMailToWarehouse(string wharehouseId, SiesaOrder siesaOrder)
         {
-            this.newOrderMail.SendMailToWarehouse(wharehouseId, vtexOrderId);
+            this.newOrderMail.SendMailToWarehouse(wharehouseId, siesaOrder);
         }
 
         public void SendSiesaErrorMail(SiesaException exception, string vtexOrderId)

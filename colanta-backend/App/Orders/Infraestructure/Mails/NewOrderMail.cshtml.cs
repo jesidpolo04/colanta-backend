@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace colanta_backend.App.Orders.Infraestructure
 {
+    using Orders.SiesaOrders.Domain;
     public class NewOrderMailModel : PageModel
     {
-        public string orderId;
+        public SiesaOrder siesaOrder;
 
-        public NewOrderMailModel(string orderId)
+        public NewOrderMailModel(SiesaOrder siesaOrder)
         {
-            this.orderId = orderId;
+            this.siesaOrder = siesaOrder;
         }
         public void OnGet()
         {

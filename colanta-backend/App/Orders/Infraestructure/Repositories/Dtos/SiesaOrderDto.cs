@@ -2,6 +2,7 @@
 {
     using Orders.SiesaOrders.Domain;
     using System.Collections.Generic;
+    using System.Text.Json;
 
     public class SiesaOrderDto
     {
@@ -34,8 +35,10 @@
             siesaOrder.ciudad = this.Encabezado.C263Ciudad;
             siesaOrder.negocio = this.Encabezado.C263Negocio;
             siesaOrder.total_pedido = this.Encabezado.C263TotalPedido;
+            siesaOrder.total_envio = this.Encabezado.C263ValorEnvio;
             siesaOrder.total_descuento = this.Encabezado.C263TotalDescuentos;
             siesaOrder.recoge_en_tienda = this.Encabezado.C263RecogeEnTienda;
+            siesaOrder.formas_de_pago = JsonSerializer.Serialize(this.FormasPago);
             
             List<SiesaOrderDetail> siesaOrderDetails = new List<SiesaOrderDetail>();
             foreach(SiesaOrderDetailDto siesaOrderDetailDto in this.Detalles)

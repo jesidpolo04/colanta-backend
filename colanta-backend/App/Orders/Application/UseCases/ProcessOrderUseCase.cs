@@ -63,16 +63,22 @@
             {
                 if (!thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
-                    this.notifyToStore(vtexOrderId, vtexOrder.shippingData.logisticsInfo[0].addressId);
-                    await this.sendToSiesa(localOrder);
-                 }
+                    SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
+                    if (siesaOrder != null)
+                    {
+                        this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].addressId);
+                    }
+                }
             }
             if (status == OrderVtexStates.PAYMENT_PENDING)
             {
                 if (thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
-                    this.notifyToStore(vtexOrderId, vtexOrder.shippingData.logisticsInfo[0].addressId);
-                    await this.sendToSiesa(localOrder);
+                    SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
+                    if(siesaOrder != null)
+                    {
+                        this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].addressId);
+                    }
                 }
             }
         }
@@ -88,24 +94,27 @@
             return false;
         }
 
-        private async Task sendToSiesa(Order order)
+        private async Task<SiesaOrder> sendToSiesa(Order order)
         {
             try
             {
-                await this.siesaRepository.saveOrder(order);
+                SiesaOrder siesaOrder = await this.siesaRepository.saveOrder(order);
+                await this.siesaOrdersLocalRepository.saveSiesaOrder(siesaOrder);
+                return siesaOrder;
             }
             catch(SiesaException exception)
             {
                 System.Console.WriteLine("Error en al enviar pedido a siesa");
                 this.mailService.SendSiesaErrorMail(exception, order.vtex_id);
+                return null;
             }
         }
 
-        private void notifyToStore(string orderId, string wharehouseId)
+        private void notifyToStore(SiesaOrder order, string wharehouseId)
         {
             try
             {
-                this.mailService.SendMailToWarehouse(wharehouseId, orderId);
+                this.mailService.SendMailToWarehouse(wharehouseId, order);
             }
             catch
             {
