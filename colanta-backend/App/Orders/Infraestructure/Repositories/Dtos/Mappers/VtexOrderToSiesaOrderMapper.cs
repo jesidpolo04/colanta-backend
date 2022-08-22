@@ -28,6 +28,7 @@
             siesaOrder.Encabezado.C263ReferenciaVTEX = vtexOrder.orderId;
             siesaOrder.Encabezado.C263CondPago = this.getPaymentCondition(vtexOrder.paymentData.transactions[0].payments);
             siesaOrder.Encabezado.C263ReferenciaPago = this.getHeaderPaymentReference(vtexOrder.paymentData.transactions[0].payments);
+            siesaOrder.Encabezado.C263PagoContraentrega = this.isUponDelivery(vtexOrder.paymentData.transactions[0].payments);
             siesaOrder.Encabezado.C263ValorEnvio = this.getTotal(vtexOrder.totals, "Shipping");
             siesaOrder.Encabezado.C263Notas = "sin observaciones";
             siesaOrder.Encabezado.C263Direccion = this.getSiesaAddressFromVtexAdress(vtexOrder.shippingData.selectedAddresses[0]);
@@ -86,6 +87,19 @@
                 }
             }
             return siesaOrder;
+        }
+
+        private bool isUponDelivery(List<Payment> payments)
+        {
+            foreach(Payment payment in payments)
+            {
+                if(
+                    payment.paymentSystem == PaymentMethods.CARD_PROMISSORY.id || 
+                    payment.paymentSystem == PaymentMethods.CONTRAENTREGA.id ||
+                    payment.paymentSystem == PaymentMethods.EFECTIVO.id
+                    ) return true;
+            }
+            return false;
         }
 
         private string getSiesaAddressFromVtexAdress(SelectedAddress vtexAddress)
