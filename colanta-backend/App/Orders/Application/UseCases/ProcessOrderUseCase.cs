@@ -67,7 +67,7 @@
             {
                 if (!thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
-                    this.registerUser(vtexOrder.clientProfileData.document, vtexOrder.clientProfileData.email);
+                    this.registerUser(vtexOrder.clientProfileData.userProfileId);
                     SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                     if (siesaOrder != null)
                     {
@@ -79,7 +79,7 @@
             {
                 if (thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
-                    this.registerUser(vtexOrder.clientProfileData.document, vtexOrder.clientProfileData.email);
+                    this.registerUser(vtexOrder.clientProfileData.userProfileId);
                     SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                     if(siesaOrder != null)
                     {
@@ -127,11 +127,11 @@
             } 
         }
 
-        private void registerUser(string document, string vtexEmail)
+        private void registerUser(string userVtexId)
         {
             try
             {
-                this.registerUserService.registerUser(document, vtexEmail).Wait();
+                this.registerUserService.registerUser(userVtexId).Wait();
             }
             catch (SiesaException exception)
             {

@@ -17,14 +17,10 @@
 
         public async Task registerUser
             (
-                string document,
-                string vtexEmail
+                string vtexId
             )
         {
-            string emailPattern = @"^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$";
-            string[] regexSplit = Regex.Split(vtexEmail, emailPattern);
-            string email = regexSplit[0];
-            VtexUser vtexUser = this.vtexRepository.getByDocumentAndEmail(document, email).Result;
+            VtexUser vtexUser = this.vtexRepository.getByVtexId(vtexId).Result;
             if(vtexUser == null) return;
             User user = VtexUserMapper.getUserFromVtexUser(vtexUser);
             user = await this.siesaRepository.saveUser(user);

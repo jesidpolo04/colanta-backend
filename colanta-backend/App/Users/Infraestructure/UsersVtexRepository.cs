@@ -96,7 +96,7 @@
         public async Task<VtexUser> getByVtexId(string vtexId)
         {
             string queryFields = "_fields=id,document,documentType,email,firstName,lastName,phone,homePhone,birthDate,address";
-            string queryConditions = $"_where=(id={vtexId})";
+            string queryConditions = $"_where=(userId={vtexId})";
             string endpoint = $"/api/dataentities/CL/search?{queryFields}&{queryConditions}";
             string url = $"https://{accountName}.{vtexEnvironment}{endpoint}";
             HttpResponseMessage vtexResponse = await httpClient.GetAsync(url);
