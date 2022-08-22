@@ -4,7 +4,25 @@
 }
 
 <h2>Promoción Inválida</h2>
-<p>Al intentar crear la promoción con SIESA id: <b>@Model.promotion.siesa_id</b>,
+<p>Al intentar crear la promoción con SIESA id: <b>@Model.promotion.siesa_id</b> de tipo 
+    @if(Model.promotion.type == "regular") 
+    {
+        <span>regular (porcentual | nominal)</span>
+    }
+    @if (Model.promotion.type == "forThePriceOf")
+    {
+        <span>bono (2x1)</span>
+    }
+    @if (Model.promotion.type == "buyAndWin")
+    {
+        <span>regalo</span>
+    }
+    @if (Model.promotion.type == "combo")
+    {
+        <span>kit</span>
+    }
+
+    ,
     nos topamos con algunas inconcistencias por las cuales la promoción no pudo ser creada.</p>
 
 @if(Model.config.invalidBrands.Count > 0){
