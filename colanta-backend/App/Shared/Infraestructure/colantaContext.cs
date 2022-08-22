@@ -398,6 +398,9 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.negocio);
                 entity.Property(e => e.total_pedido);
                 entity.Property(e => e.total_descuento);
+                entity.Property(e => e.total_envio);
+                entity.Property(e => e.formas_de_pago);
+                entity.Property(e => e.pago_contraentrega);
                 entity.Property(e => e.recoge_en_tienda);
 
                 entity.HasMany(e => e.detalles).WithOne(e => e.order).HasForeignKey(e => e.order_id);

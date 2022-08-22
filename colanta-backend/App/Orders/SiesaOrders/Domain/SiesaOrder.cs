@@ -24,6 +24,7 @@
         public decimal total_descuento { get; set; }
         public decimal total_envio { get; set; }
         public string formas_de_pago { get; set; }
+        public bool pago_contraentrega { get; set; }
         public bool recoge_en_tienda { get; set; }
         public string siesa_pedido { get; set; }
         public SiesaOrderDetail[] detalles { get; set; }
