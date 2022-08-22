@@ -92,5 +92,22 @@
             }
             return Task.CompletedTask;
         }
+
+        public async Task<VtexUser> getByVtexId(string vtexId)
+        {
+            string queryFields = "_fields=id,document,documentType,email,firstName,lastName,phone,homePhone,birthDate,address";
+            string queryConditions = $"_where=(id={vtexId})";
+            string endpoint = $"/api/dataentities/CL/search?{queryFields}&{queryConditions}";
+            string url = $"https://{accountName}.{vtexEnvironment}{endpoint}";
+            HttpResponseMessage vtexResponse = await httpClient.GetAsync(url);
+            if (!vtexResponse.IsSuccessStatusCode)
+            {
+                throw new VtexException(vtexResponse, $"Vtex respondió con status: {vtexResponse.StatusCode}");
+            }
+            string responseBody = await vtexResponse.Content.ReadAsStringAsync();
+            VtexUser[] vtexUsers = JsonSerializer.Deserialize<VtexUser[]>(responseBody);
+            if (vtexUsers.Length == 0) return null;
+            else return vtexUsers.First();
+        }
     }
 }

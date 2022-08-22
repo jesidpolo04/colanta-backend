@@ -16,15 +16,14 @@
 
         public async Task registerUser
             (
-                string document,
-                string email
+                string vtexId
             )
         {
-            VtexUser vtexUser = this.vtexRepository.getByDocumentAndEmail(document, email).Result;
+            VtexUser vtexUser = this.vtexRepository.getByVtexId(vtexId).Result;
             if(vtexUser == null) return;
             User user = VtexUserMapper.getUserFromVtexUser(vtexUser);
             user = await this.siesaRepository.saveUser(user);
-            if(this.localRepository.getUserByEmail(email).Result == null)
+            if(this.localRepository.getUserByEmail(vtexUser.email).Result == null)
             {
                 await this.localRepository.saveUser(user);
             }
