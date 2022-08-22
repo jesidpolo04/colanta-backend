@@ -1,6 +1,7 @@
 ﻿namespace colanta_backend.App.Users.Domain
 {
     using System.Threading.Tasks;
+    using System.Text.RegularExpressions;
     public class RegisterUserService
     {
         private UsersSiesaRepository siesaRepository;
@@ -16,10 +17,14 @@
 
         public async Task registerUser
             (
-                string vtexId
+                string document,
+                string vtexEmail
             )
         {
-            VtexUser vtexUser = this.vtexRepository.getByVtexId(vtexId).Result;
+            string emailPattern = @"^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$";
+            string[] regexSplit = Regex.Split(vtexEmail, emailPattern);
+            string email = regexSplit[0];
+            VtexUser vtexUser = this.vtexRepository.getByDocumentAndEmail(document, email).Result;
             if(vtexUser == null) return;
             User user = VtexUserMapper.getUserFromVtexUser(vtexUser);
             user = await this.siesaRepository.saveUser(user);
