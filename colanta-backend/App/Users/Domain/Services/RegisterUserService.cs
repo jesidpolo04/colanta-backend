@@ -21,6 +21,7 @@
             )
         {
             VtexUser vtexUser = this.vtexRepository.getByDocumentAndEmail(document, email).Result;
+            if(vtexUser == null) return;
             User user = VtexUserMapper.getUserFromVtexUser(vtexUser);
             user = await this.siesaRepository.saveUser(user);
             if(this.localRepository.getUserByEmail(email).Result == null)
