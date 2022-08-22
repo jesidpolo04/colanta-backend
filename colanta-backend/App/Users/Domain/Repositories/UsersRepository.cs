@@ -5,6 +5,7 @@
     {
         public Task<User> saveUser(User user);
         public Task<User?> getUserByDocument(string document, string document_type);
+        public Task<User> getUserByEmail(string email);
         public Task<User[]> getAllUsers();
     }
 }

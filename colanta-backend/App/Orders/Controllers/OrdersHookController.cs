@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace colanta_backend.App.Orders.Controllers
 {
     using Orders.Domain;
+    using Users.Domain;
     using Orders.Application;
     using SiesaOrders.Domain;
     using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace colanta_backend.App.Orders.Controllers
     [Route("api")]
     public class OrdersHookController : ControllerBase
     {
+        private RegisterUserService registerUserService;
         private OrdersRepository localRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
         private OrdersVtexRepository vtexRepository;
@@ -22,7 +24,8 @@ namespace colanta_backend.App.Orders.Controllers
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
-            MailService mailService
+            MailService mailService,
+            RegisterUserService registerUserService
             )
         {
             this.localRepository = localRepository;
@@ -30,6 +33,7 @@ namespace colanta_backend.App.Orders.Controllers
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
             this.mailService = mailService;
+            this.registerUserService = registerUserService;
         }
 
         [Route("orders/hook")]
@@ -47,7 +51,8 @@ namespace colanta_backend.App.Orders.Controllers
                 this.siesaOrdersLocalRepository, 
                 this.vtexRepository, 
                 this.siesaRepository,
-                this.mailService);
+                this.mailService,
+                this.registerUserService);
 
             await useCase.Invoke(
                 orderSummary.OrderId, 

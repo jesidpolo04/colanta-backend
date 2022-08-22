@@ -51,6 +51,8 @@ namespace colanta_backend
             //Dependencies Injections Users
             services.AddTransient<UsersRepository, UsersEFRepository>();
             services.AddTransient<App.Users.Domain.UsersSiesaRepository, App.Users.Infraestructure.UsersSiesaRepository>();
+            services.AddTransient<App.Users.Domain.UsersVtexRepository, App.Users.Infraestructure.UsersVtexRepository>();
+            services.AddTransient<App.Users.Domain.RegisterUserService>();
             
             //Dependencies Injections Brands
             services.AddTransient<BrandsRepository, EFBrandsRepository>();

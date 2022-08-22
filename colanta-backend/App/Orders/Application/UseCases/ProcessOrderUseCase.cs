@@ -1,5 +1,6 @@
 ﻿namespace colanta_backend.App.Orders.Application
 {
+    using Users.Domain;
     using Shared.Domain;
     using Orders.Domain;
     using Orders.SiesaOrders.Domain;
@@ -13,13 +14,15 @@
         private OrdersSiesaRepository siesaRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
         private MailService mailService;
+        private RegisterUserService registerUserService;
 
         public ProcessOrderUseCase(
             OrdersRepository localRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
-            MailService mailService
+            MailService mailService,
+            RegisterUserService registerUserService
             )
         {
             this.localRepository = localRepository;
@@ -27,6 +30,7 @@
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
             this.mailService = mailService;
+            this.registerUserService = registerUserService;
         }
 
         public async Task Invoke(string vtexOrderId, string status, string lastStatus, string lastChange, string currentChange)
@@ -63,6 +67,7 @@
             {
                 if (!thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
+                    this.registerUserService.registerUser(vtexOrder.clientProfileData.document, vtexOrder.clientProfileData.email).Wait();
                     SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                     if (siesaOrder != null)
                     {
@@ -74,6 +79,7 @@
             {
                 if (thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
+                    this.registerUserService.registerUser(vtexOrder.clientProfileData.document, vtexOrder.clientProfileData.email).Wait();
                     SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                     if(siesaOrder != null)
                     {
@@ -119,6 +125,24 @@
             catch
             {
             } 
+        }
+
+        private void registerUser(string document, string email)
+        {
+            try
+            {
+                this.registerUserService.registerUser(document, email).Wait();
+            }
+            catch (SiesaException exception)
+            {
+                System.Console.WriteLine(exception.Message);
+                System.Console.WriteLine(exception.responseBody);
+            }
+            catch(VtexException exception)
+            {
+                System.Console.WriteLine(exception.Message);
+                System.Console.WriteLine(exception.responseBody);
+            }
         }
     }
 }

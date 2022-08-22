@@ -36,6 +36,16 @@ namespace colanta_backend.App.Users.Infraestructure
             return null;
         }
 
+        public async Task<User> getUserByEmail(string email)
+        {
+            var efUsers = this.dbContext.Users.Where(user => user.email == email);
+            if (efUsers.ToArray().Length > 0)
+            {
+                return efUsers.First().getUserFromEFUser();
+            }
+            return null;
+        }
+
         public async Task<User> saveUser(User user)
         {
             EFUser efUser = new EFUser();
