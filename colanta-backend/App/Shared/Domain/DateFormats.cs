@@ -2,6 +2,6 @@
 {
     public class DateFormats
     {
-        public static string UTC = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'";
+        public static string UTC = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff";
     }
 }

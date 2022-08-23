@@ -118,17 +118,61 @@
 
 
                     <tr style="box-sizing: border-box !important;">
-                        <td style="font-size: 14px; line-height: 20px; box-sizing: border-box; border-collapse: collapse; text-align: center; padding-top: .5rem; padding-bottom: .5rem; vertical-align: top; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%;"
+                        <td class="ph4-ns" style="font-size: 14px; line-height: 20px; box-sizing: border-box; border-collapse: collapse; text-align: center; padding-top: .5rem; padding-bottom: .5rem; vertical-align: top; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%;"
                             align="left">
 
                             <p>
                                 <strong>El número del pedido es: </strong> <span
-                                    style="color: #00b7ff;"><strong>#@Model.siesaOrder.referencia_vtex</strong></span>
+                                    style="color: #00b7ff;"><strong>#@Model.vtexOrderId</strong></span>
                             </p>
                             <p>
                                 <strong>Siesa pedido: </strong> <span
-                                    style="color: #00b7ff;"><strong>@Model.siesaOrder.siesa_pedido</strong></span>
+                                    style="color: #00b7ff;"><strong>@Model.siesaPedido</strong></span>
                             </p>
+                        </td>
+                    </tr>
+                    <tr style="box-sizing: border-box !important;">
+                        <td class="ph4-ns" style="font-size: 14px; line-height: 20px; box-sizing: border-box; border-collapse: collapse; text-align: center; padding-top: .5rem; padding-bottom: .5rem; vertical-align: top; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%;"
+                            align="left">
+                            <h2>Formas de pago</h2>
+                            <table style="margin: 0 auto">
+                                <tbody >
+                                    @foreach(var wayToPay in Model.wayToPays)
+                                    {
+                                        <tr>
+                                            <td><b>@wayToPay.wayToPay:</b></td>
+                                            <td>@string.Format("{0:C}", wayToPay.value)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr style="box-sizing: border-box !important;">
+                        <td class="ph4-ns" style="font-size: 14px; line-height: 20px; box-sizing: border-box; border-collapse: collapse; text-align: center; padding-top: .5rem; padding-bottom: .5rem; vertical-align: top; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%;"
+                            align="left">
+                            <h2>Entrega</h2>
+                            <table style="margin: 0 auto">
+                                <tbody >
+                                    <tr>
+                                        <td><b>Tipo de entrega:</b></td>
+                                        <td>
+                                            @if (Model.isUponDelivery)
+                                            {
+                                                <span>Recogida</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Domicilio</span>       
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Hora estimada:</b></td>
+                                        <td>@Model.deliveryDate.ToString("dd/mm/yyyy HH:mm")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </td>
                     </tr>
                     <tr style="box-sizing: border-box !important;">
