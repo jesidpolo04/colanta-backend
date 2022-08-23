@@ -135,11 +135,13 @@
             }
             catch (SiesaException exception)
             {
+                System.Console.WriteLine("Error en al intentar registrar al cliente en siesa");
                 System.Console.WriteLine(exception.Message);
                 System.Console.WriteLine(exception.responseBody);
             }
             catch(VtexException exception)
             {
+                System.Console.WriteLine("Error en al consultar el cliente en vtex");
                 System.Console.WriteLine(exception.Message);
                 System.Console.WriteLine(exception.responseBody);
             }
