@@ -39,6 +39,7 @@
             siesaOrder.total_descuento = this.Encabezado.C263TotalDescuentos;
             siesaOrder.recoge_en_tienda = this.Encabezado.C263RecogeEnTienda;
             siesaOrder.formas_de_pago = JsonSerializer.Serialize(this.FormasPago);
+            siesaOrder.pago_contraentrega = this.Encabezado.C263PagoContraentrega;
             
             List<SiesaOrderDetail> siesaOrderDetails = new List<SiesaOrderDetail>();
             foreach(SiesaOrderDetailDto siesaOrderDetailDto in this.Detalles)
