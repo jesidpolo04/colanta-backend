@@ -157,7 +157,7 @@
                                     <tr>
                                         <td><b>Tipo de entrega:</b></td>
                                         <td>
-                                            @if (Model.isUponDelivery)
+                                            @if (Model.pickupInStore)
                                             {
                                                 <span>Recogida</span>
                                             }
@@ -168,8 +168,17 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><b>Hora estimada:</b></td>
-                                        <td>@Model.deliveryDate.ToString("dd/mm/yyyy HH:mm")</td>
+                                        @if (Model.pickupInStore)
+                                        {
+                                            <td><b>Hora estimada (domicilio):</b></td>
+                                            <td>@Model.deliveryDate.ToString("dd/mm/yyyy HH:mm")</td>
+                                        }       
+                                        else
+                                        {
+                                            <td><b>Hora del pedido:</b></td>
+                                            <td>@Model.orderDate.ToString("dd/mm/yyyy HH:mm")</td>
+                                        }
+                                           
                                     </tr>
                                 </tbody>
                             </table>

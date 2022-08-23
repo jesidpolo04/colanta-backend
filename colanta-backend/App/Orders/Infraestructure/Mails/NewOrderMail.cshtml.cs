@@ -13,7 +13,8 @@ namespace colanta_backend.App.Orders.Infraestructure
         public string vtexOrderId;
         public string siesaPedido;
         public DateTime deliveryDate;
-        public bool isUponDelivery;
+        public DateTime orderDate;
+        public bool pickupInStore;
         public List<WayToPay> wayToPays;
         public NewOrderMailModel(SiesaOrder siesaOrder)
         {
@@ -21,7 +22,8 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.vtexOrderId = siesaOrder.referencia_vtex;
             this.siesaPedido = siesaOrder.siesa_pedido;
             this.deliveryDate = DateTime.Parse(siesaOrder.fecha_entrega);
-            this.isUponDelivery = siesaOrder.recoge_en_tienda;
+            this.orderDate = DateTime.Parse(siesaOrder.fecha);
+            this.pickupInStore = siesaOrder.recoge_en_tienda;
             this.wayToPays = JsonSerializer.Deserialize<List<WayToPay>>(siesaOrder.formas_de_pago);
         }
         public void OnGet()
