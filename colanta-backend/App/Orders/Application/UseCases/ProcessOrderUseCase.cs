@@ -1,5 +1,6 @@
 ﻿namespace colanta_backend.App.Orders.Application
 {
+    using System;
     using Users.Domain;
     using Shared.Domain;
     using Orders.Domain;
@@ -67,7 +68,7 @@
             {
                 if (!thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
-                    this.registerUser(vtexOrder.clientProfileData.userProfileId);
+                    await this.registerUser(vtexOrder.clientProfileData.userProfileId);
                     SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                     if (siesaOrder != null)
                     {
@@ -79,7 +80,7 @@
             {
                 if (thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
-                    this.registerUser(vtexOrder.clientProfileData.userProfileId);
+                    await this.registerUser(vtexOrder.clientProfileData.userProfileId);
                     SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                     if(siesaOrder != null)
                     {
@@ -127,11 +128,11 @@
             } 
         }
 
-        private void registerUser(string userVtexId)
+        private async Task registerUser(string userVtexId)
         {
             try
             {
-                this.registerUserService.registerUser(userVtexId).Wait();
+                await this.registerUserService.registerUser(userVtexId);
             }
             catch (SiesaException exception)
             {
