@@ -9,6 +9,7 @@
     using FluentEmail.Core;
     using FluentEmail.Razor;
     using FluentEmail.Smtp;
+    using System.Collections.Generic;
 
     public class GmailSender : EmailSender, IDisposable
     {
@@ -16,7 +17,7 @@
         private string password;
         private string user;
 
-        private string from = "jesing482@gmail.com";
+        private string from = "wilsonflorez184444z@gmail.com";
         
         public GmailSender(IConfiguration configuration)
         {
@@ -45,6 +46,11 @@
                 .Subject(title)
                 .UsingTemplateFromFile(templatePath, model, true)
                 .Send();
+        }
+
+        public void SendEmailMultiple(string title, string templatePath, object model, List<string> to)
+        {
+            throw new NotImplementedException();
         }
     }
 }
