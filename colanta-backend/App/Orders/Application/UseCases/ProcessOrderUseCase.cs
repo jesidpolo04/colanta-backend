@@ -39,6 +39,11 @@
             VtexOrder vtexOrder = await this.vtexRepository.getOrderByVtexId(vtexOrderId);
             Order localOrder = await this.localRepository.getOrderByVtexId(vtexOrderId);
 
+            string userVtexId = vtexOrder.clientProfileData.userProfileId;
+            string deliveryCountry = vtexOrder.shippingData.address.country;
+            string deliveryDepartment = vtexOrder.shippingData.address.state;
+            string deliveryCity = vtexOrder.shippingData.address.city;
+
             if (localOrder != null && localOrder.status == status) return; // si no cambió nada, finalizar
 
             if (localOrder != null && localOrder.status != status) //si cambió el estado ...
@@ -68,7 +73,7 @@
             {
                 if (!thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
-                    await this.registerUser(vtexOrder.clientProfileData.userProfileId);
+                    await this.registerUser(userVtexId, deliveryCountry, deliveryDepartment, deliveryCity);
                     SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                     if (siesaOrder != null)
                     {
@@ -80,7 +85,7 @@
             {
                 if (thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
                 {
-                    await this.registerUser(vtexOrder.clientProfileData.userProfileId);
+                    await this.registerUser(userVtexId, deliveryCountry, deliveryDepartment, deliveryCity);
                     SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                     if(siesaOrder != null)
                     {
@@ -128,23 +133,25 @@
             } 
         }
 
-        private async Task registerUser(string userVtexId)
+        private async Task registerUser(string userVtexId, string country, string department, string city)
         {
             try
             {
-                await this.registerUserService.registerUser(userVtexId);
+                await this.registerUserService.registerUser(userVtexId, country, department, city);
             }
             catch (SiesaException exception)
             {
-                System.Console.WriteLine("Error en al intentar registrar al cliente en siesa");
-                System.Console.WriteLine(exception.Message);
-                System.Console.WriteLine(exception.responseBody);
+                Console.WriteLine("Error en al intentar registrar al cliente en siesa");
+                Console.WriteLine(exception.Message);
+                Console.WriteLine(exception.requestBody);
+                Console.WriteLine(exception.responseBody);
             }
             catch(VtexException exception)
             {
-                System.Console.WriteLine("Error en al consultar el cliente en vtex");
-                System.Console.WriteLine(exception.Message);
-                System.Console.WriteLine(exception.responseBody);
+                Console.WriteLine("Error en al consultar el cliente en vtex");
+                Console.WriteLine(exception.Message);
+                Console.WriteLine(exception.requestBody);
+                Console.WriteLine(exception.responseBody);
             }
         }
     }

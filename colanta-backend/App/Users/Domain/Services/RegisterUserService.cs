@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using System.Text.RegularExpressions;
+    using System;
     public class RegisterUserService
     {
         private UsersSiesaRepository siesaRepository;
@@ -17,12 +18,19 @@
 
         public async Task registerUser
             (
-                string vtexId
+                string vtexId,
+                string country,
+                string departament,
+                string city
             )
         {
             VtexUser vtexUser = this.vtexRepository.getByVtexId(vtexId).Result;
             if(vtexUser == null) return;
             User user = VtexUserMapper.getUserFromVtexUser(vtexUser);
+            user.country_code = country;
+            user.department_code = departament;
+            user.city_code = city;
+            user.born_date = DateTime.Now.ToString("yyyyMMdd");
             user = await this.siesaRepository.saveUser(user);
             if(this.localRepository.getUserByEmail(vtexUser.email).Result == null)
             {
