@@ -44,9 +44,6 @@ namespace colanta_backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services
-                .AddFluentEmail(Configuration["SmtpUser"], "Colanta Middleware")
-                .AddRazorRenderer();
 
             //Dependencies Injections Users
             services.AddTransient<UsersRepository, UsersEFRepository>();
