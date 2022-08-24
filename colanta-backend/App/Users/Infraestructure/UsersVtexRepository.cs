@@ -85,7 +85,7 @@
                 customerClass = customerClass
             };
             HttpContent httpContent = new StringContent(JsonSerializer.Serialize(requestBody), System.Text.Encoding.UTF8, "application/json");
-            HttpResponseMessage vtexResponse = httpClient.PostAsync(url, httpContent).Result;
+            HttpResponseMessage vtexResponse = httpClient.PatchAsync(url, httpContent).Result;
             if (!vtexResponse.IsSuccessStatusCode)
             {
                 throw new VtexException(vtexResponse, $"Vtex respondió con status: {vtexResponse.StatusCode}");
