@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="App\Orders\Infraestructure\Mails\NewOrderMail.cshtml" />
     <Content Remove="App\Products\Infraestructure\Mails\InvalidBrandMail.cshtml" />
   </ItemGroup>
 
@@ -37,7 +38,16 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="App\Orders\Infraestructure\Mails\NewOrderMail.cshtml" />
     <None Include="App\Products\Infraestructure\Mails\InvalidBrandMail.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="App\Orders\Infraestructure\Mails\NewOrderMail.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="App\Orders\Infraestructure\Mails\NewOrderMail.cshtml" />
   </ItemGroup>
 
 </Project>

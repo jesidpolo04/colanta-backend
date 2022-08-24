@@ -74,6 +74,7 @@
                 foreach(PriceTag vtexDiscount in vtexItem.priceTags)
                 {
                     if (siesaDetail.C263IndObsequio == 1) continue;
+                    if (vtexDiscount.identifier == null) continue;
                     discountConsecutive++;
                     SiesaOrderDiscountDto siesaDiscount = new SiesaOrderDiscountDto();
                     siesaDiscount.C263DestoCO = siesaOrder.Encabezado.C263CO;
