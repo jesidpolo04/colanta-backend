@@ -27,7 +27,7 @@
             VtexUser vtexUser = this.vtexRepository.getByVtexId(vtexId).Result;
             if(vtexUser == null) return;
             User user = VtexUserMapper.getUserFromVtexUser(vtexUser);
-            user.country_code = country;
+            user.country_code = "Colombia";
             user.department_code = departament;
             user.city_code = city;
             user.born_date = DateTime.Now.ToString("yyyyMMdd");
