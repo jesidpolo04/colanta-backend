@@ -76,6 +76,8 @@ namespace colanta_backend
             services.AddTransient<App.Products.Domain.GetSkuVtexIdBySiesaId>();
             services.AddTransient<App.Products.Jobs.RenderProductsAndSkus>();
             services.AddTransient<App.Products.Jobs.FixProductSkus>();
+            //Dependencies Injections Specifications
+            services.AddTransient<App.Specifications.Domain.SpecificationsVtexRepository, App.Specifications.Infraestructure.SpecificationsVtexRepository>();
             //Dependencies Injections Prices
             services.AddTransient<App.Prices.Domain.PricesRepository , App.Prices.Infraestructure.PricesEFRepository>();
             services.AddTransient<App.Prices.Domain.PricesVtexRepository, App.Prices.Infraestructure.PricesVtexRepository>();

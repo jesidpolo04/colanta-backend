@@ -22,6 +22,7 @@ namespace colanta_backend.App.Prices.Infraestructure
         {
             var efPrices = this.dbContext.Prices
                 .Include(price => price.sku)
+                .ThenInclude(sku => sku.product)
                 .Where(e => e.sku_concat_siesa_id == concat_siesa_id);
 
             if (efPrices.ToArray().Length > 0)
@@ -37,6 +38,7 @@ namespace colanta_backend.App.Prices.Infraestructure
         {
             var efPrices = this.dbContext.Prices
                 .Include(price => price.sku)
+                .ThenInclude(sku => sku.product)
                 .Where(e => e.sku.id == sku_id);
 
             if (efPrices.ToArray().Length > 0)

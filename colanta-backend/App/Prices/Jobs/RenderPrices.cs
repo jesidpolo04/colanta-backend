@@ -2,12 +2,12 @@
 {
     using System.Threading.Tasks;
     using App.Prices.Domain;
+    using App.Specifications.Domain;
     using App.Products.Domain;
     using App.Shared.Domain;
     using App.Shared.Application;
     using System.Collections.Generic;
     using System.Text.Json;
-    using System.Text.Json.Serialization;
     using System;
     public class RenderPrices : IDisposable
     {
@@ -15,6 +15,7 @@
         public PricesRepository localRepository; 
         public PricesVtexRepository vtexRepository ;
         public PricesSiesaRepository siesaRepository;
+        public SpecificationsVtexRepository specificationsVtexRepository;
         public SkusRepository skusLocalRepository;
         public IProcess processLogger;
         public ILogger logger;
@@ -34,6 +35,7 @@
             PricesRepository localRepository,
             PricesVtexRepository vtexRepository,
             PricesSiesaRepository siesaRepository,
+            SpecificationsVtexRepository specificationsVtexRepository,
             SkusRepository skusLocalRepository,
             IProcess processLogger,
             ILogger logger,
@@ -43,6 +45,7 @@
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
             this.skusLocalRepository = skusLocalRepository;
+            this.specificationsVtexRepository = specificationsVtexRepository;
             this.processLogger = processLogger;
             this.logger = logger;
             this.mail = mail;
@@ -92,6 +95,7 @@
                             if (vtexPrice == null)
                             {
                                 await this.vtexRepository.savePrice(localPrice);
+                                this.updatePriceForMeasurementUnit(localPrice.sku.product, localPrice.price);
                                 this.loadPrices.Add(localPrice);
                                 this.details.Add(new Detail(
                                             origin: "vtex",
@@ -107,6 +111,7 @@
                                 if (vtexPrice.price != localPrice.price)
                                 {
                                     await this.vtexRepository.savePrice(localPrice);
+                                    this.updatePriceForMeasurementUnit(localPrice.sku.product, localPrice.price);
                                     this.updatedPrices.Add(localPrice);
                                     this.details.Add(new Detail(
                                             origin: "vtex",
@@ -232,6 +237,29 @@
                 json_details: JsonSerializer.Serialize(this.details, jsonOptions)
                 );
             this.mail.sendMail(this.loadPrices, this.updatedPrices, this.failedPrices);
+        }
+
+        private void updatePriceForMeasurementUnit(Product product, decimal price)
+        {
+            decimal content;
+            decimal pmu; // price for measurement unit
+            if (product.business == Stores.AGROCOLANTA) return;
+            if (product.vtex_id == null) return;
+            var specifications = this.specificationsVtexRepository.getProductSpecifications((int)product.vtex_id).Result;
+            foreach(Specification specification in specifications)
+            {
+                if(specification.Id == SpecificationsIds.CONTENT && specification.Value.Count > 0) 
+                {
+                    content = Convert.ToDecimal(specification.Value[0]);
+                    pmu = price / content;
+
+                    var pmuSpecificationValue = new List<string>();
+                    pmuSpecificationValue.Add(pmu.ToString("#.##"));
+                    var pmuSpecification = new Specification(SpecificationsIds.PRICE_FOR_MEASUREMENT_UNIT, pmuSpecificationValue);
+                    this.specificationsVtexRepository.updateProductSpecification((int)product.vtex_id, pmuSpecification);
+                    break;
+                }
+            }
         }
 
         private bool skuExist(Price price)
