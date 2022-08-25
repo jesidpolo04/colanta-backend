@@ -61,6 +61,7 @@
             product.siesa_id = this.sku.product.siesa_id;
             product.is_active = this.sku.product.is_active;
 
+            sku.product = product;
             price.sku = sku;
 
             return price;
