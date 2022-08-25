@@ -7,6 +7,8 @@
         public string Name { get; set; }
         public List<string> Value { get; set; }
 
+        public Specification()
+        {}
         public Specification(int Id, List<string> Value)
         {
             this.Id = Id;
