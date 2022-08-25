@@ -130,7 +130,7 @@ namespace colanta_backend
             //Dependencies Injections Shared
             services.AddTransient<IProcess, ProcessLogs>();
             services.AddTransient<ILogger, EFLogger>();
-            services.AddTransient<EmailSender, GmailSender>();
+            services.AddTransient<EmailSender, ColantaSender>();
 
             //------------------- Tasks -------------------------//
 
