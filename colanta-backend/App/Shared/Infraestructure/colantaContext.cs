@@ -198,6 +198,7 @@ namespace colanta_backend.App.Shared.Infraestructure
 
                 entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
                 entity.Property(e => e.name).IsRequired();
+                entity.Property(e => e.email);
                 entity.Property(e => e.siesa_id);
                 entity.Property(e => e.vtex_id);
                 entity.Property(e => e.business);
