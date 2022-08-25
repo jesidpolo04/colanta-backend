@@ -18,8 +18,10 @@
         {
             this.subject = $"Tienes un nuevo pedido: #{siesaOrder.referencia_vtex}";
             NewOrderMailModel model = new NewOrderMailModel(siesaOrder);
-            this.emailSender.SendEmail(this.subject, this.template, model, "jesdady482@gmail.com");
-            this.emailSender.SendEmail(this.subject, this.template, model, "cristianro@colanta.com.co");
+            this.emailSender.SendEmail(this.subject, this.template, model, "jesdady482@gmail.com, jesidpolo04@gmail.com");
+            //this.emailSender.SendEmail(this.subject, this.template, model, "cristianro@colanta.com.co");
+            //this.emailSender.SendEmail(this.subject, this.template, model, "pvtcar1@colanta.com.co");
+            //this.emailSender.SendEmail(this.subject, this.template, model, "pidecolanta@colanta.com.co");
         }
     }
 }
