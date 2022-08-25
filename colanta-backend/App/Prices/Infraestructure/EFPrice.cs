@@ -31,6 +31,7 @@
             price.business = this.business;
 
             Sku sku = new Sku();
+
             sku.id = this.sku.id;
             sku.ref_id = this.sku.ref_id;
             sku.siesa_id = this.sku.siesa_id;
@@ -44,6 +45,22 @@
             sku.packaged_length = this.sku.packaged_length;
             sku.packaged_height = this.sku.packaged_height;
             sku.packaged_width = this.sku.packaged_width;
+
+            Product product = new Product();
+            product.id = this.sku.product.id;
+            product.name = this.sku.product.name;
+            product.ean = this.sku.product.ean;
+            product.description = this.sku.product.description;
+            product.ref_id = this.sku.product.ref_id;
+            product.business = this.sku.product.business;
+            product.type = this.sku.product.type;
+            product.brand_id = this.sku.product.brand_id;
+            product.category_id = this.sku.product.category_id;
+            product.concat_siesa_id = this.sku.product.concat_siesa_id;
+            product.vtex_id = this.sku.product.vtex_id;
+            product.siesa_id = this.sku.product.siesa_id;
+            product.is_active = this.sku.product.is_active;
+
             price.sku = sku;
 
             return price;
