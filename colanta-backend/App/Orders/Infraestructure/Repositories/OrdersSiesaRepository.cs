@@ -35,8 +35,8 @@ namespace colanta_backend.App.Orders.Infraestructure
 
         public async Task<SiesaOrder> getOrderBySiesaId(string siesaId)
         {
-            string endpoint = "/ordenes/" + siesaId;
-            HttpResponseMessage siesaResponse = await httpClient.GetAsync("http://localhost:3333" + endpoint);
+            string endpoint = "api/pedidos/" + siesaId;
+            HttpResponseMessage siesaResponse = await httpClient.GetAsync(this.configuration["SiesaUrl"] + endpoint);
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             if (!siesaResponse.IsSuccessStatusCode)
             {
@@ -58,7 +58,6 @@ namespace colanta_backend.App.Orders.Infraestructure
             string jsonContent = JsonSerializer.Serialize(siesaOrderDto);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
             HttpResponseMessage siesaResponse = await httpClient.PostAsync(this.configuration["SiesaUrl"] + endpoint, httpContent);
-            //HttpResponseMessage siesaResponse = await httpClient.PostAsync("http://localhost:3000/orders", httpContent);
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             if (!siesaResponse.IsSuccessStatusCode)
             {

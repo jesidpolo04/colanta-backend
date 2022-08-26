@@ -8,29 +8,45 @@
     using Microsoft.Extensions.Configuration;
     using System.Threading.Tasks;
     using App.Shared.Domain;
+    using App.Shared.Infraestructure;
     using colanta_backend.App.Orders.Domain;
     using colanta_backend.App.Orders.SiesaOrders.Domain;
 
-    public class OrdersVtexRepository : Domain.OrdersVtexRepository
+    public class OrdersVtexRepository : VtexRepository, Domain.OrdersVtexRepository
     {
-        private HttpClient httpClient;
-        private IConfiguration configuration;
-        private string apiKey;
-        private string apiToken;
-        private string accountName;
-        private string vtexEnvironment;
-        public OrdersVtexRepository(IConfiguration configuration)
+        public OrdersVtexRepository(IConfiguration configuration) : base(configuration)
         {
-            this.configuration = configuration;
-            this.apiKey = configuration["MercolantaVtexApiKey"];
-            this.apiToken = configuration["MercolantaVtexToken"];
-            this.accountName = configuration["MercolantaAccountName"];
-            this.vtexEnvironment = configuration["MercolantaEnvironment"];
+        }
 
-            this.httpClient = new HttpClient();
-            this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            this.httpClient.DefaultRequestHeaders.Add("X-VTEX-API-AppToken", this.apiToken);
-            this.httpClient.DefaultRequestHeaders.Add("X-VTEX-API-AppKey", this.apiKey);
+        public async Task approvePayment(string paymentId, string orderVtexId)
+        {
+            string endpoint = $"/api/oms/pvt/orders/{orderVtexId}/payments/{paymentId}/payment-notification";
+            string url = $"https://{accountName}.{vtexEnvironment}{endpoint}";
+            HttpResponseMessage vtexResponse = await httpClient.PostAsync(url, null);
+            if (!vtexResponse.IsSuccessStatusCode)
+            {
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
+            }
+        }
+
+        public async Task cancelOrder(string orderVtexId)
+        {
+            string endpoint = $"/api/oms/pvt/orders/{orderVtexId}/cancel";
+            string url = $"https://{accountName}.{vtexEnvironment}{endpoint}";
+            var requestBody = new
+            {
+                reason = "El pedido no se completó"
+            };
+            HttpContent content = new StringContent(
+                JsonSerializer.Serialize(requestBody),
+                System.Text.Encoding.UTF8,
+                "application/json"
+                );
+            HttpResponseMessage vtexResponse = await httpClient.PostAsync(url, content);
+            if (!vtexResponse.IsSuccessStatusCode)
+            {
+                throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
+            }
         }
 
         public async Task<VtexOrder> getOrderByVtexId(string vtexOrderId)
@@ -46,7 +62,7 @@
             return JsonSerializer.Deserialize<VtexOrder>(vtexResponseBody);
         }
 
-        public async Task<bool> startHandlingOrder(string orderVtexId)
+        public async Task startHandlingOrder(string orderVtexId)
         {
             string endpoint = "/api/oms/pvt/orders/" + orderVtexId + "/start-handling";
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint;
@@ -56,7 +72,6 @@
             {
                 throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
-            return true;
         }
 
         public async Task<string> updateVtexOrder(SiesaOrder oldSiesaOrder, SiesaOrder newSiesaOrder)
