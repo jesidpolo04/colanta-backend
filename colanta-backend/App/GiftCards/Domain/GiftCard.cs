@@ -8,9 +8,12 @@
         public string name { get; set; }
         public string code { get; set; }
         public string token { get; set; }
+        public string provider { get; set; }
         public string business { get; set; }
         public decimal balance { get; set; }
         public string owner { get; set; }
+        public string owner_email { get; set; }
+        public bool used { get; set; }
         public string emision_date { get; set; }
         public string expire_date { get; set; }
 

@@ -303,11 +303,14 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.name);
                 entity.Property(e => e.balance);
                 entity.Property(e => e.owner);
+                entity.Property(e => e.owner_email);
                 entity.Property(e => e.business);
                 entity.Property(e => e.code);
                 entity.Property(e => e.token);
                 entity.Property(e => e.expire_date);
                 entity.Property(e => e.emision_date);
+                entity.Property(e => e.provider);
+                entity.Property(e => e.used);
             });
 
             modelBuilder.Entity<EFGiftCardTransaction>(entity =>

@@ -26,6 +26,18 @@
             return giftCards.ToArray();
         }
 
+        public async Task<GiftCard[]> getGiftCardsByDocumentAndEmail(string document, string email)
+        {
+            var giftcards = new List<GiftCard>();
+            var efGiftCards = this.dbContext.GiftCards
+                .Where(giftcard => giftcard.owner == document && giftcard.owner_email == email);
+            foreach (EFGiftCard efGiftcard in efGiftCards)
+            {
+                giftcards.Add(efGiftcard.getGiftCardFromEfGiftCard());
+            }
+            return giftcards.ToArray();
+        }
+
         public async Task<GiftCard> getGiftCardBySiesaId(string siesaId)
         {
             var efGiftCards = this.dbContext.GiftCards.Where(giftcard => giftcard.siesa_id == siesaId);

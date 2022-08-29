@@ -3,7 +3,8 @@
     public interface GiftCardsRepository
     {
         Task<GiftCard[]> getAllGiftCards();
-        Task<GiftCard[]> getGiftCardsByDocumentAndBusiness(string ownerDocument, string business);
+        Task<GiftCard[]> getGiftCardsByDocumentAndBusiness(string document, string business);
+        Task<GiftCard[]> getGiftCardsByDocumentAndEmail(string document, string email);
         Task<GiftCard> getGiftCardBySiesaId(string siesaId);
         Task<GiftCard> saveGiftCard(GiftCard giftCard);
         Task<GiftCard> updateGiftCard(GiftCard giftCard);
