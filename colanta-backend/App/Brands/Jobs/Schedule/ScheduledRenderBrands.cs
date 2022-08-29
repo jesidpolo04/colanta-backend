@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System;
+using NCrontab;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,14 +8,18 @@ namespace colanta_backend.App.Brands.Jobs
 {
     public class ScheduledRenderBrands : IHostedService, IDisposable
     {
-        private Timer _timer;
+        private readonly CrontabSchedule _crontabSchedule;
+        private DateTime _nextRun;
+        private const string Schedule = "0 0 0/2 * * *";
         private RenderBrands renderBrands;
         public ScheduledRenderBrands(RenderBrands renderBrands)
         {
+            _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
+            _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.renderBrands = renderBrands;
         }
 
-        public async void Execute(object state)
+        public async void Execute()
         {
             using (renderBrands)
             {
@@ -24,20 +29,30 @@ namespace colanta_backend.App.Brands.Jobs
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromSeconds(10), TimeSpan.FromMinutes(1));
+            Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(UntilNextExecution(), cancellationToken);
+
+                    this.Execute();
+
+                    _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
+                }
+            }, cancellationToken);
+
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
 
+        private int UntilNextExecution() => Math.Max(0, (int)_nextRun.Subtract(DateTime.Now).TotalMilliseconds);
+
         public void Dispose()
         {
-            
-            _timer?.Dispose();
         }
     }
 }

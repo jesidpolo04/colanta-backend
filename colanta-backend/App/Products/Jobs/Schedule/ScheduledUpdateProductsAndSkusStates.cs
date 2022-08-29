@@ -9,16 +9,16 @@ namespace colanta_backend.App.Products.Jobs
     using Products.Domain;
     using Shared.Application;
     using Shared.Domain;
+    using NCrontab;
     public class ScheduledUpdateProductsAndSkusStates : IHostedService , IDisposable
     {
-        private Timer _timer;
+        private readonly CrontabSchedule _crontabSchedule;
+        private DateTime _nextRun;
+        private const string Schedule = "0 0/30 * * * *";
         private ProductsRepository productsLocalRepository;
         private ProductsVtexRepository productsVtexRepository;
         private SkusRepository skusLocalRepository;
         private SkusVtexRepository skusVtexRepository;
-
-        private TimeSpan timeout = TimeSpan.FromSeconds(5);
-        private TimeSpan interval = TimeSpan.FromMinutes(8);
         
         public ScheduledUpdateProductsAndSkusStates(
             ProductsRepository productsLocalRepository,
@@ -27,13 +27,15 @@ namespace colanta_backend.App.Products.Jobs
             SkusVtexRepository skusVtexRepository
             )
         {
+            _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
+            _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.productsLocalRepository = productsLocalRepository;
             this.productsVtexRepository = productsVtexRepository;
             this.skusLocalRepository = skusLocalRepository;
             this.skusVtexRepository = skusVtexRepository;
         }
 
-        public async void Execute(object state)
+        public async void Execute()
         {
             UpdateProductsAndSkusStates updateProductsAndSkusStates = new UpdateProductsAndSkusStates(
                 this.productsLocalRepository,
@@ -46,19 +48,30 @@ namespace colanta_backend.App.Products.Jobs
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, timeout, interval);
+            Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(UntilNextExecution(), cancellationToken);
+
+                    this.Execute();
+
+                    _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
+                }
+            }, cancellationToken);
+
             return Task.CompletedTask;
         }
 
+        private int UntilNextExecution() => Math.Max(0, (int)_nextRun.Subtract(DateTime.Now).TotalMilliseconds);
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
 
         public void Dispose()
         {
-            _timer?.Dispose();
         }
     }
 }

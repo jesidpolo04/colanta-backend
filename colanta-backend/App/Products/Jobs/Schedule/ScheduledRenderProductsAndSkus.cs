@@ -2,22 +2,24 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-
+using NCrontab;
 
 namespace colanta_backend.App.Products.Jobs
 {
     public class ScheduledRenderProductsAndSkus : IHostedService , IDisposable
     {
-        private Timer _timer;
+        private readonly CrontabSchedule _crontabSchedule;
+        private DateTime _nextRun;
+        private const string Schedule = "0 10 0/2 * * *";
         private RenderProductsAndSkus renderProductsAndSkus;
-        private TimeSpan timeout = TimeSpan.FromSeconds(5);
-        private TimeSpan interval = TimeSpan.FromMinutes(8);
         public ScheduledRenderProductsAndSkus(RenderProductsAndSkus renderProductsAndSkus)
         {
+            _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
+            _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.renderProductsAndSkus = renderProductsAndSkus;
         }
 
-        public async void Execute(object state)
+        public async void Execute()
         {
             using (renderProductsAndSkus)
             {
@@ -27,19 +29,29 @@ namespace colanta_backend.App.Products.Jobs
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, timeout, interval);
+            Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(UntilNextExecution(), cancellationToken);
+
+                    this.Execute();
+
+                    _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
+                }
+            }, cancellationToken);
+
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
+        private int UntilNextExecution() => Math.Max(0, (int)_nextRun.Subtract(DateTime.Now).TotalMilliseconds);
 
         public void Dispose()
         {
-            _timer?.Dispose();
         }
     }
 }

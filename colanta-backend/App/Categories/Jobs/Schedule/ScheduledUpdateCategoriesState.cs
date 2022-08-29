@@ -8,9 +8,13 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Hosting;
+    using NCrontab;
     public class ScheduledUpdateCategoriesState: IDisposable, IHostedService
     {
-        private Timer _timer;
+        private readonly CrontabSchedule _crontabSchedule;
+        private DateTime _nextRun;
+        private const string Schedule = "0 0/30 * * * *";
+
         private CategoriesRepository localRepository;
         private CategoriesVtexRepository vtexRepository;
 
@@ -18,11 +22,13 @@
             CategoriesRepository localRepository,
             CategoriesVtexRepository vtexRepository)
         {
+            _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
+            _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
         }
 
-        public async void Execute(object state)
+        public async void Execute()
         {
             UpdateCategoriesState updateCategoriesState = new UpdateCategoriesState(this.localRepository, this.vtexRepository);
             await updateCategoriesState.Invoke();
@@ -30,19 +36,31 @@
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromSeconds(5), TimeSpan.FromMinutes(1));
+            Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(UntilNextExecution(), cancellationToken);
+
+                    this.Execute();
+
+                    _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
+                }
+            }, cancellationToken);
+
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
 
+        private int UntilNextExecution() => Math.Max(0, (int)_nextRun.Subtract(DateTime.Now).TotalMilliseconds);
+
+
         public void Dispose()
         {
-            _timer?.Dispose();
         }
     }
 }
