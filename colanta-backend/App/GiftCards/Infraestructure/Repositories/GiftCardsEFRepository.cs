@@ -178,6 +178,9 @@
             efGiftCard.expire_date = giftCard.expire_date;
             efGiftCard.balance = giftCard.balance;
             efGiftCard.siesa_id = giftCard.siesa_id;
+            efGiftCard.owner = giftCard.owner;
+            efGiftCard.owner_email = giftCard.owner_email;
+            efGiftCard.used = giftCard.used;
 
             this.dbContext.SaveChanges();
             return giftCard;
