@@ -3,11 +3,12 @@
     using App.Categories.Domain;
     using App.Shared.Domain;
     using App.Shared.Application;
+    using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Text.Json;
     using System.Text.Json.Serialization;
-    public class UpCategoriesToVtex
+    public class UpCategoriesToVtex : IDisposable
     {
         private string processName = "Carga de categorías nulas a Vtex";
         private CategoriesRepository localRepository;
@@ -32,6 +33,13 @@
 
             this.failedCategories = new List<Category>();
             this.loadCategories = new List<Category>();
+        }
+
+        public void Dispose()
+        {
+            this.details.Clear();
+            this.failedCategories.Clear();
+            this.loadCategories.Clear();
         }
 
         public async Task Invoke()
