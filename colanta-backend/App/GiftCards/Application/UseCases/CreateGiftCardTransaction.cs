@@ -16,6 +16,7 @@
         {
             GiftCard giftcard = await this.localRepository.getGiftCardBySiesaId(giftcardId);
             Transaction transaction = giftcard.newTransaction(request.value, JsonSerializer.Serialize(request));
+            giftcard.hasBeenUsed();
             transaction = await this.localRepository.saveGiftCardTransaction(transaction);
             await this.localRepository.updateGiftCard(giftcard);
             return transaction;

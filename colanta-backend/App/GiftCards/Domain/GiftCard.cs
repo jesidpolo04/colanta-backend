@@ -31,5 +31,10 @@
         {
             this.balance = newBalance;
         }
+
+        public void hasBeenUsed()
+        {
+            this.used = true;
+        }
     }
 }
