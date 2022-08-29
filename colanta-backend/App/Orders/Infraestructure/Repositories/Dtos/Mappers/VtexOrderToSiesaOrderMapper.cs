@@ -8,6 +8,7 @@
     using Promotions.Domain;
     using SiesaOrders.Domain;
     using System.Threading.Tasks;
+    using GiftCards.Domain;
     public class VtexOrderToSiesaOrderMapper
     {
         private SkusRepository skusLocalRepository;
@@ -213,7 +214,7 @@
             foreach (Payment payment in payments)
             {
                 if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return "CUPO";
-                if (PaymentMethods.GIFTCARD.id == payment.paymentSystem && payment.giftCardProvider == "cupo") return "CUPO";
+                if (PaymentMethods.GIFTCARD.id == payment.paymentSystem && payment.giftCardProvider == Providers.CUPO) return "CUPO";
             }
             return "CON";
         }
