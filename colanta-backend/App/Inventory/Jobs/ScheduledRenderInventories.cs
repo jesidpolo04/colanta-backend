@@ -4,18 +4,23 @@
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using NCrontab;
 
     public class ScheduledRenderInventories : IHostedService, IDisposable
     {
-        private Timer _timer;
+        private readonly CrontabSchedule _crontabSchedule;
+        private DateTime _nextRun;
+        private const string Schedule = "0 0/30 * * * *";
         private RenderInventories renderInventories;
 
         public ScheduledRenderInventories(RenderInventories renderInventories)
         {
+            _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
+            _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.renderInventories = renderInventories;
         }
 
-        public async void Execute(object state)
+        public async void Execute()
         {
             using (renderInventories)
             {
@@ -25,20 +30,30 @@
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine("Start Async ... :D");
-            _timer = new Timer(Execute, null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
+            Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(UntilNextExecution(), cancellationToken);
+
+                    this.Execute();
+
+                    _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
+                }
+            }, cancellationToken);
+
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
 
+        private int UntilNextExecution() => Math.Max(0, (int)_nextRun.Subtract(DateTime.Now).TotalMilliseconds);
+
         public void Dispose()
         {
-            _timer?.Dispose();
         }
     }
 }
