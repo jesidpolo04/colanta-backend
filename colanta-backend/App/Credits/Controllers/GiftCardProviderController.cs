@@ -44,6 +44,8 @@ namespace colanta_backend.App.Credits.Controllers
         [Route("giftcards/_search")] // obtener giftcards
         public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
+            if(vtexInfo.client.document == null || vtexInfo.client.document == "") return new GiftCardProviderDto[0] {};
+            if(vtexInfo.client.email == null || vtexInfo.client.email == "") return new GiftCardProviderDto[0] {};
             FindCredit useCase = new FindCredit(this.giftcardLocalRepository, this.creditsSiesaRepository, this.siesaOrdersLocalRepository);
             GiftCard[] giftCards = await useCase.Invoke(vtexInfo.client.document, vtexInfo.client.email);
             List<GiftCardProviderDto> giftCardProviderDtos = new List<GiftCardProviderDto>();
