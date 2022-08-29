@@ -294,6 +294,7 @@
         public string giftCardId { get; set; }
         public string giftCardName { get; set; }
         public string giftCardCaption { get; set; }
+        public string giftCardProvider { get; set; }
         public string redemptionCode { get; set; }
         public string group { get; set; }
         public string tid { get; set; }
