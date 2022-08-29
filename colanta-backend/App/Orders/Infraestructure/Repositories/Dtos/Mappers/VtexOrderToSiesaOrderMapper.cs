@@ -221,7 +221,8 @@
 
         private string getWayToPay(Payment payment)
         {
-            if (PaymentMethods.GIFTCARD.id == payment.paymentSystem) return "GIFTCARD";
+            if (PaymentMethods.GIFTCARD.id == payment.paymentSystem && Providers.GIFTCARDS == payment.giftCardProvider) return "GIFTCARD";
+            if (PaymentMethods.GIFTCARD.id == payment.paymentSystem && Providers.CUPO == payment.giftCardProvider) return "CUPO";
             if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem && PaymentMethods.CONTRAENTREGA.name == payment.paymentSystemName) return "CONTRAENTREGA";
             if (PaymentMethods.WOMPI.id == payment.paymentSystem) return "WOMPI";
             if (PaymentMethods.EFECTIVO.id == payment.paymentSystem && PaymentMethods.EFECTIVO.name == payment.paymentSystemName) return "EFECTIVO";
