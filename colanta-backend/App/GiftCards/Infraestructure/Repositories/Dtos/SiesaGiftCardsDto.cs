@@ -26,9 +26,11 @@
             giftCard.code = this.codigo;
             giftCard.token = this.codigo;
             giftCard.owner = this.propietario;
+            giftCard.provider = Providers.GIFTCARDS;
             giftCard.expire_date = this.fecha_expiracion;
             giftCard.emision_date = this.fecha_emision;
             giftCard.business = this.negocio;
+            giftCard.used = false;
             return giftCard;
         }
 

@@ -3,6 +3,6 @@
     public class Providers
     {
         public static readonly string CUPO = "cupo";
-        public static readonly string GIFTCARDS = "middleware";
+        public static readonly string GIFTCARDS = "bono";
     }
 }
