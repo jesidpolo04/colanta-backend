@@ -128,8 +128,9 @@
             {
                 this.mailService.SendMailToWarehouse(wharehouseId, order);
             }
-            catch
+            catch(Exception exception)
             {
+                System.Console.WriteLine($"Error al enviar el mail a la tienda: {exception.Message}");
             } 
         }
 
