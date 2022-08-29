@@ -7,13 +7,13 @@
     using Orders.SiesaOrders.Domain;
     using System.Threading.Tasks;
     using System.Collections.Generic;
-    public class FindCredit
+    public class GenerateCode
     {
         private GiftCardsRepository giftCardsRepository;
         private CreditsSiesaRepository creditsSiesaRepository;
         private SiesaOrdersRepository siesaOrdersRepository;
 
-        public FindCredit(GiftCardsRepository giftCardsRepository, CreditsSiesaRepository creditsSiesaRepository, SiesaOrdersRepository siesaOrdersRepository)
+        public GenerateCode(GiftCardsRepository giftCardsRepository, CreditsSiesaRepository creditsSiesaRepository, SiesaOrdersRepository siesaOrdersRepository)
         {
             this.giftCardsRepository = giftCardsRepository;
             this.creditsSiesaRepository = creditsSiesaRepository;
