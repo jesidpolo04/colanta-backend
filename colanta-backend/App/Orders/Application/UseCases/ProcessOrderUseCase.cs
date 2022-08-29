@@ -77,7 +77,7 @@
                     SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                     if (siesaOrder != null)
                     {
-                        this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].addressId);
+                        this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].polygonName);
                     }
                 }
             }
@@ -89,7 +89,7 @@
                     SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                     if(siesaOrder != null)
                     {
-                        this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].addressId);
+                        this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].polygonName);
                     }
                 }
             }
