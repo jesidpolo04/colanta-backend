@@ -11,10 +11,11 @@
         private CategoriesVtexRepository vtexRepository;
         private ILogger logger;
         private CustomConsole console = new CustomConsole();
-        public UpdateCategoriesState(CategoriesRepository localRepository, CategoriesVtexRepository vtexRepository)
+        public UpdateCategoriesState(CategoriesRepository localRepository, CategoriesVtexRepository vtexRepository, ILogger logger)
         {
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
+            this.logger = logger;
         }
 
         public async Task Invoke()
