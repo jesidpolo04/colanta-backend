@@ -35,7 +35,7 @@ namespace colanta_backend.App.Products.Jobs
             this.skusVtexRepository = skusVtexRepository;
         }
 
-        public async void Execute()
+        public void Execute()
         {
             UpdateProductsAndSkusStates updateProductsAndSkusStates = new UpdateProductsAndSkusStates(
                 this.productsLocalRepository,
@@ -43,7 +43,7 @@ namespace colanta_backend.App.Products.Jobs
                 this.skusLocalRepository,
                 this.skusVtexRepository
                 );
-            await updateProductsAndSkusStates.Invoke();
+            updateProductsAndSkusStates.Invoke().Wait();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

@@ -22,11 +22,11 @@
             this.renderPromotions = renderPromotions;
         }
 
-        public async void Execute()
+        public void Execute()
         {
             using (renderPromotions)
             {
-                await this.renderPromotions.Invoke();
+                this.renderPromotions.Invoke().Wait();
             }
                 
         }

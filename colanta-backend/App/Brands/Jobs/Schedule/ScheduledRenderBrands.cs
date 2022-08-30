@@ -19,11 +19,11 @@ namespace colanta_backend.App.Brands.Jobs
             this.renderBrands = renderBrands;
         }
 
-        public async void Execute()
+        public void Execute()
         {
             using (renderBrands)
             {
-                await this.renderBrands.Invoke();
+                this.renderBrands.Invoke().Wait();
             }
         }
 

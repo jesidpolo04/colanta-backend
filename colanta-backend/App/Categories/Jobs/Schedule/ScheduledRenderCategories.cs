@@ -19,11 +19,11 @@
             this.renderCategories = renderCategories;
         }
 
-        public async void Execute()
+        public void Execute()
         {
             using (renderCategories)
             {
-                await this.renderCategories.Invoke();
+                this.renderCategories.Invoke().Wait();
             }
         }
 

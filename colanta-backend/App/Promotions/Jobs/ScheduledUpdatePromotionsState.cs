@@ -23,9 +23,9 @@
             this.updatePromotionsState = updatePromotionsState;
         }
 
-        public async void Execute()
+        public void Execute()
         {
-            await this.updatePromotionsState.Invoke();
+            this.updatePromotionsState.Invoke().Wait();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

@@ -20,11 +20,11 @@
             this.renderInventories = renderInventories;
         }
 
-        public async void Execute()
+        public void Execute()
         {
             using (renderInventories)
             {
-                await renderInventories.Invoke();
+                renderInventories.Invoke().Wait();
             }
         }
 

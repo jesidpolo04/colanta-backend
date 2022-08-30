@@ -31,12 +31,12 @@
             this.logs = logs;
         }
 
-        public async void Execute()
+        public void Execute()
         {
             UpCategoriesToVtex upCategoriesToVtex = new UpCategoriesToVtex(this.localRepository, this.vtexRepository, this.logs);
             using (upCategoriesToVtex)
             {
-                await upCategoriesToVtex.Invoke();
+                upCategoriesToVtex.Invoke().Wait();
             }
         }
 

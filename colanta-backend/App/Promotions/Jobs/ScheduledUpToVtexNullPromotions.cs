@@ -28,13 +28,13 @@
             this.vtexRepository = vtexRepository;
         }
 
-        public async void Execute()
+        public void Execute()
         {
             UpToVtexNullPromotions upToVtexNullPromotions = new UpToVtexNullPromotions(
                 this.localRepository,
                 this.vtexRepository
                 );
-            await upToVtexNullPromotions.Invoke();
+            upToVtexNullPromotions.Invoke().Wait();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

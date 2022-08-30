@@ -19,11 +19,11 @@ namespace colanta_backend.App.Products.Jobs
             this.renderProductsAndSkus = renderProductsAndSkus;
         }
 
-        public async void Execute()
+        public void Execute()
         {
             using (renderProductsAndSkus)
             {
-                await this.renderProductsAndSkus.Invoke();
+                this.renderProductsAndSkus.Invoke().Wait();
             }
         }
 

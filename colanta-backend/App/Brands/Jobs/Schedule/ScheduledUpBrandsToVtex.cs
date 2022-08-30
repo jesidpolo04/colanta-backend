@@ -20,10 +20,10 @@
             this.brandsLocalRepository = brandsLocalRepository;
             this.brandVtexRepository = brandsVtexRepository;
         }
-        public async void Execute()
+        public void Execute()
         {
             UpBrandsToVtex upBrandsToVtex = new UpBrandsToVtex(this.brandsLocalRepository, this.brandVtexRepository);
-            await upBrandsToVtex.Invoke();
+            upBrandsToVtex.Invoke().Wait();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

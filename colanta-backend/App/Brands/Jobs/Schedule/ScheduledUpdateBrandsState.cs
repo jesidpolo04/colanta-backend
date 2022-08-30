@@ -20,7 +20,7 @@
             this.brandsLocalRepository = brandsLocalRepository;
             this.brandVtexRepository = brandsVtexRepository;
         }
-        public async void Execute()
+        public void Execute()
         {
             UpdateBrandsState updateBrandsState = new UpdateBrandsState(this.brandsLocalRepository, this.brandVtexRepository);
             updateBrandsState.Invoke();

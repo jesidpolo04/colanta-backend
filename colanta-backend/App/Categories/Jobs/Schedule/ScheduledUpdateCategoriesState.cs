@@ -31,10 +31,10 @@
             this.logger = logger;
         }
 
-        public async void Execute()
+        public void Execute()
         {
             UpdateCategoriesState updateCategoriesState = new UpdateCategoriesState(this.localRepository, this.vtexRepository, this.logger);
-            await updateCategoriesState.Invoke();
+            updateCategoriesState.Invoke().Wait();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

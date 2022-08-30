@@ -19,11 +19,11 @@
             this.renderPrices = renderPrices;
         }
 
-        public async void Execute()
+        public void Execute()
         {
             using (renderPrices)
             {
-                await this.renderPrices.Invoke();
+                this.renderPrices.Invoke().Wait();
             }
             
         }
