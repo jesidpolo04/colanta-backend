@@ -17,20 +17,23 @@
 
         private CategoriesRepository localRepository;
         private CategoriesVtexRepository vtexRepository;
+        private ILogger logger;
 
         public ScheduledUpdateCategoriesState(
             CategoriesRepository localRepository,
-            CategoriesVtexRepository vtexRepository)
+            CategoriesVtexRepository vtexRepository,
+            ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
+            this.logger = logger;
         }
 
         public async void Execute()
         {
-            UpdateCategoriesState updateCategoriesState = new UpdateCategoriesState(this.localRepository, this.vtexRepository);
+            UpdateCategoriesState updateCategoriesState = new UpdateCategoriesState(this.localRepository, this.vtexRepository, this.logger);
             await updateCategoriesState.Invoke();
         }
 
