@@ -8,18 +8,21 @@
     using Microsoft.Extensions.Configuration;
     using Shared.Domain;
     using Shared.Application;
+    using NCrontab;
     public class ScheduledRenderPromotions : IHostedService, IDisposable
     {
-        private Timer _timer;
+        private readonly CrontabSchedule _crontabSchedule;
+        private DateTime _nextRun;
+        private const string Schedule = "0 30 0/2 * * *";
         private RenderPromotions renderPromotions;
-        private TimeSpan timeout = TimeSpan.FromSeconds(5);
-        private TimeSpan interval = TimeSpan.FromMinutes(8);
         public ScheduledRenderPromotions(RenderPromotions renderPromotions)
         {
+            _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
+            _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.renderPromotions = renderPromotions;
         }
 
-        public async void Execute(object state)
+        public async void Execute()
         {
             using (renderPromotions)
             {
@@ -30,19 +33,30 @@
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, timeout, interval);
+            Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(UntilNextExecution(), cancellationToken);
+
+                    this.Execute();
+
+                    _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
+                }
+            }, cancellationToken);
+
             return Task.CompletedTask;
         }
 
+        private int UntilNextExecution() => Math.Max(0, (int)_nextRun.Subtract(DateTime.Now).TotalMilliseconds);
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
 
         public void Dispose()
         {
-            _timer?.Dispose();
         }
     }
 }

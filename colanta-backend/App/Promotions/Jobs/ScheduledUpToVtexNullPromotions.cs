@@ -8,9 +8,12 @@
     using Microsoft.Extensions.Configuration;
     using Shared.Domain;
     using Shared.Application;
+    using NCrontab;
     public class ScheduledUpToVtexNullPromotions : IHostedService, IDisposable
     {
-        private Timer _timer;
+        private readonly CrontabSchedule _crontabSchedule;
+        private DateTime _nextRun;
+        private const string Schedule = "0 30 0/1 * * *";
         private PromotionsRepository localRepository;
         private PromotionsVtexRepository vtexRepository;
 
@@ -18,11 +21,14 @@
             PromotionsRepository localRepository,
             PromotionsVtexRepository vtexRepository)
         {
+            _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
+            _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
+
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
         }
 
-        public async void Execute(object state)
+        public async void Execute()
         {
             UpToVtexNullPromotions upToVtexNullPromotions = new UpToVtexNullPromotions(
                 this.localRepository,
@@ -33,19 +39,30 @@
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Execute, null, TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30));
+            Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(UntilNextExecution(), cancellationToken);
+
+                    this.Execute();
+
+                    _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
+                }
+            }, cancellationToken);
+
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
 
+        private int UntilNextExecution() => Math.Max(0, (int)_nextRun.Subtract(DateTime.Now).TotalMilliseconds);
+
         public void Dispose()
         {
-            _timer?.Dispose();
         }
     }
 }
