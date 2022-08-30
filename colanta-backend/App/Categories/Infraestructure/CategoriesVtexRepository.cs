@@ -117,9 +117,14 @@
         {
             string endpoint = "/api/catalog/pvt/category/";
             HttpResponseMessage vtexResponse = await this.httpClient.GetAsync("https://" + this.accountName + "." + this.vtexEnvironment + endpoint + vtexId);
+
             if (vtexResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 return null;
+            }
+            if(vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
+            {
+                throw new VtexException(vtexResponse, $"Vtex respondió con status: {vtexResponse.StatusCode}");
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             VtexCategoryDto categoryDto = JsonSerializer.Deserialize<VtexCategoryDto>(vtexResponseBody);

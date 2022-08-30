@@ -9,7 +9,8 @@
     {
         private CategoriesRepository localRepository;
         private CategoriesVtexRepository vtexRepository;
-
+        private ILogger logger;
+        private CustomConsole console = new CustomConsole();
         public UpdateCategoriesState(CategoriesRepository localRepository, CategoriesVtexRepository vtexRepository)
         {
             this.localRepository = localRepository;
@@ -34,13 +35,15 @@
                     }
                     catch(VtexException vtexException)
                     {
-                        throw vtexException;
+                        console.throwException(vtexException.Message);
+                        await logger.writelog(vtexException);
                     }
                 }
             }
             catch (Exception exception)
             {
-                throw exception;
+                console.throwException(exception.Message);
+                await logger.writelog(exception);
             }
         }
     }
