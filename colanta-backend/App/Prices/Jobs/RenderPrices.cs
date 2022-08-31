@@ -132,7 +132,7 @@
                         catch (VtexException vtexException)
                         {
                             this.console.throwException(vtexException.Message);
-                            this.failedPrices.Add(siesaPrice);
+                            this.failedPrices.Add(localPrice);
                             this.details.Add(new Detail(
                                         origin: "vtex",
                                         action: vtexException.requestUrl,
@@ -144,7 +144,7 @@
                         }
                         catch (Exception exception)
                         {
-                            this.failedPrices.Add(siesaPrice);
+                            this.failedPrices.Add(localPrice);
                             this.console.throwException(exception.Message);
                             this.logger.writelog(exception);
                         }
@@ -189,7 +189,7 @@
                         catch (VtexException vtexException)
                         {
                             this.console.throwException(vtexException.Message);
-                            this.failedPrices.Add(siesaPrice);
+                            this.failedPrices.Add(localPrice);
                             this.details.Add(new Detail(
                                         origin: "vtex",
                                         action: vtexException.requestUrl,
@@ -201,7 +201,7 @@
                         }
                         catch (Exception exception)
                         {
-                            this.failedPrices.Add(siesaPrice);
+                            this.failedPrices.Add(localPrice);
                             this.console.throwException(exception.Message);
                             this.logger.writelog(exception);
                         }

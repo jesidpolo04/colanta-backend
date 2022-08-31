@@ -56,7 +56,7 @@
                     <td>@price.sku.name</td>
                     <td>@price.sku.siesa_id</td>
                     <td>@price.sku.vtex_id</td>
-                    <td>@price.price</td>
+                    <td>@string.Format("{0:C}", price.price)</td>
                 </tr>
             }
         </tbody>
@@ -83,7 +83,7 @@
                     <td>@price.sku.name</td>
                     <td>@price.sku.siesa_id</td>
                     <td>@price.sku.vtex_id</td>
-                    <td>@price.price</td>
+                    <td>@string.Format("{0:C}", price.price)</td>
                 </tr>
             }
         </tbody>
