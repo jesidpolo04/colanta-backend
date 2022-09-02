@@ -36,8 +36,8 @@ namespace colanta_backend.App.Credits.Controllers
             GenerateCupoLacteoGiftcard useCase = new GenerateCupoLacteoGiftcard(this.giftcardLocalRepository, creditsSiesaRepository, siesaOrdersLocalRepository);
             try
             {
-                GiftCard[] giftcards = useCase.Invoke(request.document, request.email).Result;
-                if(giftcards.Length == 0) return NotFound();
+                GiftCard giftcards = useCase.Invoke(request.document, request.email, request.business).Result;
+                if(giftcards == null) return NotFound();
                 return Ok();
             }
             catch
