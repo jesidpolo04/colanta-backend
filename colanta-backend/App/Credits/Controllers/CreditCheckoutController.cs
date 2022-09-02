@@ -33,6 +33,7 @@ namespace colanta_backend.App.Credits.Controllers
         {
             if (request.email == "" || request.email == null) return BadRequest();
             if (request.document == "" || request.document == null) return BadRequest();
+            if(request.business == "" || request.business == null) return BadRequest();
             GenerateCupoLacteoGiftcard useCase = new GenerateCupoLacteoGiftcard(this.giftcardLocalRepository, creditsSiesaRepository, siesaOrdersLocalRepository);
             try
             {
