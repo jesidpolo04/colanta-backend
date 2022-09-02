@@ -114,7 +114,7 @@ namespace colanta_backend
             services.AddTransient<App.CustomerCredit.Jobs.RenderCreditAccounts>();
             services.AddTransient<App.CustomerCredit.Domain.IRenderAccountsMail, App.CustomerCredit.Infraestructure.RenderAccountsMail>();
             //Dependencies Injections Credits
-            services.AddTransient<App.Credits.Domain.CreditsSiesaRepository, App.Credits.Infraestructure.MockCreditSiesaRepository>();
+            services.AddTransient<App.Credits.Domain.CupoLacteoSiesaRepository, App.Credits.Infraestructure.MockCreditSiesaRepository>();
             //Dependencies Injections Orders
             services.AddTransient<App.Orders.Domain.OrdersRepository, App.Orders.Infraestructure.OrdersEFRepository>();
             services.AddTransient<App.Orders.Domain.OrdersVtexRepository, App.Orders.Infraestructure.OrdersVtexRepository>();
@@ -136,30 +136,30 @@ namespace colanta_backend
             //------------------- Tasks -------------------------//
 
             //Scheduled Tasks
-            //services.AddHostedService<ScheduledRenderBrands>();
-            //services.AddHostedService<ScheduledUpdateBrandsState>();
-            //services.AddHostedService<ScheduledUpBrandsToVtex>();
+            services.AddHostedService<ScheduledRenderBrands>();
+            services.AddHostedService<ScheduledUpdateBrandsState>();
+            services.AddHostedService<ScheduledUpBrandsToVtex>();
 
-            //services.AddHostedService<ScheduledRenderCategories>();
-            //services.AddHostedService<ScheduledUpCategoriesToVtex>();
-            //services.AddHostedService<ScheduledUpdateCategoriesState>();
+            services.AddHostedService<ScheduledRenderCategories>();
+            services.AddHostedService<ScheduledUpCategoriesToVtex>();
+            services.AddHostedService<ScheduledUpdateCategoriesState>();
             //services.AddHostedService<ScheduledActivateAllCategories>();
             //services.AddHostedService<ScheduledMapFamiliesToStore>();
 
-            //services.AddHostedService<ScheduledRenderProductsAndSkus>();
-            //services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
-            //services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
+            services.AddHostedService<ScheduledRenderProductsAndSkus>();
+            services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
+            services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
             //services.AddHostedService<ScheduledFixProductSku>();
 
-            //services.AddHostedService<ScheduledRenderPrices>();
+            services.AddHostedService<ScheduledRenderPrices>();
 
             //services.AddHostedService<ScheduledRenderWarehouses>();
 
-            //services.AddHostedService<ScheduledRenderInventories>();
+            services.AddHostedService<ScheduledRenderInventories>();
 
-            //services.AddHostedService<ScheduledRenderPromotions>();
-            //services.AddHostedService<ScheduledUpdatePromotionsState>();
-            //services.AddHostedService<ScheduledUpToVtexNullPromotions>();
+            services.AddHostedService<ScheduledRenderPromotions>();
+            services.AddHostedService<ScheduledUpdatePromotionsState>();
+            services.AddHostedService<ScheduledUpToVtexNullPromotions>();
 
             //services.AddHostedService<ScheduledRenderCreditAccounts>();
             //services.AddHostedService<ScheduledReduceVtexCreditLimit>();
