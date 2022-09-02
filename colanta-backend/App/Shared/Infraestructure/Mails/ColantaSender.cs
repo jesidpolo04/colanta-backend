@@ -11,19 +11,11 @@
     public class ColantaSender : EmailSender
     {
         private SmtpClient smtpClient;
-        private string password;
-        private string user;
-        private string from = "wilsonflorez184444z@gmail.com";
+        private string from = "pidecolanta@colanta.com.co";
 
         public ColantaSender()
         {
-            this.password = "Colanta$2025";
-            this.user = @"med\pidecolanta";
-
-            this.smtpClient = new SmtpClient("http://10.50.0.135");
-            this.smtpClient.EnableSsl = false;
-            this.smtpClient.UseDefaultCredentials = false;
-            this.smtpClient.Credentials = new NetworkCredential(this.user, this.password);
+            this.smtpClient = new SmtpClient("10.50.0.135");
             Email.DefaultSender = new SmtpSender(this.smtpClient);
             Email.DefaultRenderer = new RazorRenderer();
         }
@@ -41,6 +33,16 @@
         public void SendEmailMultiple(string title, string templatePath, object model, List<string> to)
         {
             throw new System.NotImplementedException();
+        }
+
+        public void SendHelloWorld()
+        {
+            Email
+               .From(this.from, "Middleware Colanta")
+               .To("jesdady482@gmail.com;jesidpolo04@gmail.com")
+               .Subject("Hola mundo")
+               .Body("Hola mundo desde Colanta SMTP")
+               .Send();
         }
     }
 }
