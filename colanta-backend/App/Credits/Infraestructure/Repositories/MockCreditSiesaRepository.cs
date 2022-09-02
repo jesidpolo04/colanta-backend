@@ -7,9 +7,9 @@
     using System;
     using System.Threading.Tasks;
 
-    public class MockCreditSiesaRepository : Domain.CreditsSiesaRepository
+    public class MockCreditSiesaRepository : Domain.CupoLacteoSiesaRepository
     {
-        public async Task<GiftCard> getCreditByDocumentAndEmail(string document, string email)
+        public async Task<GiftCard> getCupoLacteo(string document, string email, string business = "mercolanta")
         {
             var documentAvailable = "1002999476";
             var emailAvailable = "jesing482@gmail.com";
@@ -27,6 +27,7 @@
                 giftcard.emision_date = DateTime.Now.ToString(DateFormats.UTC);
                 giftcard.expire_date = DateTime.Now.AddMinutes(5).ToString(DateFormats.UTC);
                 giftcard.name = "Cupo Lacteo";
+                giftcard.business = business;
                 giftcard.used = false;
                 return giftcard;
             }

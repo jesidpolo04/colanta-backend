@@ -16,17 +16,12 @@ namespace colanta_backend.App.Credits.Controllers
     [ApiController]
     public class GiftCardsProviderController : ControllerBase
     {
-        private CreditsSiesaRepository creditsSiesaRepository;
         private GiftCardsRepository giftcardLocalRepository;
-        private SiesaOrdersRepository siesaOrdersLocalRepository;
-        public GiftCardsProviderController(
-            CreditsSiesaRepository creditsSiesaRepository,
-            GiftCardsRepository giftcardsLocalRepository,
-            SiesaOrdersRepository siesaOrdersLocalRepository)
+        private SkusRepository skusRepository;
+        public GiftCardsProviderController(GiftCardsRepository giftcardsLocalRepository, SkusRepository skusRepository)
         {
-            this.creditsSiesaRepository = creditsSiesaRepository;
             this.giftcardLocalRepository = giftcardsLocalRepository;
-            this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
+            this.skusRepository = skusRepository;
         }
 
         [HttpPost]
@@ -48,8 +43,8 @@ namespace colanta_backend.App.Credits.Controllers
             if(vtexInfo.client.email == null || vtexInfo.client.email == "") return new GiftCardProviderDto[0] {};
             if(vtexInfo.cart.redemptionCode == null || vtexInfo.cart.redemptionCode == "") return new GiftCardProviderDto[0] {};
 
-            SearchCredit useCase = new SearchCredit(this.giftcardLocalRepository);
-            GiftCard[] giftCards = await useCase.Invoke(vtexInfo.client.document, vtexInfo.client.email, vtexInfo.cart.redemptionCode);
+            SearchGiftcard useCase = new SearchGiftcard(this.giftcardLocalRepository, this.skusRepository);
+            GiftCard[] giftCards = await useCase.Invoke(vtexInfo.client.document, vtexInfo.client.email, vtexInfo.cart.redemptionCode, vtexInfo.cart.items[0].refId);
             List<GiftCardProviderDto> giftCardProviderDtos = new List<GiftCardProviderDto>();
             foreach (GiftCard giftCard in giftCards)
             {

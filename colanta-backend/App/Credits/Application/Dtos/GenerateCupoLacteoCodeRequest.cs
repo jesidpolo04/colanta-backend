@@ -4,5 +4,6 @@
     {
         public string document { get; set; }
         public string email { get; set; }
+        public string business { get; set; }
     }
 }

@@ -16,11 +16,11 @@ namespace colanta_backend.App.Credits.Controllers
     [ApiController]
     public class CreditCheckoutController : ControllerBase
     {
-        private CreditsSiesaRepository creditsSiesaRepository;
+        private CupoLacteoSiesaRepository creditsSiesaRepository;
         private GiftCardsRepository giftcardLocalRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
 
-        public CreditCheckoutController(CreditsSiesaRepository creditsSiesaRepository, GiftCardsRepository giftcardLocalRepository, SiesaOrdersRepository siesaOrdersLocalRepository)
+        public CreditCheckoutController(CupoLacteoSiesaRepository creditsSiesaRepository, GiftCardsRepository giftcardLocalRepository, SiesaOrdersRepository siesaOrdersLocalRepository)
         {
             this.creditsSiesaRepository = creditsSiesaRepository;
             this.giftcardLocalRepository = giftcardLocalRepository;
@@ -33,7 +33,7 @@ namespace colanta_backend.App.Credits.Controllers
         {
             if (request.email == "" || request.email == null) return BadRequest();
             if (request.document == "" || request.document == null) return BadRequest();
-            GenerateCode useCase = new GenerateCode(this.giftcardLocalRepository, creditsSiesaRepository, siesaOrdersLocalRepository);
+            GenerateCupoLacteoGiftcard useCase = new GenerateCupoLacteoGiftcard(this.giftcardLocalRepository, creditsSiesaRepository, siesaOrdersLocalRepository);
             try
             {
                 GiftCard[] giftcards = useCase.Invoke(request.document, request.email).Result;
