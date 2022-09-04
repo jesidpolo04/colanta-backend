@@ -27,7 +27,6 @@ namespace colanta_backend.App.Inventory.Infraestructure
 
         public async Task<Inventory[]> getAllInventoriesByWarehouse(string warehouseSiesaId)
         {
-            Console.WriteLine("warehouse id: " + warehouseSiesaId);
             string token = await this.siesaAuth.getToken();
             string endpoint = "/api/ColantaWS/Inventario/" + warehouseSiesaId;
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, configuration["SiesaUrl"] + endpoint);
