@@ -4,20 +4,25 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace colanta_backend.App.Orders.Infraestructure
 {
     using Orders.SiesaOrders.Domain;
+    using Inventory.Domain;
     using System;
     using System.Collections.Generic;
     using System.Text.Json;
     public class NewOrderMailModel : PageModel
     {
         public SiesaOrder siesaOrder;
+        public Warehouse store;
+        public string storeName;
         public string vtexOrderId;
         public string siesaPedido;
         public DateTime deliveryDate;
         public DateTime orderDate;
         public bool pickupInStore;
         public List<WayToPay> wayToPays;
-        public NewOrderMailModel(SiesaOrder siesaOrder)
+        public NewOrderMailModel(SiesaOrder siesaOrder, Warehouse store)
         {
+            this.store = store;
+            this.storeName = store.name;
             this.siesaOrder = siesaOrder;
             this.vtexOrderId = siesaOrder.referencia_vtex;
             this.siesaPedido = siesaOrder.siesa_pedido;

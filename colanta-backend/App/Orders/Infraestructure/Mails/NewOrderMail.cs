@@ -19,13 +19,14 @@
 
         public void SendMailToWarehouse(string wharehouseId, SiesaOrder siesaOrder)
         {
+            Warehouse store = this.warehouseRepository.getWarehouseBySiesaId(wharehouseId).Result;
             this.subject = $"Tienes un nuevo pedido: #{siesaOrder.referencia_vtex}";
-            NewOrderMailModel model = new NewOrderMailModel(siesaOrder);
-            Warehouse warehouse = this.warehouseRepository.getWarehouseBySiesaId(wharehouseId).Result;
-            this.emailSender.SendEmail(this.subject, this.template, model, warehouse.email);
+            NewOrderMailModel model = new NewOrderMailModel(siesaOrder, store);
+            //this.emailSender.SendEmail(this.subject, this.template, model, store.email);
             //this.emailSender.SendEmail(this.subject, this.template, model, "cristianro@colanta.com.co");
             //this.emailSender.SendEmail(this.subject, this.template, model, "pvtcar1@colanta.com.co");
             //this.emailSender.SendEmail(this.subject, this.template, model, "pidecolanta@colanta.com.co");
+            this.emailSender.SendEmail(this.subject, this.template, model, "jesdady482@gmail.com");
         }
     }
 }
