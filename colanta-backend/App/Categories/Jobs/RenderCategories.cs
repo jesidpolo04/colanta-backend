@@ -107,6 +107,40 @@
                                 this.inactiveCategories.Add(childLocalCategory);
                             }
                         }
+                        foreach(Category childSiesaCategory in siesaCategory.childs)
+                        {
+                            Category childLocalCategory = await this.localRepository.getCategoryBySiesaId(childSiesaCategory.siesa_id);
+                            if(childLocalCategory != null)
+                            {
+                                if (childLocalCategory.isActive)
+                                {
+                                    this.notProccecedCategories.Add(childSiesaCategory);
+                                }
+                                else
+                                {
+                                    this.inactiveCategories.Add(childSiesaCategory);
+                                }
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    childLocalCategory = await this.localRepository.saveCategory(childSiesaCategory);
+                                    Category vtexChildCategory = await this.vtexRepository.saveCategory(childLocalCategory);
+                                    childLocalCategory.vtex_id = vtexChildCategory.vtex_id;
+                                    childLocalCategory = await this.localRepository.updateCategory(childLocalCategory);
+                                    this.loadCategories.Add(childLocalCategory);
+                                    this.details.Add(new Detail("vtex", "Guardar categoría", null, null, true));
+                                }
+                                catch(VtexException exception)
+                                {
+                                    this.console.throwException(exception.Message);
+                                    this.failedLoadCategories.Add(childSiesaCategory);
+                                    this.details.Add(new Detail("vtex", exception.requestUrl, exception.responseBody, exception.Message, false));
+                                    this.logger.writelog(exception);
+                                }
+                            }
+                        }
                     }
                     if(localCategory == null)
                     {
