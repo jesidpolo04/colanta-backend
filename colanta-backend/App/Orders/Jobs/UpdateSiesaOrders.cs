@@ -42,6 +42,7 @@
                     try
                     {
                         SiesaOrder newSiesaOrder = await this.siesaRepository.getOrderBySiesaId(unfinishedSiesaOrder.siesa_id);
+                        if (newSiesaOrder == null) continue;
                         if (newSiesaOrder.finalizado)
                         {
                             this.updateLocalSiesaOrder(newSiesaOrder, unfinishedSiesaOrder).Wait();

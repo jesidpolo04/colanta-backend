@@ -35,7 +35,7 @@ namespace colanta_backend.App.Orders.Infraestructure
 
         public async Task<SiesaOrder> getOrderBySiesaId(string siesaId)
         {
-            string endpoint = "api/pedidos/" + siesaId;
+            string endpoint = "api/ColantaWS/pedidos/" + siesaId;
             HttpResponseMessage siesaResponse = await httpClient.GetAsync(this.configuration["SiesaUrl"] + endpoint);
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             if (!siesaResponse.IsSuccessStatusCode)
@@ -43,8 +43,9 @@ namespace colanta_backend.App.Orders.Infraestructure
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             UpdatedSiesaOrderResponseDto siesaOrderDto = JsonSerializer.Deserialize<UpdatedSiesaOrderResponseDto>(siesaResponseBody);
-            SiesaOrder siesaOrder = siesaOrderDto.pedido.getSiesaOrderFromDto();
-            siesaOrder.finalizado = siesaOrderDto.finalizado;
+            if (!siesaOrderDto.finalizado) return null;
+            if (siesaOrderDto.encabezado == null) return null;
+            SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFromDto();
             return siesaOrder;
         }
 
