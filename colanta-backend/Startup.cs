@@ -30,6 +30,7 @@ namespace colanta_backend
     using App.Inventory.Jobs;
     using App.Promotions.Jobs;
     using App.CustomerCredit.Jobs;
+    using App.Orders.Jobs;
 
     public class Startup
     {
@@ -164,7 +165,7 @@ namespace colanta_backend
             //services.AddHostedService<ScheduledRenderCreditAccounts>();
             //services.AddHostedService<ScheduledReduceVtexCreditLimit>();
 
-            //services.AddHostedService<ScheduledUpdateSiesaOrders>();
+            services.AddHostedService<ScheduledUpdateSiesaOrders>();
 
             services.AddSwaggerGen(c =>
             {
