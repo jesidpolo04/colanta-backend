@@ -9,10 +9,12 @@
         public string responseBody;
         public string requestUrl;
         public string? requestBody;
+        public HttpResponseMessage httpResponse;
 
         public SiesaException(HttpResponseMessage httpResponse, string message)
             : base(message)
         {
+            this.httpResponse = httpResponse;
             this.status = (int) httpResponse.StatusCode;
             this.responseBody = httpResponse.Content.ReadAsStringAsync().Result;
             this.requestUrl = httpResponse.RequestMessage.RequestUri.ToString();

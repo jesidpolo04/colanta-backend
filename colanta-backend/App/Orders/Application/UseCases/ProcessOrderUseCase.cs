@@ -36,17 +36,12 @@
 
         public async Task Invoke(string vtexOrderId, string status, string lastStatus, string lastChange, string currentChange)
         {
-            VtexOrder vtexOrder = await this.vtexRepository.getOrderByVtexId(vtexOrderId);
+            
             Order localOrder = await this.localRepository.getOrderByVtexId(vtexOrderId);
+            VtexOrder vtexOrder = await this.vtexRepository.getOrderByVtexId(vtexOrderId);
+            List<PaymentMethod> payments = vtexOrder.getPaymentMethods();
 
-            string userVtexId = vtexOrder.clientProfileData.userProfileId;
-            string deliveryCountry = vtexOrder.shippingData.address.country;
-            string deliveryDepartment = vtexOrder.shippingData.address.state;
-            string deliveryCity = vtexOrder.shippingData.address.city;
-
-            if (localOrder != null && localOrder.status == status) return; // si no cambió nada, finalizar
-
-            if (localOrder != null && localOrder.status != status) //si cambió el estado ...
+            if (localOrder != null && this.orderStatusHasBeenChanged(localOrder.status, status))
             {
                 await this.localRepository.SaveOrderHistory(localOrder);
                 localOrder.status = status;
@@ -57,7 +52,7 @@
                 localOrder = this.localRepository.updateOrder(localOrder).Result;
             }
 
-            if (localOrder == null) //si no existía
+            if (localOrder == null)
             {
                 localOrder = new Order();
                 localOrder.vtex_id = vtexOrderId;
@@ -69,32 +64,49 @@
                 localOrder = this.localRepository.SaveOrder(localOrder).Result;
             }
 
+            if(this.mustToSendToSiesa(payments, vtexOrder.status) && !this.siesaOrderAlreadyExist(vtexOrderId))
+            {
+                string userVtexId = vtexOrder.clientProfileData.userProfileId;
+                string deliveryCountry = vtexOrder.shippingData.address.country;
+                string deliveryDepartment = vtexOrder.shippingData.address.state;
+                string deliveryCity = vtexOrder.shippingData.address.city;
+
+                this.registerUser(userVtexId, deliveryCountry, deliveryDepartment, deliveryCity).Wait();
+                SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
+                this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].polygonName);
+            }
+        }
+
+        private bool siesaOrderAlreadyExist(string vtexOrderId)
+        {
+            if (this.siesaOrdersLocalRepository.getSiesaOrderByVtexId(vtexOrderId).Result != null) return true;
+            else return false;
+        }
+
+        private bool orderStatusHasBeenChanged(string oldStatus, string newStatus)
+        {
+            if (oldStatus != newStatus) return true;
+            else return false;
+        }
+
+        private bool mustToSendToSiesa(List<PaymentMethod> payments, string status)
+        {
             if (status == OrderVtexStates.READY_FOR_HANDLING)
             {
-                if (!thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
+                if (!thereArePromissoryPayment(payments))
                 {
-                    await this.registerUser(userVtexId, deliveryCountry, deliveryDepartment, deliveryCity);
-                    SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
-                    if (siesaOrder != null)
-                    {
-                        this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].polygonName);
-                    }
+                    return true;
                 }
             }
             if (status == OrderVtexStates.PAYMENT_PENDING)
             {
-                if (thereArePromissoryPayment(vtexOrder.getPaymentMethods()))
+                if (thereArePromissoryPayment(payments))
                 {
-                    await this.registerUser(userVtexId, deliveryCountry, deliveryDepartment, deliveryCity);
-                    SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
-                    if(siesaOrder != null)
-                    {
-                        this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].polygonName);
-                    }
+                    return true;
                 }
             }
+            return false;
         }
-
         
 
         private bool thereArePromissoryPayment(List<PaymentMethod> payments)
@@ -116,9 +128,8 @@
             }
             catch(SiesaException exception)
             {
-                System.Console.WriteLine("Error en al enviar pedido a siesa");
                 this.mailService.SendSiesaErrorMail(exception, order.vtex_id);
-                return null;
+                throw new SiesaOrderRejectException(exception.httpResponse, order, $"Siesa rechazó el pedido #{order.vtex_id}");
             }
         }
 
@@ -130,7 +141,7 @@
             }
             catch(Exception exception)
             {
-                System.Console.WriteLine($"Error al enviar el mail a la tienda: {exception.Message}");
+                Console.WriteLine($"Error al enviar el mail a la tienda: {exception.Message}");
             } 
         }
 
