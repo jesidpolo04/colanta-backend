@@ -16,25 +16,35 @@
         private const string Schedule = "0 30 0/1 * * *";
         private PromotionsRepository localRepository;
         private PromotionsVtexRepository vtexRepository;
+        private ILogger logger;
 
         public ScheduledUpToVtexNullPromotions(
             PromotionsRepository localRepository,
-            PromotionsVtexRepository vtexRepository)
+            PromotionsVtexRepository vtexRepository,
+            ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
 
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
+            this.logger = logger;
         }
 
         public void Execute()
         {
-            UpToVtexNullPromotions upToVtexNullPromotions = new UpToVtexNullPromotions(
-                this.localRepository,
-                this.vtexRepository
-                );
-            upToVtexNullPromotions.Invoke().Wait();
+            try
+            {
+                UpToVtexNullPromotions upToVtexNullPromotions = new UpToVtexNullPromotions(
+                                this.localRepository,
+                                this.vtexRepository
+                                );
+                upToVtexNullPromotions.Invoke().Wait();
+            }
+            catch(Exception exception)
+            {
+                this.logger.writelog(exception);
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

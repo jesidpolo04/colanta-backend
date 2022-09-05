@@ -33,8 +33,15 @@
 
         public void Execute()
         {
-            UpdateCategoriesState updateCategoriesState = new UpdateCategoriesState(this.localRepository, this.vtexRepository, this.logger);
-            updateCategoriesState.Invoke().Wait();
+            try
+            {
+                UpdateCategoriesState updateCategoriesState = new UpdateCategoriesState(this.localRepository, this.vtexRepository, this.logger);
+                updateCategoriesState.Invoke().Wait();
+            }
+            catch (Exception exception)
+            {
+                this.logger.writelog(exception);
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

@@ -10,6 +10,7 @@ namespace colanta_backend.App.Products.Jobs
     using Shared.Application;
     using Shared.Domain;
     using NCrontab;
+    using Shared.Domain;
     public class ScheduledUpdateProductsAndSkusStates : IHostedService , IDisposable
     {
         private readonly CrontabSchedule _crontabSchedule;
@@ -19,12 +20,14 @@ namespace colanta_backend.App.Products.Jobs
         private ProductsVtexRepository productsVtexRepository;
         private SkusRepository skusLocalRepository;
         private SkusVtexRepository skusVtexRepository;
+        private ILogger logger;
         
         public ScheduledUpdateProductsAndSkusStates(
             ProductsRepository productsLocalRepository,
             ProductsVtexRepository productsVtexRepository,
             SkusRepository skusLocalRepository,
-            SkusVtexRepository skusVtexRepository
+            SkusVtexRepository skusVtexRepository,
+            ILogger logger
             )
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
@@ -33,17 +36,26 @@ namespace colanta_backend.App.Products.Jobs
             this.productsVtexRepository = productsVtexRepository;
             this.skusLocalRepository = skusLocalRepository;
             this.skusVtexRepository = skusVtexRepository;
+            this.logger = logger;
         }
 
         public void Execute()
         {
-            UpdateProductsAndSkusStates updateProductsAndSkusStates = new UpdateProductsAndSkusStates(
+            try
+            {
+                UpdateProductsAndSkusStates updateProductsAndSkusStates = new UpdateProductsAndSkusStates(
                 this.productsLocalRepository,
                 this.productsVtexRepository,
                 this.skusLocalRepository,
                 this.skusVtexRepository
                 );
-            updateProductsAndSkusStates.Invoke().Wait();
+                updateProductsAndSkusStates.Invoke().Wait();
+            }
+            catch(Exception exception)
+            {
+                this.logger.writelog(exception);
+            }
+            
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

@@ -5,18 +5,33 @@
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Shared.Domain;
     public class ScheduledUpdateSiesaOrders : IHostedService, IDisposable
     {
         private readonly CrontabSchedule _crontabSchedule;
         private DateTime _nextRun;
         private const string Schedule = "0 0/5 * * * *"; // run each 5 min
         private readonly UpdateSiesaOrders _task;
+        private ILogger logger;
 
-        public ScheduledUpdateSiesaOrders(UpdateSiesaOrders task)
+        public ScheduledUpdateSiesaOrders(UpdateSiesaOrders task, ILogger logger)
         {
             _task = task;
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
+            this.logger = logger;
+        }
+
+        public void Execute()
+        {
+            try
+            {
+                _task.Invoke().Wait();
+            }
+            catch(Exception exception)
+            {
+                this.logger.writelog(exception);
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -27,7 +42,7 @@
                 {
                     await Task.Delay(UntilNextExecution(), cancellationToken); // wait until next time
 
-                    await _task.Invoke(); //execute some task
+                    this.Execute(); //execute some task
 
                     _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
                 }

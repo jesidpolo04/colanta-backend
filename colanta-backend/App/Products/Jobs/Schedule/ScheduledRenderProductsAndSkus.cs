@@ -6,24 +6,34 @@ using NCrontab;
 
 namespace colanta_backend.App.Products.Jobs
 {
+    using Shared.Domain;
     public class ScheduledRenderProductsAndSkus : IHostedService , IDisposable
     {
         private readonly CrontabSchedule _crontabSchedule;
         private DateTime _nextRun;
         private const string Schedule = "0 10 0/2 * * *";
         private RenderProductsAndSkus renderProductsAndSkus;
-        public ScheduledRenderProductsAndSkus(RenderProductsAndSkus renderProductsAndSkus)
+        private ILogger logger;
+        public ScheduledRenderProductsAndSkus(RenderProductsAndSkus renderProductsAndSkus, ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.renderProductsAndSkus = renderProductsAndSkus;
+            this.logger = logger;
         }
 
         public void Execute()
         {
             using (renderProductsAndSkus)
             {
-                this.renderProductsAndSkus.Invoke().Wait();
+                try
+                {
+                    this.renderProductsAndSkus.Invoke().Wait();
+                }
+                catch (Exception exception)
+                {
+                    this.logger.writelog(exception);
+                }
             }
         }
 

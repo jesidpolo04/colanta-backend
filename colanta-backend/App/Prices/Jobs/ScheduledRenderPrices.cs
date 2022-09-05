@@ -5,25 +5,35 @@
     using System.Threading;
     using System.Threading.Tasks;
     using NCrontab;
+    using Shared.Domain;
     public class ScheduledRenderPrices : IHostedService, IDisposable
     {
         private readonly CrontabSchedule _crontabSchedule;
         private DateTime _nextRun;
         private const string Schedule = "0 20 0/2 * * *";
         private RenderPrices renderPrices;
+        private ILogger logger;
 
-        public ScheduledRenderPrices(RenderPrices renderPrices)
+        public ScheduledRenderPrices(RenderPrices renderPrices, ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.renderPrices = renderPrices;
+            this.logger = logger;
         }
 
         public void Execute()
         {
             using (renderPrices)
             {
-                this.renderPrices.Invoke().Wait();
+                try
+                {
+                    this.renderPrices.Invoke().Wait();
+                }
+                catch(Exception exception)
+                {
+                    this.logger.writelog(exception);
+                }
             }
             
         }

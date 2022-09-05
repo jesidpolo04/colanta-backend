@@ -1,13 +1,10 @@
 ﻿namespace colanta_backend.App.Promotions.Jobs
 {
-    using Promotions.Domain;
     using Microsoft.Extensions.Hosting;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Configuration;
     using Shared.Domain;
-    using Shared.Application;
     using NCrontab;
     public class ScheduledRenderPromotions : IHostedService, IDisposable
     {
@@ -15,18 +12,27 @@
         private DateTime _nextRun;
         private const string Schedule = "0 30 0/2 * * *";
         private RenderPromotions renderPromotions;
-        public ScheduledRenderPromotions(RenderPromotions renderPromotions)
+        private ILogger logger;
+        public ScheduledRenderPromotions(RenderPromotions renderPromotions, ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.renderPromotions = renderPromotions;
+            this.logger = logger;
         }
 
         public void Execute()
         {
             using (renderPromotions)
             {
-                this.renderPromotions.Invoke().Wait();
+                try
+                {
+                    this.renderPromotions.Invoke().Wait();
+                }
+                catch (Exception exception)
+                {
+                    this.logger.writelog(exception);
+                }
             }
                 
         }

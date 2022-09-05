@@ -16,16 +16,25 @@
         private const string Schedule = "0 0/30 * * * *";
 
         private UpdatePromotionsState updatePromotionsState;
-        public ScheduledUpdatePromotionsState(UpdatePromotionsState updatePromotionsState)
+        private ILogger logger;
+        public ScheduledUpdatePromotionsState(UpdatePromotionsState updatePromotionsState, ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.updatePromotionsState = updatePromotionsState;
+            this.logger = logger;
         }
 
         public void Execute()
         {
-            this.updatePromotionsState.Invoke().Wait();
+            try
+            {
+                this.updatePromotionsState.Invoke().Wait();
+            }
+            catch (Exception exception)
+            {
+                this.logger.writelog(exception);
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

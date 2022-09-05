@@ -19,11 +19,13 @@ namespace colanta_backend.App.Products.Jobs
         private ProductsVtexRepository productsVtexRepository;
         private SkusRepository skusLocalRepository;
         private SkusVtexRepository skusVtexRepository;
+        private ILogger logger;
         public ScheduledUpToVtexNullProductsAndSkus(
             ProductsRepository productsLocalRepository,
             ProductsVtexRepository productsVtexRepository,
             SkusRepository skusLocalRepository,
-            SkusVtexRepository skusVtexRepository
+            SkusVtexRepository skusVtexRepository,
+            ILogger logger
             )
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
@@ -32,17 +34,25 @@ namespace colanta_backend.App.Products.Jobs
             this.productsVtexRepository = productsVtexRepository;
             this.skusLocalRepository = skusLocalRepository;
             this.skusVtexRepository = skusVtexRepository;
+            this.logger = logger;
         }
 
         public void Execute()
         {
-            UpToVtexNullProductsAndSkus upToVtexNullProductsAndSkus = new UpToVtexNullProductsAndSkus(
+            try
+            {
+                UpToVtexNullProductsAndSkus upToVtexNullProductsAndSkus = new UpToVtexNullProductsAndSkus(
                 this.productsLocalRepository,
                 this.skusLocalRepository,
                 this.productsVtexRepository,
                 this.skusVtexRepository
                 );
-            upToVtexNullProductsAndSkus.Invoke().Wait();
+                upToVtexNullProductsAndSkus.Invoke().Wait();
+            }
+            catch (Exception exception)
+            {
+                this.logger.writelog(exception);
+            } 
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

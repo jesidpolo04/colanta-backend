@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Brands.Domain;
     using NCrontab;
+    using Shared.Domain;
     public class ScheduledUpdateBrandsState : IHostedService, IDisposable
     {
         private readonly CrontabSchedule _crontabSchedule;
@@ -13,17 +14,26 @@
         private const string Schedule = "0 0/30 * * * *";
         private BrandsRepository brandsLocalRepository { get; set; }
         private BrandsVtexRepository brandVtexRepository { get; set; }
-        public ScheduledUpdateBrandsState(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository)
+        private ILogger logger;
+        public ScheduledUpdateBrandsState(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository, ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.brandsLocalRepository = brandsLocalRepository;
             this.brandVtexRepository = brandsVtexRepository;
+            this.logger = logger;
         }
         public void Execute()
         {
-            UpdateBrandsState updateBrandsState = new UpdateBrandsState(this.brandsLocalRepository, this.brandVtexRepository);
-            updateBrandsState.Invoke();
+            try
+            {
+                UpdateBrandsState updateBrandsState = new UpdateBrandsState(this.brandsLocalRepository, this.brandVtexRepository);
+                updateBrandsState.Invoke();
+            }
+            catch(Exception exception)
+            {
+                this.logger.writelog(exception);
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

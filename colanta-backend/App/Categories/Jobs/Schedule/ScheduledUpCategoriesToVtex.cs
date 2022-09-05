@@ -17,11 +17,13 @@
         private CategoriesRepository localRepository;
         private CategoriesVtexRepository vtexRepository;
         private IProcess logs;
+        private ILogger logger;
 
         public ScheduledUpCategoriesToVtex(
             CategoriesRepository localRepository,
             CategoriesVtexRepository vtexRepository,
-            IProcess logs
+            IProcess logs,
+            ILogger logger
 )
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
@@ -29,6 +31,7 @@
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
             this.logs = logs;
+            this.logger = logger;
         }
 
         public void Execute()
@@ -36,7 +39,14 @@
             UpCategoriesToVtex upCategoriesToVtex = new UpCategoriesToVtex(this.localRepository, this.vtexRepository, this.logs);
             using (upCategoriesToVtex)
             {
-                upCategoriesToVtex.Invoke().Wait();
+                try
+                {
+                    upCategoriesToVtex.Invoke().Wait();
+                }
+                catch(Exception exception)
+                {
+                    this.logger.writelog(exception);
+                }
             }
         }
 

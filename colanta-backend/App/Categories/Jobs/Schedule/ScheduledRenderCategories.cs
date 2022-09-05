@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using Microsoft.Extensions.Hosting;
     using NCrontab;
+    using Shared.Domain;
     public class ScheduledRenderCategories : IHostedService, IDisposable
     {
 
@@ -12,18 +13,28 @@
         private DateTime _nextRun;
         private const string Schedule = "0 0 0/2 * * *";
         private RenderCategories renderCategories;
-        public ScheduledRenderCategories(RenderCategories renderCategories)
+        private ILogger logger;
+        public ScheduledRenderCategories(RenderCategories renderCategories, ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.renderCategories = renderCategories;
+            this.logger = logger;
         }
 
         public void Execute()
         {
             using (renderCategories)
             {
-                this.renderCategories.Invoke().Wait();
+                try
+                {
+                    this.renderCategories.Invoke().Wait();
+                }
+                catch (Exception exception)
+                {
+                    this.logger.writelog(exception);
+                }
+                    
             }
         }
 

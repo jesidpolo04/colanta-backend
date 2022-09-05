@@ -5,6 +5,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using NCrontab;
+    using Shared.Domain;
 
     public class ScheduledRenderInventories : IHostedService, IDisposable
     {
@@ -12,19 +13,28 @@
         private DateTime _nextRun;
         private const string Schedule = "0 0/30 * * * *";
         private RenderInventories renderInventories;
+        private ILogger logger;
 
-        public ScheduledRenderInventories(RenderInventories renderInventories)
+        public ScheduledRenderInventories(RenderInventories renderInventories, ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.renderInventories = renderInventories;
+            this.logger = logger;
         }
 
         public void Execute()
         {
             using (renderInventories)
             {
-                renderInventories.Invoke().Wait();
+                try
+                {
+                    renderInventories.Invoke().Wait();
+                }
+                catch(Exception exception)
+                {
+                    this.logger.writelog(exception);
+                }
             }
         }
 

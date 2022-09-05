@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Brands.Domain;
     using NCrontab;
+    using Shared.Domain;
     public class ScheduledUpBrandsToVtex : IHostedService, IDisposable
     {
         private readonly CrontabSchedule _crontabSchedule;
@@ -13,17 +14,26 @@
         private const string Schedule = "0 0 0/1 * * *";
         private BrandsRepository brandsLocalRepository { get; set; }
         private BrandsVtexRepository brandVtexRepository { get; set; }
-        public ScheduledUpBrandsToVtex(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository)
+        private ILogger logger;
+        public ScheduledUpBrandsToVtex(BrandsRepository brandsLocalRepository, BrandsVtexRepository brandsVtexRepository, ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });
             _nextRun = _crontabSchedule.GetNextOccurrence(DateTime.Now);
             this.brandsLocalRepository = brandsLocalRepository;
             this.brandVtexRepository = brandsVtexRepository;
+            this.logger = logger;
         }
         public void Execute()
         {
-            UpBrandsToVtex upBrandsToVtex = new UpBrandsToVtex(this.brandsLocalRepository, this.brandVtexRepository);
-            upBrandsToVtex.Invoke().Wait();
+            try
+            {
+                UpBrandsToVtex upBrandsToVtex = new UpBrandsToVtex(this.brandsLocalRepository, this.brandVtexRepository);
+                upBrandsToVtex.Invoke().Wait();
+            }
+            catch(Exception exception)
+            {
+                this.logger.writelog(exception);
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
