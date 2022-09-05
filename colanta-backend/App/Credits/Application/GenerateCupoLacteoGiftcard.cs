@@ -24,6 +24,7 @@
         {
             this.inactivateCurrentAvailableGiftcards(document, email, business);
             GiftCard newGiftcard = await this.creditsSiesaRepository.getCupoLacteo(document, email, business);
+            if(newGiftcard == null) return null;
             await this.giftCardsRepository.saveGiftCard(newGiftcard);
             return newGiftcard;
         }
