@@ -41,7 +41,7 @@
         {
             DateTime now = DateTime.Now;
             DateTime expireDate = DateTime.Parse(this.expire_date);
-            if (DateTime.Compare(expireDate, now) > 0) return true;
+            if (DateTime.Compare(expireDate, now) < 0) return true;
             else return false;
         }
     }
