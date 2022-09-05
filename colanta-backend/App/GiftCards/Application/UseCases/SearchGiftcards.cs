@@ -63,7 +63,7 @@
                     availableGiftcards.Add(giftcard);
                 }
             }
-            return availableGiftcards.ToArray()
+            return availableGiftcards.ToArray();
         }
 
         private bool userHasPendingOrders(string document)
