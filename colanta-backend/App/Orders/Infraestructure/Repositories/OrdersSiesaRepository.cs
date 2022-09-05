@@ -35,7 +35,7 @@ namespace colanta_backend.App.Orders.Infraestructure
 
         public async Task<SiesaOrder> getOrderBySiesaId(string siesaId)
         {
-            string endpoint = "api/ColantaWS/pedidos/" + siesaId;
+            string endpoint = "/api/ColantaWS/pedidos/" + siesaId;
             HttpResponseMessage siesaResponse = await httpClient.GetAsync(this.configuration["SiesaUrl"] + endpoint);
             string siesaResponseBody = await siesaResponse.Content.ReadAsStringAsync();
             if (!siesaResponse.IsSuccessStatusCode)
