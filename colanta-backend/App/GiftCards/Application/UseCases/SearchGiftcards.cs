@@ -5,6 +5,7 @@
     using Products.Domain;
     using Orders.SiesaOrders.Domain;
     using System.Linq;
+    using System.Collections.Generic;
     public class SearchGiftcards
     {
         private GiftCardsSiesaRepository siesaRepository;
@@ -37,7 +38,7 @@
                 if(localGiftCard != null && !(this.userHasPendingOrders(document))) this.updateGiftcardBalance(localGiftCard);
             }
 
-            GiftCard[] localGiftcards = await this.localRepository.getGiftCardsByDocumentAndBusiness(document, business);
+            GiftCard[] localGiftcards = this.getAvailableGiftcards(document, business);
             return localGiftcards.Where(giftcard => giftcard.code == redemptionCode).ToArray();
         }
 
@@ -45,6 +46,24 @@
         {
             Sku sku = skusLocalRepository.getSkuByConcatSiesaId(someSkuRefId).Result;
             return sku != null ? sku.product.business : "";
+        }
+
+        private GiftCard[] getAvailableGiftcards(string document, string business) 
+        {
+            List<GiftCard> availableGiftcards = new List<GiftCard>();
+            GiftCard[] giftcards = this.localRepository.getGiftCardsByDocumentAndBusiness(document, business).Result;
+            foreach(GiftCard giftcard in giftcards)
+            {
+                if(
+                    !giftcard.used &&
+                    !giftcard.isExpired() &&
+                    giftcard.provider == Providers.GIFTCARDS
+                    )
+                {
+                    availableGiftcards.Add(giftcard);
+                }
+            }
+            return availableGiftcards.ToArray()
         }
 
         private bool userHasPendingOrders(string document)
