@@ -29,7 +29,7 @@
         public async Task<GiftCard> getCupoLacteo(string document, string email, string business)
         {
             this.setHeaders().Wait();
-            string endpoint = "/api/???";
+            string endpoint = "/api/ColantaWS/CodigosCupos";
             string url = configuration["SiesaUrl"] + endpoint;
             GetCupoLacteoRequest request = new GetCupoLacteoRequest();
             request.documento = document;
@@ -37,7 +37,7 @@
             request.negocio = business;
             HttpContent requestBody = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
             HttpResponseMessage siesaResponse = await this.httpClient.PostAsync(url, requestBody);
-            if(siesaResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if(siesaResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 return null;
             }
