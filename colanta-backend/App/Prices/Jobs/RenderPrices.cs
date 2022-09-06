@@ -94,7 +94,7 @@
 
                             if (vtexPrice == null)
                             {
-                                await this.vtexRepository.savePrice(localPrice);
+                                this.vtexRepository.savePrice(localPrice).Wait();
                                 this.updatePriceForMeasurementUnit(localPrice.sku.product, localPrice.price);
                                 this.loadPrices.Add(localPrice);
                                 this.details.Add(new Detail(
@@ -110,7 +110,7 @@
                             {
                                 if (vtexPrice.price != localPrice.price)
                                 {
-                                    await this.vtexRepository.savePrice(localPrice);
+                                    this.vtexRepository.savePrice(localPrice).Wait();
                                     this.updatePriceForMeasurementUnit(localPrice.sku.product, localPrice.price);
                                     this.updatedPrices.Add(localPrice);
                                     this.details.Add(new Detail(
