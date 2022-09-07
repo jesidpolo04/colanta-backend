@@ -51,7 +51,7 @@
 
                 siesaOrderDetails.Add(siesaOrderDetail);
             }
-            siesaOrder.Detalles = siesaOrderDetails.ToArray();
+            siesaOrder.detalles = siesaOrderDetails.ToArray();
 
             List<SiesaOrderDiscount> siesaOrderDiscounts = new List<SiesaOrderDiscount>();
             foreach (SiesaOrderDiscountDto siesaOrderDiscountDto in this.Descuentos)
@@ -66,7 +66,7 @@
 
                 siesaOrderDiscounts.Add(siesaOrderDiscount);
             }
-            siesaOrder.Descuentos = siesaOrderDiscounts.ToArray();
+            siesaOrder.descuentos = siesaOrderDiscounts.ToArray();
             return siesaOrder;
         }
     }
