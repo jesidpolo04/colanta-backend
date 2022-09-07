@@ -109,7 +109,7 @@
         {
             string address = vtexAddress.street;
             if (vtexAddress.complement != null && vtexAddress.complement != "") address += $" complemento: {vtexAddress.complement}";
-            address += $" {vtexAddress.neighborhood}";
+            address += $" Barrio: {vtexAddress.neighborhood}";
             if (vtexAddress.reference != null) address = $" {vtexAddress.reference}";
             return address;
         }
