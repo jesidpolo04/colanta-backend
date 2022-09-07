@@ -140,7 +140,14 @@
                                     @foreach(var wayToPay in Model.wayToPays)
                                     {
                                         <tr>
-                                            <td><b>@wayToPay.wayToPay:</b></td>
+                                            @if(wayToPay.wayToPay == "CUPO")
+                                            {
+                                                <td><b>CUPO LÁCTEO:</b></td>
+                                            }
+                                            else
+                                            {
+                                                <td><b>@wayToPay.wayToPay:</b></td>
+                                            }
                                             <td>@string.Format("{0:C}", wayToPay.value)</td>
                                             <td>@wayToPay.payRef</td>
                                         </tr>
