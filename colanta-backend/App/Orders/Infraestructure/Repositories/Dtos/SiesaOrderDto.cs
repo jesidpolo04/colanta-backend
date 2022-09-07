@@ -92,6 +92,7 @@
         public string C263CondPago { get; set; }
         public string C263Notas { get; set; }
         public string C263Direccion { get; set; }
+        public string C263Nombres { get; set; }
         public string C263Ciudad { get; set; }
         public string C263Departamento { get; set; }
         public string C263Negocio { get; set; }

@@ -32,7 +32,8 @@
             siesaOrder.Encabezado.C263PagoContraentrega = this.isUponDelivery(vtexOrder.paymentData.transactions[0].payments);
             siesaOrder.Encabezado.C263ValorEnvio = this.getTotal(vtexOrder.totals, "Shipping");
             siesaOrder.Encabezado.C263Notas = "sin observaciones";
-            siesaOrder.Encabezado.C263Direccion = this.getSiesaAddressFromVtexAdress(vtexOrder.shippingData.selectedAddresses[0]);
+            siesaOrder.Encabezado.C263Direccion = this.getSiesaAddressFromVtexAdress(vtexOrder.shippingData.address);
+            siesaOrder.Encabezado.C263Nombres = vtexOrder.shippingData.address.receiverName;
             siesaOrder.Encabezado.C263Departamento = vtexOrder.shippingData.address.state;
             siesaOrder.Encabezado.C263Ciudad = vtexOrder.shippingData.address.city;
             siesaOrder.Encabezado.C263Negocio = this.getBusinessFromSalesChannel(vtexOrder.salesChannel);
@@ -104,11 +105,12 @@
             return false;
         }
 
-        private string getSiesaAddressFromVtexAdress(SelectedAddress vtexAddress)
+        private string getSiesaAddressFromVtexAdress(Address vtexAddress)
         {
-            string address = "Calle " + vtexAddress.street + " " + vtexAddress.complement + " - ";
-            address += "Barrio: " + vtexAddress.neighborhood + " ";
-            address += vtexAddress.reference;
+            string address = vtexAddress.street;
+            if (vtexAddress.complement != null && vtexAddress.complement != "") address += $" complemento: {vtexAddress.complement}";
+            address += $" {vtexAddress.neighborhood}";
+            if (vtexAddress.reference != null) address = $" {vtexAddress.reference}";
             return address;
         }
 
