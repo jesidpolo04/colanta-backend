@@ -9,7 +9,8 @@
         {
             if(reader.TokenType == JsonTokenType.Number)
             {
-                return reader.GetInt32();
+                decimal number = reader.GetDecimal();
+                return Decimal.ToInt32(number);
             }
             throw new JsonException();
         }
