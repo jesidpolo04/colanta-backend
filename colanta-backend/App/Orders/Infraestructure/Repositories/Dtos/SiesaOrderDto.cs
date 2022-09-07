@@ -3,6 +3,7 @@
     using Orders.SiesaOrders.Domain;
     using System.Collections.Generic;
     using System.Text.Json;
+    using System.Text.Json.Serialization;
 
     public class SiesaOrderDto
     {
@@ -116,6 +117,7 @@
         public string? C263VariacionItem {get; set;}
         public int C263IndObsequio {get; set;}
         public string C263UnidMedida {get; set;}
+        [JsonConverter(typeof(int))]
         public int C263Cantidad {get; set;}
         public decimal C263Precio {get; set;}
         public string C263Notas {get; set;}
