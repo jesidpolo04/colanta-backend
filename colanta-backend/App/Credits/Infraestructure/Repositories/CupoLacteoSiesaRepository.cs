@@ -1,4 +1,4 @@
-﻿namespace colanta_backend.App.Credits.Infraestructure.Repositories
+﻿namespace colanta_backend.App.Credits.Infraestructure
 {
     using Promotions.Domain;
     using Credits.Domain;

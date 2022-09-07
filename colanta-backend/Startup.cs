@@ -115,7 +115,7 @@ namespace colanta_backend
             services.AddTransient<App.CustomerCredit.Jobs.RenderCreditAccounts>();
             services.AddTransient<App.CustomerCredit.Domain.IRenderAccountsMail, App.CustomerCredit.Infraestructure.RenderAccountsMail>();
             //Dependencies Injections Credits
-            services.AddTransient<App.Credits.Domain.CupoLacteoSiesaRepository, App.Credits.Infraestructure.MockCreditSiesaRepository>();
+            services.AddTransient<App.Credits.Domain.CupoLacteoSiesaRepository, App.Credits.Infraestructure.CupoLacteoSiesaRepository>();
             //Dependencies Injections Orders
             services.AddTransient<App.Orders.Domain.OrdersRepository, App.Orders.Infraestructure.OrdersEFRepository>();
             services.AddTransient<App.Orders.Domain.OrdersVtexRepository, App.Orders.Infraestructure.OrdersVtexRepository>();
