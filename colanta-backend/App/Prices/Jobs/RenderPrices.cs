@@ -78,7 +78,7 @@
                         continue;
                     }
 
-                    Price localPrice = await this.localRepository.getPriceBySkuConcatSiesaId(siesaPrice.sku_concat_siesa_id);
+                    Price localPrice = this.localRepository.getPriceBySkuConcatSiesaId(siesaPrice.sku_concat_siesa_id).Result;
 
                     if (localPrice != null)
                     {
@@ -90,7 +90,7 @@
                                 await this.localRepository.updatePrice(localPrice);
                             }
 
-                            Price vtexPrice = await this.vtexRepository.getPriceByVtexId(localPrice.sku.vtex_id);
+                            Price vtexPrice = this.vtexRepository.getPriceByVtexId(localPrice.sku.vtex_id).Result;
 
                             if (vtexPrice == null)
                             {
