@@ -79,9 +79,9 @@ namespace colanta_backend.App.Orders.Infraestructure
 
         private void ensureThatTheOrderIsSavedCorrectly(SiesaOrderIdResponseDto siesaOrderIdResponse, HttpResponseMessage response)
         {
-            if (siesaOrderIdResponse.id == 0 && 
+            if (siesaOrderIdResponse.id == 0 ||
                 siesaOrderIdResponse.id == null) throw new SiesaException(response, $"El id del pedido fue '0' o 'null' o vacío");
-            if (siesaOrderIdResponse.siesa_pedido == "" &&
+            if (siesaOrderIdResponse.siesa_pedido == "" ||
                 siesaOrderIdResponse.siesa_pedido == null) throw new SiesaException(response, $"El 'siesa_pedido' fue nulo o vacío");
         }
 
