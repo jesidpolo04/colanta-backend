@@ -65,6 +65,7 @@ namespace colanta_backend.App.Orders.Infraestructure
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
             SiesaOrderIdResponseDto siesaOrderIdResponseDto = JsonSerializer.Deserialize<SiesaOrderIdResponseDto>(siesaResponseBody);
+            this.ensureThatTheOrderIsSavedCorrectly(siesaOrderIdResponseDto, siesaResponse);
             //SiesaOrderIdResponseDto siesaOrderIdResponseDto = JsonSerializer.Deserialize<SiesaOrderIdResponseDto>("{\"id\":\"1231\"}");
             SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFromDto();
             siesaOrder.id_metodo_pago_vtex = vtexOrderDto.paymentData.transactions[0].payments[0].paymentSystem;
@@ -74,6 +75,14 @@ namespace colanta_backend.App.Orders.Infraestructure
             siesaOrder.siesa_pedido = siesaOrderIdResponseDto.siesa_pedido;
             siesaOrder.finalizado = false;
             return siesaOrder;
+        }
+
+        private void ensureThatTheOrderIsSavedCorrectly(SiesaOrderIdResponseDto siesaOrderIdResponse, HttpResponseMessage response)
+        {
+            if (siesaOrderIdResponse.id == 0 && 
+                siesaOrderIdResponse.id == null) throw new SiesaException(response, $"El id del pedido fue '0' o 'null' o vacío");
+            if (siesaOrderIdResponse.siesa_pedido == "" &&
+                siesaOrderIdResponse.siesa_pedido == null) throw new SiesaException(response, $"El 'siesa_pedido' fue nulo o vacío");
         }
 
         private async Task setHeaders()
