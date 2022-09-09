@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace colanta_backend.App.Orders.Controllers
 {
+    using Products.Domain;
     using Orders.Domain;
     using Users.Domain;
     using Orders.Application;
@@ -19,6 +20,7 @@ namespace colanta_backend.App.Orders.Controllers
         private SiesaOrdersRepository siesaOrdersLocalRepository;
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
+        private SkusRepository skusRepository;
         private ILogger logger;
         private MailService mailService;
         public OrdersHookController(
@@ -26,6 +28,7 @@ namespace colanta_backend.App.Orders.Controllers
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
+            SkusRepository skuRepository,
             ILogger logger,
             MailService mailService,
             RegisterUserService registerUserService
@@ -55,6 +58,7 @@ namespace colanta_backend.App.Orders.Controllers
                 this.siesaOrdersLocalRepository, 
                 this.vtexRepository, 
                 this.siesaRepository,
+                this.skusRepository,
                 this.logger,
                 this.mailService,
                 this.registerUserService);
