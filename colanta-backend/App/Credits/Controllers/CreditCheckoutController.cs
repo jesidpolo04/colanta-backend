@@ -29,7 +29,7 @@ namespace colanta_backend.App.Credits.Controllers
         }
 
         [HttpPost]
-        [EnableCors]
+        [EnableCors("Ecommerce")]
         [Route("generate")]
         public ActionResult Post(GenerateCupoLacteoCodeRequest request)
         {

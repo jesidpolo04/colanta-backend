@@ -16,10 +16,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using colanta_backend.App.Shared.Infraestructure;
-using Microsoft.EntityFrameworkCore;
-using FluentEmail;
-using FluentEmail.Core;
 
 namespace colanta_backend
 {
@@ -29,7 +25,6 @@ namespace colanta_backend
     using App.Prices.Jobs;
     using App.Inventory.Jobs;
     using App.Promotions.Jobs;
-    using App.CustomerCredit.Jobs;
     using App.Orders.Jobs;
 
     public class Startup
@@ -45,6 +40,15 @@ namespace colanta_backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Ecommerce", policy =>
+                {
+                    policy.WithOrigins("https://colanta.myvtex.com")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+            });
 
             //Dependencies Injections Users
             services.AddTransient<UsersRepository, UsersEFRepository>();
