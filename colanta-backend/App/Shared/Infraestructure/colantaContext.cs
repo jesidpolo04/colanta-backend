@@ -47,6 +47,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFGiftCardTransactionSettlement> GiftCardsTransactionsSettlements { get; set; }
         public virtual DbSet<EFOrder> Orders { get; set; }
         public virtual DbSet<EFOrderHistory> OrderHistory { get; set; }
+        public virtual DbSet<EFFailOrderMailLog> FailOrderMailLogs { get; set; }
         public virtual DbSet<EFSiesaOrder> SiesaOrders { get; set; }
         public virtual DbSet<EFSiesaOrderDetail> SiesaOrderDetails { get; set; }
         public virtual DbSet<EFSiesaOrderDiscount> SiesaOrderDiscounts { get; set; }
@@ -379,6 +380,14 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.vtex_id);
                 entity.Property(e => e.json).HasColumnType("text");
                 entity.Property(e => e.created_at).HasDefaultValueSql("getdate()");
+            });
+
+            modelBuilder.Entity<EFFailOrderMailLog>(entity =>
+            {
+                entity.ToTable("fail_orders_mails_logs");
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.vtexOrderId).HasColumnName("vtex_order_id").IsRequired();
+                entity.Property(e => e.lastMailSend);
             });
 
             modelBuilder.Entity<EFSiesaOrder>(entity =>

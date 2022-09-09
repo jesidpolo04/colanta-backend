@@ -14,6 +14,8 @@
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
+        private FailOrderMailLogsRepository failOrdersLogsRepository;
+        private ILogger logger;
         private MailService mailService;
         private RegisterUserService registerUserService;
 
@@ -22,6 +24,7 @@
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
+            ILogger logger,
             MailService mailService,
             RegisterUserService registerUserService
             )
@@ -30,6 +33,7 @@
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
+            this.logger = logger;
             this.mailService = mailService;
             this.registerUserService = registerUserService;
         }
@@ -128,7 +132,11 @@
             }
             catch(SiesaException exception)
             {
-                this.mailService.SendSiesaErrorMail(exception, order.vtex_id);
+                if(!this.mailService.alreadyFailOrderMailSendedAtLast(2, "H", order.vtex_id))
+                {
+                    this.mailService.SendSiesaErrorMail(exception, order.vtex_id);
+                    await this.mailService.createOrUpdateFailOrderMailLog(order.vtex_id);
+                }
                 throw new SiesaOrderRejectException(exception.httpResponse, order, $"Siesa rechazó el pedido #{order.vtex_id}");
             }
         }
@@ -141,7 +149,7 @@
             }
             catch(Exception exception)
             {
-                Console.WriteLine($"Error al enviar el mail a la tienda: {exception.Message}");
+                logger.writelog(exception);
             } 
         }
 
@@ -151,19 +159,9 @@
             {
                 await this.registerUserService.registerUser(userVtexId, country, department, city);
             }
-            catch (SiesaException exception)
+            catch(Exception exception)
             {
-                Console.WriteLine("Error en al intentar registrar al cliente en siesa");
-                Console.WriteLine(exception.Message);
-                Console.WriteLine(exception.requestBody);
-                Console.WriteLine(exception.responseBody);
-            }
-            catch(VtexException exception)
-            {
-                Console.WriteLine("Error en al consultar el cliente en vtex");
-                Console.WriteLine(exception.Message);
-                Console.WriteLine(exception.requestBody);
-                Console.WriteLine(exception.responseBody);
+                await logger.writelog(exception);
             }
         }
     }

@@ -7,6 +7,7 @@ namespace colanta_backend.App.Orders.Controllers
     using Users.Domain;
     using Orders.Application;
     using SiesaOrders.Domain;
+    using Shared.Domain;
     using System.Threading.Tasks;
 
     [ApiController]
@@ -18,12 +19,14 @@ namespace colanta_backend.App.Orders.Controllers
         private SiesaOrdersRepository siesaOrdersLocalRepository;
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
+        private ILogger logger;
         private MailService mailService;
         public OrdersHookController(
             OrdersRepository localRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
+            ILogger logger,
             MailService mailService,
             RegisterUserService registerUserService
             )
@@ -32,6 +35,7 @@ namespace colanta_backend.App.Orders.Controllers
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
+            this.logger = logger;
             this.mailService = mailService;
             this.registerUserService = registerUserService;
         }
@@ -51,6 +55,7 @@ namespace colanta_backend.App.Orders.Controllers
                 this.siesaOrdersLocalRepository, 
                 this.vtexRepository, 
                 this.siesaRepository,
+                this.logger,
                 this.mailService,
                 this.registerUserService);
 
