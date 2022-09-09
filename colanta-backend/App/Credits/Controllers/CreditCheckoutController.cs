@@ -11,6 +11,7 @@ namespace colanta_backend.App.Credits.Controllers
     using Products.Domain;
     using Orders.SiesaOrders.Domain;
     using GiftCards.Application;
+    using Microsoft.AspNetCore.Cors;
 
     [Route("api/cupo-lacteo")]
     [ApiController]
@@ -28,6 +29,7 @@ namespace colanta_backend.App.Credits.Controllers
         }
 
         [HttpPost]
+        [EnableCors]
         [Route("generate")]
         public ActionResult Post(GenerateCupoLacteoCodeRequest request)
         {
