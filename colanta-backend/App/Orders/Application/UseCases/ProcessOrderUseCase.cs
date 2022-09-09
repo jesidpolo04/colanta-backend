@@ -1,6 +1,7 @@
 ﻿namespace colanta_backend.App.Orders.Application
 {
     using System;
+    using Products.Domain;
     using Users.Domain;
     using Shared.Domain;
     using Orders.Domain;
@@ -14,7 +15,7 @@
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
-        private FailOrderMailLogsRepository failOrdersLogsRepository;
+        private SkusRepository skusRepository;
         private ILogger logger;
         private MailService mailService;
         private RegisterUserService registerUserService;
@@ -24,6 +25,7 @@
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
+            SkusRepository skusRepostory,
             ILogger logger,
             MailService mailService,
             RegisterUserService registerUserService
@@ -33,6 +35,7 @@
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
+            this.skusRepository = skusRepostory;
             this.logger = logger;
             this.mailService = mailService;
             this.registerUserService = registerUserService;
@@ -75,7 +78,7 @@
                 string deliveryDepartment = vtexOrder.shippingData.address.state;
                 string deliveryCity = vtexOrder.shippingData.address.city;
 
-                this.registerUser(userVtexId, deliveryCountry, deliveryDepartment, deliveryCity).Wait();
+                this.registerUser(userVtexId, deliveryCountry, deliveryDepartment, deliveryCity, vtexOrder.items[0].refId).Wait();
                 SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
                 this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].polygonName);
             }
@@ -153,11 +156,15 @@
             } 
         }
 
-        private async Task registerUser(string userVtexId, string country, string department, string city)
+        private async Task registerUser(string userVtexId, string country, string department, string city, string someSkuRef)
         {
             try
             {
-                await this.registerUserService.registerUser(userVtexId, country, department, city);
+                string business = "";
+                Sku sku = this.skusRepository.getSkuByConcatSiesaId(someSkuRef).Result;
+                if (sku == null) business = "mercolanta";
+                else business = sku.product.business;
+                await this.registerUserService.registerUser(userVtexId, country, department, city, business);
             }
             catch(Exception exception)
             {

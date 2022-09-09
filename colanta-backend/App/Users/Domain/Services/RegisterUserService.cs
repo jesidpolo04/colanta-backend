@@ -21,7 +21,8 @@
                 string vtexId,
                 string country,
                 string departament,
-                string city
+                string city,
+                string business
             )
         {
             VtexUser vtexUser = this.vtexRepository.getByVtexId(vtexId).Result;
@@ -31,6 +32,7 @@
             user.department_code = departament;
             user.city_code = city;
             user.born_date = DateTime.Now.ToString("yyyyMMdd");
+            user.business = business;
             user = await this.siesaRepository.saveUser(user);
             if(this.localRepository.getUserByEmail(vtexUser.email).Result == null)
             {
