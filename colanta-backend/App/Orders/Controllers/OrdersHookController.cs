@@ -28,7 +28,7 @@ namespace colanta_backend.App.Orders.Controllers
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
-            SkusRepository skuRepository,
+            SkusRepository skusRepository,
             ILogger logger,
             MailService mailService,
             RegisterUserService registerUserService
@@ -38,6 +38,7 @@ namespace colanta_backend.App.Orders.Controllers
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
+            this.skusRepository = skusRepository;
             this.logger = logger;
             this.mailService = mailService;
             this.registerUserService = registerUserService;
