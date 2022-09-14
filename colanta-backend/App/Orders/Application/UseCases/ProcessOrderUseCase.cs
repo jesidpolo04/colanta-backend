@@ -144,11 +144,12 @@
             }
         }
 
-        private void notifyToStore(SiesaOrder order, string wharehouseId)
+        private void notifyToStore(SiesaOrder siesaOrder, string wharehouseId)
         {
             try
             {
-                this.mailService.SendMailToWarehouse(wharehouseId, order);
+                VtexOrder vtexOrder = this.vtexRepository.getOrderByVtexId(siesaOrder.referencia_vtex).Result;
+                this.mailService.SendMailToWarehouse(wharehouseId, siesaOrder, vtexOrder);
             }
             catch(Exception exception)
             {

@@ -3,6 +3,6 @@
     using Orders.SiesaOrders.Domain;
     public interface INewOrderMail
     {
-        void SendMailToWarehouse(string wharehouseId, SiesaOrder siesaOrder);
+        void SendMailToWarehouse(string wharehouseId, SiesaOrder siesaOrder, VtexOrder vtexOrder);
     }
 }

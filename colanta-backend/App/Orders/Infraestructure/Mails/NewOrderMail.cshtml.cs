@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace colanta_backend.App.Orders.Infraestructure
 {
     using Orders.SiesaOrders.Domain;
+    using Orders.Domain;
     using Inventory.Domain;
     using System;
     using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace colanta_backend.App.Orders.Infraestructure
     public class NewOrderMailModel : PageModel
     {
         public SiesaOrder siesaOrder;
+        public VtexOrder vtexOrder;
         public Warehouse store;
         public string storeName;
         public string vtexOrderId;
@@ -19,10 +21,13 @@ namespace colanta_backend.App.Orders.Infraestructure
         public DateTime orderDate;
         public bool pickupInStore;
         public List<WayToPay> wayToPays;
-        public NewOrderMailModel(SiesaOrder siesaOrder, Warehouse store)
+        public DateTime? pickupStart;
+        public DateTime? pickupEnd;
+        public NewOrderMailModel(SiesaOrder siesaOrder, VtexOrder vtexOrder, Warehouse store)
         {
             this.store = store;
             this.storeName = store.name;
+            this.vtexOrder = vtexOrder;
             this.siesaOrder = siesaOrder;
             this.vtexOrderId = siesaOrder.referencia_vtex;
             this.siesaPedido = siesaOrder.siesa_pedido;
@@ -30,6 +35,8 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.orderDate = DateTime.Parse(siesaOrder.fecha);
             this.pickupInStore = siesaOrder.recoge_en_tienda;
             this.wayToPays = JsonSerializer.Deserialize<List<WayToPay>>(siesaOrder.formas_de_pago);
+            this.pickupStart = vtexOrder.shippingData.logisticsInfo[0].deliveryWindow.startDateUtc;
+            this.pickupEnd = vtexOrder.shippingData.logisticsInfo[0].deliveryWindow.endDateUtc;
         }
         public void OnGet()
         {

@@ -178,8 +178,14 @@
                                     <tr>
                                         <td><b>Hora del pedido:</b></td>
                                         <td>@Model.orderDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                           
                                     </tr>
+                                    @if (Model.pickupInStore)
+                                    {
+                                        <tr>
+                                            <td><b>Horario de recogida:</b></td>
+                                            <td>Desde @Model.pickupStart?.ToString("dd/MM/yyyy HH:mm") hasta @Model.pickupEnd?.ToString("dd/MM/yyyy HH:mm")</td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </td>

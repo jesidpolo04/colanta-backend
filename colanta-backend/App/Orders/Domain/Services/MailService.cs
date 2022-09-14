@@ -22,9 +22,9 @@
             this.failOrderMailLogsRepository = failOrderMailLogsRepository;
         }
 
-        public void SendMailToWarehouse(string wharehouseId, SiesaOrder siesaOrder)
+        public void SendMailToWarehouse(string wharehouseId, SiesaOrder siesaOrder, VtexOrder vtexOrder)
         {
-            this.newOrderMail.SendMailToWarehouse(wharehouseId, siesaOrder);
+            this.newOrderMail.SendMailToWarehouse(wharehouseId, siesaOrder, vtexOrder);
         }
 
         public void SendSiesaErrorMail(SiesaException exception, string vtexOrderId)

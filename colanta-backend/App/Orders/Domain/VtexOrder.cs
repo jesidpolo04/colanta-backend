@@ -254,7 +254,7 @@
         public double price { get; set; }
         public double? listPrice { get; set; }
         public double sellingPrice { get; set; }
-        public object deliveryWindow { get; set; }
+        public DeliveryWindow deliveryWindow { get; set; }
         public string deliveryCompany { get; set; }
         public string shippingEstimate { get; set; }
         public DateTime? shippingEstimateDate { get; set; }
@@ -380,7 +380,7 @@
         public string id { get; set; }
         public string name { get; set; }
         public string shippingEstimate { get; set; }
-        public object deliveryWindow { get; set; }
+        public DeliveryWindow deliveryWindow { get; set; }
         public double price { get; set; }
         public string deliveryChannel { get; set; }
         public PickupStoreInfo pickupStoreInfo { get; set; }
@@ -421,4 +421,10 @@
         public bool isPercentual { get; set; }
     }
 
+    public class DeliveryWindow
+    {
+        public DateTime? startDateUtc { get; set; }
+        public DateTime? endDateUtc { get; set; }
+        public decimal? price { get; set; }
+    }
 }
