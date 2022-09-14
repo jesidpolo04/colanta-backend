@@ -35,8 +35,8 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.orderDate = DateTime.Parse(siesaOrder.fecha);
             this.pickupInStore = siesaOrder.recoge_en_tienda;
             this.wayToPays = JsonSerializer.Deserialize<List<WayToPay>>(siesaOrder.formas_de_pago);
-            this.pickupStart = vtexOrder.shippingData.logisticsInfo[0].deliveryWindow.startDateUtc;
-            this.pickupEnd = vtexOrder.shippingData.logisticsInfo[0].deliveryWindow.endDateUtc;
+            this.pickupStart = vtexOrder.shippingData.logisticsInfo[0].deliveryWindow.startDateUtc?.ToUniversalTime();
+            this.pickupEnd = vtexOrder.shippingData.logisticsInfo[0].deliveryWindow.endDateUtc?.ToUniversalTime();
         }
         public void OnGet()
         {
