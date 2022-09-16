@@ -25,6 +25,7 @@ namespace colanta_backend.App.Orders.Infraestructure
         public DateTime? pickupEnd;
         public NewOrderMailModel(SiesaOrder siesaOrder, VtexOrder vtexOrder, Warehouse store)
         {
+            DeliveryWindow? deliveryWindow = vtexOrder.shippingData.logisticsInfo[0].deliveryWindow;
             this.store = store;
             this.storeName = store.name;
             this.vtexOrder = vtexOrder;
@@ -35,8 +36,8 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.orderDate = DateTime.Parse(siesaOrder.fecha);
             this.pickupInStore = siesaOrder.recoge_en_tienda;
             this.wayToPays = JsonSerializer.Deserialize<List<WayToPay>>(siesaOrder.formas_de_pago);
-            this.pickupStart = vtexOrder.shippingData.logisticsInfo[0].deliveryWindow.startDateUtc?.ToUniversalTime();
-            this.pickupEnd = vtexOrder.shippingData.logisticsInfo[0].deliveryWindow.endDateUtc?.ToUniversalTime();
+            this.pickupStart = deliveryWindow != null ? deliveryWindow.startDateUtc?.ToUniversalTime() : null;
+            this.pickupEnd = deliveryWindow != null ? deliveryWindow.endDateUtc?.ToUniversalTime() : null;
         }
         public void OnGet()
         {
