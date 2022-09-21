@@ -44,6 +44,7 @@ namespace colanta_backend.App.Orders.Infraestructure
                 return null;
             }
             UpdatedSiesaOrderResponseDto siesaOrderDto = JsonSerializer.Deserialize<UpdatedSiesaOrderResponseDto>(siesaResponseBody);
+            if (siesaOrderDto.PedidoCancelado) return UtilitiesSiesaOrders.generateCancelledSiesaOrder();
             if (!siesaOrderDto.finalizado) return null;
             SiesaOrder siesaOrder = siesaOrderDto.getSiesaOrderFromDto();
             return siesaOrder;

@@ -45,13 +45,16 @@
                         if (newSiesaOrder == null) continue;
                         if (newSiesaOrder.finalizado)
                         {
-                            this.updateLocalSiesaOrder(newSiesaOrder, unfinishedSiesaOrder).Wait();
                             if (newSiesaOrder.cancelado)
                             {
-                                this.cancelOrder(newSiesaOrder.referencia_vtex).Wait();
+                                await this.siesaOrdersHistoryLocalRepository.saveSiesaOrderHistory(unfinishedSiesaOrder);
+                                unfinishedSiesaOrder.cancelado = true;
+                                await this.siesaOrdersLocalRepository.saveSiesaOrder(unfinishedSiesaOrder);
+                                await this.cancelOrder(unfinishedSiesaOrder.referencia_vtex);
                                 continue;
                             }
-                            Order order = this.localRepository.getOrderByVtexId(newSiesaOrder.referencia_vtex).Result;
+                            this.updateLocalSiesaOrder(newSiesaOrder, unfinishedSiesaOrder).Wait();
+                            Order order = this.localRepository.getOrderByVtexId(unfinishedSiesaOrder.referencia_vtex).Result;
                             VtexOrder vtexOrder = JsonSerializer.Deserialize<VtexOrder>(order.order_json);
                             if (vtexOrder.status == OrderVtexStates.PAYMENT_PENDING)
                             {
