@@ -48,7 +48,7 @@
                         {
                             await this.siesaOrdersHistoryLocalRepository.saveSiesaOrderHistory(unfinishedSiesaOrder);
                             unfinishedSiesaOrder.cancelado = true;
-                            await this.siesaOrdersLocalRepository.saveSiesaOrder(unfinishedSiesaOrder);
+                            await this.siesaOrdersLocalRepository.updateSiesaOrder(unfinishedSiesaOrder);
                             await this.cancelOrder(unfinishedSiesaOrder.referencia_vtex);
                             continue;
                         }
