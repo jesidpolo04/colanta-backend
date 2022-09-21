@@ -6,6 +6,7 @@
     public class UpdatedSiesaOrderResponseDto
     {
         public bool finalizado { get; set; }
+        public bool PedidoCancelado { get; set; }
         public SiesaOrderHeaderDto Encabezado { get; set; }
         public List<SiesaOrderDetailDto> Detalles { get; set; }
         public List<WayToPayDto> FormasPago { get; set; }
@@ -32,6 +33,7 @@
             siesaOrder.formas_de_pago = JsonSerializer.Serialize(this.FormasPago);
             siesaOrder.pago_contraentrega = this.Encabezado.C263PagoContraentrega;
             siesaOrder.finalizado = this.finalizado;
+            siesaOrder.cancelado = this.PedidoCancelado;
 
             List<SiesaOrderDetail> siesaOrderDetails = new List<SiesaOrderDetail>();
             foreach (SiesaOrderDetailDto siesaOrderDetailDto in this.Detalles)

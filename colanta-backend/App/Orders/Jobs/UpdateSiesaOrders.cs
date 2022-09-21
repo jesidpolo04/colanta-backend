@@ -46,6 +46,11 @@
                         if (newSiesaOrder.finalizado)
                         {
                             this.updateLocalSiesaOrder(newSiesaOrder, unfinishedSiesaOrder).Wait();
+                            if (newSiesaOrder.cancelado)
+                            {
+                                this.cancelOrder(newSiesaOrder.referencia_vtex).Wait();
+                                continue;
+                            }
                             Order order = this.localRepository.getOrderByVtexId(newSiesaOrder.referencia_vtex).Result;
                             VtexOrder vtexOrder = JsonSerializer.Deserialize<VtexOrder>(order.order_json);
                             if (vtexOrder.status == OrderVtexStates.PAYMENT_PENDING)
