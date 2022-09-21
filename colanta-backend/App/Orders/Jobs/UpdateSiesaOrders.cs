@@ -43,16 +43,16 @@
                     {
                         SiesaOrder newSiesaOrder = await this.siesaRepository.getOrderBySiesaId(unfinishedSiesaOrder.siesa_id);
                         if (newSiesaOrder == null) continue;
+                        if (newSiesaOrder.cancelado)
+                        {
+                            await this.siesaOrdersHistoryLocalRepository.saveSiesaOrderHistory(unfinishedSiesaOrder);
+                            unfinishedSiesaOrder.cancelado = true;
+                            await this.siesaOrdersLocalRepository.saveSiesaOrder(unfinishedSiesaOrder);
+                            await this.cancelOrder(unfinishedSiesaOrder.referencia_vtex);
+                            continue;
+                        }
                         if (newSiesaOrder.finalizado)
                         {
-                            if (newSiesaOrder.cancelado)
-                            {
-                                await this.siesaOrdersHistoryLocalRepository.saveSiesaOrderHistory(unfinishedSiesaOrder);
-                                unfinishedSiesaOrder.cancelado = true;
-                                await this.siesaOrdersLocalRepository.saveSiesaOrder(unfinishedSiesaOrder);
-                                await this.cancelOrder(unfinishedSiesaOrder.referencia_vtex);
-                                continue;
-                            }
                             this.updateLocalSiesaOrder(newSiesaOrder, unfinishedSiesaOrder).Wait();
                             Order order = this.localRepository.getOrderByVtexId(unfinishedSiesaOrder.referencia_vtex).Result;
                             VtexOrder vtexOrder = JsonSerializer.Deserialize<VtexOrder>(order.order_json);
