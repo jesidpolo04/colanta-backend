@@ -228,17 +228,11 @@
                     if (localSku != null && localSku.is_active == false)
                     {
                         this.inactiveSkus.Add(localSku);
-                        localSku.ean = siesaSku.ean;
-                        await this.skusVtexRepository.associateEanSku((int)localSku.vtex_id, localSku.ean);
-                        await this.skusLocalRepository.updateSku(localSku);
                     }
 
                     if (localSku != null && localSku.is_active == true)
                     {
                         this.notProccecedSkus.Add(localSku);
-                        localSku.ean = siesaSku.ean;
-                        await this.skusVtexRepository.associateEanSku((int)localSku.vtex_id, localSku.ean);
-                        await this.skusLocalRepository.updateSku(localSku);
                     }
 
                     if (localSku == null)
