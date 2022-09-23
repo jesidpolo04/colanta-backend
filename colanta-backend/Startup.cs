@@ -149,26 +149,18 @@ namespace colanta_backend
             services.AddHostedService<ScheduledRenderCategories>();
             services.AddHostedService<ScheduledUpCategoriesToVtex>();
             services.AddHostedService<ScheduledUpdateCategoriesState>();
-            //services.AddHostedService<ScheduledActivateAllCategories>();
-            //services.AddHostedService<ScheduledMapFamiliesToStore>();
 
             services.AddHostedService<ScheduledRenderProductsAndSkus>();
             services.AddHostedService<ScheduledUpToVtexNullProductsAndSkus>();
             services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
-            //services.AddHostedService<ScheduledFixProductSku>();
 
             services.AddHostedService<ScheduledRenderPrices>();
-
-            //services.AddHostedService<ScheduledRenderWarehouses>();
 
             services.AddHostedService<ScheduledRenderInventories>();
 
             services.AddHostedService<ScheduledRenderPromotions>();
             services.AddHostedService<ScheduledUpdatePromotionsState>();
             services.AddHostedService<ScheduledUpToVtexNullPromotions>();
-
-            //services.AddHostedService<ScheduledRenderCreditAccounts>();
-            //services.AddHostedService<ScheduledReduceVtexCreditLimit>();
 
             services.AddHostedService<ScheduledUpdateSiesaOrders>();
 
