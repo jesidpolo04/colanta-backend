@@ -21,6 +21,7 @@
         private List<Inventory> failedInventories = new List<Inventory>();
         private List<Inventory> notProccecedInventories = new List<Inventory>();
         private int obtainedInventories = 0;
+        private int securityStock = 3;
 
         private List<Detail> details = new List<Detail>();
 
@@ -69,7 +70,7 @@
                                     success: true));
                     foreach (Inventory siesaInventory in siesaInventories)
                     {
-
+                        siesaInventory.quantity = siesaInventory.quantity <= securityStock ? 0 : siesaInventory.quantity;
                         try
                         {
                             if (!this.skuExists(siesaInventory, skusLocalRepository))
