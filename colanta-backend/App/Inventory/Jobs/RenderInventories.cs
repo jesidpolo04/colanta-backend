@@ -70,7 +70,8 @@
                                     success: true));
                     foreach (Inventory siesaInventory in siesaInventories)
                     {
-                        siesaInventory.quantity = siesaInventory.quantity <= securityStock ? 0 : siesaInventory.quantity;
+                        siesaInventory.quantity = siesaInventory.quantity <= securityStock ? 0 : siesaInventory.quantity - securityStock;
+
                         try
                         {
                             if (!this.skuExists(siesaInventory, skusLocalRepository))
