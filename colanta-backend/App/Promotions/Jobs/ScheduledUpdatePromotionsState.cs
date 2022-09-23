@@ -13,7 +13,7 @@
     {
         private readonly CrontabSchedule _crontabSchedule;
         private DateTime _nextRun;
-        private const string Schedule = "0 0/30 * * * *";
+        private const string Schedule = "0 0/60 * * * *";
 
         private UpdatePromotionsState updatePromotionsState;
         private ILogger logger;

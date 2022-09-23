@@ -13,7 +13,7 @@
     {
         private readonly CrontabSchedule _crontabSchedule;
         private DateTime _nextRun;
-        private const string Schedule = "0 30 0/1 * * *";
+        private const string Schedule = "0 30 0/3 * * *";
         private PromotionsRepository localRepository;
         private PromotionsVtexRepository vtexRepository;
         private ILogger logger;

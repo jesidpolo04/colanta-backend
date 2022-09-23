@@ -11,7 +11,7 @@
     {
         private readonly CrontabSchedule _crontabSchedule;
         private DateTime _nextRun;
-        private const string Schedule = "0 0 0/1 * * *";
+        private const string Schedule = "0 0 0/3 * * *";
         private BrandsRepository brandsLocalRepository { get; set; }
         private BrandsVtexRepository brandVtexRepository { get; set; }
         private ILogger logger;
