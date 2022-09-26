@@ -40,7 +40,7 @@
         public string hostname { get; set; }
         public object invoiceData { get; set; }
         public ChangesAttachment changesAttachment { get; set; }
-        public object openTextField { get; set; }
+        public OpenTextField? openTextField { get; set; }
         public int roundingError { get; set; }
         public string orderFormId { get; set; }
         public object commercialConditionData { get; set; }
@@ -426,5 +426,10 @@
         public DateTime? startDateUtc { get; set; }
         public DateTime? endDateUtc { get; set; }
         public decimal? price { get; set; }
+    }
+
+    public class OpenTextField
+    {
+        public string value { get; set; }
     }
 }

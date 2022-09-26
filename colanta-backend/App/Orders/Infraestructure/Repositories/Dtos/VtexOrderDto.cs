@@ -40,7 +40,7 @@
         public string hostname { get; set; }
         public object invoiceData { get; set; }
         public ChangesAttachment changesAttachment { get; set; }
-        public object openTextField { get; set; }
+        public OpenTextField? openTextField { get; set; }
         public int roundingError { get; set; }
         public string orderFormId { get; set; }
         public object commercialConditionData { get; set; }
@@ -399,5 +399,10 @@
         public decimal rawValue { get; set; }
         public string identifier { get; set; }
         public bool isPercentual { get; set; }
+    }
+
+    public class OpenTextField
+    {
+        public string value { get; set; }
     }
 }
