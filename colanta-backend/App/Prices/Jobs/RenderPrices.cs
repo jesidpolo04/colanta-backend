@@ -250,6 +250,7 @@
             {
                 if(specification.Id == SpecificationsIds.CONTENT && specification.Value.Count > 0) 
                 {
+                    if (specification.Value[0] == "") return;
                     content = Convert.ToDecimal(specification.Value[0]);
                     pmu = price / content;
 
