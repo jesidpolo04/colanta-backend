@@ -100,7 +100,6 @@
                     try
                     {
                         deltaProduct.is_active = false;
-                        await this.productsVtexRepository.updateProduct(deltaProduct);
                     }
                     catch (VtexException vtexException)
                     {
