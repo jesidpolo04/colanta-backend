@@ -16,13 +16,14 @@ namespace colanta_backend.App.Products.Infraestructure
     public class SkusVtexRepository : Domain.SkusVtexRepository
     {
         private IConfiguration configuration;
+        private ILogger logger;
         private HttpClient httpClient;
         private string apiKey;
         private string apiToken;
         private string accountName;
         private string vtexEnvironment;
 
-        public SkusVtexRepository(IConfiguration configuration)
+        public SkusVtexRepository(IConfiguration configuration, ILogger logger)
         {
             this.configuration = configuration;
             this.apiKey = configuration["MercolantaVtexApiKey"];
@@ -33,6 +34,7 @@ namespace colanta_backend.App.Products.Infraestructure
             this.httpClient = new HttpClient();
             this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             this.setCredentialHeaders();
+            this.logger = logger;
         }
 
         private void setCredentialHeaders()
@@ -108,11 +110,13 @@ namespace colanta_backend.App.Products.Infraestructure
             }
             if (vtexResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
+                await this.logger.writelog(new Exception($"No se encontró en vtex el sku con vtex id {vtexId}"));
                 return null;
             }
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
             if (vtexResponseBody == "null")
             {
+                await this.logger.writelog(new Exception($"No se encontró en vtex el sku con vtex id {vtexId}"));
                 return null;
             }
             VtexSkuDto skuDto = JsonSerializer.Deserialize<VtexSkuDto>(vtexResponseBody);
