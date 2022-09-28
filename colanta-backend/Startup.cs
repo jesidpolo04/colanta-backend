@@ -44,7 +44,7 @@ namespace colanta_backend
             {
                 options.AddPolicy("Ecommerce", policy =>
                 {
-                    policy.WithOrigins("https://colanta.myvtex.com", "https://www.pidecolanta.com/")
+                    policy.WithOrigins("https://colanta.myvtex.com", "https://www.pidecolanta.com")
                     .AllowAnyMethod()
                     .AllowAnyHeader();
                 });
