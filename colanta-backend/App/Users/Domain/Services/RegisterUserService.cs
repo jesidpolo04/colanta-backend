@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using System.Text.RegularExpressions;
     using System;
+    using Shared.Domain;
     public class RegisterUserService
     {
         private UsersSiesaRepository siesaRepository;
@@ -29,8 +30,8 @@
             if(vtexUser == null) return;
             User user = VtexUserMapper.getUserFromVtexUser(vtexUser);
             user.country_code = "Colombia";
-            user.department_code = departament;
-            user.city_code = city;
+            user.department_code = AddressCorrector.correctStateIfIsWrong(country, departament, city);
+            user.city_code = AddressCorrector.correctCityIfIsWrong(country, departament, city);
             user.born_date = DateTime.Now.ToString("yyyyMMdd");
             user.business = business;
             user = await this.siesaRepository.saveUser(user);
