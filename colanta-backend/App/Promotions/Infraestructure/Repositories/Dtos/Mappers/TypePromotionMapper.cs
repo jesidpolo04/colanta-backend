@@ -20,8 +20,9 @@
         protected string setEndDate(string? UTCDate)
         {
             int defaultMonths = 1;
+            int daysToAdd = 1;
             if (UTCDate == null) return DateTime.Now.AddMonths(defaultMonths).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
-            else return UTCDate;
+            else return DateTime.Parse(UTCDate).AddDays(daysToAdd).ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
         }
 
         protected string getRestrictionsPer(string maxItemValidsPerSiesaDto)
