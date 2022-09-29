@@ -198,7 +198,7 @@
                     inexistList1SkusIds,
                     inexistList2SkusIds
                     );
-                //this.invalidPromotionMail.sendMail(promotion, mailConfig);
+                this.invalidPromotionMail.sendMail(promotion, mailConfig);
                 return validPromotion;
             }
             return validPromotion;
