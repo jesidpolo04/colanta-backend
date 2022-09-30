@@ -62,7 +62,8 @@
                                 foreach(Payment payment in vtexOrder.paymentData.transactions[0].payments)
                                 {
                                     if (payment.paymentSystem == PaymentMethods.CONTRAENTREGA.id ||
-                                        payment.paymentSystem == PaymentMethods.EFECTIVO.id)
+                                        payment.paymentSystem == PaymentMethods.EFECTIVO.id ||
+                                        payment.paymentSystem == PaymentMethods.CARD_PROMISSORY.id)
                                         this.approvePayment(payment.id, vtexOrder.orderId).Wait();
                                 }
                             }
