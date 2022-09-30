@@ -15,6 +15,16 @@
                 "Risaralda", 
                 "Pereira"
             ));
+            addresses.Add(new WrongAddress(
+                "COL",
+                "Bolívar",
+                "Provincia de Cartagena",
+
+                "COL", 
+                "Bolívar", 
+                "Cartagena"
+            ));
+
             return addresses;
         }
     }
