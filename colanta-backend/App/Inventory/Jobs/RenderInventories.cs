@@ -112,6 +112,7 @@
                                 catch (Exception exception)
                                 {
                                     logger.writelog(new Exception($"No se pudo guardar el inventario {localInventory.ToString()} en la tienda ${localInventory.warehouse_siesa_id}"));
+                                    continue;
                                 }
                                 inventoriesVtexRepository.updateInventory(localInventory);
                                 this.loadInventories.Add(localInventory);
