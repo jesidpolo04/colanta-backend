@@ -105,7 +105,14 @@
                             }
                             if (localInventory == null)
                             {
-                                localInventory = inventoriesLocalRepository.saveInventory(siesaInventory).Result;
+                                try
+                                {
+                                    localInventory = inventoriesLocalRepository.saveInventory(siesaInventory).Result;
+                                }
+                                catch (Exception exception)
+                                {
+                                    logger.writelog(new Exception($"No se pudo guardar el inventario {localInventory.ToString()} en la tienda ${localInventory.warehouse_siesa_id}"));
+                                }
                                 inventoriesVtexRepository.updateInventory(localInventory);
                                 this.loadInventories.Add(localInventory);
 
