@@ -24,6 +24,15 @@
                 "Bolívar", 
                 "Cartagena"
             ));
+            addresses.Add(new WrongAddress(
+                "COL",
+                "Bolívar",
+                "La Uprina",
+
+                "COL", 
+                "Bolívar", 
+                "Turbaco"
+            ));
 
             return addresses;
         }
