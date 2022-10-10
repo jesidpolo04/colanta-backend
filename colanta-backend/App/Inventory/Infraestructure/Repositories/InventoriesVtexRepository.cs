@@ -94,5 +94,29 @@
 
             return inventory;
         }
+
+        public async Task removeReservedInventory(Inventory inventory)
+        {
+            string wharehouseId = inventory.warehouse.siesa_id;
+            int? skuId = inventory.sku.vtex_id;
+            string endpointListReserves = $"/api/logistics/pvt/inventory/reservations/{wharehouseId}/{skuId}";
+            string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpointListReserves;
+            HttpResponseMessage listReservesVtexResponse = await this.httpClient.GetAsync(url);
+            if (!listReservesVtexResponse.IsSuccessStatusCode)
+            {
+                throw new VtexException(listReservesVtexResponse, $"Vtex respondió con status {listReservesVtexResponse.StatusCode}, al intentar listar las reservas del sku con vtex id {skuId} en el almacen {wharehouseId}");
+            }
+            string responseBody = await listReservesVtexResponse.Content.ReadAsStringAsync();
+            var reservations = JsonSerializer.Deserialize<ReservationsDto>(responseBody);
+            foreach(var reservation in reservations.items)
+            {
+                string endpointRemoveReserve = $"/api/logistics/pvt/inventory/reservations/{reservation.LockId}/cancel";
+                HttpResponseMessage removeReserveVtexResponse = await this.httpClient.PostAsync(url, null);
+                if (!removeReserveVtexResponse.IsSuccessStatusCode)
+                {
+                    throw new VtexException(removeReserveVtexResponse, $"Vtex respondió con status {removeReserveVtexResponse.StatusCode}, al intentar remover la reserva {reservation.LockId} del SKU {reservation.ItemId} en el almacen {wharehouseId}");
+                }
+            }
+        }
     }
 }

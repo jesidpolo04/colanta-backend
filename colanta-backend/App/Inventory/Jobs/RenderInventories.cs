@@ -88,8 +88,8 @@
                                     localInventory.quantity = siesaInventory.quantity;
                                     localInventory = inventoriesLocalRepository.updateInventory(localInventory).Result;
                                     inventoriesVtexRepository.updateInventory(localInventory);
+                                    inventoriesVtexRepository.removeReservedInventory(localInventory);
                                     this.updatedInventories.Add(localInventory);
-
                                     this.details.Add(new Detail(
                                     origin: "vtex",
                                     action: "crear o actualizar inventario",

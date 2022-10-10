@@ -5,5 +5,6 @@
     {
         void changeEnvironment(string environment);
         Task<Inventory> updateInventory(Inventory inventory);
+        Task removeReservedInventory(Inventory inventory);
     }
 }
