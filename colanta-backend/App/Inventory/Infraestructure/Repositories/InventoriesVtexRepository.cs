@@ -111,6 +111,7 @@
             foreach(var reservation in reservations.items)
             {
                 string endpointRemoveReserve = $"/api/logistics/pvt/inventory/reservations/{reservation.LockId}/cancel";
+                url = "https://" + this.accountName + "." + this.vtexEnvironment + endpointRemoveReserve;
                 HttpResponseMessage removeReserveVtexResponse = await this.httpClient.PostAsync(url, null);
                 if (!removeReserveVtexResponse.IsSuccessStatusCode)
                 {
