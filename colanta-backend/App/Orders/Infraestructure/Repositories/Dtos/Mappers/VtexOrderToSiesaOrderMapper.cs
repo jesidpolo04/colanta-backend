@@ -23,7 +23,7 @@
             SiesaOrderDto siesaOrder = new SiesaOrderDto();
             //Header
             siesaOrder.Encabezado.C263CO = this.getOperationCenter(vtexOrder.shippingData.address, vtexOrder.shippingData.logisticsInfo[0]);
-            siesaOrder.Encabezado.C263Fecha = this.getDate();
+            siesaOrder.Encabezado.C263Fecha = this.getDate(vtexOrder);
             siesaOrder.Encabezado.C263DocTercero = vtexOrder.clientProfileData.document;
             siesaOrder.Encabezado.C263FechaEntrega = this.getEstimateDeliveryDate(vtexOrder.shippingData.logisticsInfo[0].shippingEstimateDate);
             siesaOrder.Encabezado.C263ReferenciaVTEX = vtexOrder.orderId;
