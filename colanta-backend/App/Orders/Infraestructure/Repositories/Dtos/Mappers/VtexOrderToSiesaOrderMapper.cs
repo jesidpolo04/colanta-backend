@@ -23,7 +23,7 @@
             SiesaOrderDto siesaOrder = new SiesaOrderDto();
             //Header
             siesaOrder.Encabezado.C263CO = this.getOperationCenter(vtexOrder.shippingData.address, vtexOrder.shippingData.logisticsInfo[0]);
-            siesaOrder.Encabezado.C263Fecha = vtexOrder.creationDate.ToString(DateFormats.UTC);
+            siesaOrder.Encabezado.C263Fecha = this.getDate();
             siesaOrder.Encabezado.C263DocTercero = vtexOrder.clientProfileData.document;
             siesaOrder.Encabezado.C263FechaEntrega = this.getEstimateDeliveryDate(vtexOrder.shippingData.logisticsInfo[0].shippingEstimateDate);
             siesaOrder.Encabezado.C263ReferenciaVTEX = vtexOrder.orderId;
@@ -247,6 +247,19 @@
         private string getObservation(VtexOrderDto vtexOrder)
         {
             return vtexOrder.openTextField != null ? vtexOrder.openTextField.value : "sin observaciones"; 
+        }
+
+        private string getDate(VtexOrderDto vtexOrder)
+        {
+            var now = DateTime.Now;
+            if(DateTime.Compare(vtexOrder.creationDate, now) < 0)
+            {
+                return now.ToString(DateFormats.UTC);
+            }
+            else
+            {
+                return vtexOrder.creationDate.ToString(DateFormats.UTC);
+            }
         }
     }
 }
