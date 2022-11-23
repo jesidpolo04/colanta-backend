@@ -2,35 +2,42 @@
 {
     public class AddressCorrector
     {
-        public static string correctCityIfIsWrong(string country, string state, string city)
+        private WrongAddressesRepository repository;
+        public AddressCorrector(WrongAddressesRepository repository)
         {
-            var wrongAddresses = WrongAddresses.get();
+            this.repository = repository;
+        }
+
+        public string correctCityIfIsWrong(string country, string state, string city)
+        {
+
+            var wrongAddresses = this.repository.getAllWrongAddresses().Result;
             foreach(WrongAddress wrongAddress in wrongAddresses)
             {
                 if (wrongAddress.isWrongAddress(country, state, city))
-                    return wrongAddress.getRightCity();
+                    return wrongAddress.getSiesaCity();
             }
             return city;
         }
 
-        public static string correctStateIfIsWrong(string country, string state, string city)
+        public string correctStateIfIsWrong(string country, string state, string city)
         {
-            var wrongAddresses = WrongAddresses.get();
-            foreach(WrongAddress wrongAddress in wrongAddresses)
+            var wrongAddresses = this.repository.getAllWrongAddresses().Result;
+            foreach (WrongAddress wrongAddress in wrongAddresses)
             {
                 if (wrongAddress.isWrongAddress(country, state, city))
-                    return wrongAddress.getRightState();
+                    return wrongAddress.getSiesaDepartment();
             }
             return state;
         }
 
-        public static string correctCountryIfIsWrong(string country, string state, string city)
+        public string correctCountryIfIsWrong(string country, string state, string city)
         {
-            var wrongAddresses = WrongAddresses.get();
-            foreach(WrongAddress wrongAddress in wrongAddresses)
+            var wrongAddresses = this.repository.getAllWrongAddresses().Result;
+            foreach (WrongAddress wrongAddress in wrongAddresses)
             {
                 if (wrongAddress.isWrongAddress(country, state, city))
-                    return wrongAddress.getRightCountry();
+                    return wrongAddress.getSiesaCountry();
             }
             return country;
         }

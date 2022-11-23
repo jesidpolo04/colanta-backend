@@ -15,6 +15,7 @@ using colanta_backend.App.CustomerCredit.Infraestructure;
 using colanta_backend.App.GiftCards.Infraestructure;
 using colanta_backend.App.Orders.Infraestructure;
 using colanta_backend.App.Orders.SiesaOrders.Infraestructure;
+using colanta_backend.App.Shared.Infraestructure;
 
 #nullable disable
 
@@ -54,6 +55,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFSiesaOrderHistory> SiesaOrdersHistory { get; set; }
         public virtual DbSet<EFProcess> Process { get; set; }
         public virtual DbSet<EFLog> Logs { get; set; }
+        public virtual DbSet<EFWrongAddress> WrongAddresses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -396,6 +398,7 @@ namespace colanta_backend.App.Shared.Infraestructure
 
                 entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
                 entity.Property(e => e.finalizado);
+                entity.Property(e => e.cancelado);
                 entity.Property(e => e.siesa_id);
                 entity.Property(e => e.co);
                 entity.Property(e => e.fecha);
@@ -462,7 +465,19 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.vtex_id);
                 entity.Property(e => e.order_json).HasColumnType("text");
                 entity.Property(e => e.created_at).HasDefaultValueSql("getdate()");
-            }); 
+            });
+
+            modelBuilder.Entity<EFWrongAddress>(entity =>
+            {
+                entity.ToTable("wrong_addresses");
+                entity.Property(e => e.id).ValueGeneratedOnAdd();
+                entity.Property(e => e.vtexCountry);
+                entity.Property(e => e.vtexDepartment);
+                entity.Property(e => e.vtexCity);
+                entity.Property(e => e.siesaCountry);
+                entity.Property(e => e.siesaDepartment);
+                entity.Property(e => e.siesaCity);
+            });
 
             OnModelCreatingPartial(modelBuilder);
         }

@@ -15,6 +15,7 @@ namespace colanta_backend.App.Orders.Infraestructure
     public class OrdersSiesaRepository : Domain.OrdersSiesaRepository
     {
         private SkusRepository skusLocalRepository;
+        private WrongAddressesRepository wrongAddressesRepository;
         private PromotionsRepository promotionLocalRepository;
         private HttpClient httpClient;
         private SiesaAuth siesaAuth;
@@ -23,11 +24,13 @@ namespace colanta_backend.App.Orders.Infraestructure
         public OrdersSiesaRepository(
             SkusRepository skusLocalRepository,
             PromotionsRepository promotionLocalRepository,
+            WrongAddressesRepository wrongAddressesRepository,
             IConfiguration configuration
         )
         {
             this.skusLocalRepository = skusLocalRepository;
             this.promotionLocalRepository = promotionLocalRepository;
+            this.wrongAddressesRepository = wrongAddressesRepository;
             this.httpClient = new HttpClient();
             this.configuration = configuration;
             this.siesaAuth = new SiesaAuth(configuration);
@@ -54,7 +57,7 @@ namespace colanta_backend.App.Orders.Infraestructure
         {
             this.setHeaders().Wait();
             string endpoint = "/api/ColantaWS/EnviarPedido";
-            VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(this.skusLocalRepository, this.promotionLocalRepository);
+            VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(this.skusLocalRepository, this.promotionLocalRepository, wrongAddressesRepository);
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(order.order_json);
             SiesaOrderDto siesaOrderDto = await mapper.getSiesaOrderDto(vtexOrderDto);
             string jsonContent = JsonSerializer.Serialize(siesaOrderDto);

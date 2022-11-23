@@ -13,13 +13,17 @@
     {
         private SkusRepository skusLocalRepository;
         private PromotionsRepository promotionsLocalRepository;
-        public VtexOrderToSiesaOrderMapper(SkusRepository skusLocalRepository, PromotionsRepository promotionsLocalRepository)
+        private WrongAddressesRepository wrongAddressesRepository;
+        public VtexOrderToSiesaOrderMapper(SkusRepository skusLocalRepository, PromotionsRepository promotionsLocalRepository, WrongAddressesRepository wrongAddressesRepository)
         {
             this.skusLocalRepository = skusLocalRepository;
             this.promotionsLocalRepository = promotionsLocalRepository;
+            this.wrongAddressesRepository = wrongAddressesRepository;
+
         }
         public async Task<SiesaOrderDto> getSiesaOrderDto(VtexOrderDto vtexOrder)
         {
+            var addressCorrector = new AddressCorrector(wrongAddressesRepository);
             SiesaOrderDto siesaOrder = new SiesaOrderDto();
             //Header
             siesaOrder.Encabezado.C263CO = this.getOperationCenter(vtexOrder.shippingData.address, vtexOrder.shippingData.logisticsInfo[0]);
@@ -34,8 +38,8 @@
             siesaOrder.Encabezado.C263Notas = this.getObservation(vtexOrder);
             siesaOrder.Encabezado.C263Direccion = this.getSiesaAddressFromVtexAdress(vtexOrder.shippingData.address);
             siesaOrder.Encabezado.C263Nombres = vtexOrder.shippingData.address.receiverName;
-            siesaOrder.Encabezado.C263Departamento = AddressCorrector.correctStateIfIsWrong(vtexOrder.shippingData.address.country, vtexOrder.shippingData.address.state, vtexOrder.shippingData.address.city);
-            siesaOrder.Encabezado.C263Ciudad = AddressCorrector.correctCityIfIsWrong(vtexOrder.shippingData.address.country, vtexOrder.shippingData.address.state, vtexOrder.shippingData.address.city);
+            siesaOrder.Encabezado.C263Departamento = addressCorrector.correctStateIfIsWrong(vtexOrder.shippingData.address.country, vtexOrder.shippingData.address.state, vtexOrder.shippingData.address.city);
+            siesaOrder.Encabezado.C263Ciudad = addressCorrector.correctCityIfIsWrong(vtexOrder.shippingData.address.country, vtexOrder.shippingData.address.state, vtexOrder.shippingData.address.city);
             siesaOrder.Encabezado.C263Negocio = this.getBusinessFromSalesChannel(vtexOrder.salesChannel);
             siesaOrder.Encabezado.C263TotalPedido = vtexOrder.value / 100;
             siesaOrder.Encabezado.C263TotalDescuentos = this.getTotal(vtexOrder.totals, "Discounts");

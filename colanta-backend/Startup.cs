@@ -135,6 +135,7 @@ namespace colanta_backend
             services.AddTransient<App.Orders.Domain.GetOrderDetailsVtexId>();
 
             //Dependencies Injections Shared
+            services.AddTransient<WrongAddressesRepository, WrongAddressesEFReppository>();
             services.AddTransient<IProcess, ProcessLogs>();
             services.AddTransient<ILogger, EFLogger>();
             services.AddTransient<EmailSender, ColantaSender>();

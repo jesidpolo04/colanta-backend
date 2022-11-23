@@ -3,42 +3,57 @@
     using System.Collections.Generic;
     public class WrongAddress
     {
-        private string country;
-        private string rightCountry;
-        private string city;
-        private string rightCity;
-        private string state;
-        private string rightState;
+        private string vtexCountry;
+        private string siesaCountry;
+        private string vtexCity;
+        private string siesaCity;
+        private string vtexDepartment;
+        private string siesaDepartment;
 
-        public WrongAddress(string country, string state, string city, string rightCountry, string rightState, string rightCity)
+        public WrongAddress(string vtexCountry, string vtexDepartment, string vtexCity, string siesaCountry, string siesaDepartment, string siesaCity)
         {
-            this.country = country;
-            this.rightCountry = rightCountry;
-            this.city = city;
-            this.rightCity = rightCity;
-            this.state = state;
-            this.rightState = rightState;
+            this.vtexCountry = vtexCountry;
+            this.siesaCountry = siesaCountry;
+            this.vtexCity = vtexCity;
+            this.siesaCity = siesaCity;
+            this.vtexDepartment = vtexDepartment;
+            this.siesaDepartment = siesaDepartment;
         }
 
-        public bool isWrongAddress(string country, string state, string city)
+        public bool isWrongAddress(string country, string department, string city)
         {
-            if (country == this.country && state == this.state && city == this.city) return true;
+            if (country == this.vtexCountry && department == this.vtexDepartment && city == this.vtexCity) return true;
             else return false;
         }
 
-        public string getRightCountry()
+        public string getVtexCountry()
         {
-            return this.rightCountry;
+            return this.vtexCountry;
         }
 
-        public string getRightCity()
+        public string getSiesaCountry()
         {
-            return this.rightCity;
+            return this.siesaCountry;
         }
 
-        public string getRightState()
+        public string getVtexCity()
         {
-            return this.rightState;
+            return this.vtexCity;
+        }
+
+        public string getSiesaCity()
+        {
+            return this.siesaCity;
+        }
+
+        public string getVtexDeparment()
+        {
+            return this.vtexDepartment;
+        }
+
+        public string getSiesaDepartment()
+        {
+            return this.siesaDepartment;
         }
     }
 }
