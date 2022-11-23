@@ -471,12 +471,12 @@ namespace colanta_backend.App.Shared.Infraestructure
             {
                 entity.ToTable("wrong_addresses");
                 entity.Property(e => e.id).ValueGeneratedOnAdd();
-                entity.Property(e => e.vtexCountry);
-                entity.Property(e => e.vtexDepartment);
-                entity.Property(e => e.vtexCity);
-                entity.Property(e => e.siesaCountry);
-                entity.Property(e => e.siesaDepartment);
-                entity.Property(e => e.siesaCity);
+                entity.Property(e => e.vtexCountry).HasColumnName("vtex_country");
+                entity.Property(e => e.vtexDepartment).HasColumnName("vtex_department"); ;
+                entity.Property(e => e.vtexCity).HasColumnName("vtex_city"); ;
+                entity.Property(e => e.siesaCountry).HasColumnName("siesa_country");
+                entity.Property(e => e.siesaDepartment).HasColumnName("siesa_department"); ;
+                entity.Property(e => e.siesaCity).HasColumnName("siesa_city");
             });
 
             OnModelCreatingPartial(modelBuilder);
