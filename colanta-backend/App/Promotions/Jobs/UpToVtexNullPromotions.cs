@@ -9,16 +9,18 @@
     {
         private PromotionsRepository localRepository;
         private PromotionsVtexRepository vtexRepository;
+        private ILogger logger;
 
         public UpToVtexNullPromotions(
             PromotionsRepository localRepository,
-            PromotionsVtexRepository vtexRepository
-
+            PromotionsVtexRepository vtexRepository,
+            ILogger logger
             )
             
         {
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
+            this.logger = logger;
         }
 
         public async Task Invoke()
@@ -36,13 +38,13 @@
                     }
                     catch(VtexException vtexException)
                     {
-
+                        await this.logger.writelog(vtexException);
                     }
                 }
             }
             catch (Exception exception)
             {
-
+                await this.logger.writelog(exception);
             }
         }
     }
