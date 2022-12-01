@@ -37,7 +37,8 @@
             {
                 UpToVtexNullPromotions upToVtexNullPromotions = new UpToVtexNullPromotions(
                                 this.localRepository,
-                                this.vtexRepository
+                                this.vtexRepository,
+                                this.logger
                                 );
                 upToVtexNullPromotions.Invoke().Wait();
             }
