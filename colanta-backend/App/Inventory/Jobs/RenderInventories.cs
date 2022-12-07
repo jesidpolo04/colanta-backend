@@ -21,7 +21,7 @@
         private List<Inventory> failedInventories = new List<Inventory>();
         private List<Inventory> notProccecedInventories = new List<Inventory>();
         private int obtainedInventories = 0;
-        private int securityStock = 3;
+        private int securityStock = 2;
 
         private List<Detail> details = new List<Detail>();
 
