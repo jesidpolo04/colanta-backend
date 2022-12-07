@@ -100,6 +100,8 @@
 
                                 if (localInventory.quantity == siesaInventory.quantity)
                                 {
+                                    inventoriesVtexRepository.updateInventory(localInventory);
+                                    inventoriesVtexRepository.removeReservedInventory(localInventory);
                                     this.notProccecedInventories.Add(localInventory);
                                 }
                             }
