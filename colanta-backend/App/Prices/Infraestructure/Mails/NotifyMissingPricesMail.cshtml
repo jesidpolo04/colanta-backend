@@ -1,0 +1,10 @@
+﻿@{
+    @model colanta_backend.App.Prices.Infraestructure.NotifyMissingPricesMailModel
+    Layout = "./App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
+}
+<h2 class="header">Desactivar producto @Model.sku.siesa_id</h2>
+
+<p>
+    El producto @Model.sku.name con siesa id @Model.sku.siesa_id debe ser desactivado,
+    Debido a que el precio del producto, no está siendo enviado desde SIESA.
+</p>
