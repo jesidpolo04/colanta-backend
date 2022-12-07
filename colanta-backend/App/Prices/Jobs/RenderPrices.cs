@@ -124,6 +124,7 @@
                                 }
                                 if (vtexPrice.price == localPrice.price)
                                 {
+                                    this.updatePriceForMeasurementUnit(localPrice.sku.product, localPrice.price);
                                     this.notProccecedPrices.Add(localPrice);
                                     continue;
                                 }
