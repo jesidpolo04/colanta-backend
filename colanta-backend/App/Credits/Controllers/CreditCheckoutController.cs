@@ -5,12 +5,8 @@ namespace colanta_backend.App.Credits.Controllers
 {
     using Credits.Domain;
     using Credits.Application;
-    using System.Threading.Tasks;
-    using System.Collections.Generic;
     using GiftCards.Domain;
-    using Products.Domain;
     using Orders.SiesaOrders.Domain;
-    using GiftCards.Application;
     using Microsoft.AspNetCore.Cors;
 
     [Route("api/cupo-lacteo")]

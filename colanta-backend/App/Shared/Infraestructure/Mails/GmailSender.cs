@@ -52,5 +52,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public void sendEmailWithoutTemplate(string title, string message, string to)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

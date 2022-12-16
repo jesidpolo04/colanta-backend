@@ -35,6 +35,16 @@
             throw new System.NotImplementedException();
         }
 
+        public void sendEmailWithoutTemplate(string title, string message, string to)
+        {
+            Email
+               .From(this.from, "Middleware Colanta")
+               .To(to)
+               .Subject(title)
+               .Body(message)
+               .Send();
+        }
+
         public void SendHelloWorld()
         {
             Email
