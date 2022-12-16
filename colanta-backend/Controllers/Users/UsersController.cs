@@ -2,21 +2,47 @@
 {
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
+    using System;
     using App.Users.Domain;
     using App.Users.Application;
     using Controllers.Users;
-   
+    using App.Shared.Domain;
+    using Microsoft.AspNetCore.Cors;
+
     [ApiController]
     [Route("api/users")]
     public class UsersController : ControllerBase
     {
-        UsersRepository localRepository;
-        UsersSiesaRepository siesaRepository;
+        private UsersRepository localRepository;
+        private UsersSiesaRepository siesaRepository;
+        private EmailSender emailSender;
+        private ILogger logger;
 
-        public UsersController(UsersRepository localRepository, UsersSiesaRepository siesaRepository)
+        public UsersController(UsersRepository localRepository, UsersSiesaRepository siesaRepository, EmailSender emailSender, ILogger logger)
         {
             this.localRepository = localRepository;
             this.siesaRepository = siesaRepository;
+            this.emailSender = emailSender;
+            this.logger = logger;
+        }
+
+        [HttpPost]
+        [EnableCors("Ecommerce")]
+        [Route("/remove")]
+        public async Task<ActionResult> Remove(RequestRemoveUserDto request)
+        {
+            try
+            {
+                var useCase = new SendRemoveUserRequest(this.emailSender);
+                useCase.Invoke(request.email, request.firstName, request.lastName, request.document, request.documentType);
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                await this.logger.writelog(exception);
+                throw exception;
+            }
+            
         }
 
         [HttpGet]
