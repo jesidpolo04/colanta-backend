@@ -28,7 +28,7 @@
 
         [HttpPost]
         [EnableCors("Ecommerce")]
-        [Route("/remove")]
+        [Route("remove")]
         public async Task<ActionResult> Remove(RequestRemoveUserDto request)
         {
             try
