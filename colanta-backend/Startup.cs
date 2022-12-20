@@ -88,6 +88,7 @@ namespace colanta_backend
             services.AddTransient<App.Prices.Domain.PricesVtexRepository, App.Prices.Infraestructure.PricesVtexRepository>();
             services.AddTransient<App.Prices.Domain.PricesSiesaRepository, App.Prices.Infraestructure.PricesSiesaRepository>();
             services.AddTransient<App.Prices.Domain.IRenderPricesMail, App.Prices.Infraestructure.RenderPricesMail>();
+            services.AddTransient<App.Prices.Domain.INotifyMissingPriceMail, App.Prices.Infraestructure.NotifyMissingPricesMail>();
             services.AddTransient<App.Prices.Jobs.RenderPrices>();
             services.AddTransient<App.Prices.Jobs.NotifyMissingPrices>();
             //Depndencies Injectios Inventory
