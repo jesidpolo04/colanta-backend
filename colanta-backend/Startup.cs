@@ -158,6 +158,7 @@ namespace colanta_backend
             services.AddHostedService<ScheduledUpdateProductsAndSkusStates>();
 
             services.AddHostedService<ScheduledRenderPrices>();
+            services.AddHostedService<ScheduledNotifyMissingPrices>();
 
             services.AddHostedService<ScheduledRenderInventories>();
 
