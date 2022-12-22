@@ -16,7 +16,12 @@
         {
             this.subject = $"Desactivar producto {sku.siesa_id}";
             var model = new NotifyMissingPricesMailModel(sku);
-            this.emailSender.SendEmail(this.subject, "./App/Prices/Infraestructure/Mails/NotifyMissingPricesMail.cshtml", model, "jesdady482@gmail.com");
+            this.emailSender.SendEmail(
+                this.subject, 
+                "./App/Prices/Infraestructure/Mails/NotifyMissingPricesMail.cshtml",
+                model,
+                "jesdady482@gmail.com;pidecolanta@colanta.com.co;williamre@colanta.com.co;mauriciosp@colanta.com.co"
+            );
         }
     }
 }
