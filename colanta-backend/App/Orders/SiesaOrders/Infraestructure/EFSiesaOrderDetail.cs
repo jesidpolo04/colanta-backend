@@ -10,7 +10,7 @@
         public string variacion_item { get; set; }
         public int ind_obsequio { get; set; }
         public string unidad_medida { get; set; }
-        public int cantidad { get; set; }
+        public decimal cantidad { get; set; }
         public decimal precio { get; set; }
         public string notas { get; set; }
         public decimal impuesto { get; set; }

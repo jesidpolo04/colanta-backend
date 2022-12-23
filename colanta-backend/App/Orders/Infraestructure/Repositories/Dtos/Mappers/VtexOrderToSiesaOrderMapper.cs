@@ -68,8 +68,8 @@
                 siesaDetail.C263ReferenciaItem = await this.getItemSiesaRef(vtexItem.refId);
                 siesaDetail.C263VariacionItem = this.getItemVariationSiesaRef(vtexItem.refId);
                 siesaDetail.C263IndObsequio = vtexItem.isGift ? 1 : 0;
-                siesaDetail.C263UnidMedida = vtexItem.measurementUnit == "un" ? "UND" : vtexItem.measurementUnit;
-                siesaDetail.C263Cantidad = vtexItem.quantity;
+                siesaDetail.C263UnidMedida = this.getMeasurementUnit(vtexItem.measurementUnit);
+                siesaDetail.C263Cantidad = vtexItem.quantity * ((decimal) vtexItem.unitMultiplier);
                 siesaDetail.C263Precio = vtexItem.price / 100;
                 siesaDetail.C263Notas = "sin notas";
                 siesaDetail.C263Impuesto = 0;
@@ -264,6 +264,13 @@
             {
                 return vtexOrder.creationDate.ToString(DateFormats.UTC);
             }
+        }
+
+        private string getMeasurementUnit(string vtexMeasurementUnit)
+        {
+            if (vtexMeasurementUnit == "kg") return "KG";
+            else if (vtexMeasurementUnit == "lb") return "LB";
+            else return "UND";
         }
     }
 }
