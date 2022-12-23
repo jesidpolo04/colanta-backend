@@ -2,7 +2,7 @@
 {
     public class RemovedItem
     {
-        public int quantity;
+        public decimal quantity;
         public decimal price;
         public string vtexId;
         public string siesaId;
