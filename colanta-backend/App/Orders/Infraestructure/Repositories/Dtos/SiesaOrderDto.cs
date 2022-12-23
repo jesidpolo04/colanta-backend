@@ -118,7 +118,6 @@
         public string? C263VariacionItem {get; set;}
         public int C263IndObsequio {get; set;}
         public string C263UnidMedida {get; set;}
-        [JsonConverter(typeof(Int32Converter))]
         public decimal C263Cantidad {get; set;}
         public decimal C263Precio {get; set;}
         public string C263Notas {get; set;}
