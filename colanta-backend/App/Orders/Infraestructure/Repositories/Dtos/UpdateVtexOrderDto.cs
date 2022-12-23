@@ -17,7 +17,7 @@
             itemsRemoved = new List<UpdateVtexOrderItemRemovedDto>();
         }
 
-        public void addItem(string vtexId, decimal price, int quantity)
+        public void addItem(string vtexId, decimal price, decimal quantity)
         {
             UpdateVtexOrderItemAddedDto itemAdded = new UpdateVtexOrderItemAddedDto();
             itemAdded.id = vtexId;
@@ -25,7 +25,7 @@
             itemAdded.quantity = quantity;
             itemsAdded.Add(itemAdded);
         }
-        public void removeItem(string vtexId, decimal price, int quantity)
+        public void removeItem(string vtexId, decimal price, decimal quantity)
         {
             UpdateVtexOrderItemRemovedDto itemRemoved = new UpdateVtexOrderItemRemovedDto();
             itemRemoved.id = vtexId;
@@ -43,14 +43,14 @@
         {
             public string id { get; set; }
             public int price { get; set; }
-            public int quantity { get; set; }
+            public decimal quantity { get; set; }
         }
 
         public class UpdateVtexOrderItemRemovedDto
         {
             public string id { get; set; }
             public int price { get; set; }
-            public int quantity { get; set; }
+            public decimal quantity { get; set; }
         }
     }
 }
