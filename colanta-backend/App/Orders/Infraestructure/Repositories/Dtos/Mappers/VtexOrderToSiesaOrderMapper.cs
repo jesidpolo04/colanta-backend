@@ -112,8 +112,10 @@
         private string getSiesaAddressFromVtexAdress(Address vtexAddress)
         {
             string address = vtexAddress.street;
+            if(vtexAddress.number != null && vtexAddress.number != "")
+                address += $" número: {vtexAddress.number}";
             if (vtexAddress.complement != null && vtexAddress.complement != "") address += $" complemento: {vtexAddress.complement}";
-            address += $" Barrio: {vtexAddress.neighborhood}";
+            address += $" barrio: {vtexAddress.neighborhood}";
             if (vtexAddress.reference != null) address = $" {vtexAddress.reference}";
             return address;
         }
