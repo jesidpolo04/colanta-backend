@@ -24,6 +24,7 @@ namespace colanta_backend.App.Orders.Controllers
         private SkusRepository skusRepository;
         private ILogger logger;
         private MailService mailService;
+        private EmailSender emailSender;
         public OrdersHookController(
             OrdersRepository localRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
@@ -32,7 +33,8 @@ namespace colanta_backend.App.Orders.Controllers
             SkusRepository skusRepository,
             ILogger logger,
             MailService mailService,
-            RegisterUserService registerUserService
+            RegisterUserService registerUserService,
+            EmailSender emailSender
             )
         {
             this.localRepository = localRepository;
@@ -43,6 +45,7 @@ namespace colanta_backend.App.Orders.Controllers
             this.logger = logger;
             this.mailService = mailService;
             this.registerUserService = registerUserService;
+            this.emailSender = emailSender;
         }
 
         [Route("orders/hook")]
@@ -74,8 +77,8 @@ namespace colanta_backend.App.Orders.Controllers
             return Ok();
         }
 
-        [Route("orders/send")]
-        [HttpPost]
+        [Route("orders/send/{vtexOrderId}")]
+        [HttpGet]
         public async Task<object> send(string vtexOrderId)
         {
             try
@@ -88,7 +91,8 @@ namespace colanta_backend.App.Orders.Controllers
                    this.siesaRepository,
                    this.skusRepository,
                    this.mailService,
-                   this.registerUserService);
+                   this.registerUserService,
+                   this.emailSender);
 
                await useCase.Invoke(vtexOrder.orderId);
                 return Ok();
