@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace colanta_backend.App.Orders.Controllers
 {
+    using System;
     using Products.Domain;
     using Orders.Domain;
     using Users.Domain;
@@ -71,6 +72,33 @@ namespace colanta_backend.App.Orders.Controllers
                 orderSummary.LastChange,
                 orderSummary.CurrentChange);
             return Ok();
+        }
+
+        [Route("orders/send")]
+        [HttpPost]
+        public async Task<object> send(string vtexOrderId)
+        {
+            try
+            {
+                var vtexOrder = await this.vtexRepository.getOrderByVtexId(vtexOrderId);
+                var useCase = new SendOrderManuallyUseCase(
+                   this.localRepository,
+                   this.siesaOrdersLocalRepository,
+                   this.vtexRepository,
+                   this.siesaRepository,
+                   this.skusRepository,
+                   this.mailService,
+                   this.registerUserService);
+
+               await useCase.Invoke(vtexOrder.orderId);
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                await this.logger.writelog(e);
+                return e;
+            }
+           
         }
     }
 }
