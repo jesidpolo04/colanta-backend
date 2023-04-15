@@ -137,6 +137,11 @@
                                     success: false));
                         await this.logger.writelog(vtexException);
                     }
+                    catch(Exception exception)
+                    {
+                        this.console.throwException(exception.Message);
+                        await this.logger.writelog(exception);
+                    }
                 }
             }
             catch(SiesaException siesaException)
