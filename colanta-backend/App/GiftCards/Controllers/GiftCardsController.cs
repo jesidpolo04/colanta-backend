@@ -10,6 +10,8 @@ namespace colanta_backend.App.GiftCards.Controllers
     using Products.Domain;
     using Orders.SiesaOrders.Domain;
     using GiftCards.Application;
+    using colanta_backend.App.Shared.Domain;
+    using System;
 
     [Route("api")]
     [ApiController]
@@ -19,16 +21,19 @@ namespace colanta_backend.App.GiftCards.Controllers
         private GiftCardsSiesaRepository siesaRepository;
         private SkusRepository skusLocalRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
+        private ILogger logger;
         public GiftCardsController(
             GiftCardsRepository localRepository, 
             GiftCardsSiesaRepository siesaRepository, 
             SkusRepository skusLocalRepository,
-            SiesaOrdersRepository siesaOrdersLocalRepository)
+            SiesaOrdersRepository siesaOrdersLocalRepository,
+            ILogger logger)
         {
             this.localRepository = localRepository;
             this.siesaRepository = siesaRepository;
             this.skusLocalRepository = skusLocalRepository;
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -46,23 +51,31 @@ namespace colanta_backend.App.GiftCards.Controllers
         [Route("giftcards/_search")] // obtener giftcards
         public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
-            SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository, this.siesaOrdersLocalRepository);
-            GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(
-                vtexInfo.client.document, 
-                vtexInfo.cart.items[0].refId,
-                vtexInfo.cart.redemptionCode);
-            List<GiftCardProviderDto> giftCardProviderDtos = new List<GiftCardProviderDto>();
-            foreach (GiftCard giftCard in giftCards)
+            try
             {
-                GiftCardProviderDto giftCardProviderDto = new GiftCardProviderDto();
-                giftCardProviderDto.setDtoFromGiftCard(giftCard);
-                giftCardProviderDtos.Add(giftCardProviderDto);
+                SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository, this.siesaOrdersLocalRepository);
+                GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(
+                    vtexInfo.client.document,
+                    vtexInfo.cart.items[0].refId,
+                    vtexInfo.cart.redemptionCode);
+                List<GiftCardProviderDto> giftCardProviderDtos = new List<GiftCardProviderDto>();
+                foreach (GiftCard giftCard in giftCards)
+                {
+                    GiftCardProviderDto giftCardProviderDto = new GiftCardProviderDto();
+                    giftCardProviderDto.setDtoFromGiftCard(giftCard);
+                    giftCardProviderDtos.Add(giftCardProviderDto);
+                }
+                int from = 0;
+                int to = giftCards.Length;
+                int of = giftCards.Length;
+                HttpContext.Response.Headers.Add("REST-Content-Range", "resources " + from + "-" + to + "/" + of);
+                return giftCardProviderDtos.ToArray();
             }
-            int from = 0;
-            int to = giftCards.Length;
-            int of = giftCards.Length;
-            HttpContext.Response.Headers.Add("REST-Content-Range", "resources " + from+"-"+to+"/"+of);
-            return giftCardProviderDtos.ToArray();
+            catch(Exception exception)
+            {
+                this.logger.writelog(exception).Wait();
+                throw exception;
+            }
         }
 
         [HttpGet("giftcards/{giftCardId}")] // obtener giftcard
