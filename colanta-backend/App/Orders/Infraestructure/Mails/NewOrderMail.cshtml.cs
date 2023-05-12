@@ -24,6 +24,7 @@ namespace colanta_backend.App.Orders.Infraestructure
         public DateTime? pickupStart;
         public DateTime? pickupEnd;
         public string observations;
+        public string phone;
 
         public NewOrderMailModel(SiesaOrder siesaOrder, VtexOrder vtexOrder, Warehouse store)
         {
@@ -41,6 +42,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.pickupStart = deliveryWindow != null ? deliveryWindow.startDateUtc?.ToUniversalTime() : null;
             this.pickupEnd = deliveryWindow != null ? deliveryWindow.endDateUtc?.ToUniversalTime() : null;
             this.observations = this.siesaOrder.notas;
+            this.phone = this.siesaOrder.telefono;
         }
         public void OnGet()
         {
