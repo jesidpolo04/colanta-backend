@@ -403,6 +403,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.co);
                 entity.Property(e => e.fecha);
                 entity.Property(e => e.doc_tercero);
+                entity.Property(e => e.telefono).HasMaxLength(30); ;
                 entity.Property(e => e.fecha_entrega);
                 entity.Property(e => e.referencia_vtex);
                 entity.Property(e => e.estado_vtex);

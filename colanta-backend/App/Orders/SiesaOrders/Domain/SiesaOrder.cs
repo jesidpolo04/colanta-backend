@@ -28,6 +28,7 @@
         public bool pago_contraentrega { get; set; }
         public bool recoge_en_tienda { get; set; }
         public string siesa_pedido { get; set; }
+        public string telefono { get; set; }
         public SiesaOrderDetail[] detalles { get; set; }
         public SiesaOrderDiscount[] descuentos { get; set; }
 

@@ -86,6 +86,7 @@
         public string C263CO { get; set; }
         public string C263Fecha { get; set; }
         public string C263DocTercero { get; set; }
+        public string C263Telefono { get; set; }
         public string C263FechaEntrega { get; set; }
         public string C263ReferenciaVTEX { get; set; }
         public string C263ReferenciaPago { get; set; }

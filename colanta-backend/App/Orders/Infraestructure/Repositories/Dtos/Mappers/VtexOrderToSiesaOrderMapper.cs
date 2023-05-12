@@ -44,6 +44,7 @@
             siesaOrder.Encabezado.C263TotalPedido = vtexOrder.value / 100;
             siesaOrder.Encabezado.C263TotalDescuentos = this.getTotal(vtexOrder.totals, "Discounts");
             siesaOrder.Encabezado.C263RecogeEnTienda = this.pickupInStore(vtexOrder.shippingData.address.addressType);
+            siesaOrder.Encabezado.C263Telefono = vtexOrder.clientProfileData.phone;
 
             
             foreach (Transaction transaction in vtexOrder.paymentData.transactions)

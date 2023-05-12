@@ -28,6 +28,7 @@
         public decimal total_descuento { get; set; }
         public bool recoge_en_tienda { get; set; }
         public bool pago_contraentrega { get; set; }
+        public string telefono { get; set; }
         public List<EFSiesaOrderDetail> detalles { get; set; }
         public List<EFSiesaOrderDiscount> descuentos { get; set; }
 
@@ -56,6 +57,7 @@
             this.formas_de_pago = siesaOrder.formas_de_pago;
             this.pago_contraentrega = siesaOrder.pago_contraentrega;
             this.recoge_en_tienda = siesaOrder.recoge_en_tienda;
+            this.telefono = siesaOrder.telefono;
 
 
             List<EFSiesaOrderDetail> efSiesaOrderDetails = new List<EFSiesaOrderDetail>();
@@ -105,6 +107,7 @@
             siesaOrder.total_envio = this.total_envio;
             siesaOrder.pago_contraentrega = this.pago_contraentrega;
             siesaOrder.formas_de_pago = this.formas_de_pago;
+            siesaOrder.telefono = this.telefono;
 
             List<SiesaOrderDetail> siesaOrderDetails = new List<SiesaOrderDetail>();
             foreach (EFSiesaOrderDetail efSiesaOrderDetail in this.detalles)
