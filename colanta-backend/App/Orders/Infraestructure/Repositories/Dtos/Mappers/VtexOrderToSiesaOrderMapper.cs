@@ -191,6 +191,7 @@
             foreach (Payment payment in payments)
             {
                 if (PaymentMethods.WOMPI.id == payment.paymentSystem) return payment.tid;
+                if (PaymentMethods.CREDIBANCO.id == payment.paymentSystem) return payment.tid;
                 if (PaymentMethods.EFECTIVO.id == payment.paymentSystem) return payment.tid;
                 if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem) return payment.tid;
             }
@@ -234,6 +235,7 @@
             if (PaymentMethods.GIFTCARD.id == payment.paymentSystem && Providers.CUPO == payment.giftCardProvider) return "CUPO";
             if (PaymentMethods.CONTRAENTREGA.id == payment.paymentSystem && PaymentMethods.CONTRAENTREGA.name == payment.paymentSystemName) return "CONTRAENTREGA";
             if (PaymentMethods.WOMPI.id == payment.paymentSystem) return "WOMPI";
+            if (PaymentMethods.CREDIBANCO.id == payment.paymentSystem) return "CREDIBANCO";
             if (PaymentMethods.EFECTIVO.id == payment.paymentSystem && PaymentMethods.EFECTIVO.name == payment.paymentSystemName) return "EFECTIVO";
             if (PaymentMethods.CARD_PROMISSORY.id == payment.paymentSystem) return "CARD_PROMISSORY";
             if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return "CUPO";
@@ -248,6 +250,7 @@
             if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return payment.tid;
             if (PaymentMethods.GIFTCARD.id == payment.paymentSystem) return payment.giftCardId;
             if (PaymentMethods.WOMPI.id == payment.paymentSystem) return payment.tid;
+            if (PaymentMethods.CREDIBANCO.id == payment.paymentSystem) return payment.tid;
             else return payment.tid;
         }
 
