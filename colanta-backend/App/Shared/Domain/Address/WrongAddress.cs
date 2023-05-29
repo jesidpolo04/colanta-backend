@@ -1,6 +1,5 @@
 ﻿namespace colanta_backend.App.Shared.Domain
 {
-    using System.Collections.Generic;
     public class WrongAddress
     {
         private string vtexCountry;
@@ -22,7 +21,11 @@
 
         public bool isWrongAddress(string country, string department, string city)
         {
-            if (country == this.vtexCountry && department == this.vtexDepartment && city == this.vtexCity) return true;
+            if (
+                country.ToLower() == this.vtexCountry.ToLower() && 
+                department.ToLower() == this.vtexDepartment.ToLower() && 
+                city.ToLower() == this.vtexCity.ToLower()
+            ) return true;
             else return false;
         }
 
