@@ -11,18 +11,20 @@
         private SkusRepository skusLocalRepository;
         private ProductsVtexRepository productsVtexRepository;
         private SkusVtexRepository skusVtexRepository;
+        private ILogger logger;
         public UpToVtexNullProductsAndSkus(
             ProductsRepository productsLocalRepository,
             SkusRepository skusLocalRepository,
             ProductsVtexRepository productsVtexRepository,
-            SkusVtexRepository skusVtexRepository
-
+            SkusVtexRepository skusVtexRepository,
+            ILogger logger
             )
         {
             this.productsLocalRepository = productsLocalRepository;
             this.skusLocalRepository = skusLocalRepository;
             this.productsVtexRepository = productsVtexRepository;
             this.skusVtexRepository = skusVtexRepository;
+            this.logger = logger;
         }
 
         public async Task Invoke()
@@ -47,7 +49,7 @@
             }
             catch(Exception exception)
             {
-
+                await this.logger.writelog(exception);
             }
         }
     }
