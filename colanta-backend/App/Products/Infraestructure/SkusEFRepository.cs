@@ -74,7 +74,9 @@
 
         public async Task<Sku[]> getVtexNullSkus()
         {
-            EFSku[] efSkus = this.dbContext.Skus.Where(sku => sku.vtex_id == null).ToArray();
+            EFSku[] efSkus = this.dbContext.Skus
+                .Include( sku => sku.product )
+                .Where(sku => sku.vtex_id == null).ToArray();
             List<Sku> skus = new List<Sku>();
             foreach(EFSku efSku in efSkus)
             {
