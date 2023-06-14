@@ -10,8 +10,10 @@ namespace colanta_backend.App.GiftCards.Controllers
     using Products.Domain;
     using Orders.SiesaOrders.Domain;
     using GiftCards.Application;
-    using colanta_backend.App.Shared.Domain;
+    using SharedDomain = colanta_backend.App.Shared.Domain;
     using System;
+    using MicrosoftLogging = Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging;
 
     [Route("api")]
     [ApiController]
@@ -21,19 +23,22 @@ namespace colanta_backend.App.GiftCards.Controllers
         private GiftCardsSiesaRepository siesaRepository;
         private SkusRepository skusLocalRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
-        private ILogger logger;
+        private SharedDomain.ILogger logger;
+        private MicrosoftLogging.ILogger fileLogger;
         public GiftCardsController(
             GiftCardsRepository localRepository, 
             GiftCardsSiesaRepository siesaRepository, 
             SkusRepository skusLocalRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
-            ILogger logger)
+            SharedDomain.ILogger logger,
+            MicrosoftLogging.ILogger<GiftCardsController> fileLogger)
         {
             this.localRepository = localRepository;
             this.siesaRepository = siesaRepository;
             this.skusLocalRepository = skusLocalRepository;
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
             this.logger = logger;
+            this.fileLogger = fileLogger;
         }
 
         [HttpPost]
@@ -53,6 +58,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         {
             try
             {
+                this.fileLogger.LogDebug($"{ DateTime.Now.ToString("f") } : Buscando giftcards", vtexInfo);
                 SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository, this.siesaOrdersLocalRepository);
                 GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(
                     vtexInfo.client.document,
@@ -69,6 +75,7 @@ namespace colanta_backend.App.GiftCards.Controllers
                 int to = giftCards.Length;
                 int of = giftCards.Length;
                 HttpContext.Response.Headers.Add("REST-Content-Range", "resources " + from + "-" + to + "/" + of);
+                this.fileLogger.LogDebug($"{DateTime.Now.ToString("f")} : Retornando giftcards", giftCardProviderDtos);
                 return giftCardProviderDtos.ToArray();
             }
             catch(Exception exception)

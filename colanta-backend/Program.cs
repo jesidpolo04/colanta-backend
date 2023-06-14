@@ -1,13 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Quartz;
-using Quartz.Impl;
+using NLog.Web;
 
 namespace colanta_backend
 {
@@ -23,6 +17,11 @@ namespace colanta_backend
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureLogging(logging =>
+                    {
+                        logging.ClearProviders();
+                    });
+                    webBuilder.UseNLog();
                 });
     }
 }

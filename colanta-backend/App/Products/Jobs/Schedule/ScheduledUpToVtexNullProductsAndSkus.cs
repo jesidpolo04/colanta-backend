@@ -45,7 +45,8 @@ namespace colanta_backend.App.Products.Jobs
                 this.productsLocalRepository,
                 this.skusLocalRepository,
                 this.productsVtexRepository,
-                this.skusVtexRepository
+                this.skusVtexRepository,
+                this.logger
                 );
                 upToVtexNullProductsAndSkus.Invoke().Wait();
             }
