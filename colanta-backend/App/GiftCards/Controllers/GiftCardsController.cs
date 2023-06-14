@@ -14,6 +14,8 @@ namespace colanta_backend.App.GiftCards.Controllers
     using System;
     using MicrosoftLogging = Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging;
+    using System.Threading.Tasks.Dataflow;
+    using System.Linq;
 
     [Route("api")]
     [ApiController]
@@ -54,11 +56,11 @@ namespace colanta_backend.App.GiftCards.Controllers
 
         [HttpPost]
         [Route("giftcards/_search")] // obtener giftcards
-        public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
+        public async Task<ActionResult<GiftCardProviderDto[]>> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
             try
             {
-                this.fileLogger.LogDebug($"{ DateTime.Now.ToString("f") } : Buscando giftcards", vtexInfo);
+                this.fileLogger.LogDebug($"Buscando giftcards de: {vtexInfo.client.document}", vtexInfo);
                 SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository, this.siesaOrdersLocalRepository);
                 GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(
                     vtexInfo.client.document,
@@ -75,13 +77,18 @@ namespace colanta_backend.App.GiftCards.Controllers
                 int to = giftCards.Length;
                 int of = giftCards.Length;
                 HttpContext.Response.Headers.Add("REST-Content-Range", "resources " + from + "-" + to + "/" + of);
-                this.fileLogger.LogDebug($"{DateTime.Now.ToString("f")} : Retornando giftcards", giftCardProviderDtos);
-                return giftCardProviderDtos.ToArray();
+                var codes = giftCards.ToList().ConvertAll(giftCard =>
+                {
+                    return giftCard.code;
+                });
+                this.fileLogger.LogDebug($"Retornando giftcards { string.Join(",", codes) }", giftCardProviderDtos);
+                return Ok(giftCardProviderDtos.ToArray());
             }
             catch(Exception exception)
             {
+                this.fileLogger.LogDebug($"Excepcion: {exception.Message} al buscar giftcards de: {vtexInfo.client.document}");
                 this.logger.writelog(exception).Wait();
-                throw exception;
+                return NotFound();
             }
         }
 
