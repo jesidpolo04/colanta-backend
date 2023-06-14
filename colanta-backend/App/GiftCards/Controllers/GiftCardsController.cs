@@ -14,8 +14,8 @@ namespace colanta_backend.App.GiftCards.Controllers
     using System;
     using MicrosoftLogging = Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging;
-    using System.Threading.Tasks.Dataflow;
     using System.Linq;
+    using System.Text.Json;
 
     [Route("api")]
     [ApiController]
@@ -60,7 +60,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         {
             try
             {
-                this.fileLogger.LogDebug($"Buscando giftcards de: {vtexInfo.client.document}", vtexInfo);
+                this.fileLogger.LogDebug($"Buscando giftcards de: {vtexInfo.client.document} : { JsonSerializer.Serialize(vtexInfo) }");
                 SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository, this.siesaOrdersLocalRepository);
                 GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(
                     vtexInfo.client.document,
