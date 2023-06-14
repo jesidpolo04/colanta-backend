@@ -62,7 +62,10 @@ namespace colanta_backend.App.Products.Infraestructure
 
         public async Task<Product[]> getVtexNullProducts()
         {
-            EFProduct[] efProducts = this.dbContext.Products.Where(product => product.vtex_id == null).ToArray();
+            EFProduct[] efProducts = this.dbContext.Products
+                .Include(product => product.brand)
+                .Include(product => product.category)
+                .Where(product => product.vtex_id == null).ToArray();
             List<Product> products = new List<Product>();
             foreach (EFProduct efProduct in efProducts)
             {
