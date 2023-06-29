@@ -1,5 +1,4 @@
 ﻿using colanta_backend.App.Prices.Jobs;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -18,7 +17,7 @@ namespace colanta_backend.App.Prices.Presentation
                 Request.Headers.TryGetValue("Authorization", out var authorization);
                 if (authorization.Equals("Jesing0408"))
                 {
-                    job.Invoke();
+                    job.Invoke().Wait();
                     Ok("Renderizando precios");
                 }
                 else
