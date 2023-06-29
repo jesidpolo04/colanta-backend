@@ -11,7 +11,7 @@ namespace colanta_backend.App.Prices.Presentation
     {
         [HttpPost]
         [Route("render")]
-        public ActionResult Post([FromServices] RenderPrices job)
+        public void Post([FromServices] RenderPrices job)
         {
             try
             {
@@ -19,16 +19,16 @@ namespace colanta_backend.App.Prices.Presentation
                 if (authorization.Equals("Jesing0408"))
                 {
                     job.Invoke();
-                    return Ok("Renderizando precios");
+                    Ok("Renderizando precios");
                 }
                 else
                 {
-                    return Unauthorized();
+                    Unauthorized();
                 }
             }
             catch (Exception exception)
             {
-                return StatusCode(500, exception.Message);
+                StatusCode(500, exception.Message);
             }
         }
     }
