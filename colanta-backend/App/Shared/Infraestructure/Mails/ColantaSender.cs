@@ -11,11 +11,18 @@
     public class ColantaSender : EmailSender
     {
         private SmtpClient smtpClient;
-        private string from = "pidecolanta@colanta.com.co";
+        private string from = "noresponder@colanta.com.co";
+        private int port = 587;
+        private string host = "smtp.office365.com";
+        private string user = "noresponder@colanta.com.co";
+        private string pass = "Colanta$2021";
 
         public ColantaSender()
         {
-            this.smtpClient = new SmtpClient("10.50.0.135");
+            this.smtpClient = new SmtpClient(this.host);
+            this.smtpClient.Port = this.port;
+            this.smtpClient.Credentials = new NetworkCredential(this.user, this.pass);
+            this.smtpClient.EnableSsl = true;
             Email.DefaultSender = new SmtpSender(this.smtpClient);
             Email.DefaultRenderer = new RazorRenderer();
         }
