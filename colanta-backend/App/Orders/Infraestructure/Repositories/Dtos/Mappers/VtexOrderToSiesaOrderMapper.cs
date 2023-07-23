@@ -23,17 +23,19 @@
         }
         public async Task<SiesaOrderDto> getSiesaOrderDto(VtexOrderDto vtexOrder)
         {
+            var shippingData = vtexOrder.shippingData;
+            var paymentData = vtexOrder.paymentData;
             var addressCorrector = new AddressCorrector(wrongAddressesRepository);
             SiesaOrderDto siesaOrder = new SiesaOrderDto();
             //Header
-            siesaOrder.Encabezado.C263CO = this.getOperationCenter(vtexOrder.shippingData.address, vtexOrder.shippingData.logisticsInfo[0]);
+            siesaOrder.Encabezado.C263CO = this.getOperationCenter(shippingData);
             siesaOrder.Encabezado.C263Fecha = this.getDate(vtexOrder);
             siesaOrder.Encabezado.C263DocTercero = vtexOrder.clientProfileData.document;
-            siesaOrder.Encabezado.C263FechaEntrega = this.getEstimateDeliveryDate(vtexOrder.shippingData.logisticsInfo[0].shippingEstimateDate);
+            siesaOrder.Encabezado.C263FechaEntrega = this.getEstimateDeliveryDate(shippingData);
             siesaOrder.Encabezado.C263ReferenciaVTEX = vtexOrder.orderId;
-            siesaOrder.Encabezado.C263CondPago = this.getPaymentCondition(vtexOrder.paymentData.transactions[0].payments);
-            siesaOrder.Encabezado.C263ReferenciaPago = this.getHeaderPaymentReference(vtexOrder.paymentData.transactions[0].payments);
-            siesaOrder.Encabezado.C263PagoContraentrega = this.isUponDelivery(vtexOrder.paymentData.transactions[0].payments);
+            siesaOrder.Encabezado.C263CondPago = this.getPaymentCondition(paymentData);
+            siesaOrder.Encabezado.C263ReferenciaPago = this.getHeaderPaymentReference(paymentData);
+            siesaOrder.Encabezado.C263PagoContraentrega = this.isUponDelivery(paymentData);
             siesaOrder.Encabezado.C263ValorEnvio = this.getTotal(vtexOrder.totals, "Shipping");
             siesaOrder.Encabezado.C263Notas = this.getObservation(vtexOrder);
             siesaOrder.Encabezado.C263Direccion = this.getSiesaAddressFromVtexAdress(vtexOrder.shippingData.address);
@@ -43,7 +45,8 @@
             siesaOrder.Encabezado.C263Negocio = this.getBusinessFromSalesChannel(vtexOrder.salesChannel);
             siesaOrder.Encabezado.C263TotalPedido = vtexOrder.value / 100;
             siesaOrder.Encabezado.C263TotalDescuentos = this.getTotal(vtexOrder.totals, "Discounts");
-            siesaOrder.Encabezado.C263RecogeEnTienda = this.pickupInStore(vtexOrder.shippingData.address.addressType);
+            siesaOrder.Encabezado.C263RecogeEnTienda = this.pickupInStore(shippingData);
+            siesaOrder.Encabezado.C263FechaRecoge = siesaOrder.Encabezado.C263RecogeEnTienda ? this.pickupDateTime(shippingData) : null;
             siesaOrder.Encabezado.C263Telefono = vtexOrder.clientProfileData.phone;
 
             
@@ -97,8 +100,9 @@
             return siesaOrder;
         }
 
-        private bool isUponDelivery(List<Payment> payments)
+        private bool isUponDelivery(PaymentData paymentData)
         {
+            var payments = paymentData.transactions[0].payments;
             foreach(Payment payment in payments)
             {
                 if(
@@ -179,8 +183,9 @@
             }
         }
 
-        private string getHeaderPaymentReference(List<Payment> payments)
+        private string getHeaderPaymentReference(PaymentData paymentData)
         {
+            var payments = paymentData.transactions[0].payments;
             //recorre en busca de pago con cupo
             foreach (Payment payment in payments)
             {
@@ -199,29 +204,34 @@
             return payments[0].giftCardId;
         }
 
-        private bool pickupInStore(string addressType)
+        private bool pickupInStore(ShippingData shippingData)
         { 
-            if (addressType == "pickup") return true;
+            if (shippingData.address.addressType == "pickup") return true;
             return false;
         }
 
-        private string getEstimateDeliveryDate(DateTime? date)
+        private string? pickupDateTime(ShippingData shippingData)
+        {
+            var estimatedDate = shippingData.logisticsInfo[0].shippingEstimateDate;
+            return estimatedDate.HasValue ? estimatedDate.Value.ToString(DateFormats.FECHA_RECOGE) : null; 
+        }
+
+        private string getEstimateDeliveryDate(ShippingData shippingData)
         {
             int defaultHours = 2;
-            if (date == null) return DateTime.Now.AddHours(defaultHours).ToString(DateFormats.UTC);
-            DateTime notNullDate = (DateTime)date;
-            return notNullDate.ToString(DateFormats.UTC);
+            if (!shippingData.logisticsInfo[0].shippingEstimateDate.HasValue) return DateTime.Now.AddHours(defaultHours).ToString(DateFormats.UTC);
+            return shippingData.logisticsInfo[0].shippingEstimateDate.Value.ToString(DateFormats.UTC);
         }
 
-        private string getOperationCenter(Address address, LogisticsInfo logisticsInfo)
+        private string getOperationCenter(ShippingData shippingData)
         {
-            if (address.addressType == "pickup") return address.addressId;
-            else return logisticsInfo.polygonName;
+            if (shippingData.address.addressType == "pickup") return shippingData.address.addressId;
+            else return shippingData.logisticsInfo[0].polygonName;
         }
 
-        private string getPaymentCondition(List<Payment> payments)
+        private string getPaymentCondition(PaymentData paymentData)
         {
-            foreach (Payment payment in payments)
+            foreach (Payment payment in paymentData.transactions[0].payments)
             {
                 if (PaymentMethods.CUSTOMER_CREDIT.id == payment.paymentSystem) return "CUPO";
                 if (PaymentMethods.GIFTCARD.id == payment.paymentSystem && payment.giftCardProvider == Providers.CUPO) return "CUPO";

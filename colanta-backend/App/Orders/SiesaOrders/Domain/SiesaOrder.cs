@@ -1,5 +1,6 @@
 ﻿namespace colanta_backend.App.Orders.SiesaOrders.Domain
 {
+    using System;
     using System.Collections.Generic;
     public class SiesaOrder
     {
@@ -27,6 +28,7 @@
         public string formas_de_pago { get; set; }
         public bool pago_contraentrega { get; set; }
         public bool recoge_en_tienda { get; set; }
+        public DateTime? fecha_recoge { get; set; }
         public string siesa_pedido { get; set; }
         public string telefono { get; set; }
         public SiesaOrderDetail[] detalles { get; set; }

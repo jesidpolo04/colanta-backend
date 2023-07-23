@@ -5,6 +5,9 @@
     using System.Text.Json;
     using System.Text.Json.Serialization;
     using Shared.Infraestructure.Converters;
+    using System;
+    using System.Globalization;
+    using colanta_backend.App.Shared.Domain;
 
     public class SiesaOrderDto
     {
@@ -40,6 +43,7 @@
             siesaOrder.total_envio = this.Encabezado.C263ValorEnvio;
             siesaOrder.total_descuento = this.Encabezado.C263TotalDescuentos;
             siesaOrder.recoge_en_tienda = this.Encabezado.C263RecogeEnTienda;
+            siesaOrder.fecha_recoge = this.Encabezado.C263FechaRecoge != null ? DateTime.ParseExact(this.Encabezado.C263FechaRecoge, DateFormats.FECHA_RECOGE, CultureInfo.InvariantCulture) : null;
             siesaOrder.formas_de_pago = JsonSerializer.Serialize(this.FormasPago);
             siesaOrder.pago_contraentrega = this.Encabezado.C263PagoContraentrega;
             
@@ -102,6 +106,7 @@
         public decimal C263TotalPedido { get; set; }
         public decimal C263TotalDescuentos { get; set; }
         public bool C263RecogeEnTienda { get; set; }
+        public string? C263FechaRecoge { get; set; }
     }
 
     public class WayToPayDto
