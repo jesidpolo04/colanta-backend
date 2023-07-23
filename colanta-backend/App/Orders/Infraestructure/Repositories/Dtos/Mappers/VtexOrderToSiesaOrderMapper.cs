@@ -235,8 +235,9 @@
 
         private string? pickupDateTime(ShippingData shippingData)
         {
+            //Se deben agregar 5 horas a la hora de VTEX ya que dice estar en formato UTC pero enrealidad viene con la hora Colombia (UTC-5)
             var estimatedDate = shippingData.logisticsInfo[0].shippingEstimateDate;
-            return estimatedDate.HasValue ? estimatedDate.Value.ToString(DateFormats.FECHA_RECOGE) : null; 
+            return estimatedDate.HasValue ? estimatedDate.Value.AddHours(5).ToString(DateFormats.FECHA_RECOGE) : null; 
         }
 
         private string getEstimateDeliveryDate(ShippingData shippingData)
