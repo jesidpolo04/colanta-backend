@@ -1,6 +1,7 @@
 ﻿namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
 {
     using SiesaOrders.Domain;
+    using System;
     using System.Collections.Generic;
     public class EFSiesaOrder
     {
@@ -27,6 +28,7 @@
         public decimal total_pedido { get; set; }
         public decimal total_descuento { get; set; }
         public bool recoge_en_tienda { get; set; }
+        public DateTime? fecha_recoge { get; set; }
         public bool pago_contraentrega { get; set; }
         public string telefono { get; set; }
         public List<EFSiesaOrderDetail> detalles { get; set; }
@@ -57,6 +59,7 @@
             this.formas_de_pago = siesaOrder.formas_de_pago;
             this.pago_contraentrega = siesaOrder.pago_contraentrega;
             this.recoge_en_tienda = siesaOrder.recoge_en_tienda;
+            this.fecha_recoge = siesaOrder.fecha_recoge;
             this.telefono = siesaOrder.telefono;
 
 
@@ -101,6 +104,7 @@
             siesaOrder.departamento = this.departamento;
             siesaOrder.ciudad = this.ciudad;
             siesaOrder.recoge_en_tienda = this.recoge_en_tienda;
+            siesaOrder.fecha_recoge = this.fecha_recoge;
             siesaOrder.negocio = this.negocio;
             siesaOrder.total_pedido = this.total_pedido;
             siesaOrder.total_descuento = this.total_descuento;

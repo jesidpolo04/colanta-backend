@@ -87,7 +87,7 @@
                     sku.name = variacionDto.nombre;
                     sku.description = this.descripcion;
                     sku.ref_id = variacionDto.referencia + "_" + variacionDto.id;
-                    sku.measurement_unit = this.unidad_medida;
+                    sku.measurement_unit = this.mapMeasurementUnit(this.unidad_medida);
                     sku.packaged_height = variacionDto.dimensiones.alto_producto;
                     sku.packaged_width = variacionDto.dimensiones.ancho_producto;
                     sku.packaged_length = variacionDto.dimensiones.largo_producto;
@@ -96,6 +96,17 @@
                     product.addSku(sku);
                 }
                 return product;
+            }
+        }
+
+        private string mapMeasurementUnit(string siesaMeasurementUnit)
+        {
+            switch (siesaMeasurementUnit)
+            {
+                case "KG":
+                    return "kg";
+                default:
+                    return "un";
             }
         }
     }

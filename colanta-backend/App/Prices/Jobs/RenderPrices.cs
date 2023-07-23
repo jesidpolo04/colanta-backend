@@ -20,6 +20,7 @@
         public IProcess processLogger;
         public ILogger logger;
         private IRenderPricesMail mail;
+        private PoundSkusService poundSkusService;
 
         public List<Price> loadPrices = new List<Price>();
         public List<Price> updatedPrices = new List<Price>();
@@ -49,6 +50,7 @@
             this.processLogger = processLogger;
             this.logger = logger;
             this.mail = mail;
+            this.poundSkusService = new PoundSkusService(skusLocalRepository);
 
             this.jsonOptions = new JsonSerializerOptions();
             this.jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
@@ -60,13 +62,6 @@
             {
                 this.console.processStartsAt(processName, DateTime.Now);
                 Price[] allSiesaPrices = await this.siesaRepository.getAllPrices();
-                this.details.Add(new Detail(
-                                    origin: "siesa",
-                                    action: "obtener todos los precios",
-                                    content: JsonSerializer.Serialize(allSiesaPrices, this.jsonOptions),
-                                    description: "petición de obtener todos los precios, completada con éxito.",
-                                    success: true
-                                    ));
 
                 foreach (Price siesaPrice in allSiesaPrices)
                 {
@@ -76,6 +71,11 @@
                     {
                         this.notProccecedPrices.Add(siesaPrice);
                         continue;
+                    }
+
+                    if (this.poundSkusService.isPoundSku( this.getSiesaIdFromConcatSiesaId(siesaPrice.sku_concat_siesa_id) ))
+                    {
+                        siesaPrice.price = siesaPrice.price / 2;
                     }
 
                     Price localPrice = this.localRepository.getPriceBySkuConcatSiesaId(siesaPrice.sku_concat_siesa_id).Result;
@@ -97,13 +97,6 @@
                                 this.vtexRepository.savePrice(localPrice).Wait();
                                 this.updatePriceForMeasurementUnit(localPrice.sku.product, localPrice.price);
                                 this.loadPrices.Add(localPrice);
-                                this.details.Add(new Detail(
-                                            origin: "vtex",
-                                            action: "crear o actualizar precio",
-                                            content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
-                                            description: "petición de crear o actualizar precio, completada con éxito.",
-                                            success: true
-                                            ));
                                 continue;
                             }
                             if (vtexPrice != null)
@@ -113,13 +106,6 @@
                                     this.vtexRepository.savePrice(localPrice).Wait();
                                     this.updatePriceForMeasurementUnit(localPrice.sku.product, localPrice.price);
                                     this.updatedPrices.Add(localPrice);
-                                    this.details.Add(new Detail(
-                                            origin: "vtex",
-                                            action: "crear o actualizar precio",
-                                            content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
-                                            description: "petición de crear o actualizar precio, completada con éxito.",
-                                            success: true
-                                            ));
                                     continue;
                                 }
                                 if (vtexPrice.price == localPrice.price)
@@ -134,13 +120,6 @@
                         {
                             this.console.throwException(vtexException.Message);
                             this.failedPrices.Add(localPrice);
-                            this.details.Add(new Detail(
-                                        origin: "vtex",
-                                        action: vtexException.requestUrl,
-                                        content: vtexException.responseBody,
-                                        description: vtexException.Message,
-                                        success: false
-                                        ));
                             this.logger.writelog(vtexException);
                         }
                         catch (Exception exception)
@@ -161,13 +140,6 @@
                             {
                                 await this.vtexRepository.savePrice(localPrice);
                                 this.loadPrices.Add(localPrice);
-                                this.details.Add(new Detail(
-                                    origin: "vtex",
-                                    action: "crear o actualizar precio",
-                                    content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
-                                    description: "petición de crear o actualizar precio, completada con éxito.",
-                                    success: true
-                                    ));
                                 continue;
                             }
                             if (vtexPrice != null)
@@ -176,13 +148,6 @@
                                 {
                                     await this.vtexRepository.savePrice(localPrice);
                                     this.loadPrices.Add(localPrice);
-                                    this.details.Add(new Detail(
-                                        origin: "vtex",
-                                        action: "crear o actualizar precio",
-                                        content: JsonSerializer.Serialize(localPrice, this.jsonOptions),
-                                        description: "petición de crear o actualizar precio, completada con éxito.",
-                                        success: true
-                                        ));
                                     continue;
                                 }
                             }
@@ -191,13 +156,6 @@
                         {
                             this.console.throwException(vtexException.Message);
                             this.failedPrices.Add(localPrice);
-                            this.details.Add(new Detail(
-                                        origin: "vtex",
-                                        action: vtexException.requestUrl,
-                                        content: vtexException.responseBody,
-                                        description: vtexException.Message,
-                                        success: false
-                                        ));
                             this.logger.writelog(vtexException);
                         }
                         catch (Exception exception)
@@ -212,13 +170,6 @@
             catch(SiesaException siesaException)
             {
                 this.console.throwException(siesaException.Message);
-                this.details.Add(new Detail(
-                                    origin: "siesa",
-                                    action: "obtener todos los precios",
-                                    content: siesaException.Message,
-                                    description: siesaException.Message,
-                                    success: false
-                                    ));
                 this.logger.writelog(siesaException);
             }
             catch(Exception genericException)
@@ -280,6 +231,11 @@
             this.failedPrices.Clear();
             this.notProccecedPrices.Clear();
             this.details.Clear();
+        }
+
+        private string getSiesaIdFromConcatSiesaId(string concatSiesaId)
+        {
+            return concatSiesaId.Split("_")[2];
         }
     }
 }

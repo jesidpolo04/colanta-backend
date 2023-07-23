@@ -39,6 +39,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFInventory> Inventories { get; set; }
         public virtual DbSet<EFPrice> Prices { get; set; }
         public virtual DbSet<EFSku> Skus { get; set; }
+        public virtual DbSet<EFPoundSku> PoundSkus { get; set; }
         public virtual DbSet<EFPromotion> Promotions { get; set; }
         public virtual DbSet<EFCreditAccount> CreditAccounts { get; set; }
         public virtual DbSet<EFGiftCard> GiftCards { get; set; }
@@ -403,7 +404,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.co);
                 entity.Property(e => e.fecha);
                 entity.Property(e => e.doc_tercero);
-                entity.Property(e => e.telefono).HasMaxLength(30); ;
+                entity.Property(e => e.telefono).HasMaxLength(30);
                 entity.Property(e => e.fecha_entrega);
                 entity.Property(e => e.referencia_vtex);
                 entity.Property(e => e.estado_vtex);
@@ -419,6 +420,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.formas_de_pago);
                 entity.Property(e => e.pago_contraentrega);
                 entity.Property(e => e.recoge_en_tienda);
+                entity.Property(e => e.fecha_recoge);
 
                 entity.HasMany(e => e.detalles).WithOne(e => e.order).HasForeignKey(e => e.order_id);
                 entity.HasMany(e => e.descuentos).WithOne(e => e.order).HasForeignKey(e => e.order_id); 
@@ -478,6 +480,14 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.siesaCountry).HasColumnName("siesa_country");
                 entity.Property(e => e.siesaDepartment).HasColumnName("siesa_department"); ;
                 entity.Property(e => e.siesaCity).HasColumnName("siesa_city");
+            });
+
+            modelBuilder.Entity<EFPoundSku>(poundSku =>
+            {
+                poundSku.ToTable("pound_skus");
+                poundSku.HasKey(poundSku => poundSku.siesaId);
+                poundSku.Property(poundSku => poundSku.siesaId).HasColumnName("siesa_id");
+                poundSku.Property(poundSku => poundSku.name).HasColumnName("name");
             });
 
             OnModelCreatingPartial(modelBuilder);

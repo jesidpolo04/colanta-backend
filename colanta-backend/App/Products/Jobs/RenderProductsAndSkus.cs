@@ -20,6 +20,7 @@
         private ProductsSiesaRepository siesaRepository;
         private BrandsRepository brandsLocalRepository;
         private CategoriesRepository categoriesLocalRepository;
+        private PoundSkusService poundSkusService;
         private IProcess processLogger;
         private ILogger logger;
         private IRenderProductsMail mail;
@@ -61,6 +62,7 @@
             this.siesaRepository = siesaRepository;
             this.brandsLocalRepository = brandsLocalRepository;
             this.categoriesLocalRepository = categoriesLocalRepository;
+            this.poundSkusService = new PoundSkusService(skusLocalRepository);
             this.processLogger = processLogger;
             this.logger = logger;
             this.mail = mail;
@@ -238,31 +240,20 @@
                     {
                         try
                         {
+                            if (this.poundSkusService.isPoundSku(siesaSku.siesa_id))
+                            {
+                                siesaSku.measurement_unit = "lb";
+                            }
                             localSku = await skusLocalRepository.saveSku(siesaSku);
                             Sku vtexSku = await skusVtexRepository.saveSku(localSku);
                             localSku.vtex_id = vtexSku.vtex_id;
                             await skusLocalRepository.updateSku(localSku);
-
                             this.loadSkus.Add(localSku);
-                            this.details.Add(new Detail(
-                                origin: "vtex",
-                                action: "crear sku",
-                                content: null,
-                                description: null,
-                                success: true
-                            ));
                         }
                         catch (VtexException vtexException)
                         {
                             this.console.throwException(vtexException.Message);
                             this.failedSkus.Add(siesaSku);
-                            this.details.Add(new Detail(
-                                origin: "vtex",
-                                action: vtexException.requestUrl,
-                                content: vtexException.responseBody,
-                                description: vtexException.Message,
-                                success: false
-                            ));
                             await this.logger.writelog(vtexException);
                         }
                         catch (Exception exception)

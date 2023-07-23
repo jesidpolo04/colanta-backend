@@ -9,12 +9,18 @@
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
 
-    public class SkusEFRepository : Domain.SkusRepository
+    public class SkusEFRepository : SkusRepository
     {
         private ColantaContext dbContext;
         public SkusEFRepository(IConfiguration configuration)
         {
             this.dbContext = new ColantaContext(configuration);
+        }
+
+        public Task<PoundSku[]> getAllPoundSkus()
+        {
+            var poundSkus = this.dbContext.PoundSkus.ToList();
+            return Task.FromResult(poundSkus.Select(poundSku => poundSku.getPoundSku()).ToArray());
         }
 
         public async Task<Sku[]> getDeltaSkus(Sku[] currentSkus)

@@ -6,7 +6,6 @@
     using Orders.Domain;
     using Shared.Domain;
     using Promotions.Domain;
-    using SiesaOrders.Domain;
     using System.Threading.Tasks;
     using GiftCards.Domain;
     public class VtexOrderToSiesaOrderMapper
@@ -14,12 +13,16 @@
         private SkusRepository skusLocalRepository;
         private PromotionsRepository promotionsLocalRepository;
         private WrongAddressesRepository wrongAddressesRepository;
-        public VtexOrderToSiesaOrderMapper(SkusRepository skusLocalRepository, PromotionsRepository promotionsLocalRepository, WrongAddressesRepository wrongAddressesRepository)
+        private PoundSkusService poundSkusService;
+        public VtexOrderToSiesaOrderMapper(
+            SkusRepository skusLocalRepository, 
+            PromotionsRepository promotionsLocalRepository, 
+            WrongAddressesRepository wrongAddressesRepository)
         {
             this.skusLocalRepository = skusLocalRepository;
             this.promotionsLocalRepository = promotionsLocalRepository;
             this.wrongAddressesRepository = wrongAddressesRepository;
-
+            this.poundSkusService = new PoundSkusService(skusLocalRepository);
         }
         public async Task<SiesaOrderDto> getSiesaOrderDto(VtexOrderDto vtexOrder)
         {
@@ -72,9 +75,9 @@
                 siesaDetail.C263ReferenciaItem = await this.getItemSiesaRef(vtexItem.refId);
                 siesaDetail.C263VariacionItem = this.getItemVariationSiesaRef(vtexItem.refId);
                 siesaDetail.C263IndObsequio = vtexItem.isGift ? 1 : 0;
-                siesaDetail.C263UnidMedida = this.getMeasurementUnit(vtexItem.measurementUnit);
-                siesaDetail.C263Cantidad = vtexItem.quantity * ((decimal) vtexItem.unitMultiplier);
-                siesaDetail.C263Precio = vtexItem.price / 100;
+                siesaDetail.C263UnidMedida = this.getMeasurementUnit(vtexItem);
+                siesaDetail.C263Cantidad = this.quantity(vtexItem);
+                siesaDetail.C263Precio = this.price(vtexItem);
                 siesaDetail.C263Notas = "sin notas";
                 siesaDetail.C263Impuesto = 0;
                 siesaDetail.C263ReferenciaVTEX = siesaOrder.Encabezado.C263ReferenciaVTEX;
@@ -98,6 +101,26 @@
                 }
             }
             return siesaOrder;
+        }
+
+        private decimal quantity(Item item)
+        {
+            string siesaId = item.refId.Split("_")[2];
+            if (this.poundSkusService.isPoundSku(siesaId))
+            {
+                return item.quantity * item.unitMultiplier.Value / 2;
+            }
+            return item.quantity * item.unitMultiplier.Value;
+        }
+
+        private decimal price(Item item)
+        {
+            string siesaId = item.refId.Split("_")[2];
+            if (this.poundSkusService.isPoundSku(siesaId))
+            {
+                return item.price / 100 * 2;
+            }
+            return item.price / 100;
         }
 
         private bool isUponDelivery(PaymentData paymentData)
@@ -282,10 +305,21 @@
             }
         }
 
-        private string getMeasurementUnit(string vtexMeasurementUnit)
+        private string getMeasurementUnit(Item item)
         {
-            if (vtexMeasurementUnit == "kg") return "KG";
-            else if (vtexMeasurementUnit == "lb") return "LB";
+            var skuSiesaId = item.refId.Split("_")[2];
+            if (item.measurementUnit == "kg") return "KG";
+            else if (item.measurementUnit == "lb")
+            {
+                if (this.poundSkusService.isPoundSku(skuSiesaId))
+                {
+                    return "KG";
+                }
+                else
+                {
+                    return "LB";
+                }
+            }
             else return "UND";
         }
     }

@@ -12,5 +12,6 @@
         Task<Sku[]> getDeltaSkus(Sku[] currentSkus);
         Task<Sku> updateSku(Sku sku);
         Task<Sku[]> updateSkus(Sku[] skus);
+        Task<PoundSku[]> getAllPoundSkus();
     }
 }
