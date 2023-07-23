@@ -22,14 +22,14 @@ namespace colanta_backend.App.Orders.Infraestructure
         private HttpClient httpClient;
         private SiesaAuth siesaAuth;
         private IConfiguration configuration;
-        private ILogger<SiesaOrder> logger;
+        private ILogger<OrdersSiesaRepository> logger;
         
         public OrdersSiesaRepository(
             SkusRepository skusLocalRepository,
             PromotionsRepository promotionLocalRepository,
             WrongAddressesRepository wrongAddressesRepository,
             IConfiguration configuration,
-            ILogger<SiesaOrder> logger
+            ILogger<OrdersSiesaRepository> logger
         )
         {
             this.skusLocalRepository = skusLocalRepository;
