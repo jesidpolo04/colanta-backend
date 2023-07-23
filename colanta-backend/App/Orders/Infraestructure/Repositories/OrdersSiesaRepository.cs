@@ -10,7 +10,9 @@ namespace colanta_backend.App.Orders.Infraestructure
     using Shared.Domain;
     using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
+    using MicrosoftLogging = Microsoft.Extensions.Logging;
     using colanta_backend.App.Orders.SiesaOrders.Domain;
+    using Microsoft.Extensions.Logging;
 
     public class OrdersSiesaRepository : Domain.OrdersSiesaRepository
     {
@@ -20,12 +22,14 @@ namespace colanta_backend.App.Orders.Infraestructure
         private HttpClient httpClient;
         private SiesaAuth siesaAuth;
         private IConfiguration configuration;
+        private MicrosoftLogging.ILogger<SiesaOrder> logger;
         
         public OrdersSiesaRepository(
             SkusRepository skusLocalRepository,
             PromotionsRepository promotionLocalRepository,
             WrongAddressesRepository wrongAddressesRepository,
-            IConfiguration configuration
+            IConfiguration configuration,
+            MicrosoftLogging.ILogger<SiesaOrder> logger
         )
         {
             this.skusLocalRepository = skusLocalRepository;
@@ -34,6 +38,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.httpClient = new HttpClient();
             this.configuration = configuration;
             this.siesaAuth = new SiesaAuth(configuration);
+            this.logger = logger;
         }
 
         public async Task<SiesaOrder> getOrderBySiesaId(string siesaId)
@@ -60,6 +65,8 @@ namespace colanta_backend.App.Orders.Infraestructure
             VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(this.skusLocalRepository, this.promotionLocalRepository, wrongAddressesRepository);
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(order.order_json);
             SiesaOrderDto siesaOrderDto = await mapper.getSiesaOrderDto(vtexOrderDto);
+            this.logger.LogDebug($"enviando a siesa orden #{order.id}");
+            this.logger.LogDebug($"cuerpo: {JsonSerializer.Serialize(siesaOrderDto)}");
             string jsonContent = JsonSerializer.Serialize(siesaOrderDto);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
             HttpResponseMessage siesaResponse = await httpClient.PostAsync(this.configuration["SiesaUrl"] + endpoint, httpContent);
