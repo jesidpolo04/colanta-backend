@@ -80,7 +80,7 @@
 
                 this.registerUser(userVtexId, deliveryCountry, deliveryDepartment, deliveryCity, vtexOrder.items[0].refId).Wait();
                 SiesaOrder siesaOrder = await this.sendToSiesa(localOrder);
-                this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].polygonName);
+                this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].deliveryIds[0].warehouseId);
             }
         }
 
