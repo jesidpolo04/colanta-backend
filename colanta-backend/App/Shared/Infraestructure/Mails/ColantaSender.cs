@@ -34,7 +34,7 @@
                 .To(to)
                 .Subject(title)
                 .UsingTemplateFromFile(templatePath, model, true)
-                .Send();
+                .SendAsync().Wait();
         }
 
         public void SendEmailMultiple(string title, string templatePath, object model, List<string> to)
