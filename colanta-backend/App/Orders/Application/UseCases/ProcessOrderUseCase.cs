@@ -71,7 +71,7 @@
                 localOrder = this.localRepository.SaveOrder(localOrder).Result;
             }
 
-            if(this.mustToSendToSiesa(payments, vtexOrder.status) && !this.siesaOrderAlreadyExist(vtexOrderId))
+            if(this.mustToSendToSiesa(payments, status) && !this.siesaOrderAlreadyExist(vtexOrderId))
             {
                 string userVtexId = vtexOrder.clientProfileData.userProfileId;
                 string deliveryCountry = vtexOrder.shippingData.address.country;
