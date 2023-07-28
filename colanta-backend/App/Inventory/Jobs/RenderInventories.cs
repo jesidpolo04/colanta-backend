@@ -171,7 +171,7 @@
                 this.notProccecedInventories.Count, 
                 this.obtainedInventories, 
                 JsonSerializer.Serialize(this.details, jsonOptions));
-            this.mail.sendMail(this.loadInventories, this.updatedInventories, this.failedInventories);
+            //this.mail.sendMail(this.loadInventories, this.updatedInventories, this.failedInventories);
             this.console.processEndstAt(processName, DateTime.Now);
         }
 
