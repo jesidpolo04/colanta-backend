@@ -1,4 +1,4 @@
-using System;
+/* using System;
 using colanta_backend.App.Auth.Services;
 using colanta_backend.App.Shared.Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +30,9 @@ namespace colanta_backend.App.Auth.Middlewares
                     {
                         context.Result = new UnauthorizedResult();
                     }
-                }else{
+                }
+                else
+                {
                     context.Result = new UnauthorizedResult();
                 }
             }
@@ -38,12 +40,14 @@ namespace colanta_backend.App.Auth.Middlewares
             {
                 this.logger.writelog(e);
             }
+            base.OnActionExecuting(context);
         }
 
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            // Do something after the action executes.
+            base.OnActionExecuted(context);
         }
     }
 }
 
+ */
