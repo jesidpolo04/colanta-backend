@@ -103,6 +103,8 @@ namespace colanta_backend.App.Orders.Controllers
             }
         }
 
+        [Route("orders/email/{vtexOrderId}")]
+        [HttpPost]
         public async Task sendNotifyEmail(string vtexOrderId)
         {
             try{
