@@ -26,6 +26,7 @@ namespace colanta_backend
     using App.Inventory.Jobs;
     using App.Promotions.Jobs;
     using App.Orders.Jobs;
+    using colanta_backend.App.Auth.Middlewares;
 
     public class Startup
     {
@@ -143,6 +144,8 @@ namespace colanta_backend
             services.AddTransient<IProcess, ProcessLogs>();
             services.AddTransient<ILogger, EFLogger>();
             services.AddTransient<EmailSender, ColantaSender>();
+
+            services.AddScoped<AuthFilter>();
 
             //------------------- Tasks -------------------------//
 

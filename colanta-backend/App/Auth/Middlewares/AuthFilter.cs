@@ -1,4 +1,4 @@
-/* using System;
+using System;
 using colanta_backend.App.Auth.Services;
 using colanta_backend.App.Shared.Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -50,4 +50,3 @@ namespace colanta_backend.App.Auth.Middlewares
     }
 }
 
- */
