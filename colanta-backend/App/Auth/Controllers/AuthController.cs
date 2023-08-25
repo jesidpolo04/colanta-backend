@@ -20,7 +20,7 @@ namespace colanta_backend.App.Auth.Controllers
 
         [HttpPost]
         [Route("login")]
-        public void Login([FromBody] LoginRequest request)
+        public ActionResult Login([FromBody] LoginRequest request)
         {
             var secret = configuration["JwtSecret"];
             var apiUsername = configuration["ApiUsername"];
@@ -39,11 +39,11 @@ namespace colanta_backend.App.Auth.Controllers
                 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
                 var token = encoder.Encode(payload, secret);
-                Ok(new {
+                return Ok(new {
                     token
                 });
             }else{
-                BadRequest(new {
+                return BadRequest(new {
                     message = "Bad login."
                 });
             }
