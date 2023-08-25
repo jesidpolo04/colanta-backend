@@ -36,7 +36,7 @@ namespace colanta_backend.App.Auth.Controllers
                         { "claim1", 0 },
                         { "claim2", "claim2-value" }
                     };
-                    IJwtAlgorithm algorithm = new RS256Algorithm(System.Security.Cryptography.RSA.Create());
+                    IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
                     IJsonSerializer serializer = new JsonNetSerializer();
                     IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
                     IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
