@@ -1,21 +1,23 @@
 using System;
 using colanta_backend.App.Auth.Services;
+using colanta_backend.App.Shared.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 
 namespace colanta_backend.App.Auth.Middlewares
 {
-    public class AuthFilter : Attribute, IActionFilter
+    public class AuthFilter : ActionFilterAttribute
     {
         private JWTService service;
+        private ILogger logger;
 
-        public AuthFilter(IConfiguration configuration)
+        public AuthFilter(IConfiguration configuration, ILogger logger)
         {
             this.service = new JWTService(configuration);
         }
 
-        public void OnActionExecuting(ActionExecutingContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             try
             {
@@ -34,11 +36,11 @@ namespace colanta_backend.App.Auth.Middlewares
             }
             catch (Exception e)
             {
-
+                this.logger.writelog(e);
             }
         }
 
-        public void OnActionExecuted(ActionExecutedContext context)
+        public override void OnActionExecuted(ActionExecutedContext context)
         {
             // Do something after the action executes.
         }
