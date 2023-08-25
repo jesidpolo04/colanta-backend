@@ -1,4 +1,5 @@
-﻿using colanta_backend.App.Prices.Jobs;
+﻿using colanta_backend.App.Auth.Middlewares;
+using colanta_backend.App.Prices.Jobs;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -6,6 +7,8 @@ namespace colanta_backend.App.Prices.Presentation
 {
     [Route("api/prices/")]
     [ApiController]
+    [ServiceFilter(typeof(AuthFilter))]
+
     public class PricesController : ControllerBase
     {
         [HttpPost]
@@ -14,16 +17,8 @@ namespace colanta_backend.App.Prices.Presentation
         {
             try
             {
-                Request.Headers.TryGetValue("Authorization", out var authorization);
-                if (authorization.Equals("Jesing0408"))
-                {
-                    job.Invoke().Wait();
-                    Ok("Renderizando precios");
-                }
-                else
-                {
-                    Unauthorized();
-                }
+                job.Invoke().Wait();
+                Ok("Renderizando precios");
             }
             catch (Exception exception)
             {
