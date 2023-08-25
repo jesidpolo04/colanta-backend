@@ -3,6 +3,7 @@ namespace colanta_backend.App.Auth.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using colanta_backend.App.Auth.Services;
     using JWT;
     using JWT.Algorithms;
     using JWT.Serializers;
@@ -23,7 +24,6 @@ namespace colanta_backend.App.Auth.Controllers
         [Route("login")]
         public ActionResult Login([FromBody] LoginRequest request)
         {
-            var secret = configuration["JwtSecret"];
             var apiUsername = configuration["ApiUsername"];
             var apiPassword = configuration["ApiPassword"];
 
@@ -31,20 +31,9 @@ namespace colanta_backend.App.Auth.Controllers
             {
                 try
                 {
-                    var payload = new Dictionary<string, object>
-                    {
-                        { "claim1", 0 },
-                        { "claim2", "claim2-value" }
-                    };
-                    IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
-                    IJsonSerializer serializer = new JsonNetSerializer();
-                    IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-                    IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
-
-                    var token = encoder.Encode(payload, secret);
-                    return Ok(new
-                    {
-                        token
+                    var service = new JWTService(configuration);
+                    return Ok(new {
+                        token = service.generateToken() 
                     });
                 }
                 catch (Exception exception)
