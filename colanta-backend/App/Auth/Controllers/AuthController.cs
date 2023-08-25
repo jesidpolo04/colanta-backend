@@ -49,7 +49,10 @@ namespace colanta_backend.App.Auth.Controllers
                 }
                 catch (Exception exception)
                 {
-                    return StatusCode(500, exception);
+                    return StatusCode(500, new {
+                        message = exception.Message,
+                        stack = exception.StackTrace
+                    });
                 }
             }
             else
