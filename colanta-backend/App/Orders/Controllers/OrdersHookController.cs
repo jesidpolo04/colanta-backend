@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace colanta_backend.App.Orders.Controllers
 {
@@ -52,16 +51,16 @@ namespace colanta_backend.App.Orders.Controllers
         [HttpPost]
         public async Task<dynamic> orderHook(OrderHookDto request)
         {
-            if(request.hookConfig != null) 
+            if (request.hookConfig != null)
             {
                 return new { hookConfig = "alive!" };
             }
             //OrderHookDto orderSummary = JsonSerializer.Deserialize<OrderHookDto>(JsonSerializer.Serialize(request));
             OrderHookDto orderSummary = request;
             ProcessOrderUseCase useCase = new ProcessOrderUseCase(
-                this.localRepository, 
-                this.siesaOrdersLocalRepository, 
-                this.vtexRepository, 
+                this.localRepository,
+                this.siesaOrdersLocalRepository,
+                this.vtexRepository,
                 this.siesaRepository,
                 this.skusRepository,
                 this.logger,
@@ -69,9 +68,9 @@ namespace colanta_backend.App.Orders.Controllers
                 this.registerUserService);
 
             await useCase.Invoke(
-                orderSummary.OrderId, 
-                orderSummary.State, 
-                orderSummary.LastState, 
+                orderSummary.OrderId,
+                orderSummary.State,
+                orderSummary.LastState,
                 orderSummary.LastChange,
                 orderSummary.CurrentChange);
             return Ok();
@@ -79,7 +78,7 @@ namespace colanta_backend.App.Orders.Controllers
 
         [Route("orders/send/{vtexOrderId}")]
         [HttpGet]
-        public async Task<object> send(string vtexOrderId)
+        public async Task Send(string vtexOrderId)
         {
             try
             {
@@ -94,15 +93,27 @@ namespace colanta_backend.App.Orders.Controllers
                    this.registerUserService,
                    this.emailSender);
 
-               await useCase.Invoke(vtexOrder.orderId);
-                return Ok();
+                await useCase.Invoke(vtexOrder.orderId);
+                Ok();
             }
-            catch(Exception e)
+            catch (Exception error)
             {
-                await this.logger.writelog(e);
-                return e;
+                this.logger.writelog(error);
+                StatusCode(500, error);
             }
-           
+        }
+
+        public async Task sendNotifyEmail(string vtexOrderId)
+        {
+            try{
+                var siesaOrder = await this.siesaOrdersLocalRepository.getSiesaOrderByVtexId(vtexOrderId);
+                var vtexOrder = await this.vtexRepository.getOrderByVtexId(vtexOrderId);
+                this.mailService.SendMailToWarehouse(siesaOrder.co, siesaOrder, vtexOrder);
+                Ok("Sending mail.");
+            }catch(Exception error){
+                this.logger.writelog(error);
+                StatusCode(500, error);
+            }
         }
     }
 }
