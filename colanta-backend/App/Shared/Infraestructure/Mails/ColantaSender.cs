@@ -15,7 +15,7 @@
         private int port = 587;
         private string host = "smtp.office365.com";
         private string user = "noresponder@colanta.com.co";
-        private string pass = "Colanta$2021";
+        private string pass = "zRcVYFW72G7w";
 
         public ColantaSender()
         {
