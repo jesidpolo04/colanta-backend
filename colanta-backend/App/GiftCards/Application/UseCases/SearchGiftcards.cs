@@ -23,7 +23,7 @@
             GiftCardsSiesaRepository siesaRepository,
             SkusRepository skusLocalRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
-            MicrosoftLogging.ILogger<GiftCardsController> fileLogger
+            MicrosoftLogging.ILogger fileLogger
             )
         {
             this.siesaRepository = siesaRepository;
