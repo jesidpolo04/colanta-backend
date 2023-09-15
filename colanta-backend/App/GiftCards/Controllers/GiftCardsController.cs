@@ -61,7 +61,7 @@ namespace colanta_backend.App.GiftCards.Controllers
             try
             {
                 this.fileLogger.LogDebug($"Buscando giftcards de: {vtexInfo.client.document} : { JsonSerializer.Serialize(vtexInfo) }");
-                SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository, this.siesaOrdersLocalRepository);
+                SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository, this.siesaOrdersLocalRepository, this.fileLogger);
                 GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(
                     vtexInfo.client.document,
                     vtexInfo.cart.items[0].refId,
