@@ -36,7 +36,7 @@
         public async Task<GiftCard[]> Invoke(string document, string skuRefId, string redemptionCode)
         {
             if (redemptionCode == "" || redemptionCode == null) return new GiftCard[0] { };
-            string business = this.getBusiness(skuRefId);
+            string business = "mercolanta";
             GiftCard[] siesaGiftCards = await this.siesaRepository.getGiftCardsByDocumentAndBusiness(document, business);
             foreach (GiftCard siesaGiftCard in siesaGiftCards)
             {
@@ -48,13 +48,6 @@
 
             GiftCard[] localGiftcards = this.getAvailableGiftcards(document, business);
             return localGiftcards.Where(giftcard => giftcard.code == redemptionCode).ToArray();
-        }
-
-        private string getBusiness(string someSkuRefId)
-        {
-            this.fileLogger.LogDebug($"Obteniendo negocio");
-            Sku sku = skusLocalRepository.getSkuByConcatSiesaId(someSkuRefId).Result;
-            return sku != null ? sku.product.business : "";
         }
 
         private GiftCard[] getAvailableGiftcards(string document, string business)
