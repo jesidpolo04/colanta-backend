@@ -10,7 +10,7 @@
     {
         private readonly CrontabSchedule _crontabSchedule;
         private DateTime _nextRun;
-        private const string Schedule = "0 0/5 * * * *"; // run each 5 min
+        private const string Schedule = "0 0 0/1 * * *"; // run each 1 hour
         private readonly UpdateSiesaOrders _task;
         private ILogger logger;
 
