@@ -20,10 +20,12 @@ namespace colanta_backend.App.Taxes
         {
             var taxesResponses = new List<TaxesResponse>();
             var productTaxesList = _TaxService.GetSiesaTaxes().Result;
+            _Logger.LogDebug(productTaxesList.ToString());
             foreach (var item in request.Items)
             {
                 var itemTaxes = GetProductTaxes(productTaxesList, item);
-                taxesResponses.Add(new TaxesResponse{
+                taxesResponses.Add(new TaxesResponse
+                {
                     Id = item.Id,
                     Taxes = itemTaxes
                 });
@@ -36,7 +38,6 @@ namespace colanta_backend.App.Taxes
             var taxList = new List<Tax>();
             var skuRef = item.RefId.Split("_")[1];
             var productSiesaTaxesList = taxesList.Where(productSiesaTaxes => productSiesaTaxes.IdProducto == skuRef).ToList();
-            _Logger.LogDebug(productSiesaTaxesList.ToString());
             if (productSiesaTaxesList.Count < 1)
             {
                 return taxList;
