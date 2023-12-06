@@ -59,7 +59,7 @@ namespace colanta_backend.App.Taxes
         public string RefId { get; set; }
 
         [JsonProperty("unitMultiplier")]
-        public int UnitMultiplier { get; set; }
+        public decimal UnitMultiplier { get; set; }
 
         [JsonProperty("measurementUnit")]
         public string MeasurementUnit { get; set; }
