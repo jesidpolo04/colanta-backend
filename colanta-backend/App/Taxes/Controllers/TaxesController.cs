@@ -8,9 +8,9 @@ namespace colanta_backend.App.Taxes.Controllers
     [ApiController]
     public class TaxesController : ControllerBase
     {
-        private ILogger<TaxService> _Logger;
+        private ILogger<TaxesController> _Logger;
 
-        public TaxesController(ILogger<TaxService> Logger)
+        public TaxesController(ILogger<TaxesController> Logger)
         {
             _Logger = Logger;
         }
