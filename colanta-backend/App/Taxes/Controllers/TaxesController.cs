@@ -1,6 +1,6 @@
 using System;
+using colanta_backend.App.Taxes.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 namespace colanta_backend.App.Taxes.Controllers
 {
     [Route("api/taxes")]
@@ -9,14 +9,18 @@ namespace colanta_backend.App.Taxes.Controllers
     {
         [HttpPost]
         [Route("calculate")]
-        public ActionResult Render([FromBody] object order)
+        public ActionResult Calculate([FromBody] VtexCalculateOrderTaxesRequest request, [FromServices] TaxService taxService)
         {
-            Console.WriteLine("Entró al método");
-            var json = JsonConvert.SerializeObject(order, Formatting.Indented);
-            Console.WriteLine(json);
-            /* HttpContext.Response.Headers.Add("ngrok-skip-browser-warning", "123"); */
-            var arreglo = new object[]{};
-            return Ok(arreglo);
+            try
+            {
+                var useCase = new CalculateOrderTaxes(taxService);
+                var response = useCase.Execute(request);
+                return Ok(response);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
         }
     }
 }

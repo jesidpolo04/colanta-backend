@@ -17,10 +17,10 @@ namespace colanta_backend
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.ConfigureLogging(logging =>
+                    /* webBuilder.ConfigureLogging(logging =>
                     {
                         logging.ClearProviders();
-                    });
+                    }); */
                     webBuilder.UseNLog();
                 });
     }
