@@ -24,11 +24,14 @@ namespace colanta_backend.App.Taxes
             foreach (var item in request.Items)
             {
                 var itemTaxes = GetProductTaxes(productTaxesList, item);
-                taxesResponses.Add(new TaxesResponse
+                if (itemTaxes.Count > 0)
                 {
-                    Id = item.Id,
-                    Taxes = itemTaxes
-                });
+                    taxesResponses.Add(new TaxesResponse
+                    {
+                        Id = item.Id,
+                        Taxes = itemTaxes
+                    });
+                }
             }
             return taxesResponses;
         }
