@@ -3,14 +3,17 @@ namespace colanta_backend.App.Taxes
     using System.Collections.Generic;
     using System.Linq;
     using colanta_backend.App.Taxes.Services;
+    using Microsoft.Extensions.Logging;
 
     public class CalculateOrderTaxes
     {
         TaxService _TaxService;
+        private ILogger _Logger;
 
-        public CalculateOrderTaxes(TaxService TaxService)
+        public CalculateOrderTaxes(TaxService TaxService, ILogger Logger)
         {
             _TaxService = TaxService;
+            _Logger = Logger;
         }
 
         public List<TaxesResponse> Execute(VtexCalculateOrderTaxesRequest request)
@@ -33,6 +36,7 @@ namespace colanta_backend.App.Taxes
             var taxList = new List<Tax>();
             var skuRef = item.RefId.Split("_")[1];
             var productSiesaTaxesList = taxesList.Where(productSiesaTaxes => productSiesaTaxes.IdProducto == skuRef).ToList();
+            _Logger.LogDebug(productSiesaTaxesList.ToString());
             if (productSiesaTaxesList.Count < 1)
             {
                 return taxList;

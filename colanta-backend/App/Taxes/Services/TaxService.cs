@@ -14,11 +14,9 @@ namespace colanta_backend.App.Taxes.Services
         private SiesaAuth _SiesaAuth;
         private HttpClient _HttpClient;
         private IConfiguration _Configuration;
-        private ILogger<TaxesController> _Logger;
-        public TaxService(IConfiguration Configuration, Logger<TaxesController> Logger)
+        public TaxService(IConfiguration Configuration)
         {
             _Configuration = Configuration;
-            _Logger = Logger;
             _SiesaAuth = new SiesaAuth(Configuration);
             _HttpClient = new HttpClient();
         }
@@ -34,7 +32,6 @@ namespace colanta_backend.App.Taxes.Services
             }
             string responseBody = await response.Content.ReadAsStringAsync();
             var parsedBody = JsonSerializer.Deserialize<SiesaTaxesResponse>(responseBody);
-            _Logger.LogDebug(parsedBody.ToString());
             return parsedBody.Impuestos;
         }
 

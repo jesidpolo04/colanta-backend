@@ -21,7 +21,7 @@ namespace colanta_backend.App.Taxes.Controllers
         {
             try
             {
-                var useCase = new CalculateOrderTaxes(taxService);
+                var useCase = new CalculateOrderTaxes(taxService, _Logger);
                 var response = useCase.Execute(request);
                 return Ok(response);
             }
