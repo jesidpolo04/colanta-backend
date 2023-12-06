@@ -1,5 +1,5 @@
 using System.Net.Http;
-using System.Text.Json;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 using colanta_backend.App.Shared.Domain;
 using colanta_backend.App.Shared.Infraestructure;
@@ -31,7 +31,7 @@ namespace colanta_backend.App.Taxes.Services
                 throw new SiesaException(response, $"Siesa respondió con status: {response.StatusCode}");
             }
             string responseBody = await response.Content.ReadAsStringAsync();
-            var parsedBody = JsonSerializer.Deserialize<SiesaTaxesResponse>(responseBody);
+            var parsedBody = JsonConvert.DeserializeObject<SiesaTaxesResponse>(responseBody);
             return parsedBody.Impuestos;
         }
 
