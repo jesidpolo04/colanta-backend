@@ -153,7 +153,7 @@ namespace colanta_backend
             //------------------- Tasks -------------------------//
 
             //Scheduled Tasks
-/*             services.AddHostedService<ScheduledRenderBrands>();
+            services.AddHostedService<ScheduledRenderBrands>();
             services.AddHostedService<ScheduledUpdateBrandsState>();
             services.AddHostedService<ScheduledUpBrandsToVtex>();
 
@@ -174,7 +174,7 @@ namespace colanta_backend
             services.AddHostedService<ScheduledUpdatePromotionsState>();
             services.AddHostedService<ScheduledUpToVtexNullPromotions>();
 
-            services.AddHostedService<ScheduledUpdateSiesaOrders>(); */
+            services.AddHostedService<ScheduledUpdateSiesaOrders>();
 
             services.AddSwaggerGen(c =>
             {
