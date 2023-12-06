@@ -1,5 +1,6 @@
 using System;
 using colanta_backend.App.Taxes.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 namespace colanta_backend.App.Taxes.Controllers
@@ -16,6 +17,7 @@ namespace colanta_backend.App.Taxes.Controllers
         }
 
         [HttpPost]
+        [EnableCors("Ecommerce")]
         [Route("calculate")]
         public ActionResult Calculate([FromBody] VtexCalculateOrderTaxesRequest request, [FromServices] TaxService taxService)
         {
