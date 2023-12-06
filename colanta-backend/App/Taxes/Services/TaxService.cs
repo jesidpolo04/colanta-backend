@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using colanta_backend.App.Shared.Domain;
 using colanta_backend.App.Shared.Infraestructure;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace colanta_backend.App.Taxes.Services
 {
@@ -12,10 +13,11 @@ namespace colanta_backend.App.Taxes.Services
         private SiesaAuth _SiesaAuth;
         private HttpClient _HttpClient;
         private IConfiguration _Configuration;
-
-        public TaxService(IConfiguration Configuration)
+        private ILogger<TaxService> _Logger;
+        public TaxService(IConfiguration Configuration, Logger<TaxService> Logger)
         {
             _Configuration = Configuration;
+            _Logger = Logger;
             _SiesaAuth = new SiesaAuth(Configuration);
             _HttpClient = new HttpClient();
         }
@@ -31,6 +33,7 @@ namespace colanta_backend.App.Taxes.Services
             }
             string responseBody = await response.Content.ReadAsStringAsync();
             var parsedBody = JsonSerializer.Deserialize<SiesaTaxesResponse>(responseBody);
+            _Logger.LogDebug(parsedBody.ToString());
             return parsedBody.Impuestos;
         }
 
