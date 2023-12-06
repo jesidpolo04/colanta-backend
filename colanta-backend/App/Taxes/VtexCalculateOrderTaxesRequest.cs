@@ -26,7 +26,7 @@ namespace colanta_backend.App.Taxes
         public ClientData ClientData { get; set; }
 
         [JsonProperty("paymentData")]
-        public PaymentData PaymentData { get; set; }
+        public PaymentData? PaymentData { get; set; }
     }
 
     public partial class ClientData
@@ -59,7 +59,7 @@ namespace colanta_backend.App.Taxes
         public string RefId { get; set; }
 
         [JsonProperty("unitMultiplier")]
-        public long UnitMultiplier { get; set; }
+        public int UnitMultiplier { get; set; }
 
         [JsonProperty("measurementUnit")]
         public string MeasurementUnit { get; set; }
@@ -71,7 +71,7 @@ namespace colanta_backend.App.Taxes
         public decimal ItemPrice { get; set; }
 
         [JsonProperty("quantity")]
-        public long Quantity { get; set; }
+        public int Quantity { get; set; }
 
         [JsonProperty("discountPrice")]
         public decimal DiscountPrice { get; set; }
@@ -80,7 +80,7 @@ namespace colanta_backend.App.Taxes
         public string DockId { get; set; }
 
         [JsonProperty("freightPrice")]
-        public long FreightPrice { get; set; }
+        public decimal FreightPrice { get; set; }
 
         [JsonProperty("brandId")]
         public string BrandId { get; set; }

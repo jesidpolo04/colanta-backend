@@ -153,7 +153,7 @@ namespace colanta_backend
             //------------------- Tasks -------------------------//
 
             //Scheduled Tasks
-            services.AddHostedService<ScheduledRenderBrands>();
+/*             services.AddHostedService<ScheduledRenderBrands>();
             services.AddHostedService<ScheduledUpdateBrandsState>();
             services.AddHostedService<ScheduledUpBrandsToVtex>();
 
@@ -174,7 +174,7 @@ namespace colanta_backend
             services.AddHostedService<ScheduledUpdatePromotionsState>();
             services.AddHostedService<ScheduledUpToVtexNullPromotions>();
 
-            services.AddHostedService<ScheduledUpdateSiesaOrders>();
+            services.AddHostedService<ScheduledUpdateSiesaOrders>(); */
 
             services.AddSwaggerGen(c =>
             {
@@ -192,7 +192,7 @@ namespace colanta_backend
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "colanta_backend v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
