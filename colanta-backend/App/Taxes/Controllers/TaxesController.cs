@@ -19,7 +19,8 @@ namespace colanta_backend.App.Taxes.Controllers
             }
             catch (Exception error)
             {
-                return BadRequest(error);
+                Console.WriteLine(error);
+                return BadRequest();
             }
         }
     }
