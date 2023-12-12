@@ -23,7 +23,7 @@ namespace colanta_backend.App.Taxes
         public ShippingDestination ShippingDestination { get; set; }
 
         [JsonProperty("clientData")]
-        public ClientData ClientData { get; set; }
+        public ClientData? ClientData { get; set; }
 
         [JsonProperty("paymentData")]
         public PaymentData? PaymentData { get; set; }
@@ -35,7 +35,7 @@ namespace colanta_backend.App.Taxes
         public string Email { get; set; }
 
         [JsonProperty("document")]
-        public string Document { get; set; }
+        public string? Document { get; set; }
 
         [JsonProperty("corporateDocument")]
         public object CorporateDocument { get; set; }
