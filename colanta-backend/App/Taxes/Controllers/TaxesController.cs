@@ -26,7 +26,7 @@ namespace colanta_backend.App.Taxes.Controllers
             {
                 var clientData = request.ClientData;
                 var document = clientData != null ? clientData.Document : null;
-                if(document != null && !document.Equals("1002999476")) return Ok(new List<object>());
+                if(document == null || !document.Equals("1002999476")) return Ok(new List<object>());
                 var useCase = new CalculateOrderTaxes(taxService, _Logger);
                 var response = useCase.Execute(request);
                 return Ok(response);
