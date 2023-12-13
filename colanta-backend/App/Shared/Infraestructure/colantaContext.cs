@@ -470,6 +470,7 @@ namespace colanta_backend.App.Shared.Infraestructure
 
                 entity.Property(siesaTax => siesaTax.Id).ValueGeneratedOnAdd().HasColumnName("id");
                 entity.Property(siesaTax => siesaTax.NroDetalle).HasColumnName("nro_detalle");
+                entity.Property(siesaTax => siesaTax.ReferenciaItem).HasColumnName("referencia_item");
                 entity.Property(siesaTax => siesaTax.IvaValor).HasColumnName("iva_valor");
                 entity.Property(siesaTax => siesaTax.IvaPorcentaje).HasColumnName("iva_porcentaje");
                 entity.Property(siesaTax => siesaTax.ImpuestoConsumoValor).HasColumnName("impuesto_consumo_valor");
