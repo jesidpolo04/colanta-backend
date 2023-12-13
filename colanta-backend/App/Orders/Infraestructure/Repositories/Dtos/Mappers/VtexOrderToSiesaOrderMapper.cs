@@ -127,6 +127,7 @@
                     C263IvaPorcen = 0,
                     C263IvaValor = 0 // por petición de Cristian Ramirez queda en 0
                 };
+                int totalTaxes = 0;
                 foreach (PriceTag priceTag in vtexItem.priceTags)
                 {
                     var taxesList = taxService.GetSiesaTaxes();
@@ -134,6 +135,7 @@
                     string priceTagName = priceTag.name;
                     string[] priceTagNameWords = priceTagName.Split("@");
                     if (!(priceTagNameWords.Length > 1) && priceTagNameWords[0] != "TAXHUB") continue;
+                    totalTaxes ++;
                     string taxName = priceTagNameWords[1];
 
                     if (taxName.Equals(TaxesNames.IVA))
@@ -150,7 +152,7 @@
                         taxes.C263SaludableValor = productTaxes.ImpuestoSaludableNominal;
                     }
                 }
-                siesaOrder.ImpuestosPedido.Add(taxes);
+                if(totalTaxes > 0) siesaOrder.ImpuestosPedido.Add(taxes);
                 itemConsecutive++;
             }
             return siesaOrder;
