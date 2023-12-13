@@ -144,6 +144,10 @@
                 }
                 throw new SiesaOrderRejectException(exception.httpResponse, order, $"Siesa rechazó el pedido #{order.vtex_id}");
             }
+            catch(Exception exception){
+                logger.writelog(exception);
+                throw exception;
+            }
         }
 
         private void notifyToStore(SiesaOrder siesaOrder, string wharehouseId)
