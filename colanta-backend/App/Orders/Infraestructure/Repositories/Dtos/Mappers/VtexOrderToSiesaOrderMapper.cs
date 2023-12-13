@@ -130,8 +130,8 @@
                 int totalTaxes = 0;
                 foreach (PriceTag priceTag in vtexItem.priceTags)
                 {
-                    var taxesList = taxService.GetSiesaTaxes();
-                    var productTaxes = taxService.FindProductTaxes(await taxesList, refId);
+                    var taxesList = taxService.GetSiesaTaxes().Result;
+                    var productTaxes = taxService.FindProductTaxes(taxesList, refId);
                     string priceTagName = priceTag.name;
                     string[] priceTagNameWords = priceTagName.Split("@");
                     if (!(priceTagNameWords.Length > 1) && priceTagNameWords[0] != "TAXHUB") continue;
