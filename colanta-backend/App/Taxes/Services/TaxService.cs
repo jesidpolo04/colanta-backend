@@ -6,6 +6,7 @@ using colanta_backend.App.Shared.Infraestructure;
 using colanta_backend.App.Taxes.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace colanta_backend.App.Taxes.Services
 {
@@ -34,6 +35,10 @@ namespace colanta_backend.App.Taxes.Services
             var parsedBody = JsonConvert.DeserializeObject<SiesaTaxesResponse>(responseBody);
             return parsedBody.Impuestos;
         }
+
+        public ProductSiesaTaxes? FindProductTaxes(ProductSiesaTaxes[] taxesList, string refId){
+            return taxesList.Where( taxes => taxes.IdProducto == refId).FirstOrDefault(null);
+        } 
 
         private void SetHeaders()
         {

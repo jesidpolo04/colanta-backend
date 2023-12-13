@@ -200,7 +200,7 @@
         public AdditionalInfo additionalInfo { get; set; }
         public string measurementUnit { get; set; }
         public decimal? unitMultiplier { get; set; }
-        public decimal? sellingPrice { get; set; }
+        public decimal sellingPrice { get; set; }
         public bool isGift { get; set; }
         public string? shippingPrice { get; set; }
         public decimal? rewardValue { get; set; }

@@ -33,34 +33,35 @@
         public string telefono { get; set; }
         public List<EFSiesaOrderDetail> detalles { get; set; }
         public List<EFSiesaOrderDiscount> descuentos { get; set; }
+        public List<EFSiesaOrderTax> impuestos { get; set; }
 
         public void setEfSiesaOrderFromSiesaOrder(SiesaOrder siesaOrder)
         {
-            this.siesa_id = siesaOrder.siesa_id;
-            this.co = siesaOrder.co;
-            this.finalizado = siesaOrder.finalizado;
-            this.cancelado = siesaOrder.cancelado;
-            this.fecha = siesaOrder.fecha;
-            this.doc_tercero = siesaOrder.doc_tercero;
-            this.fecha_entrega = siesaOrder.fecha_entrega;
-            this.referencia_vtex = siesaOrder.referencia_vtex;
-            this.estado_vtex = siesaOrder.estado_vtex;
-            this.id_metodo_pago_vtex = siesaOrder.id_metodo_pago_vtex;
-            this.metodo_pago_vtex = siesaOrder.metodo_pago_vtex;
-            this.cond_pago = siesaOrder.cond_pago;
-            this.notas = siesaOrder.notas;
-            this.direccion = siesaOrder.direccion;
-            this.departamento = siesaOrder.departamento;
-            this.ciudad = siesaOrder.ciudad;
-            this.negocio = siesaOrder.negocio;
-            this.total_pedido = siesaOrder.total_pedido;
-            this.total_descuento = siesaOrder.total_descuento;
-            this.total_envio = siesaOrder.total_envio;
-            this.formas_de_pago = siesaOrder.formas_de_pago;
-            this.pago_contraentrega = siesaOrder.pago_contraentrega;
-            this.recoge_en_tienda = siesaOrder.recoge_en_tienda;
-            this.fecha_recoge = siesaOrder.fecha_recoge;
-            this.telefono = siesaOrder.telefono;
+            siesa_id = siesaOrder.siesa_id;
+            co = siesaOrder.co;
+            finalizado = siesaOrder.finalizado;
+            cancelado = siesaOrder.cancelado;
+            fecha = siesaOrder.fecha;
+            doc_tercero = siesaOrder.doc_tercero;
+            fecha_entrega = siesaOrder.fecha_entrega;
+            referencia_vtex = siesaOrder.referencia_vtex;
+            estado_vtex = siesaOrder.estado_vtex;
+            id_metodo_pago_vtex = siesaOrder.id_metodo_pago_vtex;
+            metodo_pago_vtex = siesaOrder.metodo_pago_vtex;
+            cond_pago = siesaOrder.cond_pago;
+            notas = siesaOrder.notas;
+            direccion = siesaOrder.direccion;
+            departamento = siesaOrder.departamento;
+            ciudad = siesaOrder.ciudad;
+            negocio = siesaOrder.negocio;
+            total_pedido = siesaOrder.total_pedido;
+            total_descuento = siesaOrder.total_descuento;
+            total_envio = siesaOrder.total_envio;
+            formas_de_pago = siesaOrder.formas_de_pago;
+            pago_contraentrega = siesaOrder.pago_contraentrega;
+            recoge_en_tienda = siesaOrder.recoge_en_tienda;
+            fecha_recoge = siesaOrder.fecha_recoge;
+            telefono = siesaOrder.telefono;
 
 
             List<EFSiesaOrderDetail> efSiesaOrderDetails = new List<EFSiesaOrderDetail>();
@@ -80,52 +81,68 @@
                 efSiesaOrderDiscounts.Add(efSiesaOrderDiscount);
             }
             this.descuentos = efSiesaOrderDiscounts;
+
+            List<EFSiesaOrderTax> efSiesaOrderTaxes = new List<EFSiesaOrderTax>();
+            foreach(SiesaOrderTax siesaOrderTax in siesaOrder.impuestos)
+            {
+                EFSiesaOrderTax efSiesaOrderTax = new EFSiesaOrderTax();
+                efSiesaOrderTax.SetEfSiesaOrderTaxFromSiesaOrderTax(siesaOrderTax);
+                efSiesaOrderTaxes.Add(efSiesaOrderTax);
+            }
+            this.impuestos = efSiesaOrderTaxes;
         }
 
         public SiesaOrder getSiesaOrderFromEfSiesaOrder()
         {
-            SiesaOrder siesaOrder = new SiesaOrder();
-
-            siesaOrder.id = this.id;
-            siesaOrder.siesa_id = this.siesa_id;
-            siesaOrder.co = this.co;
-            siesaOrder.finalizado = this.finalizado;
-            siesaOrder.cancelado = this.cancelado;
-            siesaOrder.fecha = this.fecha;
-            siesaOrder.doc_tercero = this.doc_tercero;
-            siesaOrder.fecha_entrega = this.fecha_entrega;
-            siesaOrder.referencia_vtex = this.referencia_vtex;
-            siesaOrder.estado_vtex = this.estado_vtex;
-            siesaOrder.id_metodo_pago_vtex = this.id_metodo_pago_vtex;
-            siesaOrder.metodo_pago_vtex = this.metodo_pago_vtex;
-            siesaOrder.cond_pago = this.cond_pago;
-            siesaOrder.notas = this.notas;
-            siesaOrder.direccion = this.direccion;
-            siesaOrder.departamento = this.departamento;
-            siesaOrder.ciudad = this.ciudad;
-            siesaOrder.recoge_en_tienda = this.recoge_en_tienda;
-            siesaOrder.fecha_recoge = this.fecha_recoge;
-            siesaOrder.negocio = this.negocio;
-            siesaOrder.total_pedido = this.total_pedido;
-            siesaOrder.total_descuento = this.total_descuento;
-            siesaOrder.total_envio = this.total_envio;
-            siesaOrder.pago_contraentrega = this.pago_contraentrega;
-            siesaOrder.formas_de_pago = this.formas_de_pago;
-            siesaOrder.telefono = this.telefono;
+            SiesaOrder siesaOrder = new SiesaOrder
+            {
+                id = this.id,
+                siesa_id = this.siesa_id,
+                co = this.co,
+                finalizado = this.finalizado,
+                cancelado = this.cancelado,
+                fecha = this.fecha,
+                doc_tercero = this.doc_tercero,
+                fecha_entrega = this.fecha_entrega,
+                referencia_vtex = this.referencia_vtex,
+                estado_vtex = this.estado_vtex,
+                id_metodo_pago_vtex = this.id_metodo_pago_vtex,
+                metodo_pago_vtex = this.metodo_pago_vtex,
+                cond_pago = this.cond_pago,
+                notas = this.notas,
+                direccion = this.direccion,
+                departamento = this.departamento,
+                ciudad = this.ciudad,
+                recoge_en_tienda = this.recoge_en_tienda,
+                fecha_recoge = this.fecha_recoge,
+                negocio = this.negocio,
+                total_pedido = this.total_pedido,
+                total_descuento = this.total_descuento,
+                total_envio = this.total_envio,
+                pago_contraentrega = this.pago_contraentrega,
+                formas_de_pago = this.formas_de_pago,
+                telefono = this.telefono
+            };
 
             List<SiesaOrderDetail> siesaOrderDetails = new List<SiesaOrderDetail>();
-            foreach (EFSiesaOrderDetail efSiesaOrderDetail in this.detalles)
+            foreach (EFSiesaOrderDetail efSiesaOrderDetail in detalles)
             {
                 siesaOrderDetails.Add(efSiesaOrderDetail.getSiesaOrderDetailFromEfSiesaOrderDetail());
             }
             siesaOrder.detalles = siesaOrderDetails.ToArray();
 
             List<SiesaOrderDiscount> siesaOrderDiscounts = new List<SiesaOrderDiscount>();
-            foreach (EFSiesaOrderDiscount efSiesaOrderDiscount in this.descuentos)
+            foreach (EFSiesaOrderDiscount efSiesaOrderDiscount in descuentos)
             {
                 siesaOrderDiscounts.Add(efSiesaOrderDiscount.getSiesaOrderDiscountFromEfSiesaOrderDiscount());
             }
             siesaOrder.descuentos = siesaOrderDiscounts.ToArray();
+
+            List<SiesaOrderTax> siesaOrderTaxes = new List<SiesaOrderTax>();
+            foreach(EFSiesaOrderTax efSiesaOrderTax in impuestos){
+                siesaOrderTaxes.Add(efSiesaOrderTax.GetSiesaOrderTaxFromEfSiesaOrderTax());
+            }
+            siesaOrder.impuestos = siesaOrderTaxes.ToArray();
 
             return siesaOrder;
         }

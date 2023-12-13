@@ -13,6 +13,7 @@ namespace colanta_backend.App.Orders.Infraestructure
     using MicrosoftLogging = Microsoft.Extensions.Logging;
     using colanta_backend.App.Orders.SiesaOrders.Domain;
     using Microsoft.Extensions.Logging;
+    using colanta_backend.App.Taxes.Services;
 
     public class OrdersSiesaRepository : Domain.OrdersSiesaRepository
     {
@@ -23,11 +24,13 @@ namespace colanta_backend.App.Orders.Infraestructure
         private SiesaAuth siesaAuth;
         private IConfiguration configuration;
         private ILogger<OrdersSiesaRepository> logger;
+        private TaxService taxService;
         
         public OrdersSiesaRepository(
             SkusRepository skusLocalRepository,
             PromotionsRepository promotionLocalRepository,
             WrongAddressesRepository wrongAddressesRepository,
+            TaxService taxService,
             IConfiguration configuration,
             ILogger<OrdersSiesaRepository> logger
         )
@@ -39,6 +42,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.configuration = configuration;
             this.siesaAuth = new SiesaAuth(configuration);
             this.logger = logger;
+            this.taxService = taxService;
         }
 
         public async Task<SiesaOrder> getOrderBySiesaId(string siesaId)
@@ -62,7 +66,12 @@ namespace colanta_backend.App.Orders.Infraestructure
         {
             this.setHeaders().Wait();
             string endpoint = "/api/ColantaWS/EnviarPedido";
-            VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(this.skusLocalRepository, this.promotionLocalRepository, wrongAddressesRepository);
+            VtexOrderToSiesaOrderMapper mapper = new VtexOrderToSiesaOrderMapper(
+                this.skusLocalRepository, 
+                this.promotionLocalRepository, 
+                wrongAddressesRepository, 
+                taxService
+            );
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(order.order_json);
             SiesaOrderDto siesaOrderDto = await mapper.getSiesaOrderDto(vtexOrderDto);
             this.logger.LogDebug($"enviando a siesa orden #{order.id}");

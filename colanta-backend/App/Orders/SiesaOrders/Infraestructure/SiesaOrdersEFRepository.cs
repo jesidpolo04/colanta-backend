@@ -37,9 +37,10 @@ namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
             EFSiesaOrder[] efSiesaOrders = this.dbContext.SiesaOrders
                 .Include(siesaOrder => siesaOrder.detalles)
                 .Include(siesaOrder => siesaOrder.descuentos)
+                .Include(siesaOrder => siesaOrder.impuestos)
                 .Where(siesaOrder => siesaOrder.finalizado == finalizado).ToArray();
             List<SiesaOrder> siesaOrders = new List<SiesaOrder>();
-            foreach(EFSiesaOrder efSiesaOrder in efSiesaOrders)
+            foreach (EFSiesaOrder efSiesaOrder in efSiesaOrders)
             {
                 siesaOrders.Add(efSiesaOrder.getSiesaOrderFromEfSiesaOrder());
             }
@@ -51,6 +52,7 @@ namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
             EFSiesaOrder[] siesaOrders = this.dbContext.SiesaOrders
                 .Include(siesaOrder => siesaOrder.detalles)
                 .Include(siesaOrder => siesaOrder.descuentos)
+                .Include(siesaOrder => siesaOrder.impuestos)
                 .Where(siesaOrder => siesaOrder.siesa_id == siesaId).ToArray();
             if (siesaOrders.Length > 0)
             {
@@ -64,8 +66,9 @@ namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
             EFSiesaOrder[] siesaOrders = this.dbContext.SiesaOrders
                 .Include(siesaOrder => siesaOrder.detalles)
                 .Include(siesaOrder => siesaOrder.descuentos)
+                .Include(siesaOrder => siesaOrder.impuestos)
                 .Where(siesaOrder => siesaOrder.referencia_vtex == vtexId).ToArray();
-            if(siesaOrders.Length > 0)
+            if (siesaOrders.Length > 0)
             {
                 return siesaOrders.First().getSiesaOrderFromEfSiesaOrder();
             }
@@ -77,9 +80,10 @@ namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
             EFSiesaOrder[] efSiesaOrders = this.dbContext.SiesaOrders
                 .Include(siesaOrders => siesaOrders.detalles)
                 .Include(siesaOrders => siesaOrders.descuentos)
+                .Include(siesaOrder => siesaOrder.impuestos)
                 .Where(siesaOrder => siesaOrder.doc_tercero == document).ToArray();
             List<SiesaOrder> siesaOrders = new List<SiesaOrder>();
-            foreach(EFSiesaOrder efSiesaOrder in efSiesaOrders)
+            foreach (EFSiesaOrder efSiesaOrder in efSiesaOrders)
             {
                 siesaOrders.Add(efSiesaOrder.getSiesaOrderFromEfSiesaOrder());
             }
@@ -100,6 +104,7 @@ namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
             EFSiesaOrder efSiesaOrder = this.dbContext.SiesaOrders
                 .Include(efSiesaOrder => efSiesaOrder.detalles)
                 .Include(efSiesaOrder => efSiesaOrder.descuentos)
+                .Include(siesaOrder => siesaOrder.impuestos)
                 .Where(efSiesaOrder => efSiesaOrder.referencia_vtex == siesaOrder.referencia_vtex).First();
             efSiesaOrder.setEfSiesaOrderFromSiesaOrder(siesaOrder);
             this.dbContext.SaveChanges();
@@ -120,6 +125,14 @@ namespace colanta_backend.App.Orders.SiesaOrders.Infraestructure
             efSiesaOrderDiscount.setEfSiesaOrderDiscountFromSiesaOrderDiscount(siesaOrderDiscount);
             this.dbContext.SaveChanges();
             return siesaOrderDiscount;
+        }
+
+        public async Task<SiesaOrderTax> updateSiesaOrderTax(SiesaOrderTax siesaOrderTax)
+        {
+            EFSiesaOrderTax eFSiesaOrderTax = dbContext.SiesaOrderTaxes.Find(siesaOrderTax.Id);
+            eFSiesaOrderTax.SetEfSiesaOrderTaxFromSiesaOrderTax(siesaOrderTax);
+            dbContext.SaveChanges();
+            return siesaOrderTax;
         }
     }
 }

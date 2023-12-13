@@ -9,6 +9,7 @@ namespace colanta_backend.App.Orders.Controllers
     using Orders.Application;
     using SiesaOrders.Domain;
     using Shared.Domain;
+    using Taxes.Services;
     using System.Threading.Tasks;
 
     [ApiController]
@@ -34,7 +35,7 @@ namespace colanta_backend.App.Orders.Controllers
             MailService mailService,
             RegisterUserService registerUserService,
             EmailSender emailSender
-            )
+        )
         {
             this.localRepository = localRepository;
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;

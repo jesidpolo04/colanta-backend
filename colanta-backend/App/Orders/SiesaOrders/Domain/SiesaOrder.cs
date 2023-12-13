@@ -33,6 +33,7 @@
         public string telefono { get; set; }
         public SiesaOrderDetail[] detalles { get; set; }
         public SiesaOrderDiscount[] descuentos { get; set; }
+        public SiesaOrderTax[] impuestos { get; set; }
 
         public List<AddedItem> getAddedItems(SiesaOrderDetail[] newOrderDetails)
         {

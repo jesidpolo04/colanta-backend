@@ -53,6 +53,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFSiesaOrder> SiesaOrders { get; set; }
         public virtual DbSet<EFSiesaOrderDetail> SiesaOrderDetails { get; set; }
         public virtual DbSet<EFSiesaOrderDiscount> SiesaOrderDiscounts { get; set; }
+        public virtual DbSet<EFSiesaOrderTax> SiesaOrderTaxes { get; set; }
         public virtual DbSet<EFSiesaOrderHistory> SiesaOrdersHistory { get; set; }
         public virtual DbSet<EFProcess> Process { get; set; }
         public virtual DbSet<EFLog> Logs { get; set; }
@@ -69,7 +70,8 @@ namespace colanta_backend.App.Shared.Infraestructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<EFUser>(entity => {
+            modelBuilder.Entity<EFUser>(entity =>
+            {
                 entity.ToTable("users");
 
                 entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
@@ -125,7 +127,8 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.state).HasColumnName("state");
             });
 
-            modelBuilder.Entity<EFProcess>(entity => {
+            modelBuilder.Entity<EFProcess>(entity =>
+            {
                 entity.ToTable("process");
 
                 entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
@@ -192,7 +195,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.sku_concat_siesa_id).IsRequired();
                 entity.Property(e => e.price);
                 entity.Property(e => e.business);
-                
+
                 entity.HasOne(e => e.sku).WithOne().HasForeignKey<EFPrice>(e => e.sku_id);
             });
 
@@ -285,7 +288,7 @@ namespace colanta_backend.App.Shared.Infraestructure
             modelBuilder.Entity<EFCreditAccount>(entity =>
             {
                 entity.ToTable("credit_accounts");
-                
+
                 entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
                 entity.Property(e => e.vtex_id);
                 entity.Property(e => e.business);
@@ -423,7 +426,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.fecha_recoge);
 
                 entity.HasMany(e => e.detalles).WithOne(e => e.order).HasForeignKey(e => e.order_id);
-                entity.HasMany(e => e.descuentos).WithOne(e => e.order).HasForeignKey(e => e.order_id); 
+                entity.HasMany(e => e.descuentos).WithOne(e => e.order).HasForeignKey(e => e.order_id);
             });
 
             modelBuilder.Entity<EFSiesaOrderDetail>(entity =>
@@ -446,7 +449,8 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.HasOne(e => e.order).WithMany(e => e.detalles).HasForeignKey(e => e.order_id);
             });
 
-            modelBuilder.Entity<EFSiesaOrderDiscount>(entity => { 
+            modelBuilder.Entity<EFSiesaOrderDiscount>(entity =>
+            {
                 entity.ToTable("siesa_order_discounts");
 
                 entity.Property(e => e.id).ValueGeneratedOnAdd();
@@ -460,7 +464,28 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.HasOne(e => e.order).WithMany(e => e.descuentos).HasForeignKey(e => e.order_id);
             });
 
-            modelBuilder.Entity<EFSiesaOrderHistory>(entity => {
+            modelBuilder.Entity<EFSiesaOrderTax>(entity =>
+            {
+                entity.ToTable("siesa_order_taxes");
+
+                entity.Property(siesaTax => siesaTax.Id).ValueGeneratedOnAdd().HasColumnName("id");
+                entity.Property(siesaTax => siesaTax.NroDetalle).HasColumnName("nro_detalle");
+                entity.Property(siesaTax => siesaTax.IvaValor).HasColumnName("iva_valor");
+                entity.Property(siesaTax => siesaTax.IvaPorcentaje).HasColumnName("iva_porcentaje");
+                entity.Property(siesaTax => siesaTax.ImpuestoConsumoValor).HasColumnName("impuesto_consumo_valor");
+                entity.Property(siesaTax => siesaTax.ImpuestoSaludablePorcentaje).HasColumnName("impuesto_saludable_porcentaje");
+                entity.Property(siesaTax => siesaTax.ImpuestoSaludableValor).HasColumnName("impuesto_saludable_valor");
+                entity.Property(siesaTax => siesaTax.OrderId).HasColumnName("order_id");
+                entity.Property(siesaTax => siesaTax.PrecioBase).HasColumnName("precio_base");
+                entity.Property(siesaTax => siesaTax.PrecioCompleto).HasColumnName("precio_completo");
+
+                entity.HasOne(siesaTax => siesaTax.Order)
+                .WithMany(siesaOrder => siesaOrder.impuestos)
+                .HasForeignKey(e => e.OrderId);
+            });
+
+            modelBuilder.Entity<EFSiesaOrderHistory>(entity =>
+            {
                 entity.ToTable("siesa_orders_history");
 
                 entity.Property(e => e.id).ValueGeneratedOnAdd();

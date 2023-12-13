@@ -52,7 +52,7 @@ namespace colanta_backend.App.Taxes
             {
                 taxList.Add(new Tax
                 {
-                    Name = "Impuesto al consumo",
+                    Name = TaxesNames.IMPUESTO_AL_CONSUMO,
                     Description = "",
                     Value = productSiesaTaxes.ImpuestoConsumoNominal
                 });
@@ -62,7 +62,7 @@ namespace colanta_backend.App.Taxes
             {
                 taxList.Add(new Tax
                 {
-                    Name = "Impuesto saludable",
+                    Name = TaxesNames.IMPUESTO_SALUDABLE,
                     Description = "",
                     Value = productSiesaTaxes.ImpuestoSaludableNominal
                 });
@@ -73,7 +73,7 @@ namespace colanta_backend.App.Taxes
                 var priceAfterDiscounts = item.ItemPrice + item.DiscountPrice;
                 taxList.Add(new Tax
                 {
-                    Name = "Impuesto saludable",
+                    Name = TaxesNames.IMPUESTO_SALUDABLE,
                     Description = "",
                     Value = priceAfterDiscounts * (productSiesaTaxes.ImpuestoSaludablePorcentual / 100)
                 });
@@ -84,7 +84,7 @@ namespace colanta_backend.App.Taxes
                 var priceAfterDiscounts = item.ItemPrice + item.DiscountPrice;
                 taxList.Add(new Tax
                 {
-                    Name = "Iva",
+                    Name = TaxesNames.IVA,
                     Description = "",
                     Value = priceAfterDiscounts * (productSiesaTaxes.Iva / 100)
                 });

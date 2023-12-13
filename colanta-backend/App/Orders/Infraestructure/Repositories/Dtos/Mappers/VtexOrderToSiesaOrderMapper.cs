@@ -8,21 +8,28 @@
     using Promotions.Domain;
     using System.Threading.Tasks;
     using GiftCards.Domain;
+    using colanta_backend.App.Taxes;
+    using colanta_backend.App.Taxes.Services;
+
     public class VtexOrderToSiesaOrderMapper
     {
         private SkusRepository skusLocalRepository;
         private PromotionsRepository promotionsLocalRepository;
         private WrongAddressesRepository wrongAddressesRepository;
         private PoundSkusService poundSkusService;
+        private TaxService taxService;
         public VtexOrderToSiesaOrderMapper(
-            SkusRepository skusLocalRepository, 
-            PromotionsRepository promotionsLocalRepository, 
-            WrongAddressesRepository wrongAddressesRepository)
+            SkusRepository skusLocalRepository,
+            PromotionsRepository promotionsLocalRepository,
+            WrongAddressesRepository wrongAddressesRepository,
+            TaxService taxService
+        )
         {
             this.skusLocalRepository = skusLocalRepository;
             this.promotionsLocalRepository = promotionsLocalRepository;
             this.wrongAddressesRepository = wrongAddressesRepository;
             this.poundSkusService = new PoundSkusService(skusLocalRepository);
+            this.taxService = taxService;
         }
         public async Task<SiesaOrderDto> getSiesaOrderDto(VtexOrderDto vtexOrder)
         {
@@ -52,53 +59,99 @@
             siesaOrder.Encabezado.C263FechaRecoge = siesaOrder.Encabezado.C263RecogeEnTienda ? this.pickupDateTime(shippingData) : null;
             siesaOrder.Encabezado.C263Telefono = vtexOrder.clientProfileData.phone;
 
-            
+
             foreach (Transaction transaction in vtexOrder.paymentData.transactions)
             {
-                foreach(Payment payment in transaction.payments)
+                foreach (Payment payment in transaction.payments)
                 {
-                    var wayToPay = new WayToPayDto();
-                    wayToPay.C263FormaPago = this.getWayToPay(payment);
-                    wayToPay.C263ReferenciaPago = this.getTransactionReference(payment);
-                    wayToPay.C263Valor = payment.value / 100;
+                    var wayToPay = new WayToPayDto
+                    {
+                        C263FormaPago = this.getWayToPay(payment),
+                        C263ReferenciaPago = this.getTransactionReference(payment),
+                        C263Valor = payment.value / 100
+                    };
                     siesaOrder.FormasPago.Add(wayToPay);
                 }
             }
-            
-            int itemConsecutive = 0;
+
+            int itemConsecutive = 1;
             foreach (Item vtexItem in vtexOrder.items)
             {
-                itemConsecutive++;
-                SiesaOrderDetailDto siesaDetail = new SiesaOrderDetailDto();
-                siesaDetail.C263DetCO = siesaOrder.Encabezado.C263CO;
-                siesaDetail.C263NroDetalle = itemConsecutive;
-                siesaDetail.C263ReferenciaItem = await this.getItemSiesaRef(vtexItem.refId);
-                siesaDetail.C263VariacionItem = this.getItemVariationSiesaRef(vtexItem.refId);
-                siesaDetail.C263IndObsequio = vtexItem.isGift ? 1 : 0;
-                siesaDetail.C263UnidMedida = this.getMeasurementUnit(vtexItem);
-                siesaDetail.C263Cantidad = this.quantity(vtexItem);
-                siesaDetail.C263Precio = this.price(vtexItem);
-                siesaDetail.C263Notas = "sin notas";
-                siesaDetail.C263Impuesto = 0;
-                siesaDetail.C263ReferenciaVTEX = siesaOrder.Encabezado.C263ReferenciaVTEX;
+                string refId = getItemSiesaRef(vtexItem.refId).Result;
+                SiesaOrderDetailDto siesaDetail = new SiesaOrderDetailDto
+                {
+                    C263DetCO = siesaOrder.Encabezado.C263CO,
+                    C263NroDetalle = itemConsecutive,
+                    C263ReferenciaItem = refId,
+                    C263VariacionItem = this.getItemVariationSiesaRef(vtexItem.refId),
+                    C263IndObsequio = vtexItem.isGift ? 1 : 0,
+                    C263UnidMedida = this.getMeasurementUnit(vtexItem),
+                    C263Cantidad = this.quantity(vtexItem),
+                    C263Precio = this.price(vtexItem),
+                    C263Notas = "sin notas",
+                    C263Impuesto = 0,
+                    C263ReferenciaVTEX = siesaOrder.Encabezado.C263ReferenciaVTEX
+                };
                 siesaOrder.Detalles.Add(siesaDetail);
 
-                int discountConsecutive = 0;
-                foreach(PriceTag vtexDiscount in vtexItem.priceTags)
+                int discountConsecutive = 1;
+                foreach (PriceTag vtexDiscount in vtexItem.priceTags)
                 {
                     if (siesaDetail.C263IndObsequio == 1) continue;
                     if (vtexDiscount.identifier == null) continue;
-                    discountConsecutive++;
-                    SiesaOrderDiscountDto siesaDiscount = new SiesaOrderDiscountDto();
-                    siesaDiscount.C263DestoCO = siesaOrder.Encabezado.C263CO;
-                    siesaDiscount.C263ReferenciaDescuento = await this.getPromotionSiesaRef(vtexDiscount.identifier);
-                    siesaDiscount.C263ReferenciaVTEX = siesaOrder.Encabezado.C263ReferenciaVTEX;
-                    siesaDiscount.C263NroDetalle = itemConsecutive;
-                    siesaDiscount.C263OrdenDescto = discountConsecutive;
-                    siesaDiscount.C263Tasa = 0;
-                    siesaDiscount.C263Valor = (vtexDiscount.value / 100) * (-1);
+                    SiesaOrderDiscountDto siesaDiscount = new SiesaOrderDiscountDto
+                    {
+                        C263DestoCO = siesaOrder.Encabezado.C263CO,
+                        C263ReferenciaDescuento = await this.getPromotionSiesaRef(vtexDiscount.identifier),
+                        C263ReferenciaVTEX = siesaOrder.Encabezado.C263ReferenciaVTEX,
+                        C263NroDetalle = itemConsecutive,
+                        C263OrdenDescto = discountConsecutive,
+                        C263Tasa = 0,
+                        C263Valor = (vtexDiscount.value / 100) * (-1)
+                    };
                     siesaOrder.Descuentos.Add(siesaDiscount);
+                    discountConsecutive++;
                 }
+
+                SiesaOrderTaxDto taxes = new SiesaOrderTaxDto
+                {
+                    C263CodPedido = 0,
+                    C263ReferenciaItem = refId,
+                    C263NroDetalle = itemConsecutive,
+                    C263PrecioBase = price(vtexItem),
+                    C263PrecioCompleto = totalPricePerItem(vtexItem),
+                    C263IpoConsumoValor = 0,
+                    C263SaludablePorcen = 0,
+                    C263SaludablePorcenValor = 0, //por petición de Cristian Ramirez queda en 0
+                    C263SaludableValor = 0,
+                    C263IvaPorcen = 0,
+                    C263IvaValor = 0 // por petición de Cristian Ramirez queda en 0
+                };
+                foreach (PriceTag priceTag in vtexItem.priceTags)
+                {
+                    var taxesList = taxService.GetSiesaTaxes();
+                    var productTaxes = taxService.FindProductTaxes(await taxesList, refId);
+                    string priceTagName = priceTag.name;
+                    string[] priceTagNameWords = priceTagName.Split("@");
+                    if (!(priceTagNameWords.Length > 1) && priceTagNameWords[0] != "TAXHUB") continue;
+                    string taxName = priceTagNameWords[1];
+
+                    if (taxName.Equals(TaxesNames.IVA))
+                    {
+                        taxes.C263IvaPorcen = productTaxes.Iva;
+                    }
+                    else if (taxName.Equals(TaxesNames.IMPUESTO_AL_CONSUMO))
+                    {
+                        taxes.C263IpoConsumoValor = priceTag.rawValue;
+                    }
+                    else if (taxName.Equals(TaxesNames.IMPUESTO_SALUDABLE))
+                    {
+                        taxes.C263SaludablePorcen = productTaxes.ImpuestoSaludablePorcentual;
+                        taxes.C263SaludableValor = productTaxes.ImpuestoSaludableNominal;
+                    }
+                }
+                siesaOrder.ImpuestosPedido.Add(taxes);
+                itemConsecutive++;
             }
             return siesaOrder;
         }
@@ -123,13 +176,26 @@
             return item.price / 100;
         }
 
+        private decimal totalPricePerItem(Item item)
+        {
+            decimal totalTaxesValue = 0;
+            foreach (PriceTag priceTag in item.priceTags)
+            {
+                string priceTagName = priceTag.name;
+                string[] priceTagNameWords = priceTagName.Split("@");
+                if (!(priceTagNameWords.Length > 1) && priceTagNameWords[0] != "TAXHUB") continue;
+                totalTaxesValue += priceTag.rawValue;
+            }
+            return item.sellingPrice + totalTaxesValue;
+        }
+
         private bool isUponDelivery(PaymentData paymentData)
         {
             var payments = paymentData.transactions[0].payments;
-            foreach(Payment payment in payments)
+            foreach (Payment payment in payments)
             {
-                if(
-                    payment.paymentSystem == PaymentMethods.CARD_PROMISSORY.id || 
+                if (
+                    payment.paymentSystem == PaymentMethods.CARD_PROMISSORY.id ||
                     payment.paymentSystem == PaymentMethods.CONTRAENTREGA.id ||
                     payment.paymentSystem == PaymentMethods.EFECTIVO.id
                     ) return true;
@@ -140,7 +206,7 @@
         private string getSiesaAddressFromVtexAdress(Address vtexAddress)
         {
             string address = vtexAddress.street;
-            if(vtexAddress.number != null && vtexAddress.number != "")
+            if (vtexAddress.number != null && vtexAddress.number != "")
                 address += $" número: {vtexAddress.number}";
             if (vtexAddress.complement != null && vtexAddress.complement != "") address += $" complemento: {vtexAddress.complement}";
             address += $" barrio: {vtexAddress.neighborhood}";
@@ -150,7 +216,7 @@
 
         private string getBusinessFromSalesChannel(string salesChannelId)
         {
-            if(salesChannelId == "1")
+            if (salesChannelId == "1")
             {
                 return "mercolanta";
             }
@@ -164,13 +230,13 @@
         {
             //values can be: "Items" , "Discounts" , "Shipping"
             decimal value = 0;
-            foreach(Total total in totals)
+            foreach (Total total in totals)
             {
-                if(total.id == totalId)
+                if (total.id == totalId)
                 {
                     value = total.value / 100;
                 }
-                if(value < 0)
+                if (value < 0)
                 {
                     value = value * (-1);
                 }
@@ -196,7 +262,7 @@
         private async Task<string> getPromotionSiesaRef(string vtexId)
         {
             Promotion promotion = await this.promotionsLocalRepository.getPromotionByVtexId(vtexId);
-            if(promotion != null)
+            if (promotion != null)
             {
                 return promotion.siesa_id;
             }
@@ -228,7 +294,7 @@
         }
 
         private bool pickupInStore(ShippingData shippingData)
-        { 
+        {
             if (shippingData.address.addressType == "pickup") return true;
             return false;
         }
@@ -237,7 +303,7 @@
         {
             //Se deben agregar 5 horas a la hora de VTEX ya que dice estar en formato UTC pero enrealidad viene con la hora Colombia (UTC-5)
             var estimatedDate = shippingData.logisticsInfo[0].shippingEstimateDate;
-            return estimatedDate.HasValue ? estimatedDate.Value.AddHours(5).ToString(DateFormats.FECHA_RECOGE) : null; 
+            return estimatedDate.HasValue ? estimatedDate.Value.AddHours(5).ToString(DateFormats.FECHA_RECOGE) : null;
         }
 
         private string getEstimateDeliveryDate(ShippingData shippingData)
@@ -290,13 +356,13 @@
 
         private string getObservation(VtexOrderDto vtexOrder)
         {
-            return vtexOrder.openTextField != null ? vtexOrder.openTextField.value : "sin observaciones"; 
+            return vtexOrder.openTextField != null ? vtexOrder.openTextField.value : "sin observaciones";
         }
 
         private string getDate(VtexOrderDto vtexOrder)
         {
             var now = DateTime.Now;
-            if(DateTime.Compare(vtexOrder.creationDate, now) < 0)
+            if (DateTime.Compare(vtexOrder.creationDate, now) < 0)
             {
                 return now.ToString(DateFormats.UTC);
             }
