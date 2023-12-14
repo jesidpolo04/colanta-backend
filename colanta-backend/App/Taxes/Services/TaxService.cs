@@ -7,6 +7,7 @@ using colanta_backend.App.Taxes.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System;
 
 namespace colanta_backend.App.Taxes.Services
 {
@@ -37,7 +38,9 @@ namespace colanta_backend.App.Taxes.Services
         }
 
         public ProductSiesaTaxes? FindProductTaxes(ProductSiesaTaxes[] taxesList, string refId){
-            return taxesList.Where( taxes => taxes.IdProducto == refId).FirstOrDefault(null);
+            var  productTaxesList = taxesList.Where( taxes => taxes.IdProducto == refId).ToList();
+            if(productTaxesList.Count > 0) return productTaxesList.First();
+            else return null;
         } 
 
         private void SetHeaders()
