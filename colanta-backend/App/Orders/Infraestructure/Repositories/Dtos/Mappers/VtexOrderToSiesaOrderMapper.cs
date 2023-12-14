@@ -190,7 +190,7 @@
                 if (!(priceTagNameWords.Length > 1) && priceTagNameWords[0] != "TAXHUB") continue;
                 totalTaxesValue += priceTag.rawValue;
             }
-            return item.sellingPrice + totalTaxesValue;
+            return (item.sellingPrice / 100) + totalTaxesValue;
         }
 
         private bool isUponDelivery(PaymentData paymentData)
