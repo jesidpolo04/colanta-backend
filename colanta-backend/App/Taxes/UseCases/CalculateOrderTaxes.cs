@@ -54,7 +54,7 @@ namespace colanta_backend.App.Taxes
                 {
                     Name = TaxesNames.IMPUESTO_AL_CONSUMO,
                     Description = "",
-                    Value = productSiesaTaxes.ImpuestoConsumoNominal
+                    Value = productSiesaTaxes.ImpuestoConsumoNominal * item.Quantity
                 });
             }
             //IMPUESTO SALUDABLE NOMINAL
@@ -64,7 +64,7 @@ namespace colanta_backend.App.Taxes
                 {
                     Name = TaxesNames.IMPUESTO_SALUDABLE,
                     Description = "",
-                    Value = productSiesaTaxes.ImpuestoSaludableNominal
+                    Value = productSiesaTaxes.ImpuestoSaludableNominal * item.Quantity
                 });
             }
             //IMPUESTO SALUDABLE PORCENTUAL
