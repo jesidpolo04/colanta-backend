@@ -70,7 +70,7 @@ namespace colanta_backend.App.Taxes
             //IMPUESTO SALUDABLE PORCENTUAL
             if (productSiesaTaxes.ImpuestoSaludablePorcentual > 0)
             {
-                var priceAfterDiscounts = item.TargetPrice + item.DiscountPrice;
+                var priceAfterDiscounts = item.TargetPrice + (item.DiscountPrice / item.Quantity);
                 taxList.Add(new Tax
                 {
                     Name = TaxesNames.IMPUESTO_SALUDABLE,
@@ -81,7 +81,7 @@ namespace colanta_backend.App.Taxes
             //IVA
             if (productSiesaTaxes.Iva > 0)
             {
-                var priceAfterDiscounts = item.TargetPrice + item.DiscountPrice;
+                var priceAfterDiscounts = item.TargetPrice + (item.DiscountPrice / item.Quantity);
                 taxList.Add(new Tax
                 {
                     Name = TaxesNames.IVA,
