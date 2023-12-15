@@ -65,7 +65,7 @@ namespace colanta_backend.App.Taxes
         public string MeasurementUnit { get; set; }
 
         [JsonProperty("targetPrice")]
-        public double TargetPrice { get; set; }
+        public decimal TargetPrice { get; set; }
 
         [JsonProperty("itemPrice")]
         public decimal ItemPrice { get; set; }
