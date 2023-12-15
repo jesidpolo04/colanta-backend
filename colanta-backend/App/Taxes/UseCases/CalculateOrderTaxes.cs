@@ -75,7 +75,7 @@ namespace colanta_backend.App.Taxes
                 {
                     Name = TaxesNames.IMPUESTO_SALUDABLE,
                     Description = "",
-                    Value = priceAfterDiscounts * (productSiesaTaxes.ImpuestoSaludablePorcentual / 100)
+                    Value = priceAfterDiscounts * (productSiesaTaxes.ImpuestoSaludablePorcentual / 100) * item.Quantity
                 });
             }
             //IVA
@@ -86,7 +86,7 @@ namespace colanta_backend.App.Taxes
                 {
                     Name = TaxesNames.IVA,
                     Description = "",
-                    Value = priceAfterDiscounts * (productSiesaTaxes.Iva / 100)
+                    Value = priceAfterDiscounts * (productSiesaTaxes.Iva / 100) * item.Quantity
                 });
             }
             return taxList;
