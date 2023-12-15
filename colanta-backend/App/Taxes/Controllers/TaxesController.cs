@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using colanta_backend.App.Taxes.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace colanta_backend.App.Taxes.Controllers
         {
             try
             {
+                _Logger.LogDebug( JsonSerializer.Serialize(request) );
                 var clientData = request.ClientData;
                 var document = clientData != null ? clientData.Document : null;
                 var useCase = new CalculateOrderTaxes(taxService, _Logger);
