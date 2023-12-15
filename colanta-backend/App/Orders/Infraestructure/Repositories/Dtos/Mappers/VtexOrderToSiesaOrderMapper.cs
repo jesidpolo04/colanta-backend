@@ -145,7 +145,7 @@
                     }
                     else if (taxName.Equals(TaxesNames.IMPUESTO_AL_CONSUMO))
                     {
-                        taxes.C263IpoConsumoValor = priceTag.rawValue;
+                        taxes.C263IpoConsumoValor = productTaxes.ImpuestoConsumoNominal;
                     }
                     else if (taxName.Equals(TaxesNames.IMPUESTO_SALUDABLE))
                     {
@@ -188,7 +188,7 @@
                 string priceTagName = priceTag.name;
                 string[] priceTagNameWords = priceTagName.Split("@");
                 if (!(priceTagNameWords.Length > 1) && priceTagNameWords[0] != "TAXHUB") continue;
-                totalTaxesValue += priceTag.rawValue;
+                totalTaxesValue += priceTag.rawValue / item.quantity;
             }
             return (item.sellingPrice / 100) + totalTaxesValue;
         }
