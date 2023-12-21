@@ -17,7 +17,7 @@
         {
             this.id = price.id;
             this.price = price.price;
-            this.base_price = base_price;
+            this.base_price = price.base_price;
             this.sku_concat_siesa_id = price.sku_concat_siesa_id;
             this.sku_id = price.sku_id;
             this.business = price.business;
