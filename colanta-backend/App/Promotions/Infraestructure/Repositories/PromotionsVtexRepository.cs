@@ -122,7 +122,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 maxNumberOfAffectedItemsGroupKey = promotion.max_number_of_affected_items_group_key,
                 minimumQuantityBuyTogether = promotion.minimum_quantity_buy_together,
                 quantityToAffectBuyTogether = promotion.quantity_to_affect_buy_together,
-                priceTableName = promotion.price_table_name
+                priceTableName = promotion.price_table_name.ToLower() //LAS TABLAS DE PRECIO SE GUARDAN EN LOWERCASE
             };
 
             List<VtexPromotionProduct> vtexPromotionProducts = new List<VtexPromotionProduct>();
