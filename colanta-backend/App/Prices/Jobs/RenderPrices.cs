@@ -76,6 +76,7 @@
                     if (this.poundSkusService.isPoundSku( this.getSiesaIdFromConcatSiesaId(siesaPrice.sku_concat_siesa_id) ))
                     {
                         siesaPrice.price = siesaPrice.price / 2;
+                        siesaPrice.base_price = siesaPrice.base_price / 2;
                     }
 
                     Price localPrice = this.localRepository.getPriceBySkuConcatSiesaId(siesaPrice.sku_concat_siesa_id).Result;
@@ -84,9 +85,10 @@
                     {
                         try
                         {
-                            if (localPrice.price != siesaPrice.price)
+                            if (localPrice.price != siesaPrice.price || localPrice.base_price != siesaPrice.base_price)
                             {
                                 localPrice.price = siesaPrice.price;
+                                localPrice.base_price = siesaPrice.base_price;
                                 await this.localRepository.updatePrice(localPrice);
                             }
 
