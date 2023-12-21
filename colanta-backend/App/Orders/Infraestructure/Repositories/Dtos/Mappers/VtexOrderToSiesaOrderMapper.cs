@@ -113,48 +113,6 @@
                     discountConsecutive++;
                 }
 
-                SiesaOrderTaxDto taxes = new SiesaOrderTaxDto
-                {
-                    C263CodPedido = 0,
-                    C263ReferenciaItem = refId,
-                    C263NroDetalle = itemConsecutive,
-                    C263PrecioBase = price(vtexItem),
-                    C263PrecioCompleto = totalPricePerItem(vtexItem),
-                    C263IpoConsumoValor = 0,
-                    C263SaludablePorcen = 0,
-                    C263SaludablePorcenValor = 0, //por petición de Cristian Ramirez queda en 0
-                    C263SaludableValor = 0,
-                    C263IvaPorcen = 0,
-                    C263IvaValor = 0 // por petición de Cristian Ramirez queda en 0
-                };
-                int totalTaxes = 0;
-
-                foreach (PriceTag priceTag in vtexItem.priceTags)
-                {
-                    var taxesList = taxService.GetSiesaTaxes().Result;
-                    var productTaxes = taxService.FindProductTaxes(taxesList, refId);
-                    string priceTagName = priceTag.name;
-                    string[] priceTagNameWords = priceTagName.Split("@");
-                    if (!(priceTagNameWords.Length > 1) && priceTagNameWords[0] != "TAXHUB") continue;
-                    totalTaxes++;
-                    string taxName = priceTagNameWords[1];
-
-                    if (taxName.Equals(TaxesNames.IVA))
-                    {
-                        taxes.C263IvaPorcen = productTaxes.Iva;
-                    }
-                    else if (taxName.Equals(TaxesNames.IMPUESTO_AL_CONSUMO))
-                    {
-                        taxes.C263IpoConsumoValor = productTaxes.ImpuestoConsumoNominal;
-                    }
-                    else if (taxName.Equals(TaxesNames.IMPUESTO_SALUDABLE))
-                    {
-                        taxes.C263SaludablePorcen = productTaxes.ImpuestoSaludablePorcentual;
-                        taxes.C263SaludableValor = productTaxes.ImpuestoSaludableNominal;
-                    }
-                }
-
-                if (totalTaxes > 0) siesaOrder.ImpuestosPedido.Add(taxes);
                 itemConsecutive++;
             }
             return siesaOrder;
@@ -178,19 +136,6 @@
                 return item.price / 100 * 2;
             }
             return item.price / 100;
-        }
-
-        private decimal totalPricePerItem(Item item)
-        {
-            decimal totalTaxesValue = 0;
-            foreach (PriceTag priceTag in item.priceTags)
-            {
-                string priceTagName = priceTag.name;
-                string[] priceTagNameWords = priceTagName.Split("@");
-                if (!(priceTagNameWords.Length > 1) && priceTagNameWords[0] != "TAXHUB") continue;
-                totalTaxesValue += priceTag.rawValue / item.quantity;
-            }
-            return (item.sellingPrice / 100) + totalTaxesValue;
         }
 
         private bool isUponDelivery(PaymentData paymentData)
