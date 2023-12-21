@@ -10,7 +10,7 @@ namespace colanta_backend.App.PriceTables
     {
         private ColantaContext _Context;
         private ILogger _Logger;
-        public PriceTablesRepository(IConfiguration configuration, ILogger logger)
+        public PriceTablesRepository(IConfiguration configuration, ILogger<PriceTablesRepository> logger)
         {
             _Context = new ColantaContext(configuration);
             _Logger = logger;
