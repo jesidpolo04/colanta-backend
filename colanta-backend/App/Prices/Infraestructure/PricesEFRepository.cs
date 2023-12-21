@@ -39,9 +39,9 @@ namespace colanta_backend.App.Prices.Infraestructure
         public async Task<Price?> getPriceBySkuId(int sku_id)
         {
             var efPrices = this.dbContext.Prices
-                .Include(price => price.sku)
-                .ThenInclude(sku => sku.product)
-                .Where(e => e.sku.id == sku_id);
+            .Include(price => price.sku)
+            .ThenInclude(sku => sku.product)
+            .Where(e => e.sku.id == sku_id);
 
             if (efPrices.ToArray().Length > 0)
             {
@@ -54,25 +54,37 @@ namespace colanta_backend.App.Prices.Infraestructure
 
         public Price[] getPricesByBrand(int brandId)
         {
-            var dbPrices = dbContext.Prices.Where(price => price.sku.product.brand.id == brandId).ToList();
+            var dbPrices = dbContext.Prices
+            .Include(price => price.sku)
+            .ThenInclude(sku => sku.product)
+            .Where(price => price.sku.product.brand.id == brandId).ToList();
             return dbPrices.Select(dbPrice => dbPrice.getPriceFromEfPrice()).ToArray();
         }
 
         public Price[] getPricesByCategory(int categoryId)
         {
-            var dbPrices = dbContext.Prices.Where(price => price.sku.product.category.id == categoryId).ToList();
+            var dbPrices = dbContext.Prices
+            .Include(price => price.sku)
+            .ThenInclude(sku => sku.product)
+            .Where(price => price.sku.product.category.id == categoryId).ToList();
             return dbPrices.Select(dbPrice => dbPrice.getPriceFromEfPrice()).ToArray();
         }
 
         public Price[] getPricesByProduct(int productId)
         {
-            var dbPrices = dbContext.Prices.Where(price => price.sku.product.id == productId).ToList();
+            var dbPrices = dbContext.Prices
+            .Include(price => price.sku)
+            .ThenInclude(sku => sku.product)
+            .Where(price => price.sku.product.id == productId).ToList();
             return dbPrices.Select(dbPrice => dbPrice.getPriceFromEfPrice()).ToArray();
         }
 
         public Price[] getPricesBySkuIds(int[] skuIds)
         {
-            var dbPrices = dbContext.Prices.Where(price => skuIds.Contains((int)price.sku.id)).ToList();
+            var dbPrices = dbContext.Prices
+            .Include(price => price.sku)
+            .ThenInclude(sku => sku.product)
+            .Where(price => skuIds.Contains((int)price.sku.id)).ToList();
             return dbPrices.Select(dbPrice => dbPrice.getPriceFromEfPrice()).ToArray();
         }
 

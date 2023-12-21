@@ -330,6 +330,7 @@
                     fixedPrices.Add(new FixedPrice
                     {
                         PriceTable = priceTable,
+                        PriceTableName = promotion.price_table_name,
                         ListPrice = price.price,
                         Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
                         MinQuantity = 1,
@@ -346,6 +347,7 @@
                     fixedPrices.Add(new FixedPrice
                     {
                         PriceTable = priceTable,
+                        PriceTableName = promotion.price_table_name,
                         ListPrice = price.price,
                         Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
                         MinQuantity = 1,
@@ -363,6 +365,7 @@
                     fixedPrices.Add(new FixedPrice
                     {
                         PriceTable = priceTable,
+                        PriceTableName = promotion.price_table_name,
                         ListPrice = price.price,
                         Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
                         MinQuantity = 1,
@@ -381,6 +384,7 @@
                     fixedPrices.Add(new FixedPrice
                     {
                         PriceTable = priceTable,
+                        PriceTableName = promotion.price_table_name,
                         ListPrice = price.price,
                         Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
                         MinQuantity = 1,
