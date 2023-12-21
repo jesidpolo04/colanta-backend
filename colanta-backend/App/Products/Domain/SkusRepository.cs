@@ -13,5 +13,6 @@
         Task<Sku> updateSku(Sku sku);
         Task<Sku[]> updateSkus(Sku[] skus);
         Task<PoundSku[]> getAllPoundSkus();
+        Sku[] getByBrand(string brandSiesaId);
     }
 }

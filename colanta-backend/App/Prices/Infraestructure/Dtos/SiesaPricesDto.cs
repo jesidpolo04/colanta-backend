@@ -12,6 +12,7 @@
         public string id_producto { get; set; }
         public string? id_variacion { get; set; }
         public decimal precio_publico { get; set; }
+        public decimal precio_base { get; set; }
         public string negocio { get; set; }
 
         public Price GetPriceFromDto()
@@ -19,6 +20,7 @@
             Price price = new Price();
 
             price.price = this.precio_publico;
+            price.base_price = this.precio_base;
             price.business = this.negocio;
             if(id_variacion != null)
             {

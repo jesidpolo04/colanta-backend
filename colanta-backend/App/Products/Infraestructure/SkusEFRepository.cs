@@ -23,6 +23,12 @@
             return Task.FromResult(poundSkus.Select(poundSku => poundSku.getPoundSku()).ToArray());
         }
 
+        public Sku[] getByBrand(string brandSiesaId)
+        {
+            var skusDb = dbContext.Skus.Where( sku => sku.product.brand.id_siesa == brandSiesaId).ToArray();
+            return skusDb.Select( skuDb => skuDb.GetSkuFromEfSku()).ToArray();
+        }
+
         public async Task<Sku[]> getDeltaSkus(Sku[] currentSkus)
         {
             List<string> currentIds = new List<string>();

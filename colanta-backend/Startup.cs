@@ -138,6 +138,9 @@ namespace colanta_backend
             services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersHistoryRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersHistoryEFRepository>();
             services.AddTransient<App.Orders.Jobs.UpdateSiesaOrders, App.Orders.Jobs.UpdateSiesaOrders>();
             services.AddTransient<App.Orders.Domain.GetOrderDetailsVtexId>();
+            //Dependencies Injections PriceTables
+            services.AddTransient<App.PriceTables.PriceTablesRepository>();
+            services.AddTransient<App.PriceTables.PriceTablesVtexService>();
 
             //Dependecies Injections Taxes
             services.AddTransient<App.Taxes.Services.TaxService>();

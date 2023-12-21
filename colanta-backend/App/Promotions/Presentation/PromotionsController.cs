@@ -18,7 +18,7 @@ namespace colanta_backend.App.Promotions.Presentation
             try
             {
                 job.Invoke().Wait();
-                Ok("Renderizando precios");
+                Ok("Renderizando promociones");
             }
             catch (Exception exception)
             {

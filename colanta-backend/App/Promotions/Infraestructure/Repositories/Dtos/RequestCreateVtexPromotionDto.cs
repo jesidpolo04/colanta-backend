@@ -45,6 +45,7 @@
         public decimal? itemMaxPrice { get; set; }
         public decimal? itemMinPrice { get; set; }
         public string[] clusterExpressions { get; set; }
+        public string priceTableName {get; set; }
         public string? clusterOperator { get; set; }
         public int? maxUsage { get; set; }
         public int? maxUsagePerClient { get; set; }

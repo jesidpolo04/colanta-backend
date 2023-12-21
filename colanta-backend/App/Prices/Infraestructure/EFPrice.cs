@@ -7,6 +7,7 @@
     {
         public int? id { get; set; }
         public decimal price { get; set; }
+        public decimal base_price { get; set; }
         public string sku_concat_siesa_id { get; set; }
         public int sku_id { get; set; }
         public EFSku sku { get; set; }
@@ -16,6 +17,7 @@
         {
             this.id = price.id;
             this.price = price.price;
+            this.base_price = base_price;
             this.sku_concat_siesa_id = price.sku_concat_siesa_id;
             this.sku_id = price.sku_id;
             this.business = price.business;
@@ -26,6 +28,7 @@
             Price price = new Price();
             price.id = this.id;
             price.price = this.price;
+            price.base_price = this.base_price;
             price.sku_concat_siesa_id = this.sku_concat_siesa_id;
             price.sku_id = this.sku_id;
             price.business = this.business;

@@ -10,6 +10,8 @@ namespace colanta_backend.App.Prices.Infraestructure
     using Microsoft.Extensions.Configuration;
     using System.Linq;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
     public class PricesEFRepository : Domain.PricesRepository
     {
         private ColantaContext dbContext;
@@ -50,6 +52,30 @@ namespace colanta_backend.App.Prices.Infraestructure
             return null;
         }
 
+        public Price[] getPricesByBrand(int brandId)
+        {
+            var dbPrices = dbContext.Prices.Where(price => price.sku.product.brand.id == brandId).ToList();
+            return dbPrices.Select(dbPrice => dbPrice.getPriceFromEfPrice()).ToArray();
+        }
+
+        public Price[] getPricesByCategory(int categoryId)
+        {
+            var dbPrices = dbContext.Prices.Where(price => price.sku.product.category.id == categoryId).ToList();
+            return dbPrices.Select(dbPrice => dbPrice.getPriceFromEfPrice()).ToArray();
+        }
+
+        public Price[] getPricesByProduct(int productId)
+        {
+            var dbPrices = dbContext.Prices.Where(price => price.sku.product.id == productId).ToList();
+            return dbPrices.Select(dbPrice => dbPrice.getPriceFromEfPrice()).ToArray();
+        }
+
+        public Price[] getPricesBySkuIds(int[] skuIds)
+        {
+            var dbPrices = dbContext.Prices.Where(price => skuIds.Contains((int)price.sku.id)).ToList();
+            return dbPrices.Select(dbPrice => dbPrice.getPriceFromEfPrice()).ToArray();
+        }
+
         public async Task<Price> savePrice(Price price)
         {
             EFPrice efPrice = new EFPrice();
@@ -66,6 +92,7 @@ namespace colanta_backend.App.Prices.Infraestructure
             EFPrice efPrice = this.dbContext.Prices.Find(price.id);
 
             efPrice.price = price.price;
+            efPrice.base_price = price.base_price;
             efPrice.business = price.business;
             efPrice.sku_concat_siesa_id = price.sku_concat_siesa_id;
             efPrice.sku_id = price.sku_id;
@@ -76,11 +103,12 @@ namespace colanta_backend.App.Prices.Infraestructure
 
         public async Task<Price[]> updatePrices(Price[] prices)
         {
-            foreach(Price price in prices)
+            foreach (Price price in prices)
             {
                 EFPrice efPrice = this.dbContext.Prices.Find(price.id);
 
                 efPrice.price = price.price;
+                efPrice.base_price = price.base_price;
                 efPrice.business = price.business;
                 efPrice.sku_concat_siesa_id = price.sku_concat_siesa_id;
                 efPrice.sku_id = price.sku_id;

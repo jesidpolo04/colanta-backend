@@ -5,6 +5,7 @@
     {
         public int? id { get; set; }
         public decimal price { get; set; }
+        public decimal base_price { get; set; }
         public string sku_concat_siesa_id { get; set; }
         public int sku_id { get; set; }
         public Sku sku { get; set; }

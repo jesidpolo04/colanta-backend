@@ -12,6 +12,12 @@
     using System.Text.Json;
     using System.Text.Json.Serialization;
     using System.Collections.Generic;
+    using colanta_backend.App.PriceTables;
+    using colanta_backend.App.Prices.Domain;
+    using System.Linq;
+    using System.Threading;
+    using colanta_backend.App.Shared;
+
     public class RenderPromotions : IDisposable
     {
         private string processName = "Renderizado de promociones";
@@ -24,6 +30,9 @@
         private CategoriesRepository categoriesRepository;
         private ProductsRepository productsRepository;
         private SkusRepository skuRepository;
+        private PricesRepository priceLocalRepository;
+        private PriceTablesRepository priceTableRepository;
+        private PriceTablesVtexService priceTableVtexService;
         private IRenderPromotionsMail renderPromotionsMail;
         private IInvalidPromotionMail invalidPromotionMail;
 
@@ -33,9 +42,7 @@
         private List<Promotion> inactivatedPromotions = new List<Promotion>();
         private List<Promotion> failedPromotions = new List<Promotion>();
         private List<Promotion> notProccecedPromotions = new List<Promotion>();
-        private int obtainedPromotions = 0;
 
-        private List<Detail> details = new List<Detail>();
 
         private CustomConsole console = new CustomConsole();
         private JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
@@ -48,6 +55,9 @@
                 CategoriesRepository categoriesRepository,
                 ProductsRepository productsRepository,
                 SkusRepository skuRepository,
+                PricesRepository priceLocalRepository,
+                PriceTablesRepository priceTableRepository,
+                PriceTablesVtexService priceTableVtexService,
                 IProcess process,
                 ILogger logger,
                 IRenderPromotionsMail renderPromotionsMail,
@@ -61,6 +71,9 @@
             this.categoriesRepository = categoriesRepository;
             this.productsRepository = productsRepository;
             this.skuRepository = skuRepository;
+            this.priceLocalRepository = priceLocalRepository;
+            this.priceTableRepository = priceTableRepository;
+            this.priceTableVtexService = priceTableVtexService;
             this.renderPromotionsMail = renderPromotionsMail;
             this.invalidPromotionMail = invalidPromotionMail;
             this.process = process;
@@ -74,22 +87,13 @@
             try
             {
                 Promotion[] allSiesaPromotions = await this.siesaRepository.getAllPromotions();
-                this.details.Add(new Detail(
-                            origin: "siesa",
-                            action: "obtener todas las promociones",
-                            content: JsonSerializer.Serialize(allSiesaPromotions, this.jsonOptions),
-                            description: "petición para obtener las promociones, completada con éxito",
-                            success: true));
-
                 Promotion[] deltaPromotions = await this.localRepository.getDeltaPromotions(allSiesaPromotions);
-                await this.inactiveDeltaPromotions(deltaPromotions);
-                
+                inactiveDeltaPromotions(deltaPromotions);
+
                 foreach (Promotion siesaPromotion in allSiesaPromotions)
                 {
                     try
                     {
-                        this.obtainedPromotions++;
-
                         Promotion? localPromotion = await this.localRepository.getPromotionBySiesaId(siesaPromotion.siesa_id);
 
                         if (localPromotion != null)
@@ -98,7 +102,7 @@
                             {
                                 this.notProccecedPromotions.Add(localPromotion);
                             }
-                            if (localPromotion.is_active == false && localPromotion.vtex_id !=  null)
+                            if (localPromotion.is_active == false && localPromotion.vtex_id != null)
                             {
                                 this.inactivePromotions.Add(localPromotion);
                             }
@@ -112,63 +116,43 @@
                                 continue;
                             }
                             localPromotion = await this.localRepository.savePromotion(siesaPromotion);
+                            var percentualDiscountValue = localPromotion.percentual_discount_value;
+                            if (percentualDiscountValue != null && percentualDiscountValue > 0)
+                            {
+                                createPriceTable(localPromotion.price_table_name, localPromotion);
+                            }
                             Promotion vtexPromotion = await vtexRepository.savePromotion(localPromotion);
                             localPromotion.vtex_id = vtexPromotion.vtex_id;
                             await this.localRepository.updatePromotion(localPromotion);
 
                             this.loadPromotions.Add(localPromotion);
-                            this.details.Add(new Detail(
-                                origin: "vtex",
-                                action: "crear o actualizar promoción",
-                                content: JsonSerializer.Serialize(localPromotion, this.jsonOptions),
-                                description: "petición para crear o actualizar promoción, completada con éxito",
-                                success: true));
                         }
                     }
-                    catch(VtexException vtexException)
+                    catch (VtexException vtexException)
                     {
                         this.console.throwException(vtexException.Message);
                         this.failedPromotions.Add(siesaPromotion);
-                        this.details.Add(new Detail(
-                                    origin: "vtex",
-                                    action: vtexException.requestUrl,
-                                    content: vtexException.responseBody,
-                                    description: vtexException.Message,
-                                    success: false));
                         await this.logger.writelog(vtexException);
                     }
-                    catch(Exception exception)
+                    catch (Exception exception)
                     {
                         this.console.throwException(exception.Message);
                         await this.logger.writelog(exception);
                     }
                 }
             }
-            catch(SiesaException siesaException)
+            catch (SiesaException siesaException)
             {
                 this.console.throwException(siesaException.Message);
-                this.details.Add(new Detail(
-                            origin: "siesa",
-                            action: siesaException.requestUrl,
-                            content: siesaException.requestBody,
-                            description: siesaException.Message,
-                            success: false));
                 await this.logger.writelog(siesaException);
             }
-            catch(Exception genericException)
+            catch (Exception genericException)
             {
                 this.console.throwException(genericException.Message);
                 await this.logger.writelog(genericException);
             }
 
             this.renderPromotionsMail.sendMail(this.loadPromotions, this.inactivatedPromotions, this.failedPromotions);
-            this.process.Log(
-                        name: processName,
-                        total_loads: this.loadPromotions.Count,
-                        total_errors: this.failedPromotions.Count,
-                        total_not_procecced: this.notProccecedPromotions.Count,
-                        total_obtained: this.obtainedPromotions,
-                        json_details: JsonSerializer.Serialize(this.details, this.jsonOptions));
             this.console.processEndstAt(processName, DateTime.Now);
         }
 
@@ -228,11 +212,11 @@
             List<string> inexistCateories = new List<string>();
             List<string> categoriesIdsList = JsonSerializer.Deserialize<List<string>>(categoriesIds);
             if (categoriesIdsList.Count == 0) return inexistCateories;
-            foreach(string categoryId in categoriesIdsList)
+            foreach (string categoryId in categoriesIdsList)
             {
                 Category category = this.categoriesRepository.getCategoryBySiesaId(categoryId).Result;
                 if (category == null)
-                    inexistCateories.Add(categoryId);    
+                    inexistCateories.Add(categoryId);
             }
             return inexistCateories;
         }
@@ -245,7 +229,7 @@
             foreach (string skuId in skusIdsList)
             {
                 Sku sku = this.skuRepository.getSkuBySiesaId(skuId).Result;
-                if(sku == null)
+                if (sku == null)
                     inexistSkus.Add(skuId);
             }
             return inexistSkus;
@@ -255,11 +239,11 @@
         {
             List<string> inexistProducts = new List<string>();
             List<string> productsIdsList = JsonSerializer.Deserialize<List<string>>(productsIds);
-            if(productsIdsList.Count == 0) return inexistProducts;
-            foreach(string productId in productsIdsList)
+            if (productsIdsList.Count == 0) return inexistProducts;
+            foreach (string productId in productsIdsList)
             {
                 Product product = this.productsRepository.getProductBySiesaId(productId).Result;
-                if(product == null)
+                if (product == null)
                     inexistProducts.Add(productId);
             }
             return inexistProducts;
@@ -269,11 +253,11 @@
         {
             List<string> inexistSkusIds = new List<string>();
             List<string> giftConcatSiesaIdsList = JsonSerializer.Deserialize<List<string>>(giftsConcatSiesaIds);
-            if(giftConcatSiesaIdsList.Count == 0) return inexistSkusIds;
+            if (giftConcatSiesaIdsList.Count == 0) return inexistSkusIds;
             foreach (string giftConcatSiesaId in giftConcatSiesaIdsList)
             {
                 Sku gift = this.skuRepository.getSkuByConcatSiesaId(giftConcatSiesaId).Result;
-                if(gift == null)
+                if (gift == null)
                     inexistSkusIds.Add(giftConcatSiesaId);
             }
             return inexistSkusIds;
@@ -283,7 +267,7 @@
         {
             List<string> inexistSkusIds = new List<string>();
             List<string> listConcatSiesaIdsList = JsonSerializer.Deserialize<List<string>>(listConcatSiesaIds);
-            if(listConcatSiesaIdsList.Count == 0) return inexistSkusIds;
+            if (listConcatSiesaIdsList.Count == 0) return inexistSkusIds;
             foreach (string skuConcatSiesaId in listConcatSiesaIdsList)
             {
                 Sku sku = this.skuRepository.getSkuByConcatSiesaId(skuConcatSiesaId).Result;
@@ -303,20 +287,109 @@
                     await vtexRepository.changePromotionState(deltaPromotion.vtex_id, false);
                     await localRepository.updatePromotion(deltaPromotion);
                     this.inactivatedPromotions.Add(deltaPromotion);
-                    this.details.Add(new Detail(
-                            origin: "vtex",
-                            action: "actualizar promoción",
-                            content: JsonSerializer.Serialize(deltaPromotion, this.jsonOptions),
-                            description: "petición para actualizar la promoción, completada con éxito",
-                            success: true));
                 }
                 catch (VtexException vtexException)
                 {
                     this.console.throwException(vtexException.Message);
-                    this.details.Add(new Detail("vtex", vtexException.requestUrl, vtexException.responseBody, vtexException.Message, false));
                     await this.logger.writelog(vtexException);
                 }
             }
+        }
+
+        void createPriceTable(string priceTableName, Promotion promotion)
+        {
+            var table = priceTableRepository.GetByName(priceTableName);
+            if (table == null)
+            {
+                var priceTable = new PriceTable
+                {
+                    Name = priceTableName
+                };
+                priceTableRepository.Save(priceTable);
+            }
+            var fixedPrices = createFixedPrices(table, promotion);
+            List<Task> responses = new List<Task>();
+            foreach (var fixedPrice in fixedPrices)
+            {
+                var response = priceTableVtexService.AddFixedPriceToPriceTable(fixedPrice);
+                responses.Add(response);
+                Thread.Sleep(50);
+            }
+            Task.WhenAll(responses).Wait();
+        }
+
+        List<FixedPrice> createFixedPrices(PriceTable priceTable, Promotion promotion)
+        {
+            var fixedPrices = new List<FixedPrice>();
+
+            foreach (var brand in promotion.brands)
+            {
+                var prices = priceLocalRepository.getPricesByBrand((int)brand.id);
+                foreach (var price in prices)
+                {
+                    fixedPrices.Add(new FixedPrice
+                    {
+                        PriceTable = priceTable,
+                        ListPrice = price.price,
+                        Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
+                        MinQuantity = 1,
+                        VtexSkuId = price.sku_id
+                    });
+                }
+            }
+
+            foreach (var category in promotion.categories)
+            {
+                var prices = priceLocalRepository.getPricesByCategory((int)category.id);
+                foreach (var price in prices)
+                {
+                    fixedPrices.Add(new FixedPrice
+                    {
+                        PriceTable = priceTable,
+                        ListPrice = price.price,
+                        Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
+                        MinQuantity = 1,
+                        VtexSkuId = price.sku_id
+                    });
+                }
+
+            }
+
+            foreach (var product in promotion.products)
+            {
+                var prices = priceLocalRepository.getPricesByProduct((int)product.id);
+                foreach (var price in prices)
+                {
+                    fixedPrices.Add(new FixedPrice
+                    {
+                        PriceTable = priceTable,
+                        ListPrice = price.price,
+                        Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
+                        MinQuantity = 1,
+                        VtexSkuId = price.sku_id
+                    });
+                }
+
+            }
+
+            foreach (var sku in promotion.skus)
+            {
+                var skuIds = promotion.skus.Select(sku => (int)sku.id);
+                var prices = priceLocalRepository.getPricesBySkuIds(skuIds.ToArray());
+                foreach (var price in prices)
+                {
+                    fixedPrices.Add(new FixedPrice
+                    {
+                        PriceTable = priceTable,
+                        ListPrice = price.price,
+                        Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
+                        MinQuantity = 1,
+                        VtexSkuId = price.sku_id
+                    });
+                }
+            }
+
+            return fixedPrices;
         }
 
         public void Dispose()
@@ -326,7 +399,6 @@
             this.failedPromotions.Clear();
             this.notProccecedPromotions.Clear();
             this.inactivePromotions.Clear();
-            this.details.Clear();
         }
     }
 }

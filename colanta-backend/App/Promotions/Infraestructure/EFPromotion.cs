@@ -1,13 +1,7 @@
 ﻿namespace colanta_backend.App.Promotions.Infraestructure
 {
     using App.Promotions.Domain;
-    using App.Categories.Domain;
-    using App.Categories.Infraestructure;
-    using App.Brands.Domain;
-    using App.Brands.Infraestructure;
-    using App.Products.Domain;
-    using App.Products.Infraestructure;
-    using System.Collections.Generic;
+
     public class EFPromotion
     {
         public int id { get; set; }
@@ -40,6 +34,7 @@
         public string brands_ids { get; set; }
         public string categories_ids { get; set; }
         public string cluster_expressions { get; set; }
+        public string price_table_name { get; set; }
 
         public int gift_quantity_selectable { get; set; }
         public string gifts_ids { get; set; }
@@ -85,6 +80,7 @@
             promotion.brands_ids = this.brands_ids;
             promotion.categories_ids = this.categories_ids;
             promotion.cluster_expressions = this.cluster_expressions;
+            promotion.price_table_name = this.price_table_name;
 
             promotion.gift_quantity_selectable = this.gift_quantity_selectable;
   
@@ -131,6 +127,7 @@
             this.brands_ids = promotion.brands_ids;
             this.categories_ids = promotion.categories_ids;
             this.cluster_expressions = promotion.cluster_expressions;
+            this.price_table_name = promotion.price_table_name;
             this.gift_quantity_selectable = promotion.gift_quantity_selectable;
             this.gifts_ids = promotion.gifts_ids;
             this.percentual_discount_value_list_1 = promotion.percentual_discount_value_list_1;

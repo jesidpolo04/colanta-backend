@@ -22,6 +22,8 @@ using colanta_backend.App.Shared.Infraestructure;
 namespace colanta_backend.App.Shared.Infraestructure
 {
     using System.Collections.Generic;
+    using colanta_backend.App.PriceTables;
+
     public partial class ColantaContext : DbContext
     {
         IConfiguration Configuration;
@@ -58,6 +60,8 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFProcess> Process { get; set; }
         public virtual DbSet<EFLog> Logs { get; set; }
         public virtual DbSet<EFWrongAddress> WrongAddresses { get; set; }
+        public virtual DbSet<PriceTable> PriceTables { get; set; }
+        public virtual DbSet<FixedPrice> FixedPrices { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -194,6 +198,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
                 entity.Property(e => e.sku_concat_siesa_id).IsRequired();
                 entity.Property(e => e.price);
+                entity.Property(e => e.base_price);
                 entity.Property(e => e.business);
 
                 entity.HasOne(e => e.sku).WithOne().HasForeignKey<EFPrice>(e => e.sku_id);
@@ -276,6 +281,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.brands_ids);
                 entity.Property(e => e.categories_ids);
                 entity.Property(e => e.cluster_expressions);
+                entity.Property(e => e.price_table_name);
                 entity.Property(e => e.gifts_ids);
                 entity.Property(e => e.list_sku_1_buy_together_ids);
                 entity.Property(e => e.list_sku_2_buy_together_ids);
@@ -514,6 +520,38 @@ namespace colanta_backend.App.Shared.Infraestructure
                 poundSku.HasKey(poundSku => poundSku.siesaId);
                 poundSku.Property(poundSku => poundSku.siesaId).HasColumnName("siesa_id");
                 poundSku.Property(poundSku => poundSku.name).HasColumnName("name");
+            });
+
+            modelBuilder.Entity<PriceTable>(priceTable => 
+            {
+                priceTable.ToTable("price_tables");
+                priceTable.HasKey(priceTable => priceTable.Name);
+                priceTable.Property(priceTable => priceTable.Name).HasColumnName("name");
+                priceTable.Property(priceTable => priceTable.CreatedAt).HasColumnName("created_at").HasDefaultValue("GETDATE()");
+            });
+
+            modelBuilder.Entity<FixedPrice>(fixedPrice => {
+                fixedPrice.ToTable("fixed_prices");
+                fixedPrice.HasKey(fixedPrice => fixedPrice.Id);
+                fixedPrice.Property(fixedPrice => fixedPrice.Id).ValueGeneratedOnAdd().HasColumnName("id");
+                fixedPrice.Property(fixedPrice => fixedPrice.ListPrice).HasColumnName("list_price");
+                fixedPrice.Property(fixedPrice => fixedPrice.Value).HasColumnName("value");
+                fixedPrice.Property(fixedPrice => fixedPrice.MinQuantity).HasColumnName("min_quantity");
+                fixedPrice.Property(fixedPrice => fixedPrice.VtexSkuId).HasColumnName("vtex_sku_id");
+                fixedPrice.Property(fixedPrice => fixedPrice.PriceTableName).HasColumnName("price_table_name");
+                
+                fixedPrice.Property(fixedPrice => fixedPrice.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValue("GETDATE()");
+
+                fixedPrice.Property(fixedPrice => fixedPrice.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasDefaultValue("GETDATE()");
+
+                fixedPrice.HasOne(fixedPrice => fixedPrice.PriceTable)
+                .WithMany()
+                .HasForeignKey(fixedPrice => fixedPrice.PriceTableName)
+                .OnDelete(DeleteBehavior.Cascade);
             });
 
             OnModelCreatingPartial(modelBuilder);
