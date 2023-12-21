@@ -527,7 +527,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 priceTable.ToTable("price_tables");
                 priceTable.HasKey(priceTable => priceTable.Name);
                 priceTable.Property(priceTable => priceTable.Name).HasColumnName("name");
-                priceTable.Property(priceTable => priceTable.CreatedAt).HasColumnName("created_at").HasDefaultValue("GETDATE()");
+                priceTable.Property(priceTable => priceTable.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("GETDATE()");
             });
 
             modelBuilder.Entity<FixedPrice>(fixedPrice => {
@@ -542,11 +542,11 @@ namespace colanta_backend.App.Shared.Infraestructure
                 
                 fixedPrice.Property(fixedPrice => fixedPrice.CreatedAt)
                 .HasColumnName("created_at")
-                .HasDefaultValue("GETDATE()");
+                .HasDefaultValueSql("GETDATE()");
 
                 fixedPrice.Property(fixedPrice => fixedPrice.UpdatedAt)
                 .HasColumnName("updated_at")
-                .HasDefaultValue("GETDATE()");
+                .HasDefaultValueSql("GETDATE()");
 
                 fixedPrice.HasOne(fixedPrice => fixedPrice.PriceTable)
                 .WithMany()
