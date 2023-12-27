@@ -1,5 +1,7 @@
 .vs/
+.vscode/
 .editorconfig
 obj/
+bin/
 colanta-backend.sln
 *.sln
