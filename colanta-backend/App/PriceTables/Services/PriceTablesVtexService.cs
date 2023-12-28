@@ -45,5 +45,17 @@ namespace colanta_backend.App.PriceTables
                 Status = httpResponse.StatusCode
             };
         }
+
+        public async Task<HttpResponse<bool?>> DeleteFixedPriceFromPriceTable(string priceTableName, int skuVtexId)
+        {
+            string requestUri = $"{_Host}/pricing/prices/{skuVtexId}/fixed/{priceTableName}";
+            var httpResponse = await _HttpClient.DeleteAsync(requestUri);
+            return new HttpResponse<bool?>
+            {
+                Data = null,
+                IsSuccessStatusCode = httpResponse.IsSuccessStatusCode,
+                Status = httpResponse.StatusCode
+            };
+        }
     }
 }

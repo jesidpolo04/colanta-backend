@@ -30,9 +30,7 @@
         private CategoriesRepository categoriesRepository;
         private ProductsRepository productsRepository;
         private SkusRepository skuRepository;
-        private PricesRepository priceLocalRepository;
-        private PriceTablesRepository priceTableRepository;
-        private PriceTablesVtexService priceTableVtexService;
+        private PromotionalPricesRenderer promotionalPricesRenderer;
         private IRenderPromotionsMail renderPromotionsMail;
         private IInvalidPromotionMail invalidPromotionMail;
 
@@ -55,9 +53,7 @@
                 CategoriesRepository categoriesRepository,
                 ProductsRepository productsRepository,
                 SkusRepository skuRepository,
-                PricesRepository priceLocalRepository,
-                PriceTablesRepository priceTableRepository,
-                PriceTablesVtexService priceTableVtexService,
+                PromotionalPricesRenderer promotionalPricesRenderer,
                 IProcess process,
                 ILogger logger,
                 IRenderPromotionsMail renderPromotionsMail,
@@ -71,9 +67,7 @@
             this.categoriesRepository = categoriesRepository;
             this.productsRepository = productsRepository;
             this.skuRepository = skuRepository;
-            this.priceLocalRepository = priceLocalRepository;
-            this.priceTableRepository = priceTableRepository;
-            this.priceTableVtexService = priceTableVtexService;
+            this.promotionalPricesRenderer = promotionalPricesRenderer;
             this.renderPromotionsMail = renderPromotionsMail;
             this.invalidPromotionMail = invalidPromotionMail;
             this.process = process;
@@ -119,7 +113,7 @@
                             var percentualDiscountValue = localPromotion.percentual_discount_value;
                             if (percentualDiscountValue != null && percentualDiscountValue > 0)
                             {
-                                createPriceTable(localPromotion.price_table_name, localPromotion);
+                                promotionalPricesRenderer.Render(localPromotion);
                             }
                             Promotion vtexPromotion = await vtexRepository.savePromotion(localPromotion);
                             localPromotion.vtex_id = vtexPromotion.vtex_id;
@@ -294,106 +288,6 @@
                     await this.logger.writelog(vtexException);
                 }
             }
-        }
-
-        void createPriceTable(string priceTableName, Promotion promotion)
-        {
-            var table = priceTableRepository.GetByName(priceTableName);
-            if (table == null)
-            {
-                var priceTable = new PriceTable
-                {
-                    Name = priceTableName
-                };
-                priceTableRepository.Save(priceTable);
-            }
-            var fixedPrices = createFixedPrices(table, promotion);
-            List<Task> responses = new List<Task>();
-            foreach (var fixedPrice in fixedPrices)
-            {
-                var response = priceTableVtexService.AddFixedPriceToPriceTable(fixedPrice);
-                responses.Add(response);
-                Thread.Sleep(50);
-            }
-            Task.WhenAll(responses).Wait();
-        }
-
-        List<FixedPrice> createFixedPrices(PriceTable priceTable, Promotion promotion)
-        {
-            var fixedPrices = new List<FixedPrice>();
-
-            foreach (var brand in promotion.brands)
-            {
-                var prices = priceLocalRepository.getPricesByBrand((int)brand.id);
-                foreach (var price in prices)
-                {
-                    fixedPrices.Add(new FixedPrice
-                    {
-                        PriceTable = priceTable,
-                        PriceTableName = promotion.price_table_name,
-                        ListPrice = price.price,
-                        Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
-                        MinQuantity = 1,
-                        VtexSkuId = price.sku_id
-                    });
-                }
-            }
-
-            foreach (var category in promotion.categories)
-            {
-                var prices = priceLocalRepository.getPricesByCategory((int)category.id);
-                foreach (var price in prices)
-                {
-                    fixedPrices.Add(new FixedPrice
-                    {
-                        PriceTable = priceTable,
-                        PriceTableName = promotion.price_table_name,
-                        ListPrice = price.price,
-                        Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
-                        MinQuantity = 1,
-                        VtexSkuId = price.sku_id
-                    });
-                }
-
-            }
-
-            foreach (var product in promotion.products)
-            {
-                var prices = priceLocalRepository.getPricesByProduct((int)product.id);
-                foreach (var price in prices)
-                {
-                    fixedPrices.Add(new FixedPrice
-                    {
-                        PriceTable = priceTable,
-                        PriceTableName = promotion.price_table_name,
-                        ListPrice = price.price,
-                        Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
-                        MinQuantity = 1,
-                        VtexSkuId = price.sku_id
-                    });
-                }
-
-            }
-
-            foreach (var sku in promotion.skus)
-            {
-                var skuIds = promotion.skus.Select(sku => (int)sku.id);
-                var prices = priceLocalRepository.getPricesBySkuIds(skuIds.ToArray());
-                foreach (var price in prices)
-                {
-                    fixedPrices.Add(new FixedPrice
-                    {
-                        PriceTable = priceTable,
-                        PriceTableName = promotion.price_table_name,
-                        ListPrice = price.price,
-                        Value = price.price - (price.base_price * (promotion.percentual_discount_value / 100)),
-                        MinQuantity = 1,
-                        VtexSkuId = price.sku_id
-                    });
-                }
-            }
-
-            return fixedPrices;
         }
 
         public void Dispose()

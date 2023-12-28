@@ -216,13 +216,10 @@ namespace colanta_backend.App.Promotions.Infraestructure
 
         public async Task<Promotion[]> getVtexPromotions()
         {
-            EFPromotion[] efPromotions = this.dbContext.Promotions.Where(promotion => promotion.vtex_id != null).ToArray();
-            List<Promotion> promotions = new List<Promotion>();
-            foreach (EFPromotion efPromotion in efPromotions)
-            {
-                promotions.Add(efPromotion.getPromotionFromEfPromotion());
-            }
-            return promotions.ToArray();
+            return dbContext.Promotions
+            .Where(promotion => promotion.vtex_id != null)
+            .ToList()
+            .Select( efPromotion => addRelationsToPromotion(efPromotion).Result).ToArray();
         }
 
         public async Task<Promotion> savePromotion(Promotion promotion)

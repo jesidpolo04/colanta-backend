@@ -110,6 +110,7 @@ namespace colanta_backend
             services.AddTransient<App.Promotions.Jobs.UpdatePromotionsState>();
             services.AddTransient<App.Promotions.Domain.IInvalidPromotionMail, App.Promotions.Infraestructure.InvalidPromotionMail>();
             services.AddTransient<App.Promotions.Domain.IRenderPromotionsMail, App.Promotions.Infraestructure.RenderPromotionsMail>();
+            services.AddTransient<App.Promotions.PromotionPriceCalculator>();
             //Dependencies Injections GiftCards
             services.AddTransient<App.GiftCards.Domain.GiftCardsRepository, App.GiftCards.Infraestructure.GiftCardsEFRepository>();
             services.AddTransient<App.GiftCards.Domain.GiftCardsSiesaRepository, App.GiftCards.Infraestructure.GiftCardsSiesaRepository>();
@@ -141,6 +142,7 @@ namespace colanta_backend
             //Dependencies Injections PriceTables
             services.AddTransient<App.PriceTables.PriceTablesRepository>();
             services.AddTransient<App.PriceTables.PriceTablesVtexService>();
+            services.AddTransient<App.PriceTables.PromotionalPricesRenderer>();
 
             //Dependecies Injections Taxes
             services.AddTransient<App.Taxes.Services.TaxService>();

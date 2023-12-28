@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using colanta_backend.App.Shared.Infraestructure;
 using Microsoft.Extensions.Configuration;
@@ -40,6 +41,18 @@ namespace colanta_backend.App.PriceTables
             {
                 _Logger.LogError($"Error al consultar por la tabla con nombre: '{tableName}' \nError: {exception.Message} \nStack: {exception.StackTrace}");
                 return null;
+            }
+        }
+
+        public List<PriceTable> GetAll(){
+            try
+            {
+                return _Context.PriceTables.ToList();
+            }
+            catch (Exception exception)
+            {
+                _Logger.LogError($"Error al consultar todas las tablas \nError: {exception.Message} \nStack: {exception.StackTrace}");
+                return  new List<PriceTable>();
             }
         }
 
