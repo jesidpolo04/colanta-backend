@@ -3,6 +3,7 @@ using colanta_backend.App.Promotions.Domain;
 using colanta_backend.App.Promotions.Jobs;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace colanta_backend.App.Promotions.Presentation
 {
@@ -11,7 +12,8 @@ namespace colanta_backend.App.Promotions.Presentation
     public class PromotionsController : ControllerBase
     {
         PromotionsRepository _Repository;
-        public PromotionsController(PromotionsRepository repository){
+        public PromotionsController(PromotionsRepository repository)
+        {
             _Repository = repository;
         }
 
@@ -37,11 +39,16 @@ namespace colanta_backend.App.Promotions.Presentation
             try
             {
                 var promotions = _Repository.getVtexPromotions().Result;
-                foreach(var promotion in promotions){
-                    if(promotion.price_table_name != null && promotion.price_table_name != ""){
-                        promotionalPricesRenderer.Render(promotion);
+                Task.Run(() =>
+                {
+                    foreach (var promotion in promotions)
+                    {
+                        if (promotion.price_table_name != null && promotion.price_table_name != "")
+                        {
+                            promotionalPricesRenderer.Render(promotion);
+                        }
                     }
-                }
+                });
                 return Ok("Recalculando tablas de precios promocionales");
             }
             catch (Exception exception)
