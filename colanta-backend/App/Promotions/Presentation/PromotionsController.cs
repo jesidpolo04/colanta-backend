@@ -33,7 +33,7 @@ namespace colanta_backend.App.Promotions.Presentation
         }
 
         [HttpPost]
-        [Route("render")]
+        [Route("recalculate-promotional-prices")]
         public ActionResult RecalculatePromotionPrices([FromServices] PromotionalPricesRenderer promotionalPricesRenderer)
         {
             try
