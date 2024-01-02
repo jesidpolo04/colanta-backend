@@ -92,6 +92,7 @@
         public int? maxInstallment { get; set; }
         public object[] merchants { get; set; }
         public object[] clusterExpressions { get; set; }
+        public string? priceTableName { get; set; }
         public string? clusterOperator { get; set; }
         public object[] paymentsRules { get; set; }
         public object[] giftListTypes { get; set; }
