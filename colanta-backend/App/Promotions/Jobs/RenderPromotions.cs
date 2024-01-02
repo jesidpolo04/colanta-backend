@@ -281,6 +281,7 @@
                     await vtexRepository.changePromotionState(deltaPromotion.vtex_id, false);
                     await localRepository.updatePromotion(deltaPromotion);
                     this.inactivatedPromotions.Add(deltaPromotion);
+                    Thread.Sleep(100);
                 }
                 catch (VtexException vtexException)
                 {
