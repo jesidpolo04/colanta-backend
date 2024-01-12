@@ -1,87 +1,420 @@
 ﻿@{
     @model colanta_backend.App.Promotions.Infraestructure.RenderPromotionsMailModel
-     Layout = "./App/Shared/Infraestructure/Mails/EmailLayout.cshtml";
 }
+<html>
 
-<h2>Renderizado de promociones</h2>
-<p>
-    El proceso de renderizado de promociones del middleware finalizó a las <b>@Model.dateTime.ToString("HH:mm:ss")</b> de manera exitosa,
-    a continuación los detalles de las acciones realizadas.
-</p>
+    <head>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                text-decoration: none;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            }
 
-@if(Model.loadedPromotions.Count > 0){
+            body {
+                background-color: rgb(184, 184, 184);
+            }
 
-    <p>Las siguientes promociones fueron creadas exitosamente en <b>VTEX</b></p>
-    <table>
-        <thead>
-            <tr>
-                <th>Promocion</th>
-                <th>Siesa Id</th>
-                <th>Vtex Id</th>
-                <th>Tipo</th>
-            </tr>
-        </thead>
-        <tbody>
+            p {
+                margin-bottom: 8px;
+                font-size: 14px;
+            }
+
+            .mb-1 {
+                margin-bottom: 5px;
+            }
+
+            .mb-2 {
+                margin-bottom: 10px;
+            }
+
+            .mb-3 {
+                margin-bottom: 15px;
+            }
+
+            .mb-4 {
+                margin-bottom: 20px;
+            }
+
+            .mt-1 {
+                margin-top: 5px;
+            }
+
+            .mt-2 {
+                margin-top: 10px;
+            }
+
+            .mt-3 {
+                margin-top: 15px;
+            }
+
+            .mt-4 {
+                margin-top: 20px;
+            }
+
+            .bg-primary {
+                background-color: #9ede6db8;
+            }
+
+            .bg-secondary {
+                background-color: #f6f6f6;
+            }
+
+            .bg-gray {
+                background-color: #e9e9e9;
+            }
+
+            .fc-primary {
+                color: #79C142;
+            }
+
+            .fc-gray-1 {
+                color: #454545
+            }
+
+            .fs-h1 {
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .fs-h2 {
+                font-size: 20px;
+                font-weight: 600;
+            }
+
+            .fs-h3 {
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            .fs-h4 {
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            .fs-normal {
+                font-size: 14px;
+            }
+
+            .b {
+                font-weight: 600;
+            }
+
+            .d-block {
+                display: block;
+            }
+
+            .custom-font {
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            }
+
+            table {
+                border-collapse: collapse;
+            }
+
+            th,
+            td {
+                border: 1px solid #484848;
+                padding: 5px 7px;
+            }
+
+            th {
+                background-color: #9ede6db8;
+                color: #484848;
+                font-weight: 500;
+            }
+
+            .main {
+                max-width: 700px;
+                padding: 30px;
+                width: 80%;
+                margin: 50px auto;
+            }
+
+            .promotion {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .mail-title {
+                border-bottom: 3px solid #9ede6db8;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="main bg-secondary fc-gray-1">
+            <div class="mail-header mb-4">
+                <span class="mail-title fs-h1">Renderizado de promociones</span>
+            </div>
+            <p>
+                El proceso de renderizado de promociones del middleware finalizó a las
+                <b>@Model.dateTime.ToString("HH:mm:ss")</b> de manera exitosa,
+                a continuación los detalles de las acciones realizadas.
+            </p>
+
+            <p>Las siguientes promociones fueron creadas exitosamente en <b>VTEX</b></p>
             @foreach (var promotion in @Model.loadedPromotions)
             {
-                <tr>
-                    <td>@promotion.name</td>
-                    <td>@promotion.siesa_id</td>
-                    <td>@promotion.vtex_id</td>
-                    <td>@promotion.type</td>
-                </tr>
+                <div class="promotion bg-gray">
+                    <div class="promotion-header mb-3">
+                        <span class="fs-h2">@promotion.siesa_id - @promotion.name</span>
+                    </div>
+
+                    <div class="promotion-info fs-normal mb-3">
+                        <div class="mb-2">
+                            <span class="fs-h3">Información de la promoción.</span>
+                        </div>
+                        <div class="promotion-data">
+                            <span class="b">Vtex id: </span>
+                            <span>
+                                <a href="https://colanta.myvtex.com/admin/promotions/af47c9c3-ec29-4b4f-aa38-bd799e07b987"
+                                    target="_blank">abcg2h-4266k-33b43</a>
+                            </span>
+                        </div>
+                        <div class="promotion-data">
+                            <span class="b">Tipo: </span>
+                            <span>@promotion.type</span>
+                        </div>
+                        @if (promotion.percentual_discount_value)
+                        {
+                            <div class="promotion-data">
+                                <span class="b">Porcentaje descuento: </span>
+                                <span>@promotion.percentual_discount_value %</span>
+                            </div>
+                        }
+
+                    </div>
+
+                    <div class="promotion-apply mb-2">
+                        <span class="d-block fs-h3 mb-3">Aplica a</span>
+
+                        <div class="promotion-apply-to mb-2">
+                            <span class="d-block fs-h4 mb-2">Categorías</span>
+                            <table class="fs-normal">
+                                <thead>
+                                    <tr>
+                                        <th>Erp id</th>
+                                        <th>Vtex id</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var category in promotion.categories)
+                                    {
+                                        <tr>
+                                            <td>@category.siesa_id</td>
+                                            <td>@category.vtex_id</td>
+                                            <td>@category.name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="promotion-apply-to mb-2">
+                            <span class="d-block fs-h4 mb-2">Marcas</span>
+                            <table class="fs-normal">
+                                <thead>
+                                    <tr>
+                                        <th>Erp id</th>
+                                        <th>Vtex id</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var brand in promotion.brands)
+                                    {
+                                        <tr>
+                                            <td>@brand.id_siesa</td>
+                                            <td>@brand.id_vtex</td>
+                                            <td>@brand.name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="promotion-apply-to mb-2">
+                            <span class="d-block fs-h4 mb-2">Productos</span>
+                            <table class="fs-normal">
+                                <thead>
+                                    <tr>
+                                        <th>Erp id</th>
+                                        <th>Vtex id</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var product in promotion.products)
+                                    {
+                                        <tr>
+                                            <td>@product.siesa_id</td>
+                                            <td>@product.vtex_id</td>
+                                            <td>@product.name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="promotion-apply-to mb-2">
+                            <span class="d-block fs-h4 mb-2">Productos (SKU)</span>
+                            <table class="fs-normal">
+                                <thead>
+                                    <tr>
+                                        <th>Erp id</th>
+                                        <th>Vtex id</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var sku in promotion.skus)
+                                    {
+                                        <tr>
+                                            <td>@sku.siesa_id</td>
+                                            <td>@sku.vtex_id</td>
+                                            <td>@sku.name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
-}
 
-@if(Model.inactivatedPromotions.Count > 0){
-
-    <p>Las siguientes promociones fueron desactivadas exitosamente en <b>VTEX</b> debido a que ya no vinieron en el json de promociones
-        que se le proporciona al middleware.</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Promocion</th>
-                <th>Siesa Id</th>
-                <th>Vtex Id</th>
-                <th>Tipo</th>
-            </tr>
-        </thead>
-        <tbody>
+            <p>Las siguientes promociones fueron desactivadas exitosamente en <b>VTEX</b></p>
             @foreach (var promotion in @Model.inactivatedPromotions)
             {
-                <tr>
-                    <td>@promotion.name</td>
-                    <td>@promotion.siesa_id</td>
-                    <td>@promotion.vtex_id</td>
-                    <td>@promotion.type</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+                <div class="promotion bg-gray">
+                    <div class="promotion-header mb-3">
+                        <span class="fs-h2">@promotion.siesa_id - @promotion.name</span>
+                    </div>
 
-@if(Model.failedPromotions.Count > 0)
-{
-    <p>Las siguientes promociones no pudieron ser cargadas a <b>VTEX</b> debido a un error inesperado, se intentará una reinserción más tarde.</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Promocion</th>
-                <th>Siesa Id</th>
-                <th>Tipo</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var promotion in @Model.inactivatedPromotions)
-            {
-                <tr>
-                    <td>@promotion.name</td>
-                    <td>@promotion.siesa_id</td>
-                    <td>@promotion.type</td>
-                </tr>
+                    <div class="promotion-info fs-normal mb-3">
+                        <div class="mb-2">
+                            <span class="fs-h3">Información de la promoción.</span>
+                        </div>
+                        <div class="promotion-data">
+                            <span class="b">Vtex id: </span>
+                            <span>
+                                <a href="https://colanta.myvtex.com/admin/promotions/af47c9c3-ec29-4b4f-aa38-bd799e07b987"
+                                    target="_blank">abcg2h-4266k-33b43</a>
+                            </span>
+                        </div>
+                        <div class="promotion-data">
+                            <span class="b">Tipo: </span>
+                            <span>@promotion.type</span>
+                        </div>
+                        @if (promotion.percentual_discount_value)
+                        {
+                            <div class="promotion-data">
+                                <span class="b">Porcentaje descuento: </span>
+                                <span>@promotion.percentual_discount_value %</span>
+                            </div>
+                        }
+
+                    </div>
+
+                    <div class="promotion-apply mb-2">
+                        <span class="d-block fs-h3 mb-3">Aplica a</span>
+
+                        <div class="promotion-apply-to mb-2">
+                            <span class="d-block fs-h4 mb-2">Categorías</span>
+                            <table class="fs-normal">
+                                <thead>
+                                    <tr>
+                                        <th>Erp id</th>
+                                        <th>Vtex id</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var category in promotion.categories)
+                                    {
+                                        <tr>
+                                            <td>@category.siesa_id</td>
+                                            <td>@category.vtex_id</td>
+                                            <td>@category.name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="promotion-apply-to mb-2">
+                            <span class="d-block fs-h4 mb-2">Marcas</span>
+                            <table class="fs-normal">
+                                <thead>
+                                    <tr>
+                                        <th>Erp id</th>
+                                        <th>Vtex id</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var brand in promotion.brands)
+                                    {
+                                        <tr>
+                                            <td>@brand.id_siesa</td>
+                                            <td>@brand.id_vtex</td>
+                                            <td>@brand.name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="promotion-apply-to mb-2">
+                            <span class="d-block fs-h4 mb-2">Productos</span>
+                            <table class="fs-normal">
+                                <thead>
+                                    <tr>
+                                        <th>Erp id</th>
+                                        <th>Vtex id</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var product in promotion.products)
+                                    {
+                                        <tr>
+                                            <td>@product.siesa_id</td>
+                                            <td>@product.vtex_id</td>
+                                            <td>@product.name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="promotion-apply-to mb-2">
+                            <span class="d-block fs-h4 mb-2">Productos (SKU)</span>
+                            <table class="fs-normal">
+                                <thead>
+                                    <tr>
+                                        <th>Erp id</th>
+                                        <th>Vtex id</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var sku in promotion.skus)
+                                    {
+                                        <tr>
+                                            <td>@sku.siesa_id</td>
+                                            <td>@sku.vtex_id</td>
+                                            <td>@sku.name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
-}
+        </div>
+    </body>
+</html>
