@@ -20,6 +20,8 @@ namespace colanta_backend.App.PriceTables.Scripts{
             foreach(var promotion in promotions){
                 if(promotion.price_table_name != null && promotion.price_table_name != ""){
                     var priceTable = _PriceTablesRepository.GetByName(promotion.price_table_name);
+                    priceTable.DiscountPercentage = promotion.percentual_discount_value;
+                    _PriceTablesRepository.Update(priceTable);
                     var fixedPrices = this._PriceTableRenderer.CreateFixedPrices(priceTable, promotion);
                     _PriceTablesRepository.SaveFixedPrices(fixedPrices.ToArray());
                 }

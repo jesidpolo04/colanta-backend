@@ -57,6 +57,10 @@ namespace colanta_backend.App.PriceTables
             }
         }
 
+        public void Update(PriceTable priceTable){
+            _Context.Update(priceTable);
+        }
+
         public FixedPrice[] GetFixedPricesBySku(int vtexSkuId){
             return _Context.FixedPrices
             .Include( fixedPrice => fixedPrice.PriceTable )

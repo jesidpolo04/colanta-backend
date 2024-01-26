@@ -26,12 +26,14 @@ namespace colanta_backend.App.PriceTables{
 
         public void RenderPromotionalTable(Promotion promotion){
             var priceTableName = promotion.price_table_name;
+            var discountPercentage = promotion.percentual_discount_value;
             var table = _PricesTableRepository.GetByName(priceTableName);
             if (table == null)
             {
                 var priceTable = new PriceTable
                 {
-                    Name = priceTableName
+                    Name = priceTableName,
+                    DiscountPercentage = discountPercentage
                 };
                 _PricesTableRepository.Save(priceTable);
             }
