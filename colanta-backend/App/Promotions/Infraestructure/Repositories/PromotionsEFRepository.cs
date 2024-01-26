@@ -27,6 +27,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
         public Promotion[] getActivePromotions()
         {
             return dbContext.Promotions.Where( promotion => promotion.is_active == true )
+                .ToList()
                 .Select( promotion => addRelationsToPromotion(promotion).Result )
                 .ToArray();
         }
