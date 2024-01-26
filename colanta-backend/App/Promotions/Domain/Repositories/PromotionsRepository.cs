@@ -10,5 +10,6 @@
         public Task<Promotion> savePromotion(Promotion promotion);
         public Task<Promotion[]> getAllPromotions();
         public Task<Promotion> updatePromotion(Promotion promotion);
+        public Promotion[] getActivePromotions();
     }
 }

@@ -527,6 +527,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 priceTable.ToTable("price_tables");
                 priceTable.HasKey(priceTable => priceTable.Name);
                 priceTable.Property(priceTable => priceTable.Name).HasColumnName("name");
+                priceTable.Property(priceTable => priceTable.DiscountPercentage).HasColumnName("discount_percentage");
                 priceTable.Property(priceTable => priceTable.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("GETDATE()");
             });
 

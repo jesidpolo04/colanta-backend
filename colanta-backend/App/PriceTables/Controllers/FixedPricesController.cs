@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using colanta_backend.App.PriceTables.Scripts;
 using colanta_backend.App.Products.Domain;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,15 @@ namespace colanta_backend.App.PriceTables
         {
             _Service = service;
             _Repository = repository;
+        }
+
+        [HttpPost]
+        [Route("render-fixed-prices-in-bd")]
+        public ActionResult RenderFixedPricesInBd([FromServices] RenderFixedPricesInBd script){
+            Task.Run(()=>{
+                script.Execute();
+            });
+            return Ok("Renderizando precios fijos en base de datos.");
         }
 
         [HttpPost]

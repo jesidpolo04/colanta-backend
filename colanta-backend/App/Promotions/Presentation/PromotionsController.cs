@@ -34,7 +34,7 @@ namespace colanta_backend.App.Promotions.Presentation
 
         [HttpPost]
         [Route("recalculate-promotional-prices")]
-        public ActionResult RecalculatePromotionPrices([FromServices] PromotionalPricesRenderer promotionalPricesRenderer)
+        public ActionResult RecalculatePromotionPrices([FromServices] PriceTableRenderer promotionalPricesRenderer)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace colanta_backend.App.Promotions.Presentation
                     {
                         if (promotion.price_table_name != null && promotion.price_table_name != "")
                         {
-                            promotionalPricesRenderer.Render(promotion);
+                            promotionalPricesRenderer.RenderPromotionalTable(promotion);
                         }
                     }
                 });

@@ -30,7 +30,7 @@ namespace colanta_backend.App.PriceTables
             _HttpClient.DefaultRequestHeaders.Add("X-VTEX-API-AppKey", _ApiKey);
         }
 
-        public async Task<HttpResponse<bool?>> AddFixedPriceToPriceTable(FixedPrice fixedPrice)
+        public async Task<HttpResponse<bool?>> AddOrUpdateFixedPriceToPriceTable(FixedPrice fixedPrice)
         {
             string requestUri = $"{_Host}/pricing/prices/{fixedPrice.VtexSkuId}/fixed/{fixedPrice.PriceTableName}";
             var fixedPriceDto = FixedPriceDto.GetDtoFromFixedPrice(fixedPrice);

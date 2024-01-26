@@ -30,7 +30,7 @@
         private CategoriesRepository categoriesRepository;
         private ProductsRepository productsRepository;
         private SkusRepository skuRepository;
-        private PromotionalPricesRenderer promotionalPricesRenderer;
+        private PriceTableRenderer promotionalPriceTableRenderer;
         private IRenderPromotionsMail renderPromotionsMail;
         private IInvalidPromotionMail invalidPromotionMail;
 
@@ -53,7 +53,7 @@
                 CategoriesRepository categoriesRepository,
                 ProductsRepository productsRepository,
                 SkusRepository skuRepository,
-                PromotionalPricesRenderer promotionalPricesRenderer,
+                PriceTableRenderer promotionalPricesRenderer,
                 IProcess process,
                 ILogger logger,
                 IRenderPromotionsMail renderPromotionsMail,
@@ -67,7 +67,7 @@
             this.categoriesRepository = categoriesRepository;
             this.productsRepository = productsRepository;
             this.skuRepository = skuRepository;
-            this.promotionalPricesRenderer = promotionalPricesRenderer;
+            this.promotionalPriceTableRenderer = promotionalPricesRenderer;
             this.renderPromotionsMail = renderPromotionsMail;
             this.invalidPromotionMail = invalidPromotionMail;
             this.process = process;
@@ -113,7 +113,7 @@
                             var percentualDiscountValue = localPromotion.percentual_discount_value;
                             if (percentualDiscountValue != null && percentualDiscountValue > 0)
                             {
-                                promotionalPricesRenderer.Render(localPromotion);
+                                promotionalPriceTableRenderer.RenderPromotionalTable(localPromotion);
                             }
                             Promotion vtexPromotion = await vtexRepository.savePromotion(localPromotion);
                             localPromotion.vtex_id = vtexPromotion.vtex_id;

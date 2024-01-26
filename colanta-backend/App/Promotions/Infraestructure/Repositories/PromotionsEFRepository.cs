@@ -24,6 +24,13 @@ namespace colanta_backend.App.Promotions.Infraestructure
             this.dbContext = new ColantaContext(configuration);
         }
 
+        public Promotion[] getActivePromotions()
+        {
+            return dbContext.Promotions.Where( promotion => promotion.is_active == true )
+                .Select( promotion => addRelationsToPromotion(promotion).Result )
+                .ToArray();
+        }
+
         public async Task<Promotion[]> getAllPromotions()
         {
             EFPromotion[] efPromotions = this.dbContext.Promotions.ToArray();

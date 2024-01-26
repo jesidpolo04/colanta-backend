@@ -142,7 +142,8 @@ namespace colanta_backend
             //Dependencies Injections PriceTables
             services.AddTransient<App.PriceTables.PriceTablesRepository>();
             services.AddTransient<App.PriceTables.PriceTablesVtexService>();
-            services.AddTransient<App.PriceTables.PromotionalPricesRenderer>();
+            services.AddTransient<App.PriceTables.PriceTableRenderer>();
+            services.AddTransient<App.PriceTables.Scripts.RenderFixedPricesInBd>();
 
             //Dependecies Injections Taxes
             services.AddTransient<App.Taxes.Services.TaxService>();

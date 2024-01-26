@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using colanta_backend.App.Shared.Infraestructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -56,6 +57,12 @@ namespace colanta_backend.App.PriceTables
             }
         }
 
+        public FixedPrice[] GetFixedPricesBySku(int vtexSkuId){
+            return _Context.FixedPrices
+            .Include( fixedPrice => fixedPrice.PriceTable )
+            .Where( fixedPrice => fixedPrice.VtexSkuId == vtexSkuId ).ToArray();
+        }
+
         public void SaveFixedPrices(FixedPrice[] fixedPrices)
         {
             try
@@ -66,6 +73,19 @@ namespace colanta_backend.App.PriceTables
             catch (Exception exception)
             {
                 _Logger.LogError($"Error al guardar los precios fijos \nError: {exception.Message} \nStack: {exception.StackTrace}");
+            }
+        }
+
+        public void UpdateFixedPrices(FixedPrice[] fixedPrices)
+        {
+            try
+            {
+                _Context.FixedPrices.UpdateRange(fixedPrices);
+                _Context.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                _Logger.LogError($"Error al actualizar los precios fijos \nError: {exception.Message} \nStack: {exception.StackTrace}");
             }
         }
     }
