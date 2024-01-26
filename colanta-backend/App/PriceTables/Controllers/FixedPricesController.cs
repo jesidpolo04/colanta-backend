@@ -20,6 +20,15 @@ namespace colanta_backend.App.PriceTables
         }
 
         [HttpPost]
+        [Route("recalculate-fixed-prices")]
+        public ActionResult RenderFixedPricesInBd([FromServices] RecalculateFixedPrices script){
+            Task.Run(()=>{
+                script.Execute();
+            });
+            return Ok("Recalculando precios fijos en VTEX.");
+        }
+
+        [HttpPost]
         [Route("render-fixed-prices-in-bd")]
         public ActionResult RenderFixedPricesInBd([FromServices] RenderFixedPricesInBd script){
             Task.Run(()=>{

@@ -144,6 +144,8 @@ namespace colanta_backend
             services.AddTransient<App.PriceTables.PriceTablesVtexService>();
             services.AddTransient<App.PriceTables.PriceTableRenderer>();
             services.AddTransient<App.PriceTables.Scripts.RenderFixedPricesInBd>();
+            services.AddTransient<App.PriceTables.Scripts.RecalculateFixedPrices>();
+            
 
             //Dependecies Injections Taxes
             services.AddTransient<App.Taxes.Services.TaxService>();

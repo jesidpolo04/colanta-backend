@@ -11,5 +11,6 @@
         public Task<Promotion[]> getAllPromotions();
         public Task<Promotion> updatePromotion(Promotion promotion);
         public Promotion[] getActivePromotions();
+        public Promotion[] getClusterActivePromotions();
     }
 }

@@ -107,6 +107,14 @@ namespace colanta_backend.App.Promotions.Infraestructure
             return promotions.ToArray();
         }
 
+        public Promotion[] getClusterActivePromotions()
+        {
+            return dbContext.Promotions.Where( promotion => promotion.is_active == true && promotion.cluster_expressions != "[]" )
+                .ToList()
+                .Select( promotion => addRelationsToPromotion(promotion).Result )
+                .ToArray();
+        }
+
         public async Task<Promotion[]> getDeltaPromotions(Promotion[] currentPromotions)
         {
             List<string> currentPromotionsIds = new List<string>();
