@@ -7,18 +7,24 @@
     using FluentEmail.Core;
     using FluentEmail.Razor;
     using FluentEmail.Smtp;
+    using Microsoft.Extensions.Configuration;
 
     public class ColantaSender : EmailSender
     {
         private SmtpClient smtpClient;
-        private string from = "noresponder@colanta.com.co";
-        private int port = 587;
-        private string host = "smtp.office365.com";
-        private string user = "noresponder@colanta.com.co";
-        private string pass = "L-63$<`]zR4As3;*s#F7gC";
+        private readonly string from;
+        private readonly int port;
+        private readonly string host;
+        private readonly string user;
+        private readonly string pass;
 
-        public ColantaSender()
+        public ColantaSender(IConfiguration configuration)
         {
+            from = configuration["SmtpUser"];
+            port = int.Parse(configuration["SmtpPort"]);
+            host = configuration["SmtpServer"];
+            user = configuration["SmtpUser"];
+            pass = configuration["SmtpPass"];
             this.smtpClient = new SmtpClient(this.host);
             this.smtpClient.Port = this.port;
             this.smtpClient.Credentials = new NetworkCredential(this.user, this.pass);
