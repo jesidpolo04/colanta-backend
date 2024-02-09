@@ -24,7 +24,7 @@
             port = int.Parse(configuration["SmtpPort"]);
             host = configuration["SmtpServer"];
             user = configuration["SmtpUser"];
-            pass = configuration["SmtpPass"];
+            pass = configuration["SmtpPassword"];
             this.smtpClient = new SmtpClient(this.host);
             this.smtpClient.Port = this.port;
             this.smtpClient.Credentials = new NetworkCredential(this.user, this.pass);
