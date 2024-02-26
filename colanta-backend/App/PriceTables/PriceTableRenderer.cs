@@ -62,6 +62,7 @@ namespace colanta_backend.App.PriceTables{
                 var newFixedPrice = _PromotionPriceCalculator.CalculatePrice(price, discountPercentage);
                 fixedPrice.Value = newFixedPrice;
                 _PriceTableVtexService.AddOrUpdateFixedPriceToPriceTable(fixedPrice);
+                Thread.Sleep(80);
             }
             _PricesTableRepository.UpdateFixedPrices(fixedPrices);
         }
