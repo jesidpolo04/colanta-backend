@@ -10,6 +10,7 @@
         public Task<Price> savePrice(Price price);
         public Task<Price> updatePrice(Price price);
         public Task<Price[]> updatePrices(Price[] prices);
+        public Price getPriceWithCategoryAndBrand(string concatSiesaId);
 
         public Price[] getPricesByBrand(int brandId);
         public Price[] getPricesByCategory(int categoryId);

@@ -1,5 +1,6 @@
 ﻿namespace colanta_backend.App.Promotions.Domain { 
     using System.Threading.Tasks;
+    using App.Products.Domain;
     public interface PromotionsRepository
     {
         public Task<Promotion> getPromotionBySiesaId(string siesaId);
@@ -12,5 +13,6 @@
         public Task<Promotion> updatePromotion(Promotion promotion);
         public Promotion[] getActivePromotions();
         public Promotion[] getClusterActivePromotions();
+        public Promotion[] getPromotionsForASku(Sku sku);
     }
 }

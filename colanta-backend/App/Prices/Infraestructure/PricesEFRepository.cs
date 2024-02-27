@@ -88,6 +88,19 @@ namespace colanta_backend.App.Prices.Infraestructure
             return dbPrices.Select(dbPrice => dbPrice.getPriceFromEfPrice()).ToArray();
         }
 
+        public Price? getPriceWithCategoryAndBrand(string concatSiesaId)
+        {
+            var dbPrices = dbContext.Prices
+            .Include(price => price.sku)
+            .ThenInclude(sku => sku.product)
+            .ThenInclude(product => product.brand)
+            .Include(price => price.sku)
+            .ThenInclude(sku => sku.product)
+            .ThenInclude(product => product.category)
+            .Where(price => price.sku_concat_siesa_id == concatSiesaId).ToList();
+            return dbPrices.Count > 0 ? dbPrices.First().getPriceFromEfPrice() : null;
+        }
+
         public async Task<Price> savePrice(Price price)
         {
             EFPrice efPrice = new EFPrice();

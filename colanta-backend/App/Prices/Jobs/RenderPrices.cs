@@ -10,6 +10,8 @@
     using System.Text.Json;
     using System;
     using colanta_backend.App.PriceTables;
+    using colanta_backend.App.Promotions.Domain;
+    using System.Threading;
 
     public class RenderPrices : IDisposable
     {
@@ -17,6 +19,7 @@
         public PricesRepository localRepository; 
         public PricesVtexRepository vtexRepository ;
         public PricesSiesaRepository siesaRepository;
+        public PromotionsRepository promotionsRepository;
         public SpecificationsVtexRepository specificationsVtexRepository;
         public SkusRepository skusLocalRepository;
         public readonly PriceTableRenderer priceTableRenderer;
@@ -41,6 +44,7 @@
             PricesSiesaRepository siesaRepository,
             SpecificationsVtexRepository specificationsVtexRepository,
             SkusRepository skusLocalRepository,
+            PromotionsRepository promotionsRepository,
             PriceTableRenderer priceTableRenderer,
             IProcess processLogger,
             ILogger logger,
@@ -50,6 +54,7 @@
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
             this.skusLocalRepository = skusLocalRepository;
+            this.promotionsRepository = promotionsRepository;
             this.priceTableRenderer = priceTableRenderer;
             this.specificationsVtexRepository = specificationsVtexRepository;
             this.processLogger = processLogger;
@@ -155,6 +160,12 @@
                                     this.loadPrices.Add(localPrice);
                                     continue;
                                 }
+                            }
+                            var priceWithBrandAndCategory = localRepository.getPriceWithCategoryAndBrand(localPrice.sku_concat_siesa_id);
+                            var promotions = this.promotionsRepository.getPromotionsForASku(priceWithBrandAndCategory.sku);
+                            foreach(var promotion in promotions){
+                                priceTableRenderer.CreateAndUpFixedPrice(priceWithBrandAndCategory, promotion);
+                                Thread.Sleep(80);
                             }
                         }
                         catch (VtexException vtexException)

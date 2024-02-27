@@ -219,6 +219,19 @@ namespace colanta_backend.App.Promotions.Infraestructure
             return null;
         }
 
+        public Promotion[] getPromotionsForASku(Sku sku)
+        {
+            return dbContext.Promotions
+            .Where(promotion => 
+                promotion.skus_ids.Contains(sku.ref_id) ||
+                promotion.skus_ids.Contains(sku.product.ref_id) ||
+                promotion.brands_ids.Contains(sku.product.brand.id_siesa) ||
+                promotion.categories_ids.Contains(sku.product.category.siesa_id) 
+            )
+            .ToList()
+            .Select( efPromotion => addRelationsToPromotion(efPromotion).Result).ToArray();
+        }
+
         public async Task<Promotion[]> getVtexNullPromotions()
         {
             EFPromotion[] efPromotions = this.dbContext.Promotions.Where(promotion => promotion.vtex_id == null).ToArray();

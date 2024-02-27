@@ -10,6 +10,9 @@
     using Shared.Domain;
     using System.Text.Json;
     using System.Text.Json.Serialization;
+    using colanta_backend.App.Promotions.Domain;
+    using colanta_backend.App.PriceTables;
+
     public class RenderProductsAndSkus : IDisposable
     {
         private string processName = "Renderizado de productos";
@@ -199,6 +202,7 @@
                             Product vtexProduct = await productsVtexRepository.saveProduct(localProduct);
                             localProduct.vtex_id = vtexProduct.vtex_id;
                             await productsLocalRepository.updateProduct(localProduct);
+                            //Agregar precios fijos promocionales
                         }
                         catch (VtexException vtexException)
                         {
