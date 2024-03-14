@@ -5,6 +5,6 @@ namespace colanta_backend.App.Bags {
         [JsonProperty("id_producto")]
         public string IdProducto { get; set; } //Referencia ERP
         [JsonProperty("peso")]
-        public int Peso { get; set; } //Capacidad
+        public float Peso { get; set; } //Capacidad
     }
 }
