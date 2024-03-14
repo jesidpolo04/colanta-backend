@@ -5,7 +5,7 @@ namespace colanta_backend.App.Bags {
     [Route("api/bags")]
     [ApiController]
     public class BagsController : ControllerBase {
-
+        [HttpGet]
         [Route("")]
         [EnableCors("Ecommerce")]
         public Bag[] GetBags([FromServices] BagsService bagsService){
