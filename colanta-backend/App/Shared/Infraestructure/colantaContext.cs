@@ -225,6 +225,8 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.warehouse_id).IsRequired();
                 entity.Property(e => e.quantity);
                 entity.Property(e => e.business);
+                entity.Property(e => e.infinite);
+                entity.Property(e => e.security_stock);
 
                 entity.HasOne(e => e.sku).WithMany().HasForeignKey(e => e.sku_id);
                 entity.HasOne(e => e.warehouse).WithMany().HasForeignKey(e => e.warehouse_id);

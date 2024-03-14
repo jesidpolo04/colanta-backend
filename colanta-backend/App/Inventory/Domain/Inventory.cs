@@ -12,5 +12,7 @@
         public string warehouse_siesa_id { get; set; }
         public Warehouse warehouse { get; set; }
         public string business { get; set; }
+        public bool infinite { get; set; }
+        public int security_stock { get; set; }
     }
 }

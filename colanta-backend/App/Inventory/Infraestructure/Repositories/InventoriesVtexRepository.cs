@@ -80,7 +80,7 @@
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint;
             UpdateVtexInventoryRequestDto requestBody = new UpdateVtexInventoryRequestDto();
             requestBody.quantity = inventory.quantity;
-            requestBody.unlimitedQuantity = false;
+            requestBody.unlimitedQuantity = inventory.infinite;
 
             string jsonContent = JsonSerializer.Serialize(requestBody);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");

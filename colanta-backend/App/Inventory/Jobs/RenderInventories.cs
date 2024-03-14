@@ -21,7 +21,7 @@
         private List<Inventory> failedInventories = new List<Inventory>();
         private List<Inventory> notProccecedInventories = new List<Inventory>();
         private int obtainedInventories = 0;
-        private int securityStock = 2;
+
 
         private List<Detail> details = new List<Detail>();
 
@@ -70,7 +70,7 @@
                                     success: true));
                     foreach (Inventory siesaInventory in siesaInventories)
                     {
-                        siesaInventory.quantity = siesaInventory.quantity <= securityStock ? 0 : siesaInventory.quantity - securityStock;
+                        siesaInventory.quantity = siesaInventory.quantity <= siesaInventory.security_stock ? 0 : siesaInventory.quantity - siesaInventory.security_stock;
 
                         try
                         {

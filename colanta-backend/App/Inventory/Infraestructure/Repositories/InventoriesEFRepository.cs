@@ -23,12 +23,12 @@
                 .Include(inventory => inventory.warehouse)
                 .Include(inventory => inventory.sku)
                 .Where(inventory => inventory.sku_concat_siesa_id == concatSiesaId && inventory.warehouse_siesa_id == warehouseSiesaId);
-            if(efInventories.ToArray().Length > 0)
+            if (efInventories.ToArray().Length > 0)
             {
                 EFInventory efInventory = efInventories.First();
                 return efInventory.getInventoryFromEfInventory();
             }
-            return null;   
+            return null;
         }
 
         public async Task<Inventory> saveInventory(Inventory inventory)
@@ -49,13 +49,15 @@
 
         public async Task<Inventory[]> updateInventories(Inventory[] inventories)
         {
-            foreach(Inventory inventory in inventories)
+            foreach (Inventory inventory in inventories)
             {
                 EFInventory efInventory = this.dbContext.Inventories.Find(inventory.id);
                 efInventory.quantity = inventory.quantity;
                 efInventory.business = inventory.business;
                 efInventory.sku_concat_siesa_id = inventory.sku_concat_siesa_id;
                 efInventory.warehouse_siesa_id = inventory.warehouse_siesa_id;
+                efInventory.infinite = inventory.infinite; //todo: hacer función en la entidad de infraestructura para actualizar
+                efInventory.security_stock = inventory.security_stock;
             }
             this.dbContext.SaveChanges();
             return inventories;
@@ -68,6 +70,8 @@
             efInventory.business = inventory.business;
             efInventory.sku_concat_siesa_id = inventory.sku_concat_siesa_id;
             efInventory.warehouse_siesa_id = inventory.warehouse_siesa_id;
+            efInventory.infinite = inventory.infinite;
+            efInventory.security_stock = inventory.security_stock;
             this.dbContext.SaveChanges();
             return inventory;
         }

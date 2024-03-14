@@ -14,6 +14,8 @@
         public string warehouse_siesa_id { get; set; }
         public EFWarehouse warehouse { get; set; }
         public string business { get; set; }
+        public bool infinite { get; set; }
+        public int security_stock { get; set; }
 
         public Inventory getInventoryFromEfInventory()
         {
@@ -25,6 +27,8 @@
             inventory.warehouse_id = this.warehouse_id;
             inventory.warehouse_siesa_id = this.warehouse_siesa_id;
             inventory.business = this.business;
+            inventory.infinite = this.infinite;
+            inventory.security_stock = this.security_stock;
 
             Warehouse warehouse = new Warehouse();
             warehouse.id = this.warehouse.id;
@@ -60,6 +64,8 @@
             this.sku_concat_siesa_id = inventory.sku_concat_siesa_id;
             this.warehouse_siesa_id = inventory.warehouse_siesa_id;
             this.business = inventory.business;
+            this.infinite = inventory.infinite;
+            this.security_stock = inventory.security_stock;
         }
     }
 }

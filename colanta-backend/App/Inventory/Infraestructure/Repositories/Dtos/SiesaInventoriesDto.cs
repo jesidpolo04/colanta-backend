@@ -12,6 +12,8 @@
         public string? id_variacion { get; set; }
         public int cantidad { get; set; }
         public string negocio { get; set; }
+        public bool infinito { get; set; }
+        public int stockseguridad { get; set; }
 
         public Inventory getInventoryFromDto()
         {
@@ -19,6 +21,9 @@
 
             inventory.quantity = cantidad;
             inventory.business = negocio;
+            inventory.infinite = infinito;
+            inventory.security_stock = stockseguridad;
+            
             if (id_variacion != null)
             {
                 inventory.sku_concat_siesa_id = this.negocio + "_" + this.id_producto + "_" + id_variacion;
