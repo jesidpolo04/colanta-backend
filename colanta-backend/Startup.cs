@@ -150,6 +150,9 @@ namespace colanta_backend
             //Dependecies Injections Taxes
             services.AddTransient<App.Taxes.Services.TaxService>();
 
+            //Dependencies Injections Bags
+            services.AddTransient<App.Bags.BagsService>();
+
             //Dependencies Injections Shared
             services.AddTransient<WrongAddressesRepository, WrongAddressesEFReppository>();
             services.AddTransient<IProcess, ProcessLogs>();
