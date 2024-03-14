@@ -2,7 +2,7 @@ namespace colanta_backend.App.Bags {
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
 
-    [Route("api/bags/")]
+    [Route("api/bags")]
     [ApiController]
     public class BagsController : ControllerBase {
 
