@@ -8,7 +8,7 @@ namespace colanta_backend.App.Bags {
 
         [Route("")]
         [EnableCors("Ecommerce")]
-        Bag[] GetBags([FromServices] BagsService bagsService){
+        public Bag[] GetBags([FromServices] BagsService bagsService){
             return bagsService.GetAvailableBags().ToArray(); //todo: caché para no consultar tanto el ERP
         }
     }
