@@ -85,7 +85,10 @@
                             {
                                 if (localInventory.quantity != siesaInventory.quantity)
                                 {
-                                    localInventory.quantity = siesaInventory.quantity;
+                                    localInventory.quantity = siesaInventory.quantity; //todo: funcion que actualize la entidad (no hacerlo linea por linea como aquí)
+                                    localInventory.infinite = siesaInventory.infinite;
+                                    localInventory.security_stock = siesaInventory.security_stock;
+
                                     localInventory = inventoriesLocalRepository.updateInventory(localInventory).Result;
                                     inventoriesVtexRepository.updateInventory(localInventory);
                                     inventoriesVtexRepository.removeReservedInventory(localInventory);
