@@ -83,7 +83,7 @@
 
                             if (localInventory != null)
                             {
-                                if (localInventory.quantity != siesaInventory.quantity)
+                                if (localInventory.quantity != siesaInventory.quantity || localInventory.infinite != siesaInventory.infinite)
                                 {
                                     localInventory.quantity = siesaInventory.quantity; //todo: funcion que actualize la entidad (no hacerlo linea por linea como aquí)
                                     localInventory.infinite = siesaInventory.infinite;
