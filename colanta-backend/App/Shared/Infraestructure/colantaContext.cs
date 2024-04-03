@@ -22,6 +22,7 @@ using colanta_backend.App.Shared.Infraestructure;
 namespace colanta_backend.App.Shared.Infraestructure
 {
     using System.Collections.Generic;
+    using colanta_backend.App.Bags;
     using colanta_backend.App.PriceTables;
 
     public partial class ColantaContext : DbContext
@@ -62,6 +63,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFWrongAddress> WrongAddresses { get; set; }
         public virtual DbSet<PriceTable> PriceTables { get; set; }
         public virtual DbSet<FixedPrice> FixedPrices { get; set; }
+        public virtual DbSet<BagConfig> BagConfig { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -555,6 +557,14 @@ namespace colanta_backend.App.Shared.Infraestructure
                 .WithMany()
                 .HasForeignKey(fixedPrice => fixedPrice.PriceTableName)
                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<BagConfig>(bagConfig => {
+                bagConfig.ToTable("bag_configs");
+                bagConfig.HasKey(bagConfig => bagConfig.Id);
+                bagConfig.Property(bagConfig => bagConfig.Id).ValueGeneratedOnAdd().HasColumnName("id");
+                bagConfig.Property(bagConfig => bagConfig.BagSkuId).HasColumnName("bag_sku_id");
+                bagConfig.Property(bagConfig => bagConfig.CapacityInGrams).HasColumnName("capacity_in_grams");
             });
 
             OnModelCreatingPartial(modelBuilder);

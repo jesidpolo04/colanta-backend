@@ -152,6 +152,7 @@ namespace colanta_backend
 
             //Dependencies Injections Bags
             services.AddTransient<App.Bags.BagsService>();
+            services.AddTransient<App.Bags.BagConfigRepository>();
 
             //Dependencies Injections Shared
             services.AddTransient<WrongAddressesRepository, WrongAddressesEFReppository>();
