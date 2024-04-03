@@ -17,7 +17,7 @@ namespace colanta_backend.App.Bags
         }
 
         [HttpGet]
-        [Route("/config")]
+        [Route("config")]
         [EnableCors("Ecommerce")]
         public ActionResult GetConfig([FromServices] BagConfigRepository bagConfigRepository)
         {
@@ -29,7 +29,7 @@ namespace colanta_backend.App.Bags
         }
 
         [HttpPatch]
-        [Route("/config")]
+        [Route("config")]
         [EnableCors("Ecommerce")]
         public ActionResult SetConfig([FromServices] BagConfigRepository bagConfigRepository, [FromBody] SetBagConfigDto dto)
         {
