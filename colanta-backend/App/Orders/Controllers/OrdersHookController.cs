@@ -67,14 +67,18 @@ namespace colanta_backend.App.Orders.Controllers
                 this.logger,
                 this.mailService,
                 this.registerUserService);
-
-            await useCase.Invoke(
-                orderSummary.OrderId,
-                orderSummary.State,
-                orderSummary.LastState,
-                orderSummary.LastChange,
-                orderSummary.CurrentChange);
-            return Ok();
+            try{
+                await useCase.Invoke(
+                    orderSummary.OrderId,
+                    orderSummary.State,
+                    orderSummary.LastState,
+                    orderSummary.LastChange,
+                    orderSummary.CurrentChange);
+                return Ok();
+            }catch(Exception e){
+                logger.writelog(e);
+                return StatusCode(500);
+            }
         }
 
         [Route("orders/send/{vtexOrderId}")]
