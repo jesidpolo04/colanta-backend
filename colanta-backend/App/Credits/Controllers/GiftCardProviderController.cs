@@ -11,6 +11,11 @@ namespace colanta_backend.App.Credits.Controllers
     using Products.Domain;
     using Orders.SiesaOrders.Domain;
     using GiftCards.Application;
+    using MicrosoftLogging = Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging;
+    using System.Text.Json;
+    using System.Linq;
+    using System;
 
     [Route("api/cupo-lacteo")]
     [ApiController]
@@ -18,10 +23,13 @@ namespace colanta_backend.App.Credits.Controllers
     {
         private GiftCardsRepository giftcardLocalRepository;
         private SkusRepository skusRepository;
-        public GiftCardsProviderController(GiftCardsRepository giftcardsLocalRepository, SkusRepository skusRepository)
+        private MicrosoftLogging.ILogger fileLogger;
+
+        public GiftCardsProviderController(GiftCardsRepository giftcardsLocalRepository, SkusRepository skusRepository, MicrosoftLogging.ILogger<GiftCardsProviderController> fileLogger)
         {
             this.giftcardLocalRepository = giftcardsLocalRepository;
             this.skusRepository = skusRepository;
+            this.fileLogger = fileLogger;
         }
 
         [HttpPost]
@@ -37,26 +45,38 @@ namespace colanta_backend.App.Credits.Controllers
 
         [HttpPost]
         [Route("giftcards/_search")] // obtener giftcards
-        public async Task<GiftCardProviderDto[]> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
+        public async Task<ActionResult<GiftCardProviderDto[]>> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
-            if(vtexInfo.client.document == null || vtexInfo.client.document == "") return new GiftCardProviderDto[0] {};
-            if(vtexInfo.client.email == null || vtexInfo.client.email == "") return new GiftCardProviderDto[0] {};
-            if(vtexInfo.cart.redemptionCode == null || vtexInfo.cart.redemptionCode == "") return new GiftCardProviderDto[0] {};
+            try{
+                this.fileLogger.LogDebug($"Buscando giftcards de: {vtexInfo.client.document} : { JsonSerializer.Serialize(vtexInfo) }");
 
-            SearchGiftcard useCase = new SearchGiftcard(this.giftcardLocalRepository, this.skusRepository);
-            GiftCard[] giftCards = await useCase.Invoke(vtexInfo.client.document, vtexInfo.client.email, vtexInfo.cart.redemptionCode, vtexInfo.cart.items[0].refId);
-            List<GiftCardProviderDto> giftCardProviderDtos = new List<GiftCardProviderDto>();
-            foreach (GiftCard giftCard in giftCards)
-            {
-                GiftCardProviderDto giftCardProviderDto = new GiftCardProviderDto();
-                giftCardProviderDto.setDtoFromGiftCard(giftCard);
-                giftCardProviderDtos.Add(giftCardProviderDto);
-            }
-            int from = 0;
-            int to = giftCards.Length;
-            int of = giftCards.Length;
-            HttpContext.Response.Headers.Add("REST-Content-Range", "resources " + from + "-" + to + "/" + of);
-            return giftCardProviderDtos.ToArray();
+                if(vtexInfo.client.document == null || vtexInfo.client.document == "") return new GiftCardProviderDto[0] {};
+                if(vtexInfo.client.email == null || vtexInfo.client.email == "") return new GiftCardProviderDto[0] {};
+                if(vtexInfo.cart.redemptionCode == null || vtexInfo.cart.redemptionCode == "") return new GiftCardProviderDto[0] {};
+
+                SearchGiftcard useCase = new SearchGiftcard(this.giftcardLocalRepository, this.skusRepository);
+                GiftCard[] giftCards = await useCase.Invoke(vtexInfo.client.document, vtexInfo.client.email, vtexInfo.cart.redemptionCode, vtexInfo.cart.items[0].refId);
+                List<GiftCardProviderDto> giftCardProviderDtos = new List<GiftCardProviderDto>();
+                foreach (GiftCard giftCard in giftCards)
+                {
+                    GiftCardProviderDto giftCardProviderDto = new GiftCardProviderDto();
+                    giftCardProviderDto.setDtoFromGiftCard(giftCard);
+                    giftCardProviderDtos.Add(giftCardProviderDto);
+                }
+                int from = 0;
+                int to = giftCards.Length;
+                int of = giftCards.Length;
+                HttpContext.Response.Headers.Add("REST-Content-Range", "resources " + from + "-" + to + "/" + of);
+                var codes = giftCards.ToList().ConvertAll(giftCard =>
+                    {
+                        return giftCard.code;
+                    });
+                this.fileLogger.LogDebug($"Retornando giftcards { string.Join(",", codes) }", giftCardProviderDtos);
+                return giftCardProviderDtos.ToArray();
+            }catch(Exception exception){
+                this.fileLogger.LogDebug($"Excepcion: {exception.Message} al buscar giftcards de: {vtexInfo.client.document}");
+                return NotFound();
+            }   
         }
 
         [HttpGet("giftcards/{giftCardId}")] // obtener giftcard
