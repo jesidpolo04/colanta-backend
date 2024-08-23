@@ -16,6 +16,7 @@ namespace colanta_backend.App.Credits.Controllers
     using System.Text.Json;
     using System.Linq;
     using System;
+    using System.Diagnostics;
 
     [Route("api/cupo-lacteo")]
     [ApiController]
@@ -48,6 +49,9 @@ namespace colanta_backend.App.Credits.Controllers
         public async Task<ActionResult<GiftCardProviderDto[]>> getGiftCardsByDocumentAndBusiness(ListAllGiftCardsRequestDto vtexInfo)
         {
             try{
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
                 this.fileLogger.LogDebug($"Buscando giftcards de: {vtexInfo.client.document} : { JsonSerializer.Serialize(vtexInfo) }");
 
                 if(vtexInfo.client.document == null || vtexInfo.client.document == "") return new GiftCardProviderDto[0] {};
@@ -71,7 +75,9 @@ namespace colanta_backend.App.Credits.Controllers
                     {
                         return giftCard.code;
                     });
+                stopwatch.Stop();
                 this.fileLogger.LogDebug($"Retornando giftcards { string.Join(",", codes) }", giftCardProviderDtos);
+                this.fileLogger.LogDebug("Tiempo de retorno: {Time}", stopwatch.Elapsed);
                 return giftCardProviderDtos.ToArray();
             }catch(Exception exception){
                 this.fileLogger.LogDebug($"Excepcion: {exception.Message} al buscar giftcards de: {vtexInfo.client.document}");

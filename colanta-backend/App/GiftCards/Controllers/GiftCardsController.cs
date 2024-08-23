@@ -16,6 +16,7 @@ namespace colanta_backend.App.GiftCards.Controllers
     using Microsoft.Extensions.Logging;
     using System.Linq;
     using System.Text.Json;
+    using System.Diagnostics;
 
     [Route("api")]
     [ApiController]
@@ -60,6 +61,8 @@ namespace colanta_backend.App.GiftCards.Controllers
         {
             try
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
                 this.fileLogger.LogDebug($"Buscando giftcards de: {vtexInfo.client.document} : { JsonSerializer.Serialize(vtexInfo) }");
                 SearchGiftcards listAllGiftCardsByDocumentAndBussines = new SearchGiftcards(this.localRepository, this.siesaRepository, this.skusLocalRepository, this.siesaOrdersLocalRepository, this.fileLogger);
                 GiftCard[] giftCards = await listAllGiftCardsByDocumentAndBussines.Invoke(
@@ -81,7 +84,9 @@ namespace colanta_backend.App.GiftCards.Controllers
                 {
                     return giftCard.code;
                 });
+                stopwatch.Stop();
                 this.fileLogger.LogDebug($"Retornando giftcards { string.Join(",", codes) }", giftCardProviderDtos);
+                this.fileLogger.LogDebug("Tiempo de retorno: {Time}", stopwatch.Elapsed);
                 return Ok(giftCardProviderDtos.ToArray());
             }
             catch(Exception exception)
