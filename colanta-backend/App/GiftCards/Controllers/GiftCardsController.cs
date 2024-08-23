@@ -95,6 +95,7 @@ namespace colanta_backend.App.GiftCards.Controllers
         [HttpGet("giftcards/{giftCardId}")] // obtener giftcard
         public async Task<GiftCardDetailProviderResponseDto> getGiftCardBySiesaId(string giftCardId)
         {
+            fileLogger.LogDebug("Obteniendo giftcard por id: {Id}", giftCardId);
             GetGiftcardBySiesaId getAndUpdateGiftCardBySiesaId = new GetGiftcardBySiesaId(
                 this.localRepository,
                 this.siesaRepository
@@ -102,6 +103,7 @@ namespace colanta_backend.App.GiftCards.Controllers
             GiftCard giftCard = await getAndUpdateGiftCardBySiesaId.Invoke(giftCardId);
             GiftCardDetailProviderResponseDto response = new GiftCardDetailProviderResponseDto();
             response.setDtoFromGiftCard(giftCard);
+            fileLogger.LogDebug("Giftcard obtenida: {Giftcard}", JsonSerializer.Serialize(response));
             return response;
         }
 
