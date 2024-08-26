@@ -11,6 +11,9 @@ namespace colanta_backend.App.Orders.Controllers
     using Shared.Domain;
     using Taxes.Services;
     using System.Threading.Tasks;
+    using MicrosoftLogging = Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging;
+    using System.Text.Json;
 
     [ApiController]
     [Route("api")]
@@ -22,7 +25,8 @@ namespace colanta_backend.App.Orders.Controllers
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
         private SkusRepository skusRepository;
-        private ILogger logger;
+        private Shared.Domain.ILogger logger;
+        private MicrosoftLogging.ILogger fileLogger;
         private MailService mailService;
         private EmailSender emailSender;
         public OrdersHookController(
@@ -31,7 +35,8 @@ namespace colanta_backend.App.Orders.Controllers
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
             SkusRepository skusRepository,
-            ILogger logger,
+            Shared.Domain.ILogger logger,
+            MicrosoftLogging.ILogger fileLogger,
             MailService mailService,
             RegisterUserService registerUserService,
             EmailSender emailSender
@@ -43,6 +48,7 @@ namespace colanta_backend.App.Orders.Controllers
             this.siesaRepository = siesaRepository;
             this.skusRepository = skusRepository;
             this.logger = logger;
+            this.fileLogger = fileLogger;
             this.mailService = mailService;
             this.registerUserService = registerUserService;
             this.emailSender = emailSender;
@@ -52,6 +58,7 @@ namespace colanta_backend.App.Orders.Controllers
         [HttpPost]
         public async Task<dynamic> orderHook(OrderHookDto request)
         {
+            fileLogger.LogInformation("Order Hook Request: {Request}", JsonSerializer.Serialize(request));
             if (request.hookConfig != null)
             {
                 return new { hookConfig = "alive!" };
