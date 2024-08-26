@@ -23,7 +23,7 @@ namespace colanta_backend.App.Orders.Controllers
         private RegisterUserService registerUserService;
         private OrdersRepository localRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
-        private CanceledOrdersRepository canceledOrdersRepository;
+        /* private CanceledOrdersRepository canceledOrdersRepository; */
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
         private SkusRepository skusRepository;
@@ -37,7 +37,7 @@ namespace colanta_backend.App.Orders.Controllers
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
-            CanceledOrdersRepository canceledOrdersRepository,
+            /* CanceledOrdersRepository canceledOrdersRepository, */
             SkusRepository skusRepository,
             Shared.Domain.ILogger logger,
             MicrosoftLogging.ILogger fileLogger,
@@ -48,7 +48,7 @@ namespace colanta_backend.App.Orders.Controllers
         {
             this.localRepository = localRepository;
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
-            this.canceledOrdersRepository = canceledOrdersRepository;
+            /* this.canceledOrdersRepository = canceledOrdersRepository; */
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
             this.skusRepository = skusRepository;
@@ -70,10 +70,10 @@ namespace colanta_backend.App.Orders.Controllers
             }
             //OrderHookDto orderSummary = JsonSerializer.Deserialize<OrderHookDto>(JsonSerializer.Serialize(request));
             OrderHookDto orderSummary = request;
-            List<CanceledOrder> canceledOrders = await canceledOrdersRepository.GetAll();
+/*             List<CanceledOrder> canceledOrders = await canceledOrdersRepository.GetAll();
             if(canceledOrders.Exists( canceledOrder => canceledOrder.VtexOrderId == request.OrderId )){
                 return Ok();
-            }
+            } */
             ProcessOrderUseCase useCase = new ProcessOrderUseCase(
                 this.localRepository,
                 this.siesaOrdersLocalRepository,
