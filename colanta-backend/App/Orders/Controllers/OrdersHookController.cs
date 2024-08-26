@@ -14,6 +14,7 @@ namespace colanta_backend.App.Orders.Controllers
     using MicrosoftLogging = Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging;
     using System.Text.Json;
+    using System.Collections.Generic;
 
     [ApiController]
     [Route("api")]
@@ -22,6 +23,7 @@ namespace colanta_backend.App.Orders.Controllers
         private RegisterUserService registerUserService;
         private OrdersRepository localRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
+        private CanceledOrdersRepository canceledOrdersRepository;
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
         private SkusRepository skusRepository;
@@ -29,11 +31,13 @@ namespace colanta_backend.App.Orders.Controllers
         private MicrosoftLogging.ILogger fileLogger;
         private MailService mailService;
         private EmailSender emailSender;
+
         public OrdersHookController(
             OrdersRepository localRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
+            CanceledOrdersRepository canceledOrdersRepository,
             SkusRepository skusRepository,
             Shared.Domain.ILogger logger,
             MicrosoftLogging.ILogger fileLogger,
@@ -44,6 +48,7 @@ namespace colanta_backend.App.Orders.Controllers
         {
             this.localRepository = localRepository;
             this.siesaOrdersLocalRepository = siesaOrdersLocalRepository;
+            this.canceledOrdersRepository = canceledOrdersRepository;
             this.vtexRepository = vtexRepository;
             this.siesaRepository = siesaRepository;
             this.skusRepository = skusRepository;
@@ -65,6 +70,10 @@ namespace colanta_backend.App.Orders.Controllers
             }
             //OrderHookDto orderSummary = JsonSerializer.Deserialize<OrderHookDto>(JsonSerializer.Serialize(request));
             OrderHookDto orderSummary = request;
+            List<CanceledOrder> canceledOrders = await canceledOrdersRepository.GetAll();
+            if(canceledOrders.Exists( canceledOrder => canceledOrder.VtexOrderId == request.OrderId )){
+                return Ok();
+            }
             ProcessOrderUseCase useCase = new ProcessOrderUseCase(
                 this.localRepository,
                 this.siesaOrdersLocalRepository,

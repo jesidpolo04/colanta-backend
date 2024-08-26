@@ -51,6 +51,7 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<EFGiftCardTransactionCancellation> GiftCardsTransactionsCancellations { get; set; }
         public virtual DbSet<EFGiftCardTransactionSettlement> GiftCardsTransactionsSettlements { get; set; }
         public virtual DbSet<EFOrder> Orders { get; set; }
+        public virtual DbSet<EFCanceledOrder> CanceledOrders { get; set; }
         public virtual DbSet<EFOrderHistory> OrderHistory { get; set; }
         public virtual DbSet<EFFailOrderMailLog> FailOrderMailLogs { get; set; }
         public virtual DbSet<EFSiesaOrder> SiesaOrders { get; set; }
@@ -565,6 +566,13 @@ namespace colanta_backend.App.Shared.Infraestructure
                 bagConfig.Property(bagConfig => bagConfig.Id).ValueGeneratedOnAdd().HasColumnName("id");
                 bagConfig.Property(bagConfig => bagConfig.BagSkuId).HasColumnName("bag_sku_id");
                 bagConfig.Property(bagConfig => bagConfig.CapacityInGrams).HasColumnName("capacity_in_grams");
+            });
+
+            modelBuilder.Entity<EFCanceledOrder>(canceledOrder => {
+                canceledOrder.ToTable("canceled_orders");
+                canceledOrder.HasKey(canceledOrder => canceledOrder.Id);
+                canceledOrder.Property(canceledOrder => canceledOrder.Id).ValueGeneratedOnAdd().HasColumnName("id");
+                canceledOrder.Property(canceledOrder => canceledOrder.VtexOrderId).HasColumnName("vtex_order_id");
             });
 
             OnModelCreatingPartial(modelBuilder);

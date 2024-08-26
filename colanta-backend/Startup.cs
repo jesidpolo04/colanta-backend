@@ -134,6 +134,7 @@ namespace colanta_backend
             services.AddTransient<App.Orders.Domain.INewOrderMail, App.Orders.Infraestructure.NewOrderMail>();
             services.AddTransient<App.Orders.Domain.ISiesaErrorAtSendOrderMail, App.Orders.Infraestructure.SiesaErrorAtSendOrderMail>();
             services.AddTransient<App.Orders.Domain.MailService>();
+            services.AddTransient<App.Orders.Domain.CanceledOrdersRepository, App.Orders.Infraestructure.CanceledOrdersEFRepository>();
             //Dependencies Injections SiesaOrders
             services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersEFRepository>();
             services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersHistoryRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersHistoryEFRepository>();
