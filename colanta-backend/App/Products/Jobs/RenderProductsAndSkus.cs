@@ -128,25 +128,11 @@
                         deltaSku.is_active = false;
                         await skusVtexRepository.changeSkuState((int)deltaSku.vtex_id, false);
                         this.inactivatedSkus.Add(deltaSku);
-                        this.details.Add(new Detail(
-                                origin: "vtex",
-                                action: "actualizar estado en vtex",
-                                content: null,
-                                description: null,
-                                success: true
-                            ));
                     }
                     catch (VtexException vtexException)
                     {
                         deltaSku.is_active = true;
                         this.console.throwException(vtexException.Message);
-                        this.details.Add(new Detail(
-                                origin: "vtex",
-                                action: vtexException.requestUrl,
-                                content: vtexException.responseBody,
-                                description: vtexException.Message,
-                                success: false
-                                ));
                         await this.logger.writelog(vtexException);
                     }
                     catch (Exception exception)
@@ -161,27 +147,6 @@
 
                 foreach (Product siesaProduct in allSiesaProducts)
                 {
-                    try
-                    {
-                        this.validProduct(siesaProduct);
-                    }
-                    catch (InvalidBrandException exception)
-                    {
-                        this.console.throwException(exception.Message);
-                        this.invalidBrandMail.sendMail(exception);
-                        await this.logger.writelog(exception);
-                        this.failedProducts.Add(siesaProduct);
-                        continue;
-                    }
-                    catch (InvalidCategoryException exception)
-                    {
-                        this.console.throwException(exception.Message);
-                        this.invalidCategoryMail.sendMail(exception);
-                        await this.logger.writelog(exception);
-                        this.failedProducts.Add(siesaProduct);
-                        continue;
-                    }
-                    
                     Product? localProduct = await productsLocalRepository.getProductBySiesaId(siesaProduct.siesa_id);
 
                     if (localProduct != null && localProduct.is_active == false)
@@ -195,9 +160,10 @@
                     }
 
                     if (localProduct == null)
-                    {
+                    {   
                         try
                         {
+                            this.validProduct(siesaProduct);
                             localProduct = await productsLocalRepository.saveProduct(siesaProduct);
                             Product vtexProduct = await productsVtexRepository.saveProduct(localProduct);
                             localProduct.vtex_id = vtexProduct.vtex_id;
@@ -210,12 +176,27 @@
                             await this.logger.writelog(vtexException);
                             this.failedProducts.Add(siesaProduct);
                         }
+                        catch (InvalidBrandException exception)
+                        {
+                            this.console.throwException(exception.Message);
+                            this.invalidBrandMail.sendMail(exception);
+                            await this.logger.writelog(exception);
+                            this.failedProducts.Add(siesaProduct);
+                            continue;
+                        }
+                        catch (InvalidCategoryException exception)
+                        {
+                            this.console.throwException(exception.Message);
+                            this.invalidCategoryMail.sendMail(exception);
+                            await this.logger.writelog(exception);
+                            this.failedProducts.Add(siesaProduct);
+                            continue;
+                        }
                         catch (Exception exception)
                         {
                             this.console.throwException(exception.Message);
                             await this.logger.writelog(exception);
                             this.failedProducts.Add(siesaProduct);
-
                         }
                     }
                 }
