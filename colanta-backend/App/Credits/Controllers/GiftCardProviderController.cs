@@ -251,8 +251,8 @@ namespace colanta_backend.App.Credits.Controllers
             string appToken;
 
             // Verificar si los headers existen y obtener sus valores
-            if (!Request.Headers.TryGetValue("AppKey", out var headerAppKey) ||
-                !Request.Headers.TryGetValue("AppToken", out var headerAppToken))
+            if (!Request.Headers.TryGetValue("X-PROVIDER-API-AppKey", out var headerAppKey) ||
+                !Request.Headers.TryGetValue("X-PROVIDER-API-AppToken", out var headerAppToken))
             {
                 // Si falta algún header, retornar false
                 return false;
