@@ -10,18 +10,21 @@
     using GiftCards.Domain;
     using colanta_backend.App.Taxes;
     using colanta_backend.App.Taxes.Services;
+    using colanta_backend.App.OrderObservations.Domain;
 
     public class VtexOrderToSiesaOrderMapper
     {
         private SkusRepository skusLocalRepository;
         private PromotionsRepository promotionsLocalRepository;
         private WrongAddressesRepository wrongAddressesRepository;
+        private ObservationsParser observationsParser;
         private PoundSkusService poundSkusService;
         private TaxService taxService;
         public VtexOrderToSiesaOrderMapper(
             SkusRepository skusLocalRepository,
             PromotionsRepository promotionsLocalRepository,
             WrongAddressesRepository wrongAddressesRepository,
+            ObservationsParser observationsParser,
             TaxService taxService
         )
         {
@@ -30,6 +33,7 @@
             this.wrongAddressesRepository = wrongAddressesRepository;
             this.poundSkusService = new PoundSkusService(skusLocalRepository);
             this.taxService = taxService;
+            this.observationsParser = observationsParser;
         }
         public async Task<SiesaOrderDto> getSiesaOrderDto(VtexOrderDto vtexOrder)
         {
@@ -47,7 +51,7 @@
             siesaOrder.Encabezado.C263ReferenciaPago = this.getHeaderPaymentReference(paymentData);
             siesaOrder.Encabezado.C263PagoContraentrega = this.isUponDelivery(paymentData);
             siesaOrder.Encabezado.C263ValorEnvio = this.getTotal(vtexOrder.totals, "Shipping");
-            siesaOrder.Encabezado.C263Notas = this.getObservation(vtexOrder);
+            siesaOrder.Encabezado.C263Notas = await this.getObservation(vtexOrder);
             siesaOrder.Encabezado.C263Direccion = this.getSiesaAddressFromVtexAdress(vtexOrder.shippingData.address);
             siesaOrder.Encabezado.C263Nombres = vtexOrder.shippingData.address.receiverName;
             siesaOrder.Encabezado.C263Departamento = addressCorrector.correctStateIfIsWrong(vtexOrder.shippingData.address.country, vtexOrder.shippingData.address.state, vtexOrder.shippingData.address.city);
@@ -58,7 +62,6 @@
             siesaOrder.Encabezado.C263RecogeEnTienda = this.pickupInStore(shippingData);
             siesaOrder.Encabezado.C263FechaRecoge = siesaOrder.Encabezado.C263RecogeEnTienda ? this.pickupDateTime(shippingData) : null;
             siesaOrder.Encabezado.C263Telefono = vtexOrder.clientProfileData.phone;
-
 
             foreach (Transaction transaction in vtexOrder.paymentData.transactions)
             {
@@ -303,9 +306,9 @@
             else return payment.tid;
         }
 
-        private string getObservation(VtexOrderDto vtexOrder)
+        private async Task<string> getObservation(VtexOrderDto vtexOrder)
         {
-            return vtexOrder.openTextField != null ? vtexOrder.openTextField.value : "sin observaciones";
+            return  vtexOrder.openTextField != null ? await observationsParser.Parse(vtexOrder.openTextField.value) : "sin observaciones";
         }
 
         private string getDate(VtexOrderDto vtexOrder)

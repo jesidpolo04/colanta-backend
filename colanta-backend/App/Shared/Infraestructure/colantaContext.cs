@@ -1,28 +1,22 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
-
-
-using colanta_backend.App.Brands.Infraestructure;
-using colanta_backend.App.Categories.Infraestructure;
-using colanta_backend.App.Products.Infraestructure;
-using colanta_backend.App.Users.Infraestructure;
-using colanta_backend.App.Prices.Infraestructure;
-using colanta_backend.App.Inventory.Infraestructure;
-using colanta_backend.App.Promotions.Infraestructure;
-using colanta_backend.App.CustomerCredit.Infraestructure;
-using colanta_backend.App.GiftCards.Infraestructure;
-using colanta_backend.App.Orders.Infraestructure;
-using colanta_backend.App.Orders.SiesaOrders.Infraestructure;
-using colanta_backend.App.Shared.Infraestructure;
-
-#nullable disable
-
+﻿#nullable disable
 namespace colanta_backend.App.Shared.Infraestructure
 {
-    using System.Collections.Generic;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+
+    using colanta_backend.App.Brands.Infraestructure;
+    using colanta_backend.App.Categories.Infraestructure;
+    using colanta_backend.App.Products.Infraestructure;
+    using colanta_backend.App.Users.Infraestructure;
+    using colanta_backend.App.Prices.Infraestructure;
+    using colanta_backend.App.Inventory.Infraestructure;
+    using colanta_backend.App.Promotions.Infraestructure;
+    using colanta_backend.App.CustomerCredit.Infraestructure;
+    using colanta_backend.App.GiftCards.Infraestructure;
+    using colanta_backend.App.Orders.Infraestructure;
+    using colanta_backend.App.Orders.SiesaOrders.Infraestructure;
     using colanta_backend.App.Bags;
+    using colanta_backend.App.OrderObservations.Infrastructure;
     using colanta_backend.App.PriceTables;
 
     public partial class ColantaContext : DbContext
@@ -65,6 +59,8 @@ namespace colanta_backend.App.Shared.Infraestructure
         public virtual DbSet<PriceTable> PriceTables { get; set; }
         public virtual DbSet<FixedPrice> FixedPrices { get; set; }
         public virtual DbSet<BagConfig> BagConfig { get; set; }
+        public virtual DbSet<EFProductObservationField> ProductObservationFields { get; set; }
+        public virtual DbSet<EFProductCutTypeValue> ProductCutTypeValues { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -527,7 +523,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 poundSku.Property(poundSku => poundSku.name).HasColumnName("name");
             });
 
-            modelBuilder.Entity<PriceTable>(priceTable => 
+            modelBuilder.Entity<PriceTable>(priceTable =>
             {
                 priceTable.ToTable("price_tables");
                 priceTable.HasKey(priceTable => priceTable.Name);
@@ -536,7 +532,8 @@ namespace colanta_backend.App.Shared.Infraestructure
                 priceTable.Property(priceTable => priceTable.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("GETDATE()");
             });
 
-            modelBuilder.Entity<FixedPrice>(fixedPrice => {
+            modelBuilder.Entity<FixedPrice>(fixedPrice =>
+            {
                 fixedPrice.ToTable("fixed_prices");
                 fixedPrice.HasKey(fixedPrice => fixedPrice.Id);
                 fixedPrice.Property(fixedPrice => fixedPrice.Id).ValueGeneratedOnAdd().HasColumnName("id");
@@ -545,7 +542,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 fixedPrice.Property(fixedPrice => fixedPrice.MinQuantity).HasColumnName("min_quantity");
                 fixedPrice.Property(fixedPrice => fixedPrice.VtexSkuId).HasColumnName("vtex_sku_id");
                 fixedPrice.Property(fixedPrice => fixedPrice.PriceTableName).HasColumnName("price_table_name");
-                
+
                 fixedPrice.Property(fixedPrice => fixedPrice.CreatedAt)
                 .HasColumnName("created_at")
                 .HasDefaultValueSql("GETDATE()");
@@ -560,7 +557,8 @@ namespace colanta_backend.App.Shared.Infraestructure
                 .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<BagConfig>(bagConfig => {
+            modelBuilder.Entity<BagConfig>(bagConfig =>
+            {
                 bagConfig.ToTable("bag_configs");
                 bagConfig.HasKey(bagConfig => bagConfig.Id);
                 bagConfig.Property(bagConfig => bagConfig.Id).ValueGeneratedOnAdd().HasColumnName("id");
@@ -568,11 +566,30 @@ namespace colanta_backend.App.Shared.Infraestructure
                 bagConfig.Property(bagConfig => bagConfig.CapacityInGrams).HasColumnName("capacity_in_grams");
             });
 
-            modelBuilder.Entity<EFCanceledOrder>(canceledOrder => {
+            modelBuilder.Entity<EFCanceledOrder>(canceledOrder =>
+            {
                 canceledOrder.ToTable("canceled_orders");
                 canceledOrder.HasKey(canceledOrder => canceledOrder.Id);
                 canceledOrder.Property(canceledOrder => canceledOrder.Id).ValueGeneratedOnAdd().HasColumnName("id");
                 canceledOrder.Property(canceledOrder => canceledOrder.VtexOrderId).HasColumnName("vtex_order_id");
+            });
+
+            modelBuilder.Entity<EFProductObservationField>(productObservationField =>
+            {
+                productObservationField.ToTable("product_observation_fields");
+                productObservationField.HasKey(productObservationField => productObservationField.Id);
+                productObservationField.Property(productObservationField => productObservationField.Id).ValueGeneratedOnAdd().HasColumnName("id");
+                productObservationField.Property(productObservationField => productObservationField.Code).HasColumnName("code");
+                productObservationField.Property(productObservationField => productObservationField.Description).HasColumnName("description");
+            });
+
+            modelBuilder.Entity<EFProductCutTypeValue>(productCutTypeValue =>
+            {
+                productCutTypeValue.ToTable("product_cut_type_values");
+                productCutTypeValue.HasKey(productCutTypeValue => productCutTypeValue.Id);
+                productCutTypeValue.Property(productCutTypeValue => productCutTypeValue.Id).ValueGeneratedOnAdd().HasColumnName("id");
+                productCutTypeValue.Property(productCutTypeValue => productCutTypeValue.Code).HasColumnName("code");
+                productCutTypeValue.Property(productCutTypeValue => productCutTypeValue.Description).HasColumnName("description");
             });
 
             OnModelCreatingPartial(modelBuilder);

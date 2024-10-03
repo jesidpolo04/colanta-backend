@@ -45,7 +45,16 @@ namespace colanta_backend
             {
                 options.AddPolicy("Ecommerce", policy =>
                 {
-                    policy.WithOrigins("https://colanta.myvtex.com", "https://devbolsas--colanta.myvtex.com", "https://devjesidpolo--colanta.myvtex.com", "https://www.pidecolanta.com")
+                    policy
+                    .WithOrigins("https://colanta.myvtex.com", "https://devbolsas--colanta.myvtex.com", "https://devjesidpolo--colanta.myvtex.com", "https://www.pidecolanta.com")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+
+                options.AddPolicy("EcommerceWildCard", policy => {
+                    policy
+                    .SetIsOriginAllowedToAllowWildcardSubdomains()
+                    .WithOrigins("https://*.myvtex.com", "https://www.pidecolanta.com")
                     .AllowAnyMethod()
                     .AllowAnyHeader();
                 });
@@ -146,7 +155,10 @@ namespace colanta_backend
             services.AddTransient<App.PriceTables.PriceTableRenderer>();
             services.AddTransient<App.PriceTables.Scripts.RenderFixedPricesInBd>();
             services.AddTransient<App.PriceTables.Scripts.RecalculateFixedPrices>();
-            
+
+            //Dependencies Injections OrderObservations
+            services.AddTransient<App.OrderObservations.Domain.OrderObservationsRepository, App.OrderObservations.Infrastructure.OrderObservationsEFRepository>();
+            services.AddTransient<App.OrderObservations.Domain.ObservationsParser>();
 
             //Dependecies Injections Taxes
             services.AddTransient<App.Taxes.Services.TaxService>();
