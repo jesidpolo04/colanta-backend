@@ -14,6 +14,7 @@ namespace colanta_backend.App.Orders.Infraestructure
     using colanta_backend.App.Orders.SiesaOrders.Domain;
     using Microsoft.Extensions.Logging;
     using colanta_backend.App.Taxes.Services;
+    using colanta_backend.App.OrderObservations.Domain;
 
     public class OrdersSiesaRepository : Domain.OrdersSiesaRepository
     {
@@ -25,12 +26,14 @@ namespace colanta_backend.App.Orders.Infraestructure
         private IConfiguration configuration;
         private ILogger<OrdersSiesaRepository> logger;
         private TaxService taxService;
+        private ObservationsParser observationsParser;
         
         public OrdersSiesaRepository(
             SkusRepository skusLocalRepository,
             PromotionsRepository promotionLocalRepository,
             WrongAddressesRepository wrongAddressesRepository,
             TaxService taxService,
+            ObservationsParser observationsParser,
             IConfiguration configuration,
             ILogger<OrdersSiesaRepository> logger
         )
@@ -43,6 +46,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.siesaAuth = new SiesaAuth(configuration);
             this.logger = logger;
             this.taxService = taxService;
+            this.observationsParser = observationsParser;
         }
 
         public async Task<SiesaOrder> getOrderBySiesaId(string siesaId)
@@ -70,6 +74,7 @@ namespace colanta_backend.App.Orders.Infraestructure
                 this.skusLocalRepository, 
                 this.promotionLocalRepository, 
                 wrongAddressesRepository, 
+                observationsParser,
                 taxService
             );
             VtexOrderDto vtexOrderDto = JsonSerializer.Deserialize<VtexOrderDto>(order.order_json);
