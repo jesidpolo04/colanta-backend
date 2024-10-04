@@ -3,6 +3,7 @@ namespace colanta_backend.App.Shared.Infraestructure
 {
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.EntityFrameworkCore.Metadata;
 
     using colanta_backend.App.Brands.Infraestructure;
     using colanta_backend.App.Categories.Infraestructure;
