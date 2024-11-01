@@ -124,6 +124,33 @@ namespace colanta_backend.App.Orders.Controllers
             }
         }
 
+        [Route("orders/send-with-any-status/{vtexOrderId}")]
+        [HttpPost]
+        public async Task SendWithAnyStatus(string vtexOrderId)
+        {
+            try
+            {
+                var vtexOrder = await this.vtexRepository.getOrderByVtexId(vtexOrderId);
+                var useCase = new SendOrderInAnyStatusUseCase(
+                   this.localRepository,
+                   this.siesaOrdersLocalRepository,
+                   this.vtexRepository,
+                   this.siesaRepository,
+                   this.skusRepository,
+                   this.mailService,
+                   this.registerUserService,
+                   this.emailSender);
+
+                await useCase.Invoke(vtexOrder.orderId);
+                Ok();
+            }
+            catch (Exception error)
+            {
+                this.logger.writelog(error);
+                StatusCode(500, error);
+            }
+        }
+
         [Route("orders/email/{vtexOrderId}")]
         [HttpPost]
         public async Task sendNotifyEmail(string vtexOrderId)
