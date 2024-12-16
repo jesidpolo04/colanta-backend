@@ -17,8 +17,11 @@ namespace colanta_backend.App.OrderObservations.Domain
         /// </summary>
         /// <param name="observations"></param>
         /// <returns></returns>
-        public async Task<string> Parse(string observations){
+        public async Task<string> Parse(string? observations){
             //TODO: Para todo el repositorio, averiguar como implementar adecuadamente accessos concurrentes a la base de datos.
+            if(observations == null){
+                return "";
+            } 
             List<ProductObservationField> fields = _repository.GetOrderObservationFields().Result;
             List<ProductCutTypeValue> cutTypes = _repository.GetProductCutTypeValues().Result;
 
