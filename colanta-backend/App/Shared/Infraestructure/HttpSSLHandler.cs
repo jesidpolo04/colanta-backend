@@ -14,11 +14,13 @@ namespace colanta_backend.App.Shared
         public HttpSSLHandler(ILogger<HttpSSLHandler> logger)
         {
             _logger = logger;
+            _logger.LogInformation("HttpSSLHandler created");
             ServerCertificateCustomValidationCallback = ValidateServerCertificate;
         }
 
         private bool ValidateServerCertificate(HttpRequestMessage requestMessage, X509Certificate2 certificate, X509Chain chain, SslPolicyErrors sslErrors)
         {
+            _logger.LogInformation("Validating SSL Certificate");
             if (sslErrors != SslPolicyErrors.None)
             {
                 _logger.LogError($"SSL Certificate error: {sslErrors}");
