@@ -27,6 +27,7 @@ namespace colanta_backend
     using App.Promotions.Jobs;
     using App.Orders.Jobs;
     using colanta_backend.App.Auth.Middlewares;
+    using colanta_backend.App.Shared;
 
     public class Startup
     {
@@ -174,6 +175,8 @@ namespace colanta_backend
             services.AddTransient<EmailSender, ColantaSender>();
 
             services.AddScoped<AuthFilter>();
+
+            services.AddTransient<HttpSSLHandler>();
 
             //------------------- Tasks -------------------------//
 

@@ -12,16 +12,18 @@ namespace colanta_backend.App.Inventory.Infraestructure
     using Shared.Domain;
     using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
+    using colanta_backend.App.Shared;
+
     public class InventoriesSiesaRepository : Domain.InventoriesSiesaRepository
     {
         private IConfiguration configuration;
         private HttpClient httpClient;
         private SiesaAuth siesaAuth;
 
-        public InventoriesSiesaRepository(IConfiguration configuration)
+        public InventoriesSiesaRepository(IConfiguration configuration, HttpSSLHandler handler)
         {
             this.configuration = configuration;
-            this.httpClient = new HttpClient();
+            this.httpClient = new HttpClient(handler);
             this.siesaAuth = new SiesaAuth(configuration);
         }
 
