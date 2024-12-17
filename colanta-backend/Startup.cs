@@ -175,6 +175,7 @@ namespace colanta_backend
             services.AddTransient<EmailSender, ColantaSender>();
 
             services.AddScoped<AuthFilter>();
+            services.AddTransient<SiesaAuth>();
 
             services.AddTransient<HttpSSLHandler>();
 

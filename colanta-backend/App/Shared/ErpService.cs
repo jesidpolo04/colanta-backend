@@ -11,10 +11,10 @@ namespace colanta_backend.App.Shared
         protected HttpClient HttpClient { get; set; }
         protected IConfiguration Configuration { get; set; }
         protected String BaseUrl { get; set; }
-        public ErpService(IConfiguration configuration)
+        public ErpService(IConfiguration configuration, SiesaAuth siesaAuth)
         {
             Configuration = configuration;
-            SiesaAuth = new SiesaAuth(configuration);
+            SiesaAuth = siesaAuth;
             HttpClient = new HttpClient();
             BaseUrl = configuration["SiesaUrl"];
         }

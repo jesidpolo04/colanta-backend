@@ -18,12 +18,12 @@ namespace colanta_backend.App.Promotions.Infraestructure
         private IConfiguration configuration;
         private SiesaAuth siesaAuth;
 
-        public PromotionsSiesaRepository(IConfiguration configuration)
+        public PromotionsSiesaRepository(IConfiguration configuration, SiesaAuth siesaAuth)
         {
             this.httpClient = new HttpClient();
             this.httpClient.Timeout = TimeSpan.FromMinutes(5);
             this.configuration = configuration;
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.siesaAuth = siesaAuth;
         }
         public async Task<Promotion[]> getAllPromotions()
         {

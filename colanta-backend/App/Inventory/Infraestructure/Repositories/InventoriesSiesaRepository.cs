@@ -20,11 +20,11 @@ namespace colanta_backend.App.Inventory.Infraestructure
         private HttpClient httpClient;
         private SiesaAuth siesaAuth;
 
-        public InventoriesSiesaRepository(IConfiguration configuration, HttpSSLHandler handler)
+        public InventoriesSiesaRepository(IConfiguration configuration, SiesaAuth siesaAuth)
         {
             this.configuration = configuration;
-            this.httpClient = new HttpClient(handler);
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.httpClient = new HttpClient();
+            this.siesaAuth = siesaAuth;
         }
 
         public async Task<Inventory[]> getAllInventoriesByWarehouse(string warehouseSiesaId)

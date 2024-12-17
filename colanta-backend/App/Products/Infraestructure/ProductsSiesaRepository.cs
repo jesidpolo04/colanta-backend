@@ -20,11 +20,11 @@
         private SiesaAuth siesaAuth;
 
 
-        public ProductsSiesaRepository(IConfiguration configuration, EmailSender emailSender)
+        public ProductsSiesaRepository(IConfiguration configuration, EmailSender emailSender, SiesaAuth siesaAuth)
         {
             this.configuration = configuration;
             this.httpClient = new HttpClient();
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.siesaAuth = siesaAuth;
             this.emailSender = emailSender;
         }
 

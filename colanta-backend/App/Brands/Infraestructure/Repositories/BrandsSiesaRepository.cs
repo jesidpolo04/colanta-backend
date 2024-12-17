@@ -17,12 +17,12 @@
         private HttpClient httpClient;
         private SiesaBrandMapper siesaBrandMapper;
         private SiesaAuth siesaAuth;
-        public BrandsSiesaRepository(IConfiguration configuration)
+        public BrandsSiesaRepository(IConfiguration configuration, SiesaAuth siesaAuth)
         {
             this.httpClient = new HttpClient();
             this.siesaBrandMapper = new SiesaBrandMapper();
             this.configuration = configuration;
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.siesaAuth = siesaAuth;
         }
         public async Task<Brand[]?> getAllBrands()
         {

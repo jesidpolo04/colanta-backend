@@ -16,10 +16,10 @@ namespace colanta_backend.App.Taxes.Services
         private SiesaAuth _SiesaAuth;
         private HttpClient _HttpClient;
         private IConfiguration _Configuration;
-        public TaxService(IConfiguration Configuration)
+        public TaxService(IConfiguration Configuration, SiesaAuth SiesaAuth)
         {
             _Configuration = Configuration;
-            _SiesaAuth = new SiesaAuth(Configuration);
+            _SiesaAuth = SiesaAuth;
             _HttpClient = new HttpClient();
         }
 

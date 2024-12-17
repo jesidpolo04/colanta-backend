@@ -19,11 +19,11 @@ namespace colanta_backend.App.CustomerCredit.Infraestructure
         private IConfiguration configuration;
         private SiesaAuth siesaAuth;
 
-        public CreditAccountsSiesaRepository(IConfiguration configuration)
+        public CreditAccountsSiesaRepository(IConfiguration configuration, SiesaAuth siesaAuth)
         {
             this.httpClient = new HttpClient();
             this.configuration = configuration;
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.siesaAuth = siesaAuth;
         }
         public async Task<decimal> getAccountByDocumentAndBusiness(string document, string business)
         {

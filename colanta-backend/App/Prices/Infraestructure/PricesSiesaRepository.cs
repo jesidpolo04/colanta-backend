@@ -18,11 +18,12 @@ namespace colanta_backend.App.Prices.Infraestructure
         private HttpClient httpClient;
         private IConfiguration configuration;
         private SiesaAuth siesaAuth;
-        public PricesSiesaRepository(IConfiguration configuration)
+        
+        public PricesSiesaRepository(IConfiguration configuration, SiesaAuth siesaAuth)
         {
             this.httpClient = new HttpClient();
             this.configuration = configuration;
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.siesaAuth = siesaAuth;
         }
         public async Task<Price[]> getAllPrices()
         {

@@ -35,6 +35,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             TaxService taxService,
             ObservationsParser observationsParser,
             IConfiguration configuration,
+            SiesaAuth siesaAuth,
             ILogger<OrdersSiesaRepository> logger
         )
         {
@@ -43,7 +44,7 @@ namespace colanta_backend.App.Orders.Infraestructure
             this.wrongAddressesRepository = wrongAddressesRepository;
             this.httpClient = new HttpClient();
             this.configuration = configuration;
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.siesaAuth = siesaAuth;
             this.logger = logger;
             this.taxService = taxService;
             this.observationsParser = observationsParser;

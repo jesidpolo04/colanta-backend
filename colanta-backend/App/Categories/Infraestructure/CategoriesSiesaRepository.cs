@@ -16,11 +16,11 @@
         private IConfiguration configuration;
         private HttpClient httpClient;
         private SiesaAuth siesaAuth;
-        public CategoriesMockSiesaRepository(IConfiguration configuration)
+        public CategoriesMockSiesaRepository(IConfiguration configuration, SiesaAuth siesaAuth)
         {
             this.configuration = configuration;
             this.httpClient = new HttpClient();
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.siesaAuth = siesaAuth;
         }
         public async Task<Category[]> getAllCategories()
         {

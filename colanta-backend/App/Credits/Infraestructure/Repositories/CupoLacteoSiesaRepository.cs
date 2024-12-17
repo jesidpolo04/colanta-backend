@@ -18,12 +18,12 @@
         private IConfiguration configuration;
         private SiesaAuth siesaAuth;
 
-        public CupoLacteoSiesaRepository(IConfiguration configuration)
+        public CupoLacteoSiesaRepository(IConfiguration configuration, SiesaAuth siesaAuth)
         {
             this.httpClient = new HttpClient();
             this.httpClient.Timeout = TimeSpan.FromMinutes(5);
             this.configuration = configuration;
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.siesaAuth = siesaAuth;
         }
 
         public async Task<GiftCard> getCupoLacteo(string document, string email, string business)

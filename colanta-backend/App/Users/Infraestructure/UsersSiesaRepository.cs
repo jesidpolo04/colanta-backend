@@ -19,11 +19,11 @@ namespace colanta_backend.App.Users.Infraestructure
         private HttpClient httpClient;
         private SiesaAuth siesaAuth;
 
-        public UsersSiesaRepository(IConfiguration configuration)
+        public UsersSiesaRepository(IConfiguration configuration, SiesaAuth siesaAuth)
         {
             this.configuration = configuration;
             this.httpClient = new HttpClient();
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.siesaAuth = siesaAuth;
         }
         public async Task<User> saveUser(User user)
         {

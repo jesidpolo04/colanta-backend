@@ -10,27 +10,22 @@
     using Newtonsoft.Json.Linq;
     using Shared.Application;
     using Shared.Domain;
+
     public class SiesaAuth
     {
-
         private IConfiguration configuration;
         private HttpClient httpClient;
         private string siesaUrl;
-        public SiesaAuth(IConfiguration configuration)
+
+        public SiesaAuth(IConfiguration configuration, HttpSSLHandler handler)
         {
-            this.httpClient = new HttpClient();
+            this.httpClient = new HttpClient(handler);
             this.configuration = configuration;
             this.siesaUrl = this.configuration["SiesaUrl"];
         }
 
-        private void setHeaders()
-        {
-
-        }
-
         public async Task<string> getToken()
         {
-            this.setHeaders();
             string user = this.configuration["SiesaUser"];
             string password = this.configuration["SiesaPassword"];
             string endpoint = "/api/Login/Login";

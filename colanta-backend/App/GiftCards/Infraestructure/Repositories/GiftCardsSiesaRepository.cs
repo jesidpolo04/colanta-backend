@@ -20,11 +20,11 @@ namespace colanta_backend.App.GiftCards.Infraestructure
         private HttpClient httpClient;
         private SiesaAuth siesaAuth;
 
-        public GiftCardsSiesaRepository(IConfiguration configuration)
+        public GiftCardsSiesaRepository(IConfiguration configuration, SiesaAuth siesaAuth)
         {
             this.configuration = configuration;
             this.httpClient = new HttpClient();
-            this.siesaAuth = new SiesaAuth(configuration);
+            this.siesaAuth = siesaAuth;
         }
 
         public async Task<GiftCard[]> getAllGiftCards()
