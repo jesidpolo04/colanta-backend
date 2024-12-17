@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using colanta_backend.App.Products.Domain;
 using colanta_backend.App.Shared;
+using colanta_backend.App.Shared.Infraestructure;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -9,7 +10,8 @@ namespace colanta_backend.App.Bags
     public class BagsService : ErpService
     {
         private readonly SkusRepository SkusRepository;
-        public BagsService(IConfiguration configuration, SkusRepository skusRepository) : base(configuration)
+
+        public BagsService(IConfiguration configuration, SkusRepository skusRepository, SiesaAuth siesaAuth) : base(configuration, siesaAuth)
         {
             SkusRepository = skusRepository;
         }

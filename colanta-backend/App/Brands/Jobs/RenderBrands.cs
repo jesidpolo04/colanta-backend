@@ -9,6 +9,8 @@
     using System.Text.Json;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
+    using colanta_backend.App.Shared.Infraestructure;
+
     public class RenderBrands : IDisposable
     {
         public string processName = "Renderizado de marcas";
@@ -29,6 +31,7 @@
         private List<Brand> inactivatedBrands;
         private int obtainedBrands;
         private JsonSerializerOptions jsonOptions;
+        private SiesaAuth siesaAuth;
 
         public RenderBrands(
             BrandsRepository brandsLocalRepository,
@@ -36,7 +39,8 @@
             IProcess processLogger,
             ILogger logger,
             IRenderBrandsMail mail,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            SiesaAuth siesaAuth)
         {
             this.brandsLocalRepository = brandsLocalRepository;
             this.brandsVtexRepository = brandsVtexRepository;
@@ -55,6 +59,7 @@
             this.failedLoadBrands = new List<Brand>();
             this.notProccecedBrands = new List<Brand>();
             this.inactivatedBrands = new List<Brand>();
+            this.siesaAuth = siesaAuth;
         }
 
         public async Task Invoke()
@@ -62,7 +67,7 @@
             try
             {
                 this.console.processStartsAt(processName, DateTime.Now);
-                BrandsSiesaRepository brandsSiesaRepository = new BrandsSiesaRepository(this.configuration);
+                BrandsSiesaRepository brandsSiesaRepository = new BrandsSiesaRepository(this.configuration, siesaAuth);
 
                 Brand[] siesaBrands = await brandsSiesaRepository.getAllBrands();
                 this.obtainedBrands = siesaBrands.Length;
