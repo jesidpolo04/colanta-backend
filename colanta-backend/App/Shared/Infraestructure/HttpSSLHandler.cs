@@ -29,7 +29,7 @@ namespace colanta_backend.App.Shared
                     _logger.LogError($"Chain status: {chainStatus.Status} - {chainStatus.StatusInformation}");
                 }
             }
-            return sslErrors == SslPolicyErrors.None;
+            return true;
         }
     }
 }
