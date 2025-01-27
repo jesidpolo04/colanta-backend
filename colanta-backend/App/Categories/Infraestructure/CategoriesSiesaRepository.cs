@@ -38,11 +38,7 @@
             List<Category> categories = new List<Category>();
             foreach(SiesaCategoryDto siesaCategoryDto in siesaCategoriesDto.familias)
             {
-                try{
-                    categories.Add(siesaCategoryDto.toCategory());
-                }catch(ChildCategoryAlreadyExistException exception){
-                    _logger.LogWarning(exception, exception.Message);
-                }
+                categories.Add(siesaCategoryDto.toCategory());
             }
             return categories.ToArray();
         }
