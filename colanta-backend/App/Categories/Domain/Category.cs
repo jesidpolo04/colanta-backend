@@ -34,9 +34,8 @@
             {
                 if(child.siesa_id == newChild.siesa_id && child.siesa_id != null)
                 {
-                    string message = "la categoría con siesa id ";
-                    message += newChild.siesa_id + "ya existe como hija de la categoría con siesa id" + this.siesa_id;
-                    throw new ChildCategoryAlreadyExistException(message, this, newChild);
+                    //TODO: buscar manera de notificar o loggear la incidencia
+                    return this;
                 }
             }
             this.childs.Add(newChild);
