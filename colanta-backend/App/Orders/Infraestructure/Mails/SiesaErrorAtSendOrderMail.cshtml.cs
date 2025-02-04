@@ -16,13 +16,9 @@ namespace colanta_backend.App.Orders.Infraestructure
         {
             this.exception = exception;
             this.vtexOrderId = vtexOrderId;
-            this.status = exception.status.ToString();
-
-            var requestBodyObject = Newtonsoft.Json.JsonConvert.DeserializeObject(exception.requestBody);
-            this.requestBody = Newtonsoft.Json.JsonConvert.SerializeObject(requestBodyObject, Newtonsoft.Json.Formatting.Indented);
-            
-            var responseBodyObject = Newtonsoft.Json.JsonConvert.DeserializeObject(exception.responseBody);
-            this.responseBody = Newtonsoft.Json.JsonConvert.SerializeObject(responseBodyObject, Newtonsoft.Json.Formatting.Indented);
+            status = exception.status.ToString();
+            requestBody = exception.requestBody;
+            responseBody = exception.responseBody;
         }
 
         public void OnGet()
