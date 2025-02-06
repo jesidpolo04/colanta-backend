@@ -26,7 +26,7 @@
                 this.subject, 
                 this.template, 
                 model,
-                "pidecolanta@colanta.com.co;auxiliarcad1@colanta.com.co;auxiliarcad2@colanta.com.co"
+                "pidecolanta@colanta.com.co;auxiliarcad1@colanta.com.co;auxiliarcad2@colanta.com.co;santiagorg@colanta.com.co"
             );
         }
     }
