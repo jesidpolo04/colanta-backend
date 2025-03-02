@@ -72,9 +72,9 @@ namespace colanta_backend
             services.AddTransient<IRenderBrandsMail, RenderBrandsMail>();
             services.AddTransient<App.Brands.Jobs.RenderBrands>();
             //Dependencies Injections Cattegories
-            services.AddTransient<App.Categories.Domain.CategoriesRepository , App.Categories.Infraestructure.CategoriesEFRepository>(); //s
-            services.AddTransient<App.Categories.Domain.CategoriesVtexRepository, App.Categories.Infraestructure.CategoriesVtexRepository>();
-            services.AddTransient<App.Categories.Domain.CategoriesSiesaRepository, App.Categories.Infraestructure.CategoriesMockSiesaRepository>();//
+            services.AddTransient<App.Categories.Domain.ICategoriesRepository , App.Categories.Infraestructure.CategoriesEFRepository>(); //s
+            services.AddTransient<App.Categories.Domain.ICategoriesVtexRepository, App.Categories.Infraestructure.CategoriesVtexRepository>();
+            services.AddTransient<App.Categories.Domain.ICategoriesSiesaRepository, App.Categories.Infraestructure.HttpCategoriesSiesaRepository>();//
             services.AddTransient<App.Categories.Domain.IRenderCategoriesMail, App.Categories.Infraestructure.RenderCategoriesMail>();
             services.AddTransient<RenderCategories>();
             services.AddTransient<ActivateAllCategories>();

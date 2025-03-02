@@ -10,119 +10,120 @@
     using Microsoft.Extensions.Configuration;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    public class CategoriesEFRepository : CategoriesRepository
+    public class CategoriesEFRepository : ICategoriesRepository
     {
-        private ColantaContext dbContext;
+        private readonly ColantaContext _dbContext;
         public CategoriesEFRepository(IConfiguration configuration)
         {
-            this.dbContext = new ColantaContext(configuration);
+            _dbContext = new ColantaContext(configuration);
         }
 
-        public async Task<Category[]> getAllCategories()
+        public async Task<Category[]> GetAllCategories()
         {
-            EFCategory[] efCategories = this.dbContext.Categories
-                                        .Include(c => c.childs)
-                                        .ToArray();
+            EFCategory[] efCategories = await _dbContext.Categories
+                                        .Include(c => c.Childs)
+                                        .ToArrayAsync();
             List<Category> categories = new List<Category>();
             foreach(EFCategory efCategory in efCategories)
             {
-                categories.Add(efCategory.getCategoryFromEFCategory());
+                categories.Add(efCategory.GetCategory());
             }
             return categories.ToArray();
         }
 
-        public async Task<Category[]> getVtexNullCategories()
+        public async Task<Category[]> GetVtexNullCategories()
         {
-            EFCategory[] efCategories = this.dbContext.Categories.Where(category => category.vtex_id == null ).ToArray();
+            EFCategory[] efCategories = await _dbContext.Categories.Where(category => category.VtexId == null).ToArrayAsync();
             List<Category> categories = new List<Category>();
             foreach(EFCategory efCategory in efCategories)
             {
-                categories.Add(efCategory.getCategoryFromEFCategory());
+                categories.Add(efCategory.GetCategory());
             }
             return categories.ToArray();
         }
 
-        public async Task<Category?> getCategoryBySiesaId(string id)
+        public async Task<Category?> GetCategoryBySiesaId(string id)
         {
-            var efCategories = this.dbContext.Categories
-                .Include(c => c.father)
-                .Include(c => c.childs)
-                .ThenInclude(child => child.father)
-                .Where(category => category.siesa_id == id);
+            var efCategories = _dbContext.Categories
+                .Include(c => c.Father)
+                .Include(c => c.Childs)
+                .ThenInclude(child => child.Father)
+                .Where(category => category.SiesaId == id);
                 
-            if(efCategories.ToArray().Length > 0)
+            if((await efCategories.ToArrayAsync()).Length > 0)
             {
-                EFCategory efCategory = efCategories.First();
-                return efCategory.getCategoryFromEFCategory();
+                EFCategory efCategory = await efCategories.FirstAsync();
+                return efCategory.GetCategory();
             }
             return null;
         }
 
-        public async Task<Category[]> getDeltaCategories(Category[] currentCategories)
+        public async Task<Category[]> GetDeltaCategories(Category[] currentCategories)
         {
             List<string> currentIds = new List<string>();
             foreach(Category category in currentCategories)
             {
-                currentIds.Add(category.siesa_id);
-                foreach(Category child in category.childs)
+                currentIds.Add(category.SiesaId);
+                foreach(Category child in category.Childs)
                 {
-                    currentIds.Add(child.siesa_id);
+                    currentIds.Add(child.SiesaId);
                 }
             }
-            EFCategory[] efDeltaCategories = this.dbContext.Categories.Where(category => !currentIds.Contains(category.siesa_id) && category.isActive == true).ToArray();
+            EFCategory[] efDeltaCategories = await _dbContext.Categories.Where(
+                category => !currentIds.Contains(category.SiesaId) && category.IsActive
+            ).ToArrayAsync();
             List<Category> categories = new List<Category>();
             foreach (EFCategory efDeltaCategory in efDeltaCategories)
             {
-                categories.Add(efDeltaCategory.getCategoryFromEFCategory());
+                categories.Add(efDeltaCategory.GetCategory());
             }
             return categories.ToArray();
         }
 
-        public async Task<Category> saveCategory(Category category)
+        public async Task<Category> SaveCategory(Category category)
         {
             EFCategory efCategory = new EFCategory();
-            efCategory.setEfCategoryFromCategory(category);
-            this.dbContext.Add(efCategory);
-            this.dbContext.SaveChanges();
-            efCategory = null;
-            return await this.getCategoryBySiesaId(category.siesa_id);
+            efCategory.SetFromCategory(category);
+            _dbContext.Add(efCategory);
+            await _dbContext.SaveChangesAsync();
+            return await GetCategoryBySiesaId(category.SiesaId);
         }
 
-        public async Task<Category[]> updateCategories(Category[] categories)
+        public async Task<Category[]> UpdateCategories(Category[] categories)
         {
             foreach(Category category in categories)
             {
-                EFCategory efCategory = this.dbContext.Categories.Find(category.id);
-                efCategory.name = category.name;
-                efCategory.vtex_id = category.vtex_id;
-                efCategory.siesa_id = category.siesa_id;
-                efCategory.business = category.business;
-                efCategory.isActive = category.isActive;
+                EFCategory efCategory = await _dbContext.Categories.FindAsync(category.Id);
+                efCategory.Name = category.Name;
+                efCategory.VtexId = category.VtexId;
+                efCategory.SiesaId = category.SiesaId;
+                efCategory.Business = category.Business;
+                efCategory.IsActive = category.IsActive;
             }
-            dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return categories;
         }
 
-        public async Task<Category> updateCategory(Category category)
+        public async Task<Category> UpdateCategory(Category category)
         {
-            EFCategory efCategory = this.dbContext.Categories.Find(category.id);
-            efCategory.name = category.name;
-            efCategory.vtex_id = category.vtex_id;
-            efCategory.siesa_id = category.siesa_id;
-            efCategory.business = category.business;
-            efCategory.isActive = category.isActive;
+            EFCategory efCategory = await _dbContext.Categories.FindAsync(category.Id);
+            efCategory.Name = category.Name;
+            efCategory.VtexId = category.VtexId;
+            efCategory.SiesaId = category.SiesaId;
+            efCategory.Business = category.Business;
+            efCategory.IsActive = category.IsActive;
 
-            this.dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return category;
         }
 
-        public async Task<Category[]> getVtexCategories()
+        public async Task<Category[]> GetVtexCategories()
         {
-            EFCategory[] efCategories = this.dbContext.Categories.Where(category => category.vtex_id != null).ToArray();
+            EFCategory[] efCategories = await _dbContext.Categories.Where(category => category.VtexId != null).ToArrayAsync();
             List<Category> categories = new List<Category>();
             foreach (EFCategory efCategory in efCategories)
             {
-                categories.Add(efCategory.getCategoryFromEFCategory());
+                categories.Add(efCategory.GetCategory());
             }
             return categories.ToArray();
         }

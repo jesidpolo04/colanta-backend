@@ -23,8 +23,8 @@
                                         name: lineDto.name,
                                         vtex_id: lineDto.id
                                     );
-                line.setFather(family);
-                family.addChild(line);
+                line.SetFather(family);
+                family.AddChild(line);
             }
             return family;
         }

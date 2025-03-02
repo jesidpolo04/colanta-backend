@@ -66,7 +66,7 @@ namespace colanta_backend.App.Prices.Infraestructure
             var dbPrices = dbContext.Prices
             .Include(price => price.sku)
             .ThenInclude(sku => sku.product)
-            .Where(price => price.sku.product.category.id == categoryId).ToList();
+            .Where(price => price.sku.product.category.Id == categoryId).ToList();
             return dbPrices.Select(dbPrice => dbPrice.getPriceFromEfPrice()).ToArray();
         }
 

@@ -7,11 +7,11 @@
     using System.Threading.Tasks;
     public class UpdateCategoriesState
     {
-        private CategoriesRepository localRepository;
-        private CategoriesVtexRepository vtexRepository;
+        private ICategoriesRepository localRepository;
+        private ICategoriesVtexRepository vtexRepository;
         private ILogger logger;
         private CustomConsole console = new CustomConsole();
-        public UpdateCategoriesState(CategoriesRepository localRepository, CategoriesVtexRepository vtexRepository, ILogger logger)
+        public UpdateCategoriesState(ICategoriesRepository localRepository, ICategoriesVtexRepository vtexRepository, ILogger logger)
         {
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
@@ -22,16 +22,16 @@
         {
             try
             {
-                Category[] localNotNullVtexCategories = await this.localRepository.getVtexCategories();
+                Category[] localNotNullVtexCategories = await this.localRepository.GetVtexCategories();
                 foreach (Category localNotNullVtexCategory in localNotNullVtexCategories)
                 {
                     try
                     {
-                        Category vtexCategory = await this.vtexRepository.getCategoryByVtexId((int)localNotNullVtexCategory.vtex_id);
-                        if(vtexCategory.isActive != localNotNullVtexCategory.isActive)
+                        Category vtexCategory = await this.vtexRepository.GetCategoryByVtexId((int)localNotNullVtexCategory.VtexId);
+                        if(vtexCategory.IsActive != localNotNullVtexCategory.IsActive)
                         {
-                            localNotNullVtexCategory.isActive = vtexCategory.isActive;
-                            await this.localRepository.updateCategory(localNotNullVtexCategory);
+                            localNotNullVtexCategory.IsActive = vtexCategory.IsActive;
+                            await this.localRepository.UpdateCategory(localNotNullVtexCategory);
                         }
                     }
                     catch(VtexException vtexException)

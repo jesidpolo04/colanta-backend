@@ -10,11 +10,11 @@
     using System.Text.Json.Serialization;
     public class ActivateAllCategories
     {
-        private CategoriesRepository localRepository;
-        private CategoriesVtexRepository vtexRepository;
-        private CategoriesSiesaRepository siesaRepository;
+        private ICategoriesRepository localRepository;
+        private ICategoriesVtexRepository vtexRepository;
+        private ICategoriesSiesaRepository siesaRepository;
 
-        public ActivateAllCategories(CategoriesRepository localRepository, CategoriesVtexRepository vtexRepository, CategoriesSiesaRepository siesaRepository)
+        public ActivateAllCategories(ICategoriesRepository localRepository, ICategoriesVtexRepository vtexRepository, ICategoriesSiesaRepository siesaRepository)
         {
             this.localRepository = localRepository;
             this.vtexRepository = vtexRepository;
@@ -23,12 +23,12 @@
 
         public async Task Invoke()
         {
-            Category[] allCategories = await this.localRepository.getAllCategories();
+            Category[] allCategories = await this.localRepository.GetAllCategories();
             foreach (Category category in allCategories)
             {
-                category.isActive = true;
-                vtexRepository.updateCategoryState((int)category.vtex_id, true).Wait();
-                await localRepository.updateCategory(category);
+                category.IsActive = true;
+                vtexRepository.UpdateCategoryState((int)category.VtexId, true).Wait();
+                await localRepository.UpdateCategory(category);
             }
         }
     }

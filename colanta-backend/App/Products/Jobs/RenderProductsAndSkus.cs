@@ -22,7 +22,7 @@
         private SkusVtexRepository skusVtexRepository;
         private ProductsSiesaRepository siesaRepository;
         private BrandsRepository brandsLocalRepository;
-        private CategoriesRepository categoriesLocalRepository;
+        private ICategoriesRepository categoriesLocalRepository;
         private PoundSkusService poundSkusService;
         private IProcess processLogger;
         private ILogger logger;
@@ -49,7 +49,7 @@
             SkusVtexRepository skusVtexRepository,
             ProductsSiesaRepository siesaRepository,
             BrandsRepository brandsLocalRepository,
-            CategoriesRepository categoriesLocalRepository,
+            ICategoriesRepository categoriesLocalRepository,
 
             IProcess processLogger,
             ILogger logger,
@@ -298,7 +298,7 @@
             {
                 throw new InvalidBrandException("La marca fue nula", siesaProduct);
             }
-            if(siesaProduct.category.siesa_id == null)
+            if(siesaProduct.category.SiesaId == null)
             {
                 throw new InvalidCategoryException("La categoría fue nula", siesaProduct);
             }
@@ -309,7 +309,7 @@
                 throw new InvalidBrandException("La marca no existe en el middleware", siesaProduct);
             }
 
-            Task<Category> category = this.categoriesLocalRepository.getCategoryBySiesaId(siesaProduct.category.siesa_id);
+            Task<Category> category = this.categoriesLocalRepository.GetCategoryBySiesaId(siesaProduct.category.SiesaId);
             if(category.Result == null)
             {
                 throw new InvalidCategoryException("La categoría no existe en el middleware", siesaProduct);

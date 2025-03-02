@@ -29,14 +29,14 @@
             @foreach (var category in @Model.loadedCategories)
             {
                  <tr>
-                    <td>@category.name</td>
-                    <td>@category.siesa_id</td>
-                    <td>@category.vtex_id</td>
-                    @if (category.father != null)
+                    <td>@category.Name</td>
+                    <td>@category.SiesaId</td>
+                    <td>@category.VtexId</td>
+                    @if (category.Father != null)
                     {
-                        <td>@category.father.name</td>
-                        <td>@category.father.siesa_id</td>
-                        <td>@category.father.vtex_id</td>
+                        <td>@category.Father.Name</td>
+                        <td>@category.Father.SiesaId</td>
+                        <td>@category.Father.VtexId</td>
                     }
                     else
                     {
@@ -69,14 +69,14 @@
             @foreach (var category in @Model.inactivatedCategories)
             {
                 <tr>
-                    <td>@category.name</td>
-                    <td>@category.siesa_id</td>
-                    <td>@category.vtex_id</td>
-                    @if (category.father != null)
+                    <td>@category.Name</td>
+                    <td>@category.SiesaId</td>
+                    <td>@category.VtexId</td>
+                    @if (category.Father != null)
                     {
-                        <td>@category.father.name</td>
-                        <td>@category.father.siesa_id</td>
-                        <td>@category.father.vtex_id</td>
+                        <td>@category.Father.Name</td>
+                        <td>@category.Father.SiesaId</td>
+                        <td>@category.Father.VtexId</td>
                     }
                     else
                     {
@@ -107,10 +107,10 @@
             @foreach (var category in @Model.failedCategories)
             {
                 <tr>
-                    <td>@category.name</td>
-                    <td>@category.siesa_id</td>
-                    <td>@category.father.name</td>
-                    <td>@category.father.siesa_id</td>
+                    <td>@category.Name</td>
+                    <td>@category.SiesaId</td>
+                    <td>@category.Father.Name</td>
+                    <td>@category.Father.SiesaId</td>
                 </tr>
             }
         </tbody>

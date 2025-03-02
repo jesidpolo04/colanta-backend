@@ -20,11 +20,11 @@
                 Category line = new Category(
                         siesa_id: lineDto.id,
                         name: lineDto.nombre,
-                        business: father.business,
+                        business: father.Business,
                         isActive: false
                     );
-                line.setFather(father);
-                father.addChild(line);
+                line.SetFather(father);
+                father.AddChild(line);
             }
             return father;
         }

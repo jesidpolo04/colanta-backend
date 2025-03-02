@@ -4,10 +4,10 @@
     using System.Threading.Tasks;
     public class MapFamiliesToStore
     {
-        private CategoriesVtexRepository vtexRepository;
-        private CategoriesRepository localRepository;
+        private ICategoriesVtexRepository vtexRepository;
+        private ICategoriesRepository localRepository;
 
-        public MapFamiliesToStore(CategoriesVtexRepository vtexRepository, CategoriesRepository localRepository)
+        public MapFamiliesToStore(ICategoriesVtexRepository vtexRepository, ICategoriesRepository localRepository)
         {
             this.vtexRepository = vtexRepository;
             this.localRepository = localRepository;
@@ -15,13 +15,13 @@
 
         public async Task Invoke()
         {
-            Category[] localCategories = await this.localRepository.getAllCategories();
+            Category[] localCategories = await this.localRepository.GetAllCategories();
             foreach (Category category in localCategories) 
             {
-                if(category.father == null)
+                if(category.Father == null)
                 {
-                    if (category.business == "mercolanta") await this.vtexRepository.updateCategoryFather((int)category.vtex_id, MercolantaCategory.vtexId);
-                    if (category.business == "agrocolanta") await this.vtexRepository.updateCategoryFather((int)category.vtex_id, AgrocolantaCategory.vtexId);
+                    if (category.Business == "mercolanta") await this.vtexRepository.UpdateCategoryFather((int)category.VtexId, MercolantaCategory.vtexId);
+                    if (category.Business == "agrocolanta") await this.vtexRepository.UpdateCategoryFather((int)category.VtexId, AgrocolantaCategory.vtexId);
                 }
             }
         }

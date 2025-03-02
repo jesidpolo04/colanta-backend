@@ -130,7 +130,7 @@ namespace colanta_backend.App.Products.Infraestructure
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint;
             CreateVtexProductDto requestBody = new CreateVtexProductDto();
             requestBody.BrandId = product.brand.id_vtex;
-            requestBody.CategoryId = product.category.vtex_id;
+            requestBody.CategoryId = product.category.VtexId;
             requestBody.RefId = product.concat_siesa_id;
             requestBody.Name = product.name;
             requestBody.Description = product.description;

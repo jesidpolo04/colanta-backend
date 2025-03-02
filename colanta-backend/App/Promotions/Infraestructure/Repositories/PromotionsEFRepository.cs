@@ -47,11 +47,11 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 }
 
                 string[] categories_ids = JsonSerializer.Deserialize<string[]>(efPromotion.categories_ids);
-                EFCategory[] efCategories = this.dbContext.Categories.Where(category => categories_ids.Contains(category.siesa_id)).ToArray();
+                EFCategory[] efCategories = this.dbContext.Categories.Where(category => categories_ids.Contains(category.SiesaId)).ToArray();
                 List<Category> categories = new List<Category>();
                 foreach (EFCategory efCategory in efCategories)
                 {
-                    categories.Add(efCategory.getCategoryFromEFCategory());
+                    categories.Add(efCategory.GetCategory());
                 }
 
                 string[] products_ids = JsonSerializer.Deserialize<string[]>(efPromotion.products_ids);
@@ -148,11 +148,11 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 }
 
                 string[] categories_ids = JsonSerializer.Deserialize<string[]>(efPromotion.categories_ids);
-                EFCategory[] efCategories = this.dbContext.Categories.Where(category => categories_ids.Contains(category.siesa_id)).ToArray();
+                EFCategory[] efCategories = this.dbContext.Categories.Where(category => categories_ids.Contains(category.SiesaId)).ToArray();
                 List<Category> categories = new List<Category>();
                 foreach(EFCategory efCategory in efCategories)
                 {
-                    categories.Add(efCategory.getCategoryFromEFCategory());
+                    categories.Add(efCategory.GetCategory());
                 }
 
                 string[] products_ids = JsonSerializer.Deserialize<string[]>(efPromotion.products_ids);
@@ -226,7 +226,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 promotion.skus_ids.Contains(sku.ref_id) ||
                 promotion.skus_ids.Contains(sku.product.ref_id) ||
                 promotion.brands_ids.Contains(sku.product.brand.id_siesa) ||
-                promotion.categories_ids.Contains(sku.product.category.siesa_id) 
+                promotion.categories_ids.Contains(sku.product.category.SiesaId) 
             )
             .ToList()
             .Select( efPromotion => addRelationsToPromotion(efPromotion).Result).ToArray();
@@ -279,11 +279,11 @@ namespace colanta_backend.App.Promotions.Infraestructure
             }
 
             string[] categories_ids = JsonSerializer.Deserialize<string[]>(efPromotion.categories_ids);
-            EFCategory[] efCategories = this.dbContext.Categories.Where(category => categories_ids.Contains(category.siesa_id)).ToArray();
+            EFCategory[] efCategories = this.dbContext.Categories.Where(category => categories_ids.Contains(category.SiesaId)).ToArray();
             List<Category> categories = new List<Category>();
             foreach (EFCategory efCategory in efCategories)
             {
-                categories.Add(efCategory.getCategoryFromEFCategory());
+                categories.Add(efCategory.GetCategory());
             }
 
             string[] products_ids = JsonSerializer.Deserialize<string[]>(efPromotion.products_ids);

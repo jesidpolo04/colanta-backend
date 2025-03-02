@@ -107,7 +107,7 @@ namespace colanta_backend.App.PriceTables
 
             foreach (var category in promotion.categories)
             {
-                var prices = _PricesRepository.getPricesByCategory((int)category.id);
+                var prices = _PricesRepository.getPricesByCategory((int)category.Id);
                 foreach (var price in prices)
                 {
                     var value = _PromotionPriceCalculator.CalculatePrice(price, promotion.percentual_discount_value);

@@ -1,36 +1,46 @@
 ﻿namespace colanta_backend.App.Categories.Infraestructure
 {
+    using System.Text.Json.Serialization;
     using Categories.Domain;
+    
     public class SiesaCategoriesDto
     {
-        public SiesaCategoryDto[] familias { get; set; }
+        [JsonPropertyName("familias")]
+        public SiesaCategoryDto[] Familias { get; set; }
     }
 
     public class SiesaCategoryDto
     {
-        public string id { get; set; }
-        public string nombre { get; set; }
-        public string negocio { get; set; }
-        public SiesaLineDto[] lineas { get; set; }
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+        
+        [JsonPropertyName("nombre")]
+        public string Nombre { get; set; }
+        
+        [JsonPropertyName("negocio")]
+        public string Negocio { get; set; }
+        
+        [JsonPropertyName("lineas")]
+        public SiesaLineDto[] Lineas { get; set; }
 
-        public Category toCategory()
+        public Category ToCategory()
         {
             Category father = new Category(
-                                    siesa_id: this.id,
-                                    name: this.nombre,
-                                    business: this.negocio,
+                                    siesa_id: Id,
+                                    name: Nombre,
+                                    business: Negocio,
                                     isActive: false
                                 );
-            foreach (SiesaLineDto lineDto in this.lineas)
+            foreach (SiesaLineDto lineDto in this.Lineas)
             {
                 Category line = new Category(
-                        siesa_id: lineDto.id,
-                        name: lineDto.nombre,
-                        business: father.business,
+                        siesa_id: lineDto.Id,
+                        name: lineDto.Nombre,
+                        business: father.Business,
                         isActive: false
                     );
-                line.setFather(father);
-                father.addChild(line);
+                line.SetFather(father);
+                father.AddChild(line);
             }
             return father;
         }
@@ -38,7 +48,10 @@
 
     public class SiesaLineDto
     {
-        public string id { get; set; }
-        public string nombre { get; set; }
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+
+        [JsonPropertyName("nombre")]
+        public string Nombre { get; set; }
     }
 }

@@ -156,8 +156,8 @@ namespace colanta_backend.App.Promotions.Infraestructure
             {
                 VtexPromotionCategory vtexPromotionCategory = new VtexPromotionCategory
                 {
-                    id = Convert.ToString(category.vtex_id),
-                    name = category.name
+                    id = Convert.ToString(category.VtexId),
+                    name = category.Name
                 };
                 vtexPromotionCategories.Add(vtexPromotionCategory);
             }

@@ -27,7 +27,7 @@
         private IProcess process;
         private ILogger logger;
         private BrandsRepository brandsRepository;
-        private CategoriesRepository categoriesRepository;
+        private ICategoriesRepository categoriesRepository;
         private ProductsRepository productsRepository;
         private SkusRepository skuRepository;
         private PriceTableRenderer promotionalPriceTableRenderer;
@@ -50,7 +50,7 @@
                 PromotionsVtexRepository vtexRepository,
                 PromotionsSiesaRepository siesaRepository,
                 BrandsRepository brandsRepository,
-                CategoriesRepository categoriesRepository,
+                ICategoriesRepository categoriesRepository,
                 ProductsRepository productsRepository,
                 SkusRepository skuRepository,
                 PriceTableRenderer promotionalPricesRenderer,
@@ -208,7 +208,7 @@
             if (categoriesIdsList.Count == 0) return inexistCateories;
             foreach (string categoryId in categoriesIdsList)
             {
-                Category category = this.categoriesRepository.getCategoryBySiesaId(categoryId).Result;
+                Category category = this.categoriesRepository.GetCategoryBySiesaId(categoryId).Result;
                 if (category == null)
                     inexistCateories.Add(categoryId);
             }

@@ -42,7 +42,7 @@
             product.business = this.business;
             if(this.category != null)
             {
-                product.category = this.category.getCategoryFromEFCategory();
+                product.category = this.category.GetCategory();
             }
             if(this.brand != null)
             {

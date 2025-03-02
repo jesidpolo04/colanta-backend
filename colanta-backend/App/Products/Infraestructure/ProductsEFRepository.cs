@@ -89,7 +89,7 @@ namespace colanta_backend.App.Products.Infraestructure
         {
             EFProduct efProduct = new EFProduct();
             EFBrand efBrand = this.dbContext.Brands.Where(brand => brand.id_siesa == product.brand.id_siesa).First();
-            EFCategory efCategory = this.dbContext.Categories.Where(category => category.siesa_id == product.category.siesa_id).First();
+            EFCategory efCategory = this.dbContext.Categories.Where(category => category.SiesaId == product.category.SiesaId).First();
 
             efProduct.setEfProductFromProduct(product);
             efProduct.category = efCategory;

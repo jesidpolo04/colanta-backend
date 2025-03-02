@@ -28,7 +28,7 @@
                             vtex_id: this.Id,
                             isActive: this.IsActive
                         );
-            category.setFather(new Category(vtex_id: FatherCategoryId, name: ""));
+            category.SetFather(new Category(vtex_id: FatherCategoryId, name: ""));
             return category;
         }
     }

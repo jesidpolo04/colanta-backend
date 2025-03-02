@@ -11,8 +11,8 @@
     public class UpCategoriesToVtex : IDisposable
     {
         private string processName = "Carga de categorías nulas a Vtex";
-        private CategoriesRepository localRepository;
-        private CategoriesVtexRepository vtexRepository;
+        private ICategoriesRepository localRepository;
+        private ICategoriesVtexRepository vtexRepository;
         private IProcess logs;
         private List<Detail> details;
         private JsonSerializerOptions jsonOptions;
@@ -20,7 +20,7 @@
         private List<Category> failedCategories;
         private List<Category> loadCategories;
 
-        public UpCategoriesToVtex(CategoriesRepository localRepository, CategoriesVtexRepository vtexRepository, IProcess logs)
+        public UpCategoriesToVtex(ICategoriesRepository localRepository, ICategoriesVtexRepository vtexRepository, IProcess logs)
         {
             
             this.localRepository = localRepository;
@@ -44,15 +44,15 @@
 
         public async Task Invoke()
         {
-            Category[] nullVtexCategories = await this.localRepository.getVtexNullCategories();
+            Category[] nullVtexCategories = await this.localRepository.GetVtexNullCategories();
 
             foreach(Category nullVtexCategory in nullVtexCategories)
             {
                 try
                 {
-                    Category vtexCategory = await this.vtexRepository.saveCategory(nullVtexCategory);
-                    nullVtexCategory.vtex_id = vtexCategory.vtex_id;
-                    await this.localRepository.updateCategory(nullVtexCategory);
+                    Category vtexCategory = await this.vtexRepository.SaveCategory(nullVtexCategory);
+                    nullVtexCategory.VtexId = vtexCategory.VtexId;
+                    await this.localRepository.UpdateCategory(nullVtexCategory);
                     this.loadCategories.Add(nullVtexCategory);
                     this.details.Add(new Detail(
                             origin: "vtex",

@@ -2,8 +2,8 @@
 {
     using System.Threading.Tasks;
 
-    public interface CategoriesSiesaRepository
+    public interface ICategoriesSiesaRepository
     {
-        Task<Category[]> getAllCategories();
+        Task<Category[]> GetAllCategories();
     }
 }

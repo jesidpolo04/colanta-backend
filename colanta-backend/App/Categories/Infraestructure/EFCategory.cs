@@ -2,102 +2,117 @@
 {
     using System.Collections.Generic;
     using App.Categories.Domain;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
     public class EFCategory
     {
-        public int? id { get; set; }
-        public string? siesa_id { get; set; }
-        public int? vtex_id { get; set; }
-        public string name { get; set; }
-        public string business { get; set; }
-        public bool isActive { get; set; }
-        public EFCategory father { get; set; }
-        public List<EFCategory> childs { get; set; }
+        public int? Id { get; set; }
+        public string? SiesaId { get; set; }
+        public int? VtexId { get; set; }
+        public string Name { get; set; }
+        public string Business { get; set; }
+        public bool IsActive { get; set; }
+        public EFCategory Father { get; set; }
+        public List<EFCategory> Childs { get; set; }
 
         public EFCategory()
         {
-            this.childs = new List<EFCategory>();
+            Childs = new List<EFCategory>();
         }
 
-        public void setEfCategoryFromCategory(Category category)
+        public void SetFromCategory(Category category)
         {
-            this.id = category.id;
-            this.name = category.name;
-            this.business = category.business;
-            this.isActive = category.isActive;
-            this.siesa_id = category.siesa_id;
-            this.vtex_id = category.vtex_id;
+            Id = category.Id;
+            Name = category.Name;
+            Business = category.Business;
+            IsActive = category.IsActive;
+            SiesaId = category.SiesaId;
+            VtexId = category.VtexId;
             
-            if(category.father != null)
+            if(category.Father != null)
             {
                 EFCategory efFather = new EFCategory();
-                efFather.id = category.father.id;
-                efFather.name = category.father.name;
-                efFather.business = category.father.business;
-                efFather.isActive = category.father.isActive;
-                efFather.siesa_id = category.father.siesa_id;
-                efFather.vtex_id = category.father.vtex_id;
+                efFather.Id = category.Father.Id;
+                efFather.Name = category.Father.Name;
+                efFather.Business = category.Father.Business;
+                efFather.IsActive = category.Father.IsActive;
+                efFather.SiesaId = category.Father.SiesaId;
+                efFather.VtexId = category.Father.VtexId;
 
-                this.father = efFather;
+                this.Father = efFather;
             }
 
-            if(category.childs.Count > 0)
+            if(category.Childs.Count > 0)
             {
-                foreach(Category child in category.childs)
+                foreach(Category child in category.Childs)
                 {
                     EFCategory efChild = new EFCategory();
-                    efChild.id = child.id;
-                    efChild.name = child.name;
-                    efChild.business = child.business;
-                    efChild.isActive = child.isActive;
-                    efChild.siesa_id = child.siesa_id;
-                    efChild.vtex_id = child.vtex_id;
-                    efChild.father = this;
-                    this.childs.Add(efChild);
+                    efChild.Id = child.Id;
+                    efChild.Name = child.Name;
+                    efChild.Business = child.Business;
+                    efChild.IsActive = child.IsActive;
+                    efChild.SiesaId = child.SiesaId;
+                    efChild.VtexId = child.VtexId;
+                    efChild.Father = this;
+                    this.Childs.Add(efChild);
                 }
             }
         }
 
-        public Category getCategoryFromEFCategory()
+        public Category GetCategory()
         {
             Category category = new Category(
-                    id: this.id,
-                    siesa_id: this.siesa_id,
-                    vtex_id: this.vtex_id,
-                    name: this.name,
-                    business: this.business,
-                    isActive: this.isActive
+                    id: this.Id,
+                    siesa_id: this.SiesaId,
+                    vtex_id: this.VtexId,
+                    name: this.Name,
+                    business: this.Business,
+                    isActive: this.IsActive
                 );
 
-            if(this.father != null)
+            if(this.Father != null)
             {
                 Category father = new Category(
-                        id: this.father.id,
-                        siesa_id: this.father.siesa_id,
-                        vtex_id: this.father.vtex_id,
-                        name: this.father.name,
-                        business: this.father.business,
-                        isActive: this.father.isActive
+                        id: this.Father.Id,
+                        siesa_id: this.Father.SiesaId,
+                        vtex_id: this.Father.VtexId,
+                        name: this.Father.Name,
+                        business: this.Father.Business,
+                        isActive: this.Father.IsActive
                     );
-                category.setFather(father);
+                category.SetFather(father);
             }
-            if(this.childs.Count > 0)
+            if(this.Childs.Count > 0)
             {
-                foreach(EFCategory efChild in this.childs)
+                foreach(EFCategory efChild in this.Childs)
                 {
                     Category child = new Category(
-                            id: efChild.id,
-                            siesa_id: efChild.siesa_id,
-                            vtex_id: efChild.vtex_id,
-                            name: efChild.name,
-                            business: efChild.business,
-                            isActive: efChild.isActive
+                            id: efChild.Id,
+                            siesa_id: efChild.SiesaId,
+                            vtex_id: efChild.VtexId,
+                            name: efChild.Name,
+                            business: efChild.Business,
+                            isActive: efChild.IsActive
                         );
-                    child.setFather(category);
-                    category.addChild(child);
+                    child.SetFather(category);
+                    category.AddChild(child);
                 }
             }
             return category;
         }
 
+        public static void BuildCategoryEfModel(EntityTypeBuilder<EFCategory> entityBuilder)
+        {
+            entityBuilder.ToTable("categories");
+            entityBuilder.Property(e => e.Id).IsRequired().ValueGeneratedOnAdd();
+            entityBuilder.Property(e => e.Name).IsRequired().HasColumnName("name");
+            entityBuilder.Property(e => e.SiesaId).HasColumnName("siesa_id");
+            entityBuilder.Property(e => e.VtexId).HasColumnName("vtex_id");
+            entityBuilder.Property(e => e.IsActive).IsRequired().HasColumnName("is_active");
+            //Relations
+            entityBuilder.HasMany(e => e.Childs).WithOne(e => e.Father).HasForeignKey("family");
+            entityBuilder.HasOne(e => e.Father).WithMany(e => e.Childs);
+        }
     }
 }

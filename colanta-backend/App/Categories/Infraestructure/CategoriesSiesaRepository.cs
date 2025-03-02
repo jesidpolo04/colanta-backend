@@ -9,14 +9,15 @@
     using Shared.Infraestructure;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using System;
 
-    public class CategoriesMockSiesaRepository : CategoriesSiesaRepository
+    public class HttpCategoriesSiesaRepository : ICategoriesSiesaRepository
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger<CategoriesMockSiesaRepository> _logger;
+        private readonly ILogger<HttpCategoriesSiesaRepository> _logger;
         private  readonly HttpClient _httpClient;
         private readonly SiesaAuth _siesaAuth;
-        public CategoriesMockSiesaRepository(IConfiguration configuration, ILogger<CategoriesMockSiesaRepository> logger)
+        public HttpCategoriesSiesaRepository(IConfiguration configuration, ILogger<HttpCategoriesSiesaRepository> logger)
         {
             _configuration = configuration;
             _httpClient = new HttpClient();
@@ -24,29 +25,38 @@
             _logger = logger;
         }
 
-        public async Task<Category[]> getAllCategories()
+        public async Task<Category[]> GetAllCategories()
         {
-            await this.setHeaders();
             string endpoint = "/api/ColantaWS/FamiliasLineas";
-            HttpResponseMessage siesaResponse = await _httpClient.GetAsync(_configuration["SiesaUrl"] + endpoint);
+            string uri = _configuration["SiesaUrl"] + endpoint;
+            var request = new HttpRequestMessage(HttpMethod.Get, uri);
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _siesaAuth.getToken());
+            HttpResponseMessage siesaResponse = await _httpClient.SendAsync(request);
+            string siesaBodyResponse = await siesaResponse.Content.ReadAsStringAsync();
             if (!siesaResponse.IsSuccessStatusCode)
             {
+                _logger.LogError("Siesa respondió con status: {StatusCode}", siesaResponse.StatusCode);
                 throw new SiesaException(siesaResponse, $"Siesa respondió con status: {siesaResponse.StatusCode}");
             }
-            string siesaBodyResponse = await siesaResponse.Content.ReadAsStringAsync();
             SiesaCategoriesDto siesaCategoriesDto = JsonSerializer.Deserialize<SiesaCategoriesDto>(siesaBodyResponse);
             List<Category> categories = new List<Category>();
-            foreach(SiesaCategoryDto siesaCategoryDto in siesaCategoriesDto.familias)
+            foreach(SiesaCategoryDto siesaCategoryDto in siesaCategoriesDto.Familias)
             {
-                categories.Add(siesaCategoryDto.toCategory());
+                try
+                {
+                    categories.Add(siesaCategoryDto.ToCategory());
+                }
+                catch(Exception exception)
+                {
+                    _logger.LogError(
+                        exception, 
+                        "Error al convertir el dto proviniente de siesa en una categoría, message: {Message}, stack: {Stack}", 
+                        exception.Message,
+                        exception.StackTrace
+                    );
+                }
             }
             return categories.ToArray();
-        }
-
-        private async Task setHeaders()
-        {
-            _httpClient.DefaultRequestHeaders.Remove("Authorization");
-            _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await _siesaAuth.getToken());
         }
     }
 }

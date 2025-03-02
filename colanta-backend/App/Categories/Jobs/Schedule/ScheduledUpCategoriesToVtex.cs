@@ -14,14 +14,14 @@
         private readonly CrontabSchedule _crontabSchedule;
         private DateTime _nextRun;
         private const string Schedule = "0 0 0/3 * * *";
-        private CategoriesRepository localRepository;
-        private CategoriesVtexRepository vtexRepository;
+        private ICategoriesRepository localRepository;
+        private ICategoriesVtexRepository vtexRepository;
         private IProcess logs;
         private ILogger logger;
 
         public ScheduledUpCategoriesToVtex(
-            CategoriesRepository localRepository,
-            CategoriesVtexRepository vtexRepository,
+            ICategoriesRepository localRepository,
+            ICategoriesVtexRepository vtexRepository,
             IProcess logs,
             ILogger logger
 )

@@ -15,13 +15,13 @@
         private DateTime _nextRun;
         private const string Schedule = "0 0/60 * * * *";
 
-        private CategoriesRepository localRepository;
-        private CategoriesVtexRepository vtexRepository;
+        private ICategoriesRepository localRepository;
+        private ICategoriesVtexRepository vtexRepository;
         private ILogger logger;
 
         public ScheduledUpdateCategoriesState(
-            CategoriesRepository localRepository,
-            CategoriesVtexRepository vtexRepository,
+            ICategoriesRepository localRepository,
+            ICategoriesVtexRepository vtexRepository,
             ILogger logger)
         {
             _crontabSchedule = CrontabSchedule.Parse(Schedule, new CrontabSchedule.ParseOptions { IncludingSeconds = true });

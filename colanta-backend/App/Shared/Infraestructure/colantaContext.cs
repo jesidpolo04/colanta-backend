@@ -156,19 +156,7 @@ namespace colanta_backend.App.Shared.Infraestructure
                 entity.Property(e => e.throw_at).HasColumnType("dateTime").HasDefaultValueSql("getdate()");
             });
 
-            modelBuilder.Entity<EFCategory>(entity =>
-            {
-                entity.ToTable("categories");
-
-                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
-                entity.Property(e => e.name).IsRequired().HasColumnName("name");
-                entity.Property(e => e.siesa_id).HasColumnName("siesa_id");
-                entity.Property(e => e.vtex_id).HasColumnName("vtex_id");
-                entity.Property(e => e.isActive).IsRequired().HasColumnName("is_active");
-
-                entity.HasMany(e => e.childs).WithOne(e => e.father).HasForeignKey("family");
-                entity.HasOne(e => e.father).WithMany(e => e.childs);
-            });
+            modelBuilder.Entity<EFCategory>(EFCategory.BuildCategoryEfModel);
 
             modelBuilder.Entity<EFProduct>(entity =>
             {

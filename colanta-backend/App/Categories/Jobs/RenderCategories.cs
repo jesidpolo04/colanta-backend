@@ -5,233 +5,167 @@
     using System.Collections.Generic;
     using System.Text.Json;
     using Categories.Domain;
-    using Shared.Domain;
-    using Shared.Application;
     using System.Text.Json.Serialization;
+    using Microsoft.Extensions.Logging;
 
     public class RenderCategories : IDisposable
     {
-        private string processName = "Renderizado de categorías";
-        private CategoriesRepository localRepository;
-        private CategoriesVtexRepository vtexRepository;
-        private CategoriesSiesaRepository siesaRepository;
-        private IProcess processLogger;
-        private ILogger logger;
-        private IRenderCategoriesMail mail;
-        private CustomConsole console;
+        private bool _disposed = false;
+        private readonly ICategoriesRepository _localRepository;
+        private readonly ICategoriesVtexRepository _vtexRepository;
+        private readonly ICategoriesSiesaRepository _siesaRepository;
+        private readonly ILogger<RenderCategories> _logger;
+        private readonly IRenderCategoriesMail _mail;
 
-        private List<Category> loadCategories = new List<Category>();
-        private List<Category> failedLoadCategories = new List<Category>();
-        private List<Category> inactiveCategories = new List<Category>();
-        private List<Category> inactivatedCategories = new List<Category>();
-        private List<Category> notProccecedCategories = new List<Category>();
-        private int obtainedCategories = 0;
+        private readonly List<Category> _loadCategories = new List<Category>();
+        private readonly List<Category> _failedLoadCategories = new List<Category>();
+        private readonly List<Category> _inactiveCategories = new List<Category>();
+        private readonly List<Category> _inactivatedCategories = new List<Category>();
+        private readonly List<Category> _notProccecedCategories = new List<Category>();
 
-        private List<Detail> details = new List<Detail>();
-        private JsonSerializerOptions jsonOptions;
         public RenderCategories(
-            CategoriesRepository categoriesLocalRepository, 
-            CategoriesVtexRepository categoriesVtexRepository, 
-            CategoriesSiesaRepository categoriesSiesaRepository,
-            IProcess logs,
-            ILogger logger,
+            ICategoriesRepository categoriesLocalRepository, 
+            ICategoriesVtexRepository categoriesVtexRepository, 
+            ICategoriesSiesaRepository categoriesSiesaRepository,
+            ILogger<RenderCategories> logger,
             IRenderCategoriesMail mail
         )
         {
-            this.localRepository = categoriesLocalRepository;
-            this.vtexRepository = categoriesVtexRepository;
-            this.siesaRepository = categoriesSiesaRepository;
-            this.processLogger = logs;
-            this.mail = mail;
-            this.logger = logger;
-            this.console = new CustomConsole();
-
-            this.jsonOptions = new JsonSerializerOptions();
-            this.jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-            this.jsonOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            _localRepository = categoriesLocalRepository;
+            _vtexRepository = categoriesVtexRepository;
+            _siesaRepository = categoriesSiesaRepository;
+            this._mail = mail;
+            _logger = logger;
         }
 
+        /// <summary>
+        /// Renderiza las categorías de SIESA en VTEX, desactivando las que ya no vienen en el JSON proporcionado por SIESA y creando las nuevas
+        /// </summary>
         public async Task Invoke()
         {
             try
             {
-                this.console.processStartsAt(processName, DateTime.Now);
-
-                Category[] siesaCategories = await this.siesaRepository.getAllCategories();
-                obtainedCategories = siesaCategories.Length;
-                this.details.Add(new Detail("siesa", "traer todas las categorías", JsonSerializer.Serialize(siesaCategories, jsonOptions), null, true));
-
-                Category[] deltaCategories = await this.localRepository.getDeltaCategories(siesaCategories);
-                foreach (Category deltaCategory in deltaCategories)
-                {
-                    try
-                    {
-                        deltaCategory.isActive = false;
-                        vtexRepository.updateCategoryState((int)deltaCategory.vtex_id, false).Wait();
-                        await localRepository.updateCategory(deltaCategory);
-
-                        //metrics
-                        this.inactivatedCategories.Add(deltaCategory);
-                        this.details.Add(new Detail(origin: "vtex", "Desactivar categoría", null, null, true));
-                    }
-                    catch (VtexException exception)
-                    {
-                        this.console.throwException(exception.Message);
-                        this.details.Add(new Detail("vtex", exception.requestUrl, exception.responseBody, exception.Message, false));
-                        await this.logger.writelog(exception);
-                    }
-                }
+                _logger.LogTrace("Iniciando renderizado de categorías, fecha: {Date}", DateTime.Now);
+                Category[] siesaCategories = await _siesaRepository.GetAllCategories();
+                _ = InactiveAbsentCategories(siesaCategories);
 
                 foreach(Category siesaCategory in siesaCategories)
                 {
-                    Category localCategory = await this.localRepository.getCategoryBySiesaId(siesaCategory.siesa_id);
+                    Category? localCategory = await _localRepository.GetCategoryBySiesaId(siesaCategory.SiesaId);
 
-                    if(localCategory != null)
+                    if(localCategory is not null)
                     {
-                        if (localCategory.isActive)
+                        //Recorre las categorias hijas provinientes del JSON en busca de nuevas subcategorias (líneas)
+                        foreach(Category childSiesaCategory in siesaCategory.Childs)
                         {
-                            this.notProccecedCategories.Add(localCategory);
-                        }
-                        else
-                        {
-                            this.inactiveCategories.Add(localCategory);
-                        }
-                        foreach(Category childLocalCategory in localCategory.childs)
-                        {
-                            if (childLocalCategory.isActive)
+                            Category childLocalCategory = await _localRepository.GetCategoryBySiesaId(childSiesaCategory.SiesaId);
+                            if(childLocalCategory is null)
                             {
-                                this.notProccecedCategories.Add(childLocalCategory);
-                            }
-                            else
-                            {
-                                this.inactiveCategories.Add(childLocalCategory);
+                                childSiesaCategory.SetFather(localCategory); //Setea la categoria padre, ya que la proviniente SIESA tiene padre con Id nulo
+                                await SaveCategory(childSiesaCategory);
                             }
                         }
-                        foreach(Category childSiesaCategory in siesaCategory.childs)
+                    }else{
+                        await SaveCategory(localCategory);
+                        foreach (Category localChildCategory in localCategory.Childs)
                         {
-                            Category childLocalCategory = await this.localRepository.getCategoryBySiesaId(childSiesaCategory.siesa_id);
-                            if(childLocalCategory != null)
-                            {
-                                if (childLocalCategory.isActive)
-                                {
-                                    this.notProccecedCategories.Add(childSiesaCategory);
-                                }
-                                else
-                                {
-                                    this.inactiveCategories.Add(childSiesaCategory);
-                                }
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    childLocalCategory = await this.localRepository.saveCategory(childSiesaCategory);
-                                    Category vtexChildCategory = await this.vtexRepository.saveCategory(childLocalCategory);
-                                    childLocalCategory.vtex_id = vtexChildCategory.vtex_id;
-                                    childLocalCategory = await this.localRepository.updateCategory(childLocalCategory);
-                                    this.loadCategories.Add(childLocalCategory);
-                                    this.details.Add(new Detail("vtex", "Guardar categoría", null, null, true));
-                                }
-                                catch(VtexException exception)
-                                {
-                                    this.console.throwException(exception.Message);
-                                    this.failedLoadCategories.Add(childSiesaCategory);
-                                    this.details.Add(new Detail("vtex", exception.requestUrl, exception.responseBody, exception.Message, false));
-                                    this.logger.writelog(exception);
-                                }
-                            }
-                        }
-                    }
-                    if(localCategory == null)
-                    {
-                        try
-                        {
-                            localCategory = await this.localRepository.saveCategory(siesaCategory); //save familys and lines
-                            Category vtexCategory = await this.vtexRepository.saveCategory(localCategory);
-                            localCategory.vtex_id = vtexCategory.vtex_id;
-                            localCategory = await this.localRepository.updateCategory(localCategory);
-                            this.loadCategories.Add(localCategory);
-                            this.details.Add(new Detail("vtex", "Guardar categoría", null, null, true));
-                            foreach (Category localChildCategory in localCategory.childs)
-                            {
-                                try
-                                {
-                                    Category vtexChildCategory = await this.vtexRepository.saveCategory(localChildCategory);
-                                    localChildCategory.vtex_id = vtexChildCategory.vtex_id;
-                                    await this.localRepository.updateCategory(localChildCategory);
-                                    this.loadCategories.Add(localChildCategory);
-                                    this.details.Add(new Detail("vtex", "Guardar categoría", null, null, true));
-                                }
-                                catch(VtexException exception)
-                                {
-                                    this.console.throwException(exception.Message);
-                                    this.failedLoadCategories.Add(localChildCategory);
-                                    this.details.Add(new Detail("vtex", exception.requestUrl, exception.responseBody, exception.Message, false));
-                                    this.logger.writelog(exception);
-                                }
-                            }
-                        }
-                        catch(VtexException exception)
-                        {
-                            this.console.throwException(exception.Message);
-                            this.failedLoadCategories.Add(localCategory);
-                            foreach (Category child in localCategory.childs)
-                            {
-                                this.failedLoadCategories.Add(child);
-                            }
-                            this.details.Add(new Detail("vtex", exception.requestUrl, exception.responseBody, exception.Message, false));
-                            this.logger.writelog(exception);
+                            await SaveCategory(localChildCategory, true);
                         }
                     }
                 }
-                this.processLogger.Log(
-                   processName,
-                   loadCategories.Count,
-                   failedLoadCategories.Count,
-                   notProccecedCategories.Count + inactiveCategories.Count,
-                   obtainedCategories,
-                   JsonSerializer.Serialize(details, jsonOptions));
-                this.console.processEndstAt(processName, DateTime.Now);
-            }
-            catch (SiesaException exception)
-            {
-                this.console.throwException(exception.Message);
-                this.console.processEndstAt(processName, DateTime.Now);
-                this.logger.writelog(exception);
-                this.processLogger.Log(
-                    processName, 
-                    loadCategories.Count, 
-                    failedLoadCategories.Count,
-                    notProccecedCategories.Count + inactiveCategories.Count,
-                    obtainedCategories, 
-                    JsonSerializer.Serialize(details, jsonOptions));
-                this.console.processEndstAt(processName, DateTime.Now);
+                _logger.LogTrace("Finalizando renderizado de categorías, fecha: {Date}", DateTime.Now);
             }
             catch(Exception exception)
             {
-                this.console.throwException(exception.Message);
-                this.console.processEndstAt(processName, DateTime.Now);
-                this.logger.writelog(exception);
-                this.processLogger.Log(
-                    processName,
-                    loadCategories.Count,
-                    failedLoadCategories.Count,
-                    notProccecedCategories.Count + inactiveCategories.Count,
-                    obtainedCategories,
-                    JsonSerializer.Serialize(details, jsonOptions));
-                this.console.processEndstAt(processName, DateTime.Now);
+                _logger.LogError(exception, "Error renderizando categorías: {Message}, stack: {Stack}", exception.Message, exception.StackTrace);
+            }finally{
+                _mail.sendMail(this._loadCategories, this._inactivatedCategories, this._failedLoadCategories);
             }
-            this.mail.sendMail(this.loadCategories, this.inactivatedCategories, this.failedLoadCategories);
+        }
+
+        /// <summary>
+        /// Desactiva las lineas y/o familias (categorias) que ya no esten en el JSON
+        /// Proviniente de SIESA
+        /// </summary>
+        /// <param name="currentSiesaCategories">Lista de categorias actuales del JSON de SIESA</param>
+        /// <returns>Retorna las categorias desactivadas</returns>
+        public async Task InactiveAbsentCategories(Category[] currentSiesaCategories)
+        {
+            try
+            {
+                Category[] deltaCategories = await this._localRepository.GetDeltaCategories(currentSiesaCategories);
+                foreach (Category deltaCategory in deltaCategories)
+                {
+                    deltaCategory.IsActive = false;
+                    int vtexId = deltaCategory.VtexId ?? throw new InvalidOperationException("VtexId nulo");
+                    bool updated = await _vtexRepository.UpdateCategoryState(vtexId, false);
+                    if(updated){
+                        await _localRepository.UpdateCategory(deltaCategory);
+                        _inactivatedCategories.Add(deltaCategory);
+                    }
+                }
+            }
+            catch(Exception exception)
+            {
+                _logger.LogError(exception, "Error obteniendo las categorías ausentes: {Message}, stack: {Stack}", exception.Message, exception.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// Guarda la categoría en VTEX y en base de datos
+        /// Si no existe el padre o su Id es nulo, se crea un nuevo registro en la base de datos
+        /// </summary>
+        /// <param name="category">Nueva categoría a crear</param>
+        /// <param name="alreadyExistsInBd">Indica si la categoría ya existe en la base de datos, en caso de que si, solo actualiza</param>
+        /// <returns></returns>
+        public async Task SaveCategory(Category category, bool alreadyExistsInBd = false){
+            try{
+                if(alreadyExistsInBd){
+                    Category vtexCategory = await this._vtexRepository.SaveCategory(category);
+                    category.VtexId = vtexCategory.VtexId;
+                    await this._localRepository.UpdateCategory(category);
+                    this._loadCategories.Add(category);
+                }else{
+                    category = await _localRepository.SaveCategory(category);
+                    Category vtexCategory = await _vtexRepository.SaveCategory(category);
+                    category.VtexId = vtexCategory.VtexId;
+                    category = await _localRepository.UpdateCategory(category);
+                    _loadCategories.Add(category);
+                }
+            }
+            catch(Exception exception){
+                _failedLoadCategories.Add(category);
+                _logger.LogError(exception, "Error guardando la categoría en vtex: {Message}, stack: {Stack}", exception.Message, exception.StackTrace);
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Dispose managed resources.
+                    _loadCategories.Clear();
+                    _inactivatedCategories.Clear();
+                    _inactiveCategories.Clear();
+                    _failedLoadCategories.Clear();
+                    _notProccecedCategories.Clear();
+                }
+                // Dispose unmanaged resources here if any.
+                _disposed = true;
+            }
         }
 
         public void Dispose()
         {
-            this.loadCategories.Clear();
-            this.inactivatedCategories.Clear();
-            this.inactiveCategories.Clear();
-            this.failedLoadCategories.Clear();
-            this.notProccecedCategories.Clear();
-            this.details.Clear();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~RenderCategories()
+        {
+            Dispose(false);
         }
     }
 }
