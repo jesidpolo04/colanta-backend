@@ -2,6 +2,7 @@ using colanta_backend.App.PriceTables;
 using colanta_backend.App.Promotions.Domain;
 using colanta_backend.App.Promotions.Jobs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -12,9 +13,12 @@ namespace colanta_backend.App.Promotions.Presentation
     public class PromotionsController : ControllerBase
     {
         PromotionsRepository _Repository;
-        public PromotionsController(PromotionsRepository repository)
+        private readonly ILogger<PromotionsController> _logger;
+
+        public PromotionsController(PromotionsRepository repository, ILogger<PromotionsController> logger)
         {
             _Repository = repository;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -63,11 +67,13 @@ namespace colanta_backend.App.Promotions.Presentation
         {
             try
             {
+                _logger.LogInformation("Limpiando precios fijos de promociones expiradas");
                 _ = job.Execute();
                 return Ok("Limpiando precios fijos de promociones expiradas");
             }
             catch (Exception exception)
             {
+                _logger.LogError(exception, "Error al limpiar precios fijos de promociones expiradas");
                 return StatusCode(500, exception.Message);
             }
         }
