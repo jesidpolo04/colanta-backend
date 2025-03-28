@@ -67,6 +67,38 @@ namespace colanta_backend.App.PriceTables
             .Where( fixedPrice => fixedPrice.VtexSkuId == vtexSkuId ).ToArray();
         }
 
+        public FixedPrice[] GetFixedPricesByPriceTableName(string priceTableName){
+            return _Context.FixedPrices
+            .Include( fixedPrice => fixedPrice.PriceTable )
+            .Where( fixedPrice => fixedPrice.PriceTable.Name == priceTableName ).ToArray();
+        }
+
+        public void DeleteFixedPrices(FixedPrice[] fixedPrices)
+        {
+            try
+            {
+                _Context.FixedPrices.RemoveRange(fixedPrices);
+                _Context.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                _Logger.LogError($"Error al eliminar los precios fijos \nError: {exception.Message} \nStack: {exception.StackTrace}");
+            }
+        }
+
+        public void DeleteFixedPrice(FixedPrice fixedPrice)
+        {
+            try
+            {
+                _Context.FixedPrices.Remove(fixedPrice);
+                _Context.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                _Logger.LogError($"Error al eliminar el precio fijo \nError: {exception.Message} \nStack: {exception.StackTrace}");
+            }
+        }
+
         public void SaveFixedPrices(FixedPrice[] fixedPrices)
         {
             try

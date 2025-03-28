@@ -14,5 +14,6 @@
         public Promotion[] getActivePromotions();
         public Promotion[] getClusterActivePromotions();
         public Promotion[] getPromotionsForASku(Sku sku);
+        public Task<Promotion[]> GetExpiredPromotions();
     }
 }

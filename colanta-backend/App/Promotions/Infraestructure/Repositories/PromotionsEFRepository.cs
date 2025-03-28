@@ -15,7 +15,9 @@ namespace colanta_backend.App.Promotions.Infraestructure
     using App.Categories.Infraestructure;
     using App.Products.Domain;
     using App.Products.Infraestructure;
-    public class PromotionsEFRepository : Domain.PromotionsRepository
+    using System;
+
+    public class PromotionsEFRepository : PromotionsRepository
     {
         private ColantaContext dbContext;
 
@@ -130,6 +132,16 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 deltaPromotions.Add(await this.addRelationsToPromotion(efDeltaPromotion));
             }
             return deltaPromotions.ToArray();
+        }
+
+        public async Task<Promotion[]> GetExpiredPromotions()
+        {
+            List<EFPromotion> efPromotions = dbContext.Promotions
+                .Where(promotion => !promotion.is_active && promotion.cluster_expressions == "[]")
+                .ToList();
+            return (await Task.WhenAll(
+                efPromotions.Select(async efPromotion => await addRelationsToPromotion(efPromotion))
+            )).ToArray();
         }
 
         public async Task<Promotion> getPromotionBySiesaId(string siesaId)
