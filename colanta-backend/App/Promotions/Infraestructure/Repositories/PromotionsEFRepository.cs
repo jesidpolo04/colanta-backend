@@ -137,7 +137,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
         public async Task<Promotion[]> GetExpiredPromotions()
         {
             List<EFPromotion> efPromotions = dbContext.Promotions
-                .Where(promotion => !promotion.is_active && promotion.cluster_expressions == "[]")
+                .Where(promotion => !promotion.is_active && promotion.cluster_expressions == "[]" && !string.IsNullOrEmpty(promotion.price_table_name))
                 .ToList();
             return (await Task.WhenAll(
                 efPromotions.Select(async efPromotion => await addRelationsToPromotion(efPromotion))
