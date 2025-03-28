@@ -117,6 +117,7 @@ namespace colanta_backend
             services.AddTransient<App.Promotions.Domain.PromotionsSiesaRepository, App.Promotions.Infraestructure.PromotionsSiesaRepository>();
             services.AddTransient<App.Promotions.Jobs.RenderPromotions>();
             services.AddTransient<App.Promotions.Jobs.UpdatePromotionsState>();
+            services.AddTransient<App.Promotions.Jobs.CleanFixedPricesFromExpiredPromotion>();
             services.AddTransient<App.Promotions.Domain.IInvalidPromotionMail, App.Promotions.Infraestructure.InvalidPromotionMail>();
             services.AddTransient<App.Promotions.Domain.IRenderPromotionsMail, App.Promotions.Infraestructure.RenderPromotionsMail>();
             services.AddTransient<App.Promotions.PromotionPriceCalculator>();
@@ -198,6 +199,7 @@ namespace colanta_backend
             services.AddHostedService<ScheduledRenderPromotions>();
             services.AddHostedService<ScheduledUpdatePromotionsState>();
             services.AddHostedService<ScheduledUpToVtexNullPromotions>();
+            //services.AddHostedService<ScheduledCleanFixedPrices>();
 
             services.AddHostedService<ScheduledUpdateSiesaOrders>();
 

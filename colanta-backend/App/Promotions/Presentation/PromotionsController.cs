@@ -56,5 +56,20 @@ namespace colanta_backend.App.Promotions.Presentation
                 return StatusCode(500, exception.Message);
             }
         }
+
+        [HttpPost]
+        [Route("clean-fixed-prices")]
+        public ActionResult CleanFixedPrices([FromServices] CleanFixedPricesFromExpiredPromotion job)
+        {
+            try
+            {
+                _ = job.Execute();
+                return Ok("Limpiando precios fijos de promociones expiradas");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
+            }
+        }
     }
 }
