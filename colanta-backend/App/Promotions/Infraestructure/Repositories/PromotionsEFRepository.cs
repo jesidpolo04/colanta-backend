@@ -144,6 +144,14 @@ namespace colanta_backend.App.Promotions.Infraestructure
             )).ToArray();
         }
 
+        public Promotion[] getNonClusterActivePromotions()
+        {
+            return dbContext.Promotions.Where( promotion => promotion.is_active == true && promotion.cluster_expressions == "[]" )
+                .ToList()
+                .Select( promotion => addRelationsToPromotion(promotion).Result )
+                .ToArray();
+        }
+
         public async Task<Promotion> getPromotionBySiesaId(string siesaId)
         {
             var efPromotions = this.dbContext.Promotions.Where(promotion => promotion.siesa_id == siesaId);

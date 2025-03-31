@@ -156,6 +156,7 @@ namespace colanta_backend
             services.AddTransient<App.PriceTables.PriceTableRenderer>();
             services.AddTransient<App.PriceTables.Scripts.RenderFixedPricesInBd>();
             services.AddTransient<App.PriceTables.Scripts.RecalculateFixedPrices>();
+            services.AddTransient<App.PriceTables.Scripts.RecalculateNonClusterFixedPrices>();
 
             //Dependencies Injections OrderObservations
             services.AddTransient<App.OrderObservations.Domain.OrderObservationsRepository, App.OrderObservations.Infrastructure.OrderObservationsEFRepository>();

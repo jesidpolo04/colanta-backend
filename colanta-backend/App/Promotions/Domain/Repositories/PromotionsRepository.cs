@@ -13,6 +13,7 @@
         public Task<Promotion> updatePromotion(Promotion promotion);
         public Promotion[] getActivePromotions();
         public Promotion[] getClusterActivePromotions();
+        public Promotion[] getNonClusterActivePromotions();
         public Promotion[] getPromotionsForASku(Sku sku);
         public Task<Promotion[]> GetExpiredPromotions();
     }
