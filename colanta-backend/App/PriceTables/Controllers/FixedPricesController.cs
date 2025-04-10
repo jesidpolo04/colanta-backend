@@ -20,6 +20,17 @@ namespace colanta_backend.App.PriceTables
         }
 
         [HttpPost]
+        [Route("render-price-table/{promotionSiesaId}")]
+        public ActionResult RenderPriceTable([FromServices] RenderPriceTable script, string promotionSiesaId)
+        {
+            Task.Run(() =>
+            {
+                script.Execute(promotionSiesaId).Wait();
+            });
+            return Ok("Renderizando precios fijos en VTEX.");
+        }
+
+        [HttpPost]
         [Route("recalculate-cluster-fixed-prices")]
         public ActionResult RenderClusterFixedPrices([FromServices] RecalculateFixedPrices script){
             Task.Run(()=>{
