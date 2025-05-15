@@ -100,7 +100,10 @@
                 EFCategory efCategory = new EFCategory();
                 efCategory.SetFromCategory(category);
                 //Attach the father category if it exists
-                dbContext.Attach(efCategory.Father);
+                if (efCategory.Father is not null)
+                {
+                    dbContext.Attach(efCategory.Father);
+                }
                 dbContext.Add(efCategory);
                 await dbContext.SaveChangesAsync();
                 return await GetCategoryBySiesaId(category.SiesaId);

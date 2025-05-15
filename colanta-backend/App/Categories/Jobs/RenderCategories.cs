@@ -3,9 +3,7 @@
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
-    using System.Text.Json;
     using Categories.Domain;
-    using System.Text.Json.Serialization;
     using Microsoft.Extensions.Logging;
 
     public class RenderCategories : IDisposable
@@ -61,18 +59,18 @@
                             Category childLocalCategory = await _localRepository.GetCategoryBySiesaId(childSiesaCategory.SiesaId);
                             if(childLocalCategory is null)
                             {
-                                _logger.LogInformation("Creando linea con siesa id: {SiesaId}:{Nombre}", childSiesaCategory.SiesaId, childLocalCategory.Name);
+                                _logger.LogInformation("Creando linea con siesa id: {SiesaId}:{Nombre}", childSiesaCategory.SiesaId, childSiesaCategory.Name);
                                 childSiesaCategory.SetFather(localCategory); //Setea la categoria padre, ya que la proviniente SIESA tiene padre con Id nulo
                                 await SaveCategory(childSiesaCategory);
                             }
                         }
                     }else{
                         _logger.LogInformation("Creando familia con siesa id: {SiesaId}:{Nombre}", siesaCategory.SiesaId, siesaCategory.Name);
-                        await SaveCategory(localCategory);
+                        await SaveCategory(siesaCategory);
                         foreach (Category localChildCategory in localCategory.Childs)
                         {
                             _logger.LogInformation("Creando linea con siesa id: {SiesaId}:{Nombre}", localChildCategory.SiesaId, localChildCategory.Name);
-                            await SaveCategory(localChildCategory, true);
+                            await SaveCategory(localChildCategory, true); //Se le pasa el true ya que la categoria ya existe en la base de datos
                         }
                     }
                 }
