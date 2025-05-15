@@ -32,15 +32,15 @@
             
             if(category.Father != null)
             {
-                EFCategory efFather = new EFCategory();
-                efFather.Id = category.Father.Id;
-                efFather.Name = category.Father.Name;
-                efFather.Business = category.Father.Business;
-                efFather.IsActive = category.Father.IsActive;
-                efFather.SiesaId = category.Father.SiesaId;
-                efFather.VtexId = category.Father.VtexId;
-
-                this.Father = efFather;
+                Father = new()
+                {
+                    Id = category.Father.Id,
+                    Name = category.Father.Name,
+                    Business = category.Father.Business,
+                    IsActive = category.Father.IsActive,
+                    SiesaId = category.Father.SiesaId,
+                    VtexId = category.Father.VtexId
+                };
             }
 
             if(category.Childs.Count > 0)

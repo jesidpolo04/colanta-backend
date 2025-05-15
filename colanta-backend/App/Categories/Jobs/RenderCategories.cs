@@ -47,7 +47,7 @@
             {
                 _logger.LogTrace("Iniciando renderizado de categorías, fecha: {Date}", DateTime.Now);
                 Category[] siesaCategories = await _siesaRepository.GetAllCategories();
-                _ = InactiveAbsentCategories(siesaCategories);
+                _ = InactiveAbsentCategories(siesaCategories); //TODO: Genera solapamiento del llamado a dbcontext si no se coloca el await 
 
                 foreach(Category siesaCategory in siesaCategories)
                 {
@@ -61,24 +61,27 @@
                             Category childLocalCategory = await _localRepository.GetCategoryBySiesaId(childSiesaCategory.SiesaId);
                             if(childLocalCategory is null)
                             {
+                                _logger.LogInformation("Creando linea con siesa id: {SiesaId}:{Nombre}", childSiesaCategory.SiesaId, childLocalCategory.Name);
                                 childSiesaCategory.SetFather(localCategory); //Setea la categoria padre, ya que la proviniente SIESA tiene padre con Id nulo
                                 await SaveCategory(childSiesaCategory);
                             }
                         }
                     }else{
+                        _logger.LogInformation("Creando familia con siesa id: {SiesaId}:{Nombre}", siesaCategory.SiesaId, siesaCategory.Name);
                         await SaveCategory(localCategory);
                         foreach (Category localChildCategory in localCategory.Childs)
                         {
+                            _logger.LogInformation("Creando linea con siesa id: {SiesaId}:{Nombre}", localChildCategory.SiesaId, localChildCategory.Name);
                             await SaveCategory(localChildCategory, true);
                         }
                     }
                 }
-                _logger.LogTrace("Finalizando renderizado de categorías, fecha: {Date}", DateTime.Now);
             }
             catch(Exception exception)
             {
                 _logger.LogError(exception, "Error renderizando categorías: {Message}, stack: {Stack}", exception.Message, exception.StackTrace);
             }finally{
+                _logger.LogTrace("Finalizando renderizado de categorías, fecha: {Date}", DateTime.Now);
                 _mail.sendMail(this._loadCategories, this._inactivatedCategories, this._failedLoadCategories);
             }
         }
@@ -135,7 +138,7 @@
             }
             catch(Exception exception){
                 _failedLoadCategories.Add(category);
-                _logger.LogError(exception, "Error guardando la categoría en vtex: {Message}, stack: {Stack}", exception.Message, exception.StackTrace);
+                _logger.LogError(exception, "Error guardando la categoría con id siesa: {SiesaId}: {Message}, stack: {Stack}", category.SiesaId, exception.Message, exception.StackTrace);
             }
         }
 

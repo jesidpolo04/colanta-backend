@@ -70,7 +70,6 @@
 
         public async Task<Category?> GetCategoryById(int vtexId)
         {
-            _logger.LogInformation("Buscando en vtex la categoría con vtex id: {VtexId}", vtexId);
             string endpoint = $"/api/catalog/pvt/category/{vtexId}";
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, endpoint);
             SetCredentialHeaders(request);
@@ -88,7 +87,6 @@
 
         public async Task<Category?> GetCategoryByName(string name)
         {
-            _logger.LogInformation("Buscando en vtex la categoría con nombre: {Name}", name);
             int treeLevel = 3;
             string endpoint = $"/api/catalog_system/pub/category/tree/{treeLevel}";
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, endpoint);
@@ -122,7 +120,6 @@
 
         public async Task<Category> GetCategoryByVtexId(int vtexId)
         {
-            _logger.LogInformation("Buscando en vtex la categoría con vtex id: {VtexId}", vtexId);
             string endpoint = $"/api/catalog/pvt/category/{vtexId}";
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, endpoint);
             SetCredentialHeaders(request);
