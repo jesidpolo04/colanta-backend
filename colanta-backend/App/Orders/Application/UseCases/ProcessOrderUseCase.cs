@@ -9,7 +9,6 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Text.Json;
-    using colanta_backend.App.Taxes.Services;
 
     public class ProcessOrderUseCase
     {
@@ -49,6 +48,12 @@
             Order localOrder = await this.localRepository.getOrderByVtexId(vtexOrderId);
             VtexOrder vtexOrder = await this.vtexRepository.getOrderByVtexId(vtexOrderId);
             List<PaymentMethod> payments = vtexOrder.getPaymentMethods();
+
+            //TODO: move to a bd table
+            if (vtexOrderId == "1533080589617-01")
+            {
+                return;
+            }
 
             if (localOrder != null && this.orderStatusHasBeenChanged(localOrder.status, status))
             {

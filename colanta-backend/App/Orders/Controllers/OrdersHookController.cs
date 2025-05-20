@@ -68,7 +68,7 @@ namespace colanta_backend.App.Orders.Controllers
             {
                 return new { hookConfig = "alive!" };
             }
-            //OrderHookDto orderSummary = JsonSerializer.Deserialize<OrderHookDto>(JsonSerializer.Serialize(request));
+
             OrderHookDto orderSummary = request;
             List<CanceledOrder> canceledOrders = await canceledOrdersRepository.GetAll();
             if(canceledOrders.Exists( canceledOrder => canceledOrder.VtexOrderId == request.OrderId )){
