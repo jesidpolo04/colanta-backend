@@ -55,6 +55,11 @@
                 return;
             }
 
+            if (vtexOrderId == "1533330589765-01")
+            {
+                return;
+            }
+
             if (localOrder != null && this.orderStatusHasBeenChanged(localOrder.status, status))
             {
                 await this.localRepository.SaveOrderHistory(localOrder);
