@@ -24,13 +24,13 @@ namespace colanta_backend.App.Credits.Controllers
     public class GiftCardsProviderController : ControllerBase
     {
         private GiftCardsRepository giftcardLocalRepository;
-        private SkusRepository skusRepository;
+        private ISkusRepository skusRepository;
         private MicrosoftLogging.ILogger fileLogger;
         private readonly IConfiguration configuration;
 
         public GiftCardsProviderController(
             GiftCardsRepository giftcardsLocalRepository,
-            SkusRepository skusRepository,
+            ISkusRepository skusRepository,
             MicrosoftLogging.ILogger<GiftCardsProviderController> fileLogger,
             IConfiguration configuration
         )

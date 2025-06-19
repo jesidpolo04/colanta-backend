@@ -5,10 +5,10 @@
     using System;
     public class FixProductSkus
     {
-        private SkusRepository _skuRepository;
+        private ISkusRepository _skuRepository;
         private SkusVtexRepository _skuVtexRepository;
 
-        public FixProductSkus(SkusRepository skuRepository, SkusVtexRepository skuVtexRepository)
+        public FixProductSkus(ISkusRepository skuRepository, SkusVtexRepository skuVtexRepository)
         {
             _skuRepository = skuRepository;
             _skuVtexRepository = skuVtexRepository;

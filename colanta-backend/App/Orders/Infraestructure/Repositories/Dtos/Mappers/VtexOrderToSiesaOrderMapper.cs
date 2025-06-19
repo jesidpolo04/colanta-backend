@@ -14,14 +14,14 @@
 
     public class VtexOrderToSiesaOrderMapper
     {
-        private SkusRepository skusLocalRepository;
+        private ISkusRepository skusLocalRepository;
         private PromotionsRepository promotionsLocalRepository;
         private WrongAddressesRepository wrongAddressesRepository;
         private ObservationsParser observationsParser;
         private PoundSkusService poundSkusService;
         private TaxService taxService;
         public VtexOrderToSiesaOrderMapper(
-            SkusRepository skusLocalRepository,
+            ISkusRepository skusLocalRepository,
             PromotionsRepository promotionsLocalRepository,
             WrongAddressesRepository wrongAddressesRepository,
             ObservationsParser observationsParser,

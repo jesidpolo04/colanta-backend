@@ -26,7 +26,7 @@ namespace colanta_backend.App.Orders.Controllers
         private CanceledOrdersRepository canceledOrdersRepository;
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
-        private SkusRepository skusRepository;
+        private ISkusRepository skusRepository;
         private Shared.Domain.ILogger logger;
         private MicrosoftLogging.ILogger fileLogger;
         private MailService mailService;
@@ -38,7 +38,7 @@ namespace colanta_backend.App.Orders.Controllers
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
             CanceledOrdersRepository canceledOrdersRepository,
-            SkusRepository skusRepository,
+            ISkusRepository skusRepository,
             Shared.Domain.ILogger logger,
             ILogger<OrdersHookController> fileLogger,
             MailService mailService,

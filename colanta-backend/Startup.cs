@@ -82,7 +82,7 @@ namespace colanta_backend
             //Dependencies Injections Products
             services.AddTransient<App.Products.Domain.ProductsRepository , App.Products.Infraestructure.ProductsEFRepository>();
             services.AddTransient<App.Products.Domain.ProductsVtexRepository, App.Products.Infraestructure.ProductsVtexRepository>();
-            services.AddTransient<App.Products.Domain.SkusRepository, App.Products.Infraestructure.SkusEFRepository>();
+            services.AddTransient<App.Products.Domain.ISkusRepository, App.Products.Infraestructure.SkusEFRepository>();
             services.AddTransient<App.Products.Domain.SkusVtexRepository, App.Products.Infraestructure.SkusVtexRepository>();
             services.AddTransient<App.Products.Domain.ProductsSiesaRepository, App.Products.Infraestructure.ProductsSiesaRepository>();
             services.AddTransient<App.Products.Domain.IRenderProductsMail, App.Products.Infraestructure.RenderProductsMail>();
@@ -104,7 +104,7 @@ namespace colanta_backend
             services.AddTransient<App.Prices.Jobs.RenderPrices>();
             services.AddTransient<App.Prices.Jobs.NotifyMissingPrices>();
             //Depndencies Injectios Inventory
-            services.AddTransient<App.Inventory.Domain.InventoriesRepository, App.Inventory.Infraestructure.InventoriesEFRepository>();
+            services.AddTransient<App.Inventory.Domain.IInventoriesRepository, App.Inventory.Infraestructure.InventoriesEFRepository>();
             services.AddTransient<App.Inventory.Domain.InventoriesVtexRepository, App.Inventory.Infraestructure.InventoriesVtexRepository>();
             services.AddTransient<App.Inventory.Domain.InventoriesSiesaRepository, App.Inventory.Infraestructure.InventoriesSiesaRepository>();
             services.AddTransient<App.Inventory.Domain.WarehousesRepository, App.Inventory.Infraestructure.WarehousesEFRepository>();

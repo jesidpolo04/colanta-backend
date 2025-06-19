@@ -4,9 +4,9 @@
     using System.Threading.Tasks;
     public class SaveSku
     {
-        private SkusRepository localRepository;
+        private ISkusRepository localRepository;
 
-        public SaveSku(SkusRepository localRepository)
+        public SaveSku(ISkusRepository localRepository)
         {
             this.localRepository = localRepository;
         }

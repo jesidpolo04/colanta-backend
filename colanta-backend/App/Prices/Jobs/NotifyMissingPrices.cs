@@ -9,13 +9,13 @@
 
     public class NotifyMissingPrices : IDisposable
     {
-        private SkusRepository skusRepository;
+        private ISkusRepository skusRepository;
         private ProductsSiesaRepository productsSiesaRepository;
         private PricesSiesaRepository priceSiesaRepository;
         private ILogger logger;
         private INotifyMissingPriceMail mail;
 
-        public NotifyMissingPrices(SkusRepository skusRepository, ProductsSiesaRepository productsSiesaRepository, PricesSiesaRepository priceSiesaRepository, ILogger logger, INotifyMissingPriceMail mail)
+        public NotifyMissingPrices(ISkusRepository skusRepository, ProductsSiesaRepository productsSiesaRepository, PricesSiesaRepository priceSiesaRepository, ILogger logger, INotifyMissingPriceMail mail)
         {
             this.skusRepository = skusRepository;
             this.productsSiesaRepository = productsSiesaRepository;

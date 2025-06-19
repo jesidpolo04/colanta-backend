@@ -1,7 +1,7 @@
 ﻿namespace colanta_backend.App.Products.Domain
 {
     using System.Threading.Tasks;
-    public interface SkusRepository
+    public interface ISkusRepository
     {
         Task<Sku> saveSku(Sku sku);
         Task<Sku?> getSkuBySiesaId(string siesaId);
@@ -10,9 +10,10 @@
         Task<Sku[]> getVtexNullSkus();
         Task<Sku[]> getVtexSkus();
         Task<Sku[]> getDeltaSkus(Sku[] currentSkus);
-        Task<Sku> updateSku(Sku sku);
-        Task<Sku[]> updateSkus(Sku[] skus);
         Task<PoundSku[]> getAllPoundSkus();
         Sku[] getByBrand(string brandSiesaId);
+        Task<string[]> getAllSkusConcatSiesaIds();
+        Task<Sku> updateSku(Sku sku);
+        Task<Sku[]> updateSkus(Sku[] skus);
     }
 }

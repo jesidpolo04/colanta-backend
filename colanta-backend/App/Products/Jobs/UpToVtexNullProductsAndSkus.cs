@@ -8,13 +8,13 @@
     public class UpToVtexNullProductsAndSkus
     {
         private ProductsRepository productsLocalRepository;
-        private SkusRepository skusLocalRepository;
+        private ISkusRepository skusLocalRepository;
         private ProductsVtexRepository productsVtexRepository;
         private SkusVtexRepository skusVtexRepository;
         private ILogger logger;
         public UpToVtexNullProductsAndSkus(
             ProductsRepository productsLocalRepository,
-            SkusRepository skusLocalRepository,
+            ISkusRepository skusLocalRepository,
             ProductsVtexRepository productsVtexRepository,
             SkusVtexRepository skusVtexRepository,
             ILogger logger

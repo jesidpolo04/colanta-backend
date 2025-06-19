@@ -18,7 +18,7 @@ namespace colanta_backend.App.Orders.Infraestructure
 
     public class OrdersSiesaRepository : Domain.OrdersSiesaRepository
     {
-        private SkusRepository skusLocalRepository;
+        private ISkusRepository skusLocalRepository;
         private WrongAddressesRepository wrongAddressesRepository;
         private PromotionsRepository promotionLocalRepository;
         private HttpClient httpClient;
@@ -29,7 +29,7 @@ namespace colanta_backend.App.Orders.Infraestructure
         private ObservationsParser observationsParser;
         
         public OrdersSiesaRepository(
-            SkusRepository skusLocalRepository,
+            ISkusRepository skusLocalRepository,
             PromotionsRepository promotionLocalRepository,
             WrongAddressesRepository wrongAddressesRepository,
             TaxService taxService,

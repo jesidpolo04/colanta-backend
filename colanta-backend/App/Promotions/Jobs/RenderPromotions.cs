@@ -29,7 +29,7 @@
         private BrandsRepository brandsRepository;
         private ICategoriesRepository categoriesRepository;
         private ProductsRepository productsRepository;
-        private SkusRepository skuRepository;
+        private ISkusRepository skuRepository;
         private PriceTableRenderer promotionalPriceTableRenderer;
         private IRenderPromotionsMail renderPromotionsMail;
         private IInvalidPromotionMail invalidPromotionMail;
@@ -52,7 +52,7 @@
                 BrandsRepository brandsRepository,
                 ICategoriesRepository categoriesRepository,
                 ProductsRepository productsRepository,
-                SkusRepository skuRepository,
+                ISkusRepository skuRepository,
                 PriceTableRenderer promotionalPricesRenderer,
                 IProcess process,
                 ILogger logger,

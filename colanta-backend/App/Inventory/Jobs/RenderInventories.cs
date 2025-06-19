@@ -8,22 +8,19 @@
     using System.Text.Json;
     using App.Shared.Domain;
     using App.Shared.Application;
+    using System.Linq;
+    
     public class RenderInventories : IDisposable
     {
         private string processName = "Renderizado de inventarios";
         private IServiceProvider serviceProvider;
         private WarehousesRepository warehousesRepository;
         private IProcess process;
-        private ILogger logger;
-        private IRenderInventoriesMail mail;
-        private List<Inventory> loadInventories = new List<Inventory>();
-        private List<Inventory> updatedInventories = new List<Inventory>();
-        private List<Inventory> failedInventories = new List<Inventory>();
-        private List<Inventory> notProccecedInventories = new List<Inventory>();
-        private int obtainedInventories = 0;
-
-
-        private List<Detail> details = new List<Detail>();
+        private readonly ILogger logger;
+        private readonly List<Inventory> loadInventories = new List<Inventory>();
+        private readonly List<Inventory> updatedInventories = new List<Inventory>();
+        private readonly List<Inventory> failedInventories = new List<Inventory>();
+        private readonly List<Inventory> notProccecedInventories = new List<Inventory>();
 
         private JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
         private CustomConsole console = new CustomConsole();
@@ -39,8 +36,6 @@
             this.warehousesRepository = warehousesRepository;
             this.process = process;
             this.logger = logger;
-            this.mail = mail;
-
             this.jsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
         }
 
@@ -49,39 +44,44 @@
             this.console.processStartsAt(processName, DateTime.Now);
 
             Warehouse[] allWarehouses = await this.warehousesRepository.getAllWarehouses();
+            string[] registeredSkus = await this.GetListOfRegisteredSkus((ISkusRepository)this.serviceProvider.GetService(typeof(ISkusRepository)));
 
-            Parallel.ForEach(allWarehouses, warehouse =>
+            ParallelOptions options = new()
             {
-                InventoriesRepository inventoriesLocalRepository = (InventoriesRepository) this.serviceProvider.GetService(typeof(InventoriesRepository));
+                MaxDegreeOfParallelism = 5 // Limita a N tareas concurrentes
+            };
+            Parallel.ForEach(allWarehouses, options, async warehouse =>
+            {
+                IInventoriesRepository inventoriesLocalRepository = (IInventoriesRepository)this.serviceProvider.GetService(typeof(IInventoriesRepository));
                 InventoriesVtexRepository inventoriesVtexRepository = (InventoriesVtexRepository)this.serviceProvider.GetService(typeof(InventoriesVtexRepository));
                 InventoriesSiesaRepository inventoriesSiesaRepository = (InventoriesSiesaRepository)this.serviceProvider.GetService(typeof(InventoriesSiesaRepository));
-                SkusRepository skusLocalRepository = (SkusRepository)this.serviceProvider.GetService(typeof(SkusRepository));
-                ILogger logger = (ILogger) this.serviceProvider.GetService(typeof(ILogger));
+                ILogger logger = (ILogger)this.serviceProvider.GetService(typeof(ILogger));
 
                 try
                 {
-                    Inventory[] siesaInventories = inventoriesSiesaRepository.getAllInventoriesByWarehouse(warehouse.siesa_id).Result;
-                    this.obtainedInventories += siesaInventories.Length;
-                    this.details.Add(new Detail(
-                                    origin: "siesa",
-                                    action: "traer todos los inventarios",
-                                    content: JsonSerializer.Serialize(siesaInventories, this.jsonOptions),
-                                    description: "petición completada con éxito",
-                                    success: true));
+                    var siesaInventoriesTask = inventoriesSiesaRepository.getAllInventoriesByWarehouse(warehouse.siesa_id);
+                    var localInventoriesTask = inventoriesLocalRepository.GetInventoriesByWarehouseSiesaId(warehouse.siesa_id);
+
+
+                    Inventory[] siesaInventories = await siesaInventoriesTask;
+                    Inventory[] localInventories = await localInventoriesTask;
+
                     foreach (Inventory siesaInventory in siesaInventories)
                     {
-                        siesaInventory.quantity = siesaInventory.quantity <= siesaInventory.security_stock ? 0 : siesaInventory.quantity - siesaInventory.security_stock;
-
                         try
                         {
-                            if (!this.skuExists(siesaInventory, skusLocalRepository))
+                            siesaInventory.quantity = siesaInventory.quantity <= siesaInventory.security_stock ? 0 : siesaInventory.quantity - siesaInventory.security_stock;
+                            if (!SkuExists(registeredSkus, siesaInventory.sku_concat_siesa_id))
                             {
-                                this.notProccecedInventories.Add(siesaInventory);
+                                notProccecedInventories.Add(siesaInventory);
                                 continue;
                             }
-                            Inventory localInventory = inventoriesLocalRepository.getInventoryByConcatSiesaIdAndWarehouseSiesaId(siesaInventory.sku_concat_siesa_id, siesaInventory.warehouse_siesa_id).Result;
+                            Inventory? localInventory = localInventories.FirstOrDefault(
+                                    localInventory => localInventory.sku_concat_siesa_id == siesaInventory.sku_concat_siesa_id
+                                        && localInventory.warehouse_siesa_id == siesaInventory.warehouse_siesa_id
+                                );
 
-                            if (localInventory != null)
+                            if (localInventory is not null)
                             {
                                 if (localInventory.quantity != siesaInventory.quantity || localInventory.infinite != siesaInventory.infinite)
                                 {
@@ -90,21 +90,15 @@
                                     localInventory.security_stock = siesaInventory.security_stock;
 
                                     localInventory = inventoriesLocalRepository.updateInventory(localInventory).Result;
-                                    inventoriesVtexRepository.updateInventory(localInventory);
-                                    inventoriesVtexRepository.removeReservedInventory(localInventory);
+                                    _ = inventoriesVtexRepository.updateInventory(localInventory);
+                                    _ = inventoriesVtexRepository.removeReservedInventory(localInventory);
                                     this.updatedInventories.Add(localInventory);
-                                    this.details.Add(new Detail(
-                                    origin: "vtex",
-                                    action: "crear o actualizar inventario",
-                                    content: JsonSerializer.Serialize(localInventory, this.jsonOptions),
-                                    description: "petición completada con éxito",
-                                    success: true));
                                 }
 
                                 if (localInventory.quantity == siesaInventory.quantity)
                                 {
-                                    inventoriesVtexRepository.updateInventory(localInventory);
-                                    inventoriesVtexRepository.removeReservedInventory(localInventory);
+                                    _ = inventoriesVtexRepository.updateInventory(localInventory);
+                                    _ = inventoriesVtexRepository.removeReservedInventory(localInventory);
                                     this.notProccecedInventories.Add(localInventory);
                                 }
                             }
@@ -116,30 +110,17 @@
                                 }
                                 catch (Exception exception)
                                 {
-                                    logger.writelog(new Exception($"No se pudo guardar el inventario {localInventory.ToString()} en la tienda ${localInventory.warehouse_siesa_id}"));
+                                    logger.writelog(new Exception($"No se pudo guardar el inventario {localInventory} en la tienda ${localInventory.warehouse_siesa_id}"));
                                     continue;
                                 }
                                 inventoriesVtexRepository.updateInventory(localInventory);
                                 this.loadInventories.Add(localInventory);
-
-                                this.details.Add(new Detail(
-                                    origin: "vtex",
-                                    action: "crear o actualizar inventario",
-                                    content: JsonSerializer.Serialize(localInventory, this.jsonOptions),
-                                    description: "petición completada con éxito",
-                                    success: true));
                             }
                         }
                         catch (VtexException vtexException)
                         {
                             this.failedInventories.Add(siesaInventory);
                             this.console.throwException(vtexException.Message);
-                            this.details.Add(new Detail(
-                                    origin: "vtex",
-                                    action: vtexException.requestUrl,
-                                    content: vtexException.responseBody,
-                                    description: vtexException.Message,
-                                    success: false));
                             logger.writelog(vtexException);
                         }
                         catch (Exception exception)
@@ -153,12 +134,6 @@
                 catch (SiesaException siesaException)
                 {
                     this.console.throwException(siesaException.Message);
-                    this.details.Add(new Detail(
-                                    origin: "siesa",
-                                    action: siesaException.requestUrl,
-                                    content: siesaException.responseBody,
-                                    description: siesaException.Message,
-                                    success: false));
                     logger.writelog(siesaException);
                 }
                 catch (Exception genericException)
@@ -167,25 +142,20 @@
                     logger.writelog(genericException);
                 }
             });
-            this.process.Log(
-                name: this.processName, 
-                this.loadInventories.Count + this.updatedInventories.Count, 
-                this.failedInventories.Count, 
-                this.notProccecedInventories.Count, 
-                this.obtainedInventories, 
-                JsonSerializer.Serialize(this.details, jsonOptions));
             //this.mail.sendMail(this.loadInventories, this.updatedInventories, this.failedInventories);
             this.console.processEndstAt(processName, DateTime.Now);
         }
 
-        private bool skuExists(Inventory inventory, SkusRepository repository)
+        private static bool SkuExists(string[] existingSkusConcatSiesaIds, string skuConcatSiesaId)
         {
-            Task<Sku> sku = repository.getSkuByConcatSiesaId(inventory.sku_concat_siesa_id);
-            if(sku.Result == null)
-            {
-                return false;
-            }
-            return true;
+            // Se utliza una busqueda sobre el arreglo de skus existentes
+            // Ya que consultarlos uno a uno es muy costoso para la base de datos
+            return existingSkusConcatSiesaIds.Contains(skuConcatSiesaId);
+        }
+
+        private async Task<string[]> GetListOfRegisteredSkus(ISkusRepository repository)
+        {
+            return await repository.getAllSkusConcatSiesaIds();
         }
 
         public void Dispose()
@@ -194,7 +164,6 @@
             this.updatedInventories.Clear();
             this.failedInventories.Clear();
             this.notProccecedInventories.Clear();
-            this.details.Clear();
         }
     }
 }

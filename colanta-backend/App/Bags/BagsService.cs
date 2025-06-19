@@ -8,8 +8,8 @@ namespace colanta_backend.App.Bags
 {
     public class BagsService : ErpService
     {
-        private readonly SkusRepository SkusRepository;
-        public BagsService(IConfiguration configuration, SkusRepository skusRepository) : base(configuration)
+        private readonly ISkusRepository SkusRepository;
+        public BagsService(IConfiguration configuration, ISkusRepository skusRepository) : base(configuration)
         {
             SkusRepository = skusRepository;
         }

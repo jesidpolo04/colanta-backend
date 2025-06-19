@@ -4,8 +4,8 @@
     using System.Threading.Tasks;
     public class GetDeltaSkus
     {
-        private SkusRepository localRepository;
-        public GetDeltaSkus(SkusRepository localRepository)
+        private ISkusRepository localRepository;
+        public GetDeltaSkus(ISkusRepository localRepository)
         {
             this.localRepository = localRepository;
         }

@@ -6,8 +6,8 @@
     using System.Threading.Tasks;
     public class GetOrderDetailsVtexId
     {
-        private SkusRepository skusLocalRepository;
-        public GetOrderDetailsVtexId(SkusRepository skusLocalRepository)
+        private ISkusRepository skusLocalRepository;
+        public GetOrderDetailsVtexId(ISkusRepository skusLocalRepository)
         {
             this.skusLocalRepository = skusLocalRepository;
         }

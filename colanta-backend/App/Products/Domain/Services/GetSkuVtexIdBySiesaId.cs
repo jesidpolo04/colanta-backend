@@ -3,8 +3,8 @@
     using System.Threading.Tasks;
     public class GetSkuVtexIdBySiesaId
     {
-        private SkusRepository skusLocalRepository;
-        public GetSkuVtexIdBySiesaId(SkusRepository skusLocalRepository)
+        private ISkusRepository skusLocalRepository;
+        public GetSkuVtexIdBySiesaId(ISkusRepository skusLocalRepository)
         {
             this.skusLocalRepository = skusLocalRepository;
         }

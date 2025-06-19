@@ -21,7 +21,7 @@
         public PricesSiesaRepository siesaRepository;
         public PromotionsRepository promotionsRepository;
         public SpecificationsVtexRepository specificationsVtexRepository;
-        public SkusRepository skusLocalRepository;
+        public ISkusRepository skusLocalRepository;
         public readonly PriceTableRenderer priceTableRenderer;
         public IProcess processLogger;
         public ILogger logger;
@@ -43,7 +43,7 @@
             PricesVtexRepository vtexRepository,
             PricesSiesaRepository siesaRepository,
             SpecificationsVtexRepository specificationsVtexRepository,
-            SkusRepository skusLocalRepository,
+            ISkusRepository skusLocalRepository,
             PromotionsRepository promotionsRepository,
             PriceTableRenderer priceTableRenderer,
             IProcess processLogger,

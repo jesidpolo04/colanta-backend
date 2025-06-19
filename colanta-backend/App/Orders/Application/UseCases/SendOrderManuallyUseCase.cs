@@ -15,7 +15,7 @@
         private OrdersVtexRepository vtexRepository;
         private OrdersSiesaRepository siesaRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
-        private SkusRepository skusRepository;
+        private ISkusRepository skusRepository;
         private MailService mailService;
         private RegisterUserService registerUserService;
         private EmailSender emailSender;
@@ -25,7 +25,7 @@
             SiesaOrdersRepository siesaOrdersLocalRepository,
             OrdersVtexRepository vtexRepository,
             OrdersSiesaRepository siesaRepository,
-            SkusRepository skusRepostory,
+            ISkusRepository skusRepostory,
             MailService mailService,
             RegisterUserService registerUserService,
             EmailSender emailSender

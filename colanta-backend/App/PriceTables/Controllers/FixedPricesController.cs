@@ -59,7 +59,7 @@ namespace colanta_backend.App.PriceTables
 
         [HttpPost]
         [Route("delete-all-fixed-prices")]
-        public ActionResult DeleteAllFixedPrices([FromServices] SkusRepository skusRepository)
+        public ActionResult DeleteAllFixedPrices([FromServices] ISkusRepository skusRepository)
         {
             try
             {

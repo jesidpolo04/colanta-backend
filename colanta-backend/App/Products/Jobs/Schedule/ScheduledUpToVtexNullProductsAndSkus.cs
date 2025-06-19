@@ -17,13 +17,13 @@ namespace colanta_backend.App.Products.Jobs
         private const string Schedule = "0 10 0/3 * * *";
         private ProductsRepository productsLocalRepository;
         private ProductsVtexRepository productsVtexRepository;
-        private SkusRepository skusLocalRepository;
+        private ISkusRepository skusLocalRepository;
         private SkusVtexRepository skusVtexRepository;
         private ILogger logger;
         public ScheduledUpToVtexNullProductsAndSkus(
             ProductsRepository productsLocalRepository,
             ProductsVtexRepository productsVtexRepository,
-            SkusRepository skusLocalRepository,
+            ISkusRepository skusLocalRepository,
             SkusVtexRepository skusVtexRepository,
             ILogger logger
             )

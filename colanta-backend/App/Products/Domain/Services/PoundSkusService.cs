@@ -2,8 +2,8 @@
 {
     public class PoundSkusService
     {
-        private SkusRepository repository;
-        public PoundSkusService(SkusRepository repository)
+        private ISkusRepository repository;
+        public PoundSkusService(ISkusRepository repository)
         {
             this.repository = repository;
         }

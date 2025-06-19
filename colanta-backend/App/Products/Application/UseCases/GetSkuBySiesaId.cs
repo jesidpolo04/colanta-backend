@@ -4,9 +4,9 @@
     using System.Threading.Tasks;
     public class GetSkuBySiesaId
     {
-        private SkusRepository localRepository;
+        private ISkusRepository localRepository;
 
-        public GetSkuBySiesaId(SkusRepository localRepository)
+        public GetSkuBySiesaId(ISkusRepository localRepository)
         {
             this.localRepository = localRepository;
         }

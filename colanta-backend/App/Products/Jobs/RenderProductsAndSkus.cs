@@ -17,7 +17,7 @@
     {
         private string processName = "Renderizado de productos";
         private ProductsRepository productsLocalRepository;
-        private SkusRepository skusLocalRepository;
+        private ISkusRepository skusLocalRepository;
         private ProductsVtexRepository productsVtexRepository;
         private SkusVtexRepository skusVtexRepository;
         private ProductsSiesaRepository siesaRepository;
@@ -45,7 +45,7 @@
         (
             ProductsRepository productsLocalRepository,
             ProductsVtexRepository productsVtexRepository,
-            SkusRepository skusLocalRepository,
+            ISkusRepository skusLocalRepository,
             SkusVtexRepository skusVtexRepository,
             ProductsSiesaRepository siesaRepository,
             BrandsRepository brandsLocalRepository,

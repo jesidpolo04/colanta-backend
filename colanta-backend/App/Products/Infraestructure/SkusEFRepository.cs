@@ -9,23 +9,34 @@
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
 
-    public class SkusEFRepository : SkusRepository
+    public class SkusEFRepository : ISkusRepository
     {
-        private ColantaContext dbContext;
+        private ColantaContext _dbContext;
+        private readonly IConfiguration _configuration;
         public SkusEFRepository(IConfiguration configuration)
         {
-            this.dbContext = new ColantaContext(configuration);
+            _dbContext = new ColantaContext(configuration);
+            _configuration = configuration;
         }
 
         public Task<PoundSku[]> getAllPoundSkus()
         {
-            var poundSkus = this.dbContext.PoundSkus.ToList();
+            var poundSkus = this._dbContext.PoundSkus.ToList();
             return Task.FromResult(poundSkus.Select(poundSku => poundSku.getPoundSku()).ToArray());
+        }
+
+        public Task<string[]> getAllSkusConcatSiesaIds()
+        {
+            using (var dbContext = new ColantaContext(_configuration))
+            {
+                // Ensure the context is disposed after use
+                return dbContext.Skus.Select(sku => sku.concat_siesa_id).ToArrayAsync();
+            }   
         }
 
         public Sku[] getByBrand(string brandSiesaId)
         {
-            var skusDb = dbContext.Skus.Where( sku => sku.product.brand.id_siesa == brandSiesaId).ToArray();
+            var skusDb = _dbContext.Skus.Where( sku => sku.product.brand.id_siesa == brandSiesaId).ToArray();
             return skusDb.Select( skuDb => skuDb.GetSkuFromEfSku()).ToArray();
         }
 
@@ -36,7 +47,7 @@
             {
                 currentIds.Add(product.siesa_id);
             }
-            EFSku[] efDeltaSkus = this.dbContext.Skus.Where(sku => !currentIds.Contains(sku.siesa_id) && sku.is_active == true).ToArray();
+            EFSku[] efDeltaSkus = this._dbContext.Skus.Where(sku => !currentIds.Contains(sku.siesa_id) && sku.is_active == true).ToArray();
             List<Sku> skus = new List<Sku>();
             foreach (EFSku efDeltaSku in efDeltaSkus)
             {
@@ -47,11 +58,11 @@
 
         public async Task<Sku> getSkuByConcatSiesaId(string concatSiesaId)
         {
-            var efSkus = this.dbContext.Skus.Where(sku => sku.concat_siesa_id == concatSiesaId);
+            var efSkus = this._dbContext.Skus.Where(sku => sku.concat_siesa_id == concatSiesaId);
             if (efSkus.ToArray().Length > 0)
             {
                 EFSku efSku = efSkus.First();
-                EFProduct efProduct = this.dbContext.Products.Find(efSku.product_id);
+                EFProduct efProduct = this._dbContext.Products.Find(efSku.product_id);
                 efSku.product = efProduct;
                 return efSku.GetSkuFromEfSku();
             }
@@ -60,11 +71,11 @@
 
         public async Task<Sku> getSkuBySiesaId(string siesaId)
         {
-            var efSkus = this.dbContext.Skus.Where(sku => sku.siesa_id == siesaId);
+            var efSkus = this._dbContext.Skus.Where(sku => sku.siesa_id == siesaId);
             if (efSkus.ToArray().Length > 0)
             {
                 EFSku efSku = efSkus.First();
-                EFProduct efProduct = this.dbContext.Products.Find(efSku.product_id);
+                EFProduct efProduct = this._dbContext.Products.Find(efSku.product_id);
                 efSku.product = efProduct;
                 return efSku.GetSkuFromEfSku();
             }
@@ -73,11 +84,11 @@
 
         public async Task<Sku> getSkuByVtexId(int vtexId)
         {
-            var efSkus = this.dbContext.Skus.Where(sku => sku.vtex_id == vtexId);
+            var efSkus = this._dbContext.Skus.Where(sku => sku.vtex_id == vtexId);
             if (efSkus.ToArray().Length > 0)
             {
                 EFSku efSku = efSkus.First();
-                EFProduct efProduct = this.dbContext.Products.Find(efSku.product_id);
+                EFProduct efProduct = this._dbContext.Products.Find(efSku.product_id);
                 efSku.product = efProduct;
                 return efSkus.First().GetSkuFromEfSku();
             }
@@ -86,7 +97,7 @@
 
         public async Task<Sku[]> getVtexNullSkus()
         {
-            EFSku[] efSkus = this.dbContext.Skus
+            EFSku[] efSkus = this._dbContext.Skus
                 .Include( sku => sku.product )
                 .Where(sku => sku.vtex_id == null).ToArray();
             List<Sku> skus = new List<Sku>();
@@ -99,7 +110,7 @@
 
         public async Task<Sku[]> getVtexSkus()
         {
-            EFSku[] efSkus = this.dbContext.Skus.Where(sku => sku.vtex_id != null)
+            EFSku[] efSkus = this._dbContext.Skus.Where(sku => sku.vtex_id != null)
                 .Include(s => s.product)
                 .ToArray();
             List<Sku> skus = new List<Sku>();
@@ -113,17 +124,17 @@
         public async Task<Sku> saveSku(Sku sku)
         {
             EFSku efSku = new EFSku();
-            EFProduct efProduct = this.dbContext.Products.Where(e => e.siesa_id == sku.product.siesa_id).First();
+            EFProduct efProduct = this._dbContext.Products.Where(e => e.siesa_id == sku.product.siesa_id).First();
             efSku.setEfSkuFromSku(sku);
             efSku.product = efProduct;
-            this.dbContext.Add(efSku);
-            this.dbContext.SaveChanges();
+            this._dbContext.Add(efSku);
+            this._dbContext.SaveChanges();
             return await this.getSkuBySiesaId(sku.siesa_id);
         }
 
         public async Task<Sku> updateSku(Sku sku)
         {
-            EFSku efSku = this.dbContext.Skus.Find(sku.id);
+            EFSku efSku = this._dbContext.Skus.Find(sku.id);
 
             efSku.siesa_id = sku.siesa_id;
             efSku.concat_siesa_id = sku.concat_siesa_id;
@@ -139,7 +150,7 @@
             efSku.measurement_unit = sku.measurement_unit;
             efSku.unit_multiplier = sku.unit_multiplier;
 
-            this.dbContext.SaveChanges();
+            this._dbContext.SaveChanges();
             return sku;
         }
 
@@ -147,7 +158,7 @@
         {
             foreach (Sku sku in skus)
             {
-                EFSku efSku = this.dbContext.Skus.Find(sku.id);
+                EFSku efSku = this._dbContext.Skus.Find(sku.id);
                 efSku.siesa_id = sku.siesa_id;
                 efSku.concat_siesa_id = sku.concat_siesa_id;
                 efSku.vtex_id = sku.vtex_id;
@@ -162,7 +173,7 @@
                 efSku.measurement_unit = sku.measurement_unit;
                 efSku.unit_multiplier = sku.unit_multiplier;
             }
-            this.dbContext.SaveChanges();
+            this._dbContext.SaveChanges();
             return skus;
         }
     }

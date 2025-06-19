@@ -13,7 +13,7 @@
     {
         private GiftCardsSiesaRepository siesaRepository;
         private GiftCardsRepository localRepository;
-        private SkusRepository skusLocalRepository;
+        private ISkusRepository skusLocalRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
 
         private MicrosoftLogging.ILogger fileLogger;
@@ -21,7 +21,7 @@
         public SearchGiftcards(
             GiftCardsRepository localRepository,
             GiftCardsSiesaRepository siesaRepository,
-            SkusRepository skusLocalRepository,
+            ISkusRepository skusLocalRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
             MicrosoftLogging.ILogger fileLogger
             )

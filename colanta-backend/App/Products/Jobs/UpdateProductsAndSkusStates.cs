@@ -9,13 +9,13 @@
     {
         private ProductsRepository productsLocalRepository;
         private ProductsVtexRepository productsVtexRepository;
-        private SkusRepository skusLocalRepository;
+        private ISkusRepository skusLocalRepository;
         private SkusVtexRepository skusVtexRepository;
         private CustomConsole console = new CustomConsole();
         public UpdateProductsAndSkusStates(
             ProductsRepository productsLocalRepository,
             ProductsVtexRepository productsVtexRepository,
-            SkusRepository skusLocalRepository,
+            ISkusRepository skusLocalRepository,
             SkusVtexRepository skusVtexRepository
 
             )

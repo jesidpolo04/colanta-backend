@@ -24,14 +24,14 @@ namespace colanta_backend.App.GiftCards.Controllers
     {
         private GiftCardsRepository localRepository;
         private GiftCardsSiesaRepository siesaRepository;
-        private SkusRepository skusLocalRepository;
+        private ISkusRepository skusLocalRepository;
         private SiesaOrdersRepository siesaOrdersLocalRepository;
         private SharedDomain.ILogger logger;
         private MicrosoftLogging.ILogger fileLogger;
         public GiftCardsController(
             GiftCardsRepository localRepository, 
             GiftCardsSiesaRepository siesaRepository, 
-            SkusRepository skusLocalRepository,
+            ISkusRepository skusLocalRepository,
             SiesaOrdersRepository siesaOrdersLocalRepository,
             SharedDomain.ILogger logger,
             MicrosoftLogging.ILogger<GiftCardsController> fileLogger)
