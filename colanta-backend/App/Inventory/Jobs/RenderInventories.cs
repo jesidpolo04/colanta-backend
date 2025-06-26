@@ -107,7 +107,7 @@
                                         _logger.LogError(exception, "Error al guardar el inventario {InventoryId} del almacén {WarehouseId}", siesaInventory.id, warehouse.siesa_id);
                                         continue;
                                     }
-                                    inventoriesVtexRepository.updateInventory(localInventory);
+                                    _ = inventoriesVtexRepository.updateInventory(localInventory);
                                     this.loadInventories.Add(localInventory);
                                 }
                             }
