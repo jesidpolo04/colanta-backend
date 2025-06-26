@@ -25,12 +25,12 @@
             return Task.FromResult(poundSkus.Select(poundSku => poundSku.getPoundSku()).ToArray());
         }
 
-        public Task<string[]> getAllSkusConcatSiesaIds()
+        public async Task<string[]> getAllSkusConcatSiesaIds()
         {
             using (var dbContext = new ColantaContext(_configuration))
             {
                 // Ensure the context is disposed after use
-                return dbContext.Skus.Select(sku => sku.concat_siesa_id).ToArrayAsync();
+                return await dbContext.Skus.Select(sku => sku.concat_siesa_id).ToArrayAsync();
             }   
         }
 
