@@ -105,8 +105,8 @@ namespace colanta_backend
             services.AddTransient<App.Prices.Jobs.NotifyMissingPrices>();
             //Depndencies Injectios Inventory
             services.AddTransient<App.Inventory.Domain.IInventoriesRepository, App.Inventory.Infraestructure.InventoriesEFRepository>();
-            services.AddTransient<App.Inventory.Domain.InventoriesVtexRepository, App.Inventory.Infraestructure.InventoriesVtexRepository>();
-            services.AddTransient<App.Inventory.Domain.InventoriesSiesaRepository, App.Inventory.Infraestructure.InventoriesSiesaRepository>();
+            services.AddSingleton<App.Inventory.Domain.InventoriesVtexRepository, App.Inventory.Infraestructure.InventoriesVtexRepository>();
+            services.AddSingleton<App.Inventory.Domain.InventoriesSiesaRepository, App.Inventory.Infraestructure.InventoriesSiesaRepository>();
             services.AddTransient<App.Inventory.Domain.WarehousesRepository, App.Inventory.Infraestructure.WarehousesEFRepository>();
             services.AddTransient<App.Inventory.Domain.WarehousesSiesaVtexRepository, App.Inventory.Infraestructure.WarehousesSiesaVtexRepository>();
             services.AddTransient<App.Inventory.Domain.IRenderInventoriesMail, App.Inventory.Infraestructure.RenderInventoriesMail>();
