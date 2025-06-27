@@ -32,6 +32,7 @@ namespace colanta_backend.App.Promotions.Presentation
             }
             catch (Exception exception)
             {
+                _logger.LogError(exception, "Error al renderizar promociones");
                 StatusCode(500, exception.Message);
             }
         }
