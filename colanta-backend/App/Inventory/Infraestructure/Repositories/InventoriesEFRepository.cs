@@ -24,6 +24,8 @@
             using (var dbContext = new ColantaContext(_configuration))
             {
                 var efInventories = dbContext.Inventories
+                    .Include(inventory => inventory.warehouse)
+                    .Include(inventory => inventory.sku)
                     .Where(inventory => inventory.warehouse_siesa_id == warehouseSiesaId)
                     .ToArray();
                 Inventory[] inventories = efInventories.Select(efInventory => efInventory.getInventoryFromEfInventory()).ToArray();
