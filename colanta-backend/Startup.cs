@@ -97,8 +97,8 @@ namespace colanta_backend
             services.AddTransient<App.Specifications.Domain.SpecificationsVtexRepository, App.Specifications.Infraestructure.SpecificationsVtexRepository>();
             //Dependencies Injections Prices
             services.AddTransient<App.Prices.Domain.PricesRepository , App.Prices.Infraestructure.PricesEFRepository>();
-            services.AddTransient<App.Prices.Domain.PricesVtexRepository, App.Prices.Infraestructure.PricesVtexRepository>();
-            services.AddTransient<App.Prices.Domain.PricesSiesaRepository, App.Prices.Infraestructure.PricesSiesaRepository>();
+            services.AddSingleton<App.Prices.Domain.PricesVtexRepository, App.Prices.Infraestructure.PricesVtexRepository>();
+            services.AddSingleton<App.Prices.Domain.PricesSiesaRepository, App.Prices.Infraestructure.PricesSiesaRepository>();
             services.AddTransient<App.Prices.Domain.IRenderPricesMail, App.Prices.Infraestructure.RenderPricesMail>();
             services.AddTransient<App.Prices.Domain.INotifyMissingPriceMail, App.Prices.Infraestructure.NotifyMissingPricesMail>();
             services.AddTransient<App.Prices.Jobs.RenderPrices>();
@@ -138,8 +138,8 @@ namespace colanta_backend
             services.AddTransient<App.Credits.Domain.CupoLacteoSiesaRepository, App.Credits.Infraestructure.CupoLacteoSiesaRepository>();
             //Dependencies Injections Orders
             services.AddTransient<App.Orders.Domain.OrdersRepository, App.Orders.Infraestructure.OrdersEFRepository>();
-            services.AddTransient<App.Orders.Domain.OrdersVtexRepository, App.Orders.Infraestructure.OrdersVtexRepository>();
-            services.AddTransient<App.Orders.Domain.OrdersSiesaRepository, App.Orders.Infraestructure.OrdersSiesaRepository>();
+            services.AddSingleton<App.Orders.Domain.OrdersVtexRepository, App.Orders.Infraestructure.OrdersVtexRepository>();
+            services.AddSingleton<App.Orders.Domain.OrdersSiesaRepository, App.Orders.Infraestructure.OrdersSiesaRepository>();
             services.AddTransient<App.Orders.Domain.FailOrderMailLogsRepository, App.Orders.Infraestructure.FailOrderMailLogsEFRepository>();
             services.AddTransient<App.Orders.Domain.INewOrderMail, App.Orders.Infraestructure.NewOrderMail>();
             services.AddTransient<App.Orders.Domain.ISiesaErrorAtSendOrderMail, App.Orders.Infraestructure.SiesaErrorAtSendOrderMail>();
@@ -152,7 +152,7 @@ namespace colanta_backend
             services.AddTransient<App.Orders.Domain.GetOrderDetailsVtexId>();
             //Dependencies Injections PriceTables
             services.AddTransient<App.PriceTables.PriceTablesRepository>();
-            services.AddTransient<App.PriceTables.PriceTablesVtexService>();
+            services.AddSingleton<App.PriceTables.PriceTablesVtexService>();
             services.AddTransient<App.PriceTables.PriceTableRenderer>();
             services.AddTransient<App.PriceTables.Scripts.RenderFixedPricesInBd>();
             services.AddTransient<App.PriceTables.Scripts.RecalculateFixedPrices>();
