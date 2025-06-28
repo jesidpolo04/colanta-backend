@@ -73,7 +73,7 @@
 
             if(!this.siesaOrderAlreadyExist(vtexOrderId))
             {
-                this.emailSender.sendEmailWithoutTemplate($"Log orden {vtexOrder.orderId}", "Se debe enviar a SIESA", "jesing482@gmail.com");
+                this.emailSender.SendEmailWithoutTemplate($"Log orden {vtexOrder.orderId}", "Se debe enviar a SIESA", "jesing482@gmail.com");
                 string userVtexId = vtexOrder.clientProfileData.userProfileId;
                 string deliveryCountry = vtexOrder.shippingData.address.country;
                 string deliveryDepartment = vtexOrder.shippingData.address.state;
@@ -83,7 +83,7 @@
                 this.notifyToStore(siesaOrder, vtexOrder.shippingData.logisticsInfo[0].polygonName);
                 return;
             }
-            this.emailSender.sendEmailWithoutTemplate($"Log orden {vtexOrder.orderId}", "No se debe enviar a SIESA", "jesing482@gmail.com");
+            this.emailSender.SendEmailWithoutTemplate($"Log orden {vtexOrder.orderId}", "No se debe enviar a SIESA", "jesing482@gmail.com");
         }
 
         private bool siesaOrderAlreadyExist(string vtexOrderId)

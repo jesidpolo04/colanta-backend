@@ -11,7 +11,6 @@
 
     public class ColantaSender : EmailSender
     {
-        private SmtpClient smtpClient;
         private readonly string from;
         private readonly int port;
         private readonly string host;
@@ -25,22 +24,22 @@
             host = configuration["SmtpServer"];
             user = configuration["SmtpUser"];
             pass = configuration["SmtpPassword"];
-            this.smtpClient = new SmtpClient(this.host);
-            this.smtpClient.Port = this.port;
-            this.smtpClient.Credentials = new NetworkCredential(this.user, this.pass);
-            this.smtpClient.EnableSsl = true;
-            Email.DefaultSender = new SmtpSender(this.smtpClient);
+            Email.DefaultSender = new SmtpSender(() => GetSmtpClient());
             Email.DefaultRenderer = new RazorRenderer();
         }
 
         public void SendEmail(string title, string templatePath, object model, string to)
         {
-            Email
-                .From(this.from, "Middleware Colanta")
-                .To(to)
-                .Subject(title)
-                .UsingTemplateFromFile(templatePath, model, true)
-                .SendAsync().Wait();
+            using (var smtp = GetSmtpClient())
+            {
+                var sender = new SmtpSender(() => smtp);
+                var email = new Email(Email.DefaultRenderer, sender);
+                email.SetFrom(this.from, "Middleware Colanta")
+                     .To(to)
+                     .Subject(title)
+                     .UsingTemplateFromFile(templatePath, model, true);
+                email.Send();
+            }
         }
 
         public void SendEmailMultiple(string title, string templatePath, object model, List<string> to)
@@ -48,14 +47,18 @@
             throw new System.NotImplementedException();
         }
 
-        public void sendEmailWithoutTemplate(string title, string message, string to)
+        public void SendEmailWithoutTemplate(string title, string message, string to)
         {
-            Email
-               .From(this.from, "Middleware Colanta")
-               .To(to)
-               .Subject(title)
-               .Body(message)
-               .Send();
+            using (var smtp = GetSmtpClient())
+            {
+                var sender = new SmtpSender(() => smtp);
+                var email = new Email(Email.DefaultRenderer, sender);
+                email.SetFrom(this.from, "Middleware Colanta")
+                     .To(to)
+                     .Subject(title)
+                     .Body(message, true);
+                email.Send();
+            }
         }
 
         public void SendHelloWorld()
@@ -66,6 +69,15 @@
                .Subject("Hola mundo")
                .Body("Hola mundo desde Colanta SMTP")
                .Send();
+        }
+
+        private SmtpClient GetSmtpClient()
+        {
+            return new SmtpClient(host, port)
+            {
+                Credentials = new NetworkCredential(user, pass),
+                EnableSsl = true
+            };
         }
     }
 }

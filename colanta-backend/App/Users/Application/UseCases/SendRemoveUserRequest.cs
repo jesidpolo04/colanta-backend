@@ -14,7 +14,7 @@
         {
             const string title = "Pidecolanta.com: Solicitud de eliminación de cuenta de usuario";
             string message = $"El usuario {name} {lastName} ha solicitado la eliminación de su cuenta en PideColanta.com.\nDatos del usuario:\n- Email: {email}\n- Cédula: {document}\nAtentamente,\nEquipo Pidecolanta.com";
-            this.emailSender.sendEmailWithoutTemplate(
+            this.emailSender.SendEmailWithoutTemplate(
                 title, 
                 message,
                 "jesdady482@gmail.com;pidecolanta@colanta.com.co;williamre@colanta.com.co;cristianro@colanta.com.co;mauriciosp@colanta.com.co"
