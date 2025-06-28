@@ -25,6 +25,8 @@ namespace colanta_backend
     using App.Prices.Jobs;
     using App.Inventory.Jobs;
     using App.Promotions.Jobs;
+    using App.Promotions.Domain;
+    using App.Promotions.Infraestructure;
     using App.Orders.Jobs;
     using colanta_backend.App.Auth.Middlewares;
 
@@ -64,13 +66,13 @@ namespace colanta_backend
             services.AddTransient<UsersRepository, UsersEFRepository>();
             services.AddTransient<App.Users.Domain.UsersSiesaRepository, App.Users.Infraestructure.UsersSiesaRepository>();
             services.AddTransient<App.Users.Domain.UsersVtexRepository, App.Users.Infraestructure.UsersVtexRepository>();
-            services.AddTransient<App.Users.Domain.RegisterUserService>();
+            services.AddTransient<RegisterUserService>();
             
             //Dependencies Injections Brands
             services.AddTransient<BrandsRepository, EFBrandsRepository>();
             services.AddTransient<BrandsVtexRepository, VtexBrandsRepository>();
             services.AddTransient<IRenderBrandsMail, RenderBrandsMail>();
-            services.AddTransient<App.Brands.Jobs.RenderBrands>();
+            services.AddTransient<RenderBrands>();
             //Dependencies Injections Cattegories
             services.AddTransient<App.Categories.Domain.ICategoriesRepository , App.Categories.Infraestructure.CategoriesEFRepository>(); //s
             services.AddTransient<App.Categories.Domain.ICategoriesVtexRepository, App.Categories.Infraestructure.CategoriesVtexRepository>();
@@ -90,9 +92,9 @@ namespace colanta_backend
             services.AddTransient<App.Products.Domain.IInvalidCategoryMail, App.Products.Infraestructure.InvalidCategoryMail>();
             services.AddTransient<App.Products.Domain.GetSkuVtexIdBySiesaId>();
             
-            services.AddTransient<App.Products.Jobs.RenderProductsAndSkus>();
-            services.AddTransient<App.Products.Jobs.UpToVtexNullProductsAndSkus>();
-            services.AddTransient<App.Products.Jobs.FixProductSkus>();
+            services.AddTransient<RenderProductsAndSkus>();
+            services.AddTransient<UpToVtexNullProductsAndSkus>();
+            services.AddTransient<FixProductSkus>();
             //Dependencies Injections Specifications
             services.AddTransient<App.Specifications.Domain.SpecificationsVtexRepository, App.Specifications.Infraestructure.SpecificationsVtexRepository>();
             //Dependencies Injections Prices
@@ -101,8 +103,8 @@ namespace colanta_backend
             services.AddSingleton<App.Prices.Domain.PricesSiesaRepository, App.Prices.Infraestructure.PricesSiesaRepository>();
             services.AddTransient<App.Prices.Domain.IRenderPricesMail, App.Prices.Infraestructure.RenderPricesMail>();
             services.AddTransient<App.Prices.Domain.INotifyMissingPriceMail, App.Prices.Infraestructure.NotifyMissingPricesMail>();
-            services.AddTransient<App.Prices.Jobs.RenderPrices>();
-            services.AddTransient<App.Prices.Jobs.NotifyMissingPrices>();
+            services.AddTransient<RenderPrices>();
+            services.AddTransient<NotifyMissingPrices>();
             //Depndencies Injectios Inventory
             services.AddTransient<App.Inventory.Domain.IInventoriesRepository, App.Inventory.Infraestructure.InventoriesEFRepository>();
             services.AddSingleton<App.Inventory.Domain.InventoriesVtexRepository, App.Inventory.Infraestructure.InventoriesVtexRepository>();
@@ -110,16 +112,16 @@ namespace colanta_backend
             services.AddTransient<App.Inventory.Domain.WarehousesRepository, App.Inventory.Infraestructure.WarehousesEFRepository>();
             services.AddTransient<App.Inventory.Domain.WarehousesSiesaVtexRepository, App.Inventory.Infraestructure.WarehousesSiesaVtexRepository>();
             services.AddTransient<App.Inventory.Domain.IRenderInventoriesMail, App.Inventory.Infraestructure.RenderInventoriesMail>();
-            services.AddTransient<App.Inventory.Jobs.RenderInventories>();
+            services.AddTransient<RenderInventories>();
             //Dependencies Injections Promotions
-            services.AddTransient<App.Promotions.Domain.PromotionsRepository, App.Promotions.Infraestructure.PromotionsEFRepository>();
-            services.AddTransient<App.Promotions.Domain.PromotionsVtexRepository, App.Promotions.Infraestructure.PromotionsVtexRepository>();
-            services.AddTransient<App.Promotions.Domain.PromotionsSiesaRepository, App.Promotions.Infraestructure.PromotionsSiesaRepository>();
-            services.AddTransient<App.Promotions.Jobs.RenderPromotions>();
-            services.AddTransient<App.Promotions.Jobs.UpdatePromotionsState>();
-            services.AddTransient<App.Promotions.Jobs.CleanFixedPricesFromExpiredPromotion>();
-            services.AddTransient<App.Promotions.Domain.IInvalidPromotionMail, App.Promotions.Infraestructure.InvalidPromotionMail>();
-            services.AddTransient<App.Promotions.Domain.IRenderPromotionsMail, App.Promotions.Infraestructure.RenderPromotionsMail>();
+            services.AddTransient<PromotionsRepository, PromotionsEFRepository>();
+            services.AddSingleton<App.Promotions.Domain.PromotionsVtexRepository, App.Promotions.Infraestructure.PromotionsVtexRepository>();
+            services.AddSingleton<App.Promotions.Domain.PromotionsSiesaRepository, App.Promotions.Infraestructure.PromotionsSiesaRepository>();
+            services.AddTransient<RenderPromotions>();
+            services.AddTransient<UpdatePromotionsState>();
+            services.AddTransient<CleanFixedPricesFromExpiredPromotion>();
+            services.AddTransient<IInvalidPromotionMail, InvalidPromotionMail>();
+            services.AddTransient<IRenderPromotionsMail, App.Promotions.Infraestructure.RenderPromotionsMail>();
             services.AddTransient<App.Promotions.PromotionPriceCalculator>();
             //Dependencies Injections GiftCards
             services.AddTransient<App.GiftCards.Domain.GiftCardsRepository, App.GiftCards.Infraestructure.GiftCardsEFRepository>();
@@ -148,7 +150,7 @@ namespace colanta_backend
             //Dependencies Injections SiesaOrders
             services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersEFRepository>();
             services.AddTransient<App.Orders.SiesaOrders.Domain.SiesaOrdersHistoryRepository, App.Orders.SiesaOrders.Infraestructure.SiesaOrdersHistoryEFRepository>();
-            services.AddTransient<App.Orders.Jobs.UpdateSiesaOrders, App.Orders.Jobs.UpdateSiesaOrders>();
+            services.AddTransient<UpdateSiesaOrders, UpdateSiesaOrders>();
             services.AddTransient<App.Orders.Domain.GetOrderDetailsVtexId>();
             //Dependencies Injections PriceTables
             services.AddTransient<App.PriceTables.PriceTablesRepository>();
