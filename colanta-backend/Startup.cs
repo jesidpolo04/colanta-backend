@@ -53,7 +53,8 @@ namespace colanta_backend
                     .AllowAnyHeader();
                 });
 
-                options.AddPolicy("EcommerceWildCard", policy => {
+                options.AddPolicy("EcommerceWildCard", policy =>
+                {
                     policy
                     .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .WithOrigins("https://*.myvtex.com", "https://www.pidecolanta.com")
@@ -64,41 +65,41 @@ namespace colanta_backend
 
             //Dependencies Injections Users
             services.AddTransient<UsersRepository, UsersEFRepository>();
-            services.AddTransient<App.Users.Domain.UsersSiesaRepository, App.Users.Infraestructure.UsersSiesaRepository>();
-            services.AddTransient<App.Users.Domain.UsersVtexRepository, App.Users.Infraestructure.UsersVtexRepository>();
+            services.AddSingleton<App.Users.Domain.UsersSiesaRepository, App.Users.Infraestructure.UsersSiesaRepository>();
+            services.AddSingleton<App.Users.Domain.UsersVtexRepository, App.Users.Infraestructure.UsersVtexRepository>();
             services.AddTransient<RegisterUserService>();
-            
+
             //Dependencies Injections Brands
             services.AddTransient<BrandsRepository, EFBrandsRepository>();
-            services.AddTransient<BrandsVtexRepository, VtexBrandsRepository>();
+            services.AddSingleton<BrandsVtexRepository, VtexBrandsRepository>();
             services.AddTransient<IRenderBrandsMail, RenderBrandsMail>();
             services.AddTransient<RenderBrands>();
             //Dependencies Injections Cattegories
-            services.AddTransient<App.Categories.Domain.ICategoriesRepository , App.Categories.Infraestructure.CategoriesEFRepository>(); //s
-            services.AddTransient<App.Categories.Domain.ICategoriesVtexRepository, App.Categories.Infraestructure.CategoriesVtexRepository>();
-            services.AddTransient<App.Categories.Domain.ICategoriesSiesaRepository, App.Categories.Infraestructure.HttpCategoriesSiesaRepository>();//
+            services.AddTransient<App.Categories.Domain.ICategoriesRepository, App.Categories.Infraestructure.CategoriesEFRepository>(); //s
+            services.AddSingleton<App.Categories.Domain.ICategoriesVtexRepository, App.Categories.Infraestructure.CategoriesVtexRepository>();
+            services.AddSingleton<App.Categories.Domain.ICategoriesSiesaRepository, App.Categories.Infraestructure.HttpCategoriesSiesaRepository>();//
             services.AddTransient<App.Categories.Domain.IRenderCategoriesMail, App.Categories.Infraestructure.RenderCategoriesMail>();
             services.AddTransient<RenderCategories>();
             services.AddTransient<ActivateAllCategories>();
             services.AddTransient<MapFamiliesToStore>();
             //Dependencies Injections Products
-            services.AddTransient<App.Products.Domain.ProductsRepository , App.Products.Infraestructure.ProductsEFRepository>();
+            services.AddTransient<App.Products.Domain.ProductsRepository, App.Products.Infraestructure.ProductsEFRepository>();
             services.AddTransient<App.Products.Domain.ProductsVtexRepository, App.Products.Infraestructure.ProductsVtexRepository>();
             services.AddTransient<App.Products.Domain.ISkusRepository, App.Products.Infraestructure.SkusEFRepository>();
-            services.AddTransient<App.Products.Domain.SkusVtexRepository, App.Products.Infraestructure.SkusVtexRepository>();
-            services.AddTransient<App.Products.Domain.ProductsSiesaRepository, App.Products.Infraestructure.ProductsSiesaRepository>();
+            services.AddSingleton<App.Products.Domain.SkusVtexRepository, App.Products.Infraestructure.SkusVtexRepository>();
+            services.AddSingleton<App.Products.Domain.ProductsSiesaRepository, App.Products.Infraestructure.ProductsSiesaRepository>();
             services.AddTransient<App.Products.Domain.IRenderProductsMail, App.Products.Infraestructure.RenderProductsMail>();
             services.AddTransient<App.Products.Domain.IInvalidBrandMail, App.Products.Infraestructure.InvalidBrandMail>();
             services.AddTransient<App.Products.Domain.IInvalidCategoryMail, App.Products.Infraestructure.InvalidCategoryMail>();
             services.AddTransient<App.Products.Domain.GetSkuVtexIdBySiesaId>();
-            
+
             services.AddTransient<RenderProductsAndSkus>();
             services.AddTransient<UpToVtexNullProductsAndSkus>();
             services.AddTransient<FixProductSkus>();
             //Dependencies Injections Specifications
             services.AddTransient<App.Specifications.Domain.SpecificationsVtexRepository, App.Specifications.Infraestructure.SpecificationsVtexRepository>();
             //Dependencies Injections Prices
-            services.AddTransient<App.Prices.Domain.PricesRepository , App.Prices.Infraestructure.PricesEFRepository>();
+            services.AddTransient<App.Prices.Domain.PricesRepository, App.Prices.Infraestructure.PricesEFRepository>();
             services.AddSingleton<App.Prices.Domain.PricesVtexRepository, App.Prices.Infraestructure.PricesVtexRepository>();
             services.AddSingleton<App.Prices.Domain.PricesSiesaRepository, App.Prices.Infraestructure.PricesSiesaRepository>();
             services.AddTransient<App.Prices.Domain.IRenderPricesMail, App.Prices.Infraestructure.RenderPricesMail>();
@@ -110,7 +111,7 @@ namespace colanta_backend
             services.AddSingleton<App.Inventory.Domain.InventoriesVtexRepository, App.Inventory.Infraestructure.InventoriesVtexRepository>();
             services.AddSingleton<App.Inventory.Domain.InventoriesSiesaRepository, App.Inventory.Infraestructure.InventoriesSiesaRepository>();
             services.AddTransient<App.Inventory.Domain.WarehousesRepository, App.Inventory.Infraestructure.WarehousesEFRepository>();
-            services.AddTransient<App.Inventory.Domain.WarehousesSiesaVtexRepository, App.Inventory.Infraestructure.WarehousesSiesaVtexRepository>();
+            services.AddSingleton<App.Inventory.Domain.WarehousesSiesaVtexRepository, App.Inventory.Infraestructure.WarehousesSiesaVtexRepository>();
             services.AddTransient<App.Inventory.Domain.IRenderInventoriesMail, App.Inventory.Infraestructure.RenderInventoriesMail>();
             services.AddTransient<RenderInventories>();
             //Dependencies Injections Promotions
