@@ -44,13 +44,18 @@
 
         public async Task Invoke(string vtexOrderId, string status, string lastStatus, string lastChange, string currentChange)
         {
-            
+
             Order localOrder = await this.localRepository.getOrderByVtexId(vtexOrderId);
             VtexOrder vtexOrder = await this.vtexRepository.getOrderByVtexId(vtexOrderId);
             List<PaymentMethod> payments = vtexOrder.getPaymentMethods();
 
             //TODO: move to a bd table
             if (vtexOrderId == "1533080589617-01")
+            {
+                return;
+            }
+
+            if (vtexOrderId == "1559440609896-01")
             {
                 return;
             }
@@ -83,7 +88,7 @@
                 localOrder = this.localRepository.SaveOrder(localOrder).Result;
             }
 
-            if(this.mustToSendToSiesa(payments, status) && !this.siesaOrderAlreadyExist(vtexOrderId))
+            if (this.mustToSendToSiesa(payments, status) && !this.siesaOrderAlreadyExist(vtexOrderId))
             {
                 string userVtexId = vtexOrder.clientProfileData.userProfileId;
                 string deliveryCountry = vtexOrder.shippingData.address.country;
@@ -126,11 +131,11 @@
             }
             return false;
         }
-        
+
 
         private bool thereArePromissoryPayment(List<PaymentMethod> payments)
         {
-            foreach(var payment in payments)
+            foreach (var payment in payments)
             {
                 if (payment.isPromissory()) return true;
             }
@@ -145,16 +150,17 @@
                 await this.siesaOrdersLocalRepository.saveSiesaOrder(siesaOrder);
                 return siesaOrder;
             }
-            catch(SiesaException exception)
+            catch (SiesaException exception)
             {
-                if(!this.mailService.alreadyFailOrderMailSendedAtLast(2, "H", order.vtex_id))
+                if (!this.mailService.alreadyFailOrderMailSendedAtLast(2, "H", order.vtex_id))
                 {
                     this.mailService.SendSiesaErrorMail(exception, order.vtex_id);
                     await this.mailService.createOrUpdateFailOrderMailLog(order.vtex_id);
                 }
                 throw new SiesaOrderRejectException(exception.httpResponse, order, $"Siesa rechazó el pedido #{order.vtex_id}");
             }
-            catch(Exception exception){
+            catch (Exception exception)
+            {
                 logger.writelog(exception);
                 throw exception;
             }
@@ -167,10 +173,10 @@
                 VtexOrder vtexOrder = this.vtexRepository.getOrderByVtexId(siesaOrder.referencia_vtex).Result;
                 this.mailService.SendMailToWarehouse(wharehouseId, siesaOrder, vtexOrder);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 logger.writelog(exception);
-            } 
+            }
         }
 
         private async Task registerUser(string userVtexId, string country, string department, string city, string someSkuRef)
@@ -183,7 +189,7 @@
                 else business = sku.product.business;
                 await this.registerUserService.registerUser(userVtexId, country, department, city, business);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 await logger.writelog(exception);
             }
