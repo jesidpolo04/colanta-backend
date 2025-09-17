@@ -13,7 +13,9 @@ namespace colanta_backend.App.Promotions.Infraestructure
     using App.Products.Domain;
     using App.Brands.Domain;
     using App.Categories.Domain;
-    using App.Shared.Domain;
+    using Microsoft.Extensions.Logging;
+    using colanta_backend.App.Shared.Domain;
+
     public class PromotionsVtexRepository : Domain.PromotionsVtexRepository
     {
         private HttpClient httpClient;
@@ -23,10 +25,12 @@ namespace colanta_backend.App.Promotions.Infraestructure
         private string accountName;
         private string vtexEnvironment;
         private JsonSerializerOptions jsonOptions;
+        private readonly ILogger<PromotionsVtexRepository> _logger;
 
-        public PromotionsVtexRepository(IConfiguration configuration)
+        public PromotionsVtexRepository(IConfiguration configuration, ILogger<PromotionsVtexRepository> logger)
         {
             this.configuration = configuration;
+            this._logger = logger;
             this.apiKey = configuration["MercolantaVtexApiKey"];
             this.apiToken = configuration["MercolantaVtexToken"];
             this.accountName = configuration["MercolantaAccountName"];
@@ -84,13 +88,13 @@ namespace colanta_backend.App.Promotions.Infraestructure
             this.changeEnvironment(environment);
             string endpoint = "/api/rnb/pvt/calculatorconfiguration/";
             string url = "https://" + this.accountName + "." + this.vtexEnvironment + endpoint + vtexId;
-            
+
             HttpResponseMessage vtexResponse = await this.httpClient.GetAsync(url);
-            if(vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
+            if (vtexResponse.StatusCode != System.Net.HttpStatusCode.OK && vtexResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
                 throw new VtexException(vtexResponse, $"Vtex respondió con status {vtexResponse.StatusCode}");
             }
-            if(vtexResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if (vtexResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 return null;
             }
@@ -98,7 +102,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             VtexPromotionDto vtexPromotionDto = JsonSerializer.Deserialize<VtexPromotionDto>(vtexResponseBody);
             return vtexPromotionDto.getPromotionFromDto();
         }
-   
+
         public async Task<Promotion> savePromotion(Promotion promotion)
         {
             this.changeEnvironment(promotion.business);
@@ -139,7 +143,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.productsAreInclusive = true;
 
             List<VtexPromotionSku> vtexPromotionSkus = new List<VtexPromotionSku>();
-            foreach(Sku sku in promotion.skus)
+            foreach (Sku sku in promotion.skus)
             {
                 VtexPromotionSku vtexPromotionSku = new VtexPromotionSku
                 {
@@ -152,7 +156,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.skusAreInclusive = true;
 
             List<VtexPromotionCategory> vtexPromotionCategories = new List<VtexPromotionCategory>();
-            foreach(Category category in promotion.categories) 
+            foreach (Category category in promotion.categories)
             {
                 VtexPromotionCategory vtexPromotionCategory = new VtexPromotionCategory
                 {
@@ -165,7 +169,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.categoriesAreInclusive = true;
 
             List<VtexPromotionBrand> vtexPromotionBrands = new List<VtexPromotionBrand>();
-            foreach(Brand brand in promotion.brands)
+            foreach (Brand brand in promotion.brands)
             {
                 VtexPromotionBrand vtexPromotionBrand = new VtexPromotionBrand
                 {
@@ -184,7 +188,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 quantitySelectable = promotion.gift_quantity_selectable
             };
             List<VtexPromotionGift> vtexGiftList = new List<VtexPromotionGift>();
-            foreach(Sku gift in promotion.gifts)
+            foreach (Sku gift in promotion.gifts)
             {
                 VtexPromotionGift vtexPromotionGift = new VtexPromotionGift
                 {
@@ -197,7 +201,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.skusGift = vtexPromotionGifts;
 
             List<VtexPromotionSku> vtexListBuyTogether1 = new List<VtexPromotionSku>();
-            foreach(Sku sku in promotion.list_sku_1_buy_together)
+            foreach (Sku sku in promotion.list_sku_1_buy_together)
             {
                 VtexPromotionSku vtexPromotionSku = new VtexPromotionSku
                 {
@@ -227,6 +231,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             requestBody.origin = "Marketplace";
 
             string jsonContent = JsonSerializer.Serialize(requestBody, jsonOptions);
+            _logger.LogTrace("Promotion VTEX Request: {Request}", jsonContent);
             HttpContent httpContent = new StringContent(jsonContent, encoding: System.Text.Encoding.UTF8, "application/json");
 
             HttpResponseMessage vtexResponse = await this.httpClient.PostAsync(url, httpContent);
@@ -236,6 +241,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             }
 
             string vtexResponseBody = await vtexResponse.Content.ReadAsStringAsync();
+            _logger.LogTrace("Promotion VTEX Response: {Response}", vtexResponseBody);
             ResponseCreateVtexPromotionDto responseCreateVtexPromotionDto = JsonSerializer.Deserialize<ResponseCreateVtexPromotionDto>(vtexResponseBody);
             return responseCreateVtexPromotionDto.getPromotionFromDto();
         }
@@ -252,7 +258,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
             string stringBody = await vtexResponse.Content.ReadAsStringAsync();
             GetAllPromotionsVtexResponseDto responseDto = JsonSerializer.Deserialize<GetAllPromotionsVtexResponseDto>(stringBody);
             List<PromotionSummary> promotionsSummaries = new List<PromotionSummary>();
-            foreach(VtexPromotionSummaryDto vtexPromotionSummary in responseDto.items)
+            foreach (VtexPromotionSummaryDto vtexPromotionSummary in responseDto.items)
             {
                 promotionsSummaries.Add(vtexPromotionSummary.getPromotionSummary());
             }
