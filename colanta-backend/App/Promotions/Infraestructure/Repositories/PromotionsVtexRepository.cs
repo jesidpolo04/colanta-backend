@@ -120,7 +120,7 @@ namespace colanta_backend.App.Promotions.Infraestructure
                 isActive = promotion.is_active,
                 maximumUnitPriceDiscount = promotion.maximum_unit_price_discount,
                 nominalDiscountValue = promotion.nominal_discount_value,
-                percentualDiscountValue = promotion.percentual_discount_value,
+                percentualDiscountValue = 0, // Siempre es 0 porque usamos Tablas de precio
                 percentualShippingDiscountValue = promotion.percentual_shipping_discount_value,
                 maxNumberOfAffectedItems = promotion.max_number_of_affected_items,
                 maxNumberOfAffectedItemsGroupKey = promotion.max_number_of_affected_items_group_key,
